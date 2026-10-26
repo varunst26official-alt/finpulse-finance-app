@@ -7,6 +7,13 @@ import {
   CalendarEvent,
   Currency,
 } from '@/types/finance';
+import {
+  TaskItem,
+  WellnessState,
+  LearningItem,
+  DocumentItem,
+} from '@/types/lifeos';
+import { UserAdaptiveInputs, AdaptiveLifeBlueprint } from '@/services/adaptiveLifeEngine';
 import { UserProfile } from '@/stores/authStore';
 
 const API_BASE = '/api';
@@ -250,6 +257,85 @@ export const api = {
     delete: async (id: string): Promise<{ success: boolean }> => {
       return request(`/calendar/${id}`, {
         method: 'DELETE',
+      });
+    },
+  },
+
+  // LifeOS Platform Synchronization
+  lifeos: {
+    fetchData: async (): Promise<{
+      success: boolean;
+      data: {
+        tasks: TaskItem[];
+        wellness: WellnessState;
+        learningItems: LearningItem[];
+        documents: DocumentItem[];
+        userInputs?: UserAdaptiveInputs;
+        blueprint?: AdaptiveLifeBlueprint;
+      };
+    }> => {
+      return request('/lifeos/data');
+    },
+
+    createTask: async (task: Partial<TaskItem>): Promise<{ success: boolean; taskId: string }> => {
+      return request('/lifeos/tasks', {
+        method: 'POST',
+        body: JSON.stringify(task),
+      });
+    },
+
+    updateTask: async (id: string, updates: Partial<TaskItem>): Promise<{ success: boolean }> => {
+      return request(`/lifeos/tasks/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(updates),
+      });
+    },
+
+    deleteTask: async (id: string): Promise<{ success: boolean }> => {
+      return request(`/lifeos/tasks/${id}`, {
+        method: 'DELETE',
+      });
+    },
+
+    logWellness: async (payload: {
+      waterDeltaLiters?: number;
+      workoutDeltaMinutes?: number;
+      caloriesDelta?: number;
+      resetWater?: boolean;
+    }): Promise<{
+      success: boolean;
+      wellness: {
+        waterLitersLogged: number;
+        workoutMinutesLogged: number;
+        caloriesLogged: number;
+      };
+    }> => {
+      return request('/lifeos/wellness/log', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+
+    updateMetrics: async (payload: {
+      heightCm?: number;
+      weightKg?: number;
+      targetWeightKg?: number;
+      caloriesTarget?: number;
+      waterTargetLiters?: number;
+    }): Promise<{ success: boolean }> => {
+      return request('/lifeos/wellness/metrics', {
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+      });
+    },
+
+    saveBlueprint: async (
+      userInputs: UserAdaptiveInputs,
+      blueprint: AdaptiveLifeBlueprint
+    ): Promise<{ success: boolean }> => {
+      return request('/lifeos/blueprint', {
+        method: 'POST',
+        body: JSON.stringify({ userInputs, blueprint }),
       });
     },
   },

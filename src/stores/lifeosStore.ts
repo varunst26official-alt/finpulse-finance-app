@@ -13,6 +13,7 @@ import {
   UserAdaptiveInputs,
   AdaptiveLifeBlueprint,
 } from '@/services/adaptiveLifeEngine';
+import { api } from '@/services/apiClient';
 
 const DEFAULT_USER_INPUTS: UserAdaptiveInputs = {
   age: 29,
@@ -37,6 +38,9 @@ interface LifeOSState {
 
   timePeriod: 'week' | 'month' | 'year';
   setTimePeriod: (period: 'week' | 'month' | 'year') => void;
+
+  isLoading: boolean;
+  fetchLifeOSData: () => Promise<void>;
 
   // Adaptive LifeOS Engine State
   userInputs: UserAdaptiveInputs;
@@ -71,7 +75,7 @@ interface LifeOSState {
 
 export const useLifeOSStore = create<LifeOSState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       currentSection: 'overview',
       setCurrentSection: (currentSection) => set({ currentSection }),
 
@@ -81,45 +85,78 @@ export const useLifeOSStore = create<LifeOSState>()(
       timePeriod: 'week',
       setTimePeriod: (timePeriod) => set({ timePeriod }),
 
+      isLoading: false,
+
+      fetchLifeOSData: async () => {
+        try {
+          set({ isLoading: true });
+          const res = await api.lifeos.fetchData();
+          if (res.success && res.data) {
+            set((state) => ({
+              tasks: res.data.tasks?.length ? res.data.tasks : state.tasks,
+              wellness: res.data.wellness ? { ...state.wellness, ...res.data.wellness } : state.wellness,
+              learningItems: res.data.learningItems?.length ? res.data.learningItems : state.learningItems,
+              documents: res.data.documents?.length ? res.data.documents : state.documents,
+              userInputs: res.data.userInputs || state.userInputs,
+              activeBlueprint: res.data.blueprint || state.activeBlueprint,
+            }));
+          }
+        } catch (err) {
+          console.warn('[LifeOS] Backend sync unavailable, using local persistence:', err);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
       userInputs: DEFAULT_USER_INPUTS,
       activeBlueprint: INITIAL_BLUEPRINT,
       isAiModalOpen: false,
       setIsAiModalOpen: (isAiModalOpen) => set({ isAiModalOpen }),
 
       generateAndApplyBlueprint: (customInputs) => {
-        set((state) => {
-          const mergedInputs: UserAdaptiveInputs = {
-            ...state.userInputs,
-            ...customInputs,
-          };
-          const blueprint = computeAdaptiveBlueprint(mergedInputs);
+        const state = get();
+        const mergedInputs: UserAdaptiveInputs = {
+          ...state.userInputs,
+          ...customInputs,
+        };
+        const blueprint = computeAdaptiveBlueprint(mergedInputs);
 
-          // Dynamically map adaptive agenda to tasks
-          const updatedTasks: TaskItem[] = blueprint.productivityAgenda.map((item, idx) => ({
-            id: `tsk_gen_${Date.now()}_${idx}`,
-            title: item.title,
-            time: item.time,
-            category: item.category,
-            priority: item.priority,
-            status: 'TODO',
-            badgeLabel: item.badge,
-            iconSymbol: item.icon,
-            notes: item.notes,
-          }));
+        // Dynamically map adaptive agenda to tasks
+        const updatedTasks: TaskItem[] = blueprint.productivityAgenda.map((item, idx) => ({
+          id: `tsk_gen_${Date.now()}_${idx}`,
+          title: item.title,
+          time: item.time,
+          category: item.category,
+          priority: item.priority,
+          status: 'TODO',
+          badgeLabel: item.badge,
+          iconSymbol: item.icon,
+          notes: item.notes,
+        }));
 
-          return {
-            userInputs: mergedInputs,
-            activeBlueprint: blueprint,
-            tasks: updatedTasks,
-            wellness: {
-              ...state.wellness,
-              heightCm: mergedInputs.heightCm,
-              weightKg: mergedInputs.weightKg,
-              caloriesTarget: blueprint.targetCalories,
-              waterTargetLiters: blueprint.dailyWaterTargetLiters,
-            },
-          };
+        set({
+          userInputs: mergedInputs,
+          activeBlueprint: blueprint,
+          tasks: updatedTasks,
+          wellness: {
+            ...state.wellness,
+            heightCm: mergedInputs.heightCm,
+            weightKg: mergedInputs.weightKg,
+            caloriesTarget: blueprint.targetCalories,
+            waterTargetLiters: blueprint.dailyWaterTargetLiters,
+          },
         });
+
+        // Persist to backend SQLite
+        api.lifeos.saveBlueprint(mergedInputs, blueprint).catch((err) =>
+          console.warn('[LifeOS] Blueprint sync warning:', err)
+        );
+        api.lifeos.updateMetrics({
+          heightCm: mergedInputs.heightCm,
+          weightKg: mergedInputs.weightKg,
+          caloriesTarget: blueprint.targetCalories,
+          waterTargetLiters: blueprint.dailyWaterTargetLiters,
+        }).catch(() => {});
       },
 
       tasks: [
@@ -180,35 +217,53 @@ export const useLifeOSStore = create<LifeOSState>()(
         },
       ],
 
-      toggleTaskComplete: (id) =>
-        set((state) => ({
+      toggleTaskComplete: (id) => {
+        const state = get();
+        const target = state.tasks.find((t) => t.id === id);
+        if (!target) return;
+
+        const nextStatus = target.status === 'COMPLETED' ? 'TODO' : 'COMPLETED';
+        const nextBadge = nextStatus === 'COMPLETED' ? 'Completed' : 'To do';
+
+        set({
           tasks: state.tasks.map((t) =>
             t.id === id
-              ? {
-                  ...t,
-                  status: t.status === 'COMPLETED' ? 'TODO' : 'COMPLETED',
-                  badgeLabel: t.status === 'COMPLETED' ? 'To do' : 'Completed',
-                }
+              ? { ...t, status: nextStatus, badgeLabel: nextBadge }
               : t
           ),
-        })),
+        });
 
-      addTask: (taskData) =>
+        api.lifeos.updateTask(id, { status: nextStatus, badgeLabel: nextBadge }).catch((err) =>
+          console.warn('[LifeOS] Task update sync error:', err)
+        );
+      },
+
+      addTask: (taskData) => {
+        const newId = `tsk_${Date.now()}`;
+        const newTask: TaskItem = {
+          ...taskData,
+          id: newId,
+          badgeLabel: taskData.badgeLabel || 'To do',
+        };
+
         set((state) => ({
-          tasks: [
-            ...state.tasks,
-            {
-              ...taskData,
-              id: `tsk_${Date.now()}`,
-              badgeLabel: taskData.badgeLabel || 'To do',
-            },
-          ],
-        })),
+          tasks: [...state.tasks, newTask],
+        }));
 
-      deleteTask: (id) =>
+        api.lifeos.createTask(newTask).catch((err) =>
+          console.warn('[LifeOS] Task create sync error:', err)
+        );
+      },
+
+      deleteTask: (id) => {
         set((state) => ({
           tasks: state.tasks.filter((t) => t.id !== id),
-        })),
+        }));
+
+        api.lifeos.deleteTask(id).catch((err) =>
+          console.warn('[LifeOS] Task delete sync error:', err)
+        );
+      },
 
       wellness: {
         heightCm: 175,
@@ -222,46 +277,71 @@ export const useLifeOSStore = create<LifeOSState>()(
         sleepHours: 7.5,
       },
 
-      updateBodyMetrics: (heightCm, weightKg) =>
+      updateBodyMetrics: (heightCm, weightKg) => {
         set((state) => ({
           wellness: {
             ...state.wellness,
             heightCm,
             weightKg,
           },
-        })),
+        }));
 
-      logWater: (amount) =>
+        api.lifeos.updateMetrics({ heightCm, weightKg }).catch((err) =>
+          console.warn('[LifeOS] Body metrics sync error:', err)
+        );
+      },
+
+      logWater: (amount) => {
         set((state) => ({
           wellness: {
             ...state.wellness,
             waterLitersLogged: Math.round((state.wellness.waterLitersLogged + amount) * 10) / 10,
           },
-        })),
+        }));
 
-      resetWater: () =>
+        api.lifeos.logWellness({ waterDeltaLiters: amount }).catch((err) =>
+          console.warn('[LifeOS] Water log sync error:', err)
+        );
+      },
+
+      resetWater: () => {
         set((state) => ({
           wellness: {
             ...state.wellness,
             waterLitersLogged: 0,
           },
-        })),
+        }));
 
-      logWorkoutMinutes: (minutes) =>
+        api.lifeos.logWellness({ resetWater: true }).catch((err) =>
+          console.warn('[LifeOS] Water reset sync error:', err)
+        );
+      },
+
+      logWorkoutMinutes: (minutes) => {
         set((state) => ({
           wellness: {
             ...state.wellness,
             workoutMinutesLogged: state.wellness.workoutMinutesLogged + minutes,
           },
-        })),
+        }));
 
-      logCalories: (calories) =>
+        api.lifeos.logWellness({ workoutDeltaMinutes: minutes }).catch((err) =>
+          console.warn('[LifeOS] Workout log sync error:', err)
+        );
+      },
+
+      logCalories: (calories) => {
         set((state) => ({
           wellness: {
             ...state.wellness,
             caloriesLogged: state.wellness.caloriesLogged + calories,
           },
-        })),
+        }));
+
+        api.lifeos.logWellness({ caloriesDelta: calories }).catch((err) =>
+          console.warn('[LifeOS] Calories log sync error:', err)
+        );
+      },
 
       learningItems: [
         {

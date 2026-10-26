@@ -16,12 +16,15 @@ export type FinanceSubTab =
   | 'calendar'
   | 'goals';
 
+export type LifeOSCategory = 'FINANCE' | 'WELLNESS' | 'PRODUCTIVITY' | 'LEARNING' | 'LIFEADMIN';
+export type PriorityLevel = 'HIGH' | 'MEDIUM' | 'LOW';
+
 export interface TaskItem {
   id: string;
   title: string;
   time?: string;
-  category: 'FINANCE' | 'WELLNESS' | 'PRODUCTIVITY' | 'LEARNING' | 'LIFEADMIN';
-  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  category: LifeOSCategory;
+  priority: PriorityLevel;
   status: 'TODO' | 'IN_PROGRESS' | 'COMPLETED' | 'SKIPPED';
   badgeLabel?: string;
   notes?: string;

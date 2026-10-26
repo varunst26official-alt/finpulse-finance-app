@@ -554,6 +554,149 @@ export function seedUserData(userId: string): void {
      VALUES (?, 'INR', 6)`,
     [userId]
   );
+
+  // 8. LifeOS Tasks
+  const initialTasks = [
+    {
+      id: `tsk_1_${userId}`,
+      title: 'Workout session',
+      time: '7:00 AM',
+      category: 'WELLNESS',
+      priority: 'HIGH',
+      status: 'TODO',
+      badgeLabel: 'Planned',
+      notes: 'Full-body movement and mobility · 30 minutes',
+      iconSymbol: '♡',
+    },
+    {
+      id: `tsk_2_${userId}`,
+      title: 'Review monthly spending',
+      time: '1:00 PM',
+      category: 'FINANCE',
+      priority: 'MEDIUM',
+      status: 'TODO',
+      badgeLabel: 'To do',
+      notes: 'Check transactions, mutual fund SIPs, and upcoming bills',
+      iconSymbol: '₹',
+    },
+    {
+      id: `tsk_3_${userId}`,
+      title: 'Learning milestone',
+      time: '4:30 PM',
+      category: 'LEARNING',
+      priority: 'MEDIUM',
+      status: 'IN_PROGRESS',
+      badgeLabel: 'In progress',
+      notes: 'Complete the next system architecture chapter',
+      iconSymbol: '▧',
+    },
+    {
+      id: `tsk_4_${userId}`,
+      title: 'Hydration goal (2.5L)',
+      time: '6:00 PM',
+      category: 'WELLNESS',
+      priority: 'LOW',
+      status: 'TODO',
+      badgeLabel: 'In progress',
+      notes: 'Drink 4 full bottles of water today',
+      iconSymbol: '◒',
+    },
+    {
+      id: `tsk_5_${userId}`,
+      title: 'Daily check-in & reflection',
+      time: '8:30 PM',
+      category: 'PRODUCTIVITY',
+      priority: 'LOW',
+      status: 'TODO',
+      badgeLabel: 'Planned',
+      notes: 'Record nutrition estimates, gratitude, and wrap up today',
+      iconSymbol: '↻',
+    },
+  ];
+
+  for (const t of initialTasks) {
+    run(
+      `INSERT OR REPLACE INTO tasks
+       (id, user_id, title, time, category, priority, status, badge_label, icon_symbol, notes)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [t.id, userId, t.title, t.time, t.category, t.priority, t.status, t.badgeLabel, t.iconSymbol, t.notes]
+    );
+  }
+
+  // 9. LifeOS Wellness Log
+  const todayStr = new Date().toISOString().split('T')[0];
+  run(
+    `INSERT OR REPLACE INTO wellness_logs
+     (id, user_id, date, height_cm, weight_kg, target_weight_kg, workout_minutes, calories_logged, calories_target, water_liters, water_target_liters, sleep_hours, notes)
+     VALUES (?, ?, ?, 175, 74.0, 70.0, 45, 1650, 2200, 1.8, 2.5, 7.5, 'Regular calibration')`,
+    [`well_${userId}_${todayStr}`, userId, todayStr]
+  );
+
+  // 10. LifeOS Learning Items
+  const learningItems = [
+    {
+      id: `lrn_1_${userId}`,
+      title: 'Full-Stack Distributed Systems',
+      field: 'Engineering',
+      progressPercent: 68,
+      hoursSpent: 34,
+      targetHours: 50,
+      status: 'IN_PROGRESS',
+      notes: 'Node.js, PostgreSQL, Distributed Caching & Event Sinks',
+    },
+    {
+      id: `lrn_2_${userId}`,
+      title: 'Advanced Personal Portfolio Management',
+      field: 'Finance',
+      progressPercent: 45,
+      hoursSpent: 18,
+      targetHours: 40,
+      status: 'IN_PROGRESS',
+      notes: 'Asset allocation theory, Beta hedged portfolios, Bond yields',
+    },
+  ];
+
+  for (const l of learningItems) {
+    run(
+      `INSERT OR REPLACE INTO learning_items
+       (id, user_id, title, field, progress_percent, hours_spent, target_hours, status, notes)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [l.id, userId, l.title, l.field, l.progressPercent, l.hoursSpent, l.targetHours, l.status, l.notes]
+    );
+  }
+
+  // 11. LifeOS Documents
+  const initialDocuments = [
+    {
+      id: `doc_1_${userId}`,
+      title: 'Indian Passport (10-Year)',
+      category: 'ID_CARD',
+      documentNumber: 'Z9874521',
+      expiryDate: '2031-08-14',
+      status: 'ACTIVE',
+      authority: 'Ministry of External Affairs, India',
+      notes: 'Original in home safe',
+    },
+    {
+      id: `doc_2_${userId}`,
+      title: 'Comprehensive Health Card',
+      category: 'INSURANCE',
+      documentNumber: 'HDFC-ERGO-98742',
+      expiryDate: '2027-02-15',
+      status: 'ACTIVE',
+      authority: 'HDFC ERGO General Insurance',
+      notes: 'Cashless hospital emergency e-card',
+    },
+  ];
+
+  for (const d of initialDocuments) {
+    run(
+      `INSERT OR REPLACE INTO documents
+       (id, user_id, title, category, document_number, expiry_date, status, authority, notes)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [d.id, userId, d.title, d.category, d.documentNumber, d.expiryDate, d.status, d.authority, d.notes]
+    );
+  }
 }
 
 /**
@@ -569,6 +712,11 @@ export function clearUserData(userId: string): void {
   run('DELETE FROM calendar_events WHERE user_id = ?', [userId]);
   run('DELETE FROM expenses WHERE user_id = ?', [userId]);
   run('DELETE FROM incomes WHERE user_id = ?', [userId]);
+  run('DELETE FROM tasks WHERE user_id = ?', [userId]);
+  run('DELETE FROM wellness_logs WHERE user_id = ?', [userId]);
+  run('DELETE FROM learning_items WHERE user_id = ?', [userId]);
+  run('DELETE FROM documents WHERE user_id = ?', [userId]);
+  run('DELETE FROM user_blueprint WHERE user_id = ?', [userId]);
 }
 
 /**
@@ -619,6 +767,13 @@ export async function initDatabase(): Promise<Database> {
     // Seed demo data
     seedUserData('usr_demo');
     console.log('[Database] Seeded initial demo user and wealth portfolio.');
+  } else {
+    // If demo user exists but tasks table is empty, seed defaults
+    const taskCount = queryOne<{ count: number }>('SELECT COUNT(*) as count FROM tasks WHERE user_id = ?', ['usr_demo']);
+    if (!taskCount || taskCount.count === 0) {
+      seedUserData('usr_demo');
+      console.log('[Database] Seeded LifeOS items for demo user.');
+    }
   }
 
   persistDatabase();

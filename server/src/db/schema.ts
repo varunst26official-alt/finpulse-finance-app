@@ -168,6 +168,77 @@ CREATE TABLE IF NOT EXISTS user_settings (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 11. LifeOS Tasks & Agenda Items
+CREATE TABLE IF NOT EXISTS tasks (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  time TEXT,
+  category TEXT NOT NULL, -- FINANCE | WELLNESS | PRODUCTIVITY | LEARNING | LIFEADMIN
+  priority TEXT NOT NULL DEFAULT 'MEDIUM', -- HIGH | MEDIUM | LOW
+  status TEXT NOT NULL DEFAULT 'TODO', -- TODO | IN_PROGRESS | COMPLETED
+  badge_label TEXT DEFAULT 'To do',
+  icon_symbol TEXT DEFAULT '☑',
+  notes TEXT,
+  due_date TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 12. LifeOS Wellness Logs & Body Metrics
+CREATE TABLE IF NOT EXISTS wellness_logs (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  date TEXT NOT NULL,
+  height_cm REAL NOT NULL,
+  weight_kg REAL NOT NULL,
+  target_weight_kg REAL,
+  workout_minutes INTEGER DEFAULT 0,
+  calories_logged INTEGER DEFAULT 0,
+  calories_target INTEGER DEFAULT 2200,
+  water_liters REAL DEFAULT 0,
+  water_target_liters REAL DEFAULT 2.5,
+  sleep_hours REAL DEFAULT 7.5,
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 13. LifeOS Learning & Career Progression
+CREATE TABLE IF NOT EXISTS learning_items (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  field TEXT NOT NULL,
+  progress_percent INTEGER DEFAULT 0,
+  hours_spent REAL DEFAULT 0,
+  target_hours REAL DEFAULT 20,
+  status TEXT DEFAULT 'IN_PROGRESS',
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 14. LifeOS Document Vault & Life Admin
+CREATE TABLE IF NOT EXISTS documents (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  category TEXT NOT NULL, -- ID_CARD | INSURANCE | PROPERTY | VEHICLE | TAX_RECORD
+  document_number TEXT NOT NULL,
+  expiry_date TEXT,
+  status TEXT DEFAULT 'ACTIVE', -- ACTIVE | EXPIRING_SOON | EXPIRED
+  authority TEXT,
+  file_url TEXT,
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 15. LifeOS User Adaptive Blueprint Settings
+CREATE TABLE IF NOT EXISTS user_blueprint (
+  user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  inputs_json TEXT NOT NULL,
+  blueprint_json TEXT NOT NULL,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_assets_user ON assets(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
@@ -178,4 +249,8 @@ CREATE INDEX IF NOT EXISTS idx_goals_user ON goals(user_id);
 CREATE INDEX IF NOT EXISTS idx_calendar_user ON calendar_events(user_id);
 CREATE INDEX IF NOT EXISTS idx_expenses_user ON expenses(user_id);
 CREATE INDEX IF NOT EXISTS idx_incomes_user ON incomes(user_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_user ON tasks(user_id);
+CREATE INDEX IF NOT EXISTS idx_wellness_user ON wellness_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_learning_user ON learning_items(user_id);
+CREATE INDEX IF NOT EXISTS idx_documents_user ON documents(user_id);
 `;

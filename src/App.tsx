@@ -19,14 +19,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 export function App() {
   const { syncWithBackend } = useFinanceStore();
   const { isAuthenticated } = useAuthStore();
-  const { currentSection } = useLifeOSStore();
+  const { currentSection, fetchLifeOSData } = useLifeOSStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
       syncWithBackend();
+      fetchLifeOSData();
     }
-  }, [isAuthenticated, syncWithBackend]);
+  }, [isAuthenticated, syncWithBackend, fetchLifeOSData]);
 
   // If user is not authenticated, show the customer Login / Register screen
   if (!isAuthenticated) {
