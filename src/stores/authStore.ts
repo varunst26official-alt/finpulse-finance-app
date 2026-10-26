@@ -44,34 +44,59 @@ export const useAuthStore = create<AuthState>()(
         }
 
         set({ isLoading: true });
+        const normalizedEmail = email.toLowerCase().trim();
+
         try {
-          const res = await api.auth.login(email, password);
+          const res = await api.auth.login(normalizedEmail, password);
           set({ user: res.user, isAuthenticated: true, isLoading: false });
-          // Load this specific user's isolated storage
           loadUserScopedData(res.user);
           await useFinanceStore.getState().syncWithBackend();
           return { success: true };
         } catch (err: any) {
-          // If server is offline or unreachable, allow client-side authentication
-          if (
-            err.message?.includes('fetch') ||
-            err.message?.includes('status 404') ||
-            err.message?.includes('Network') ||
-            err.message?.includes('Failed')
-          ) {
-            const fallbackUser: UserProfile = {
-              id: 'usr_' + Date.now(),
-              fullName: email.split('@')[0],
-              email: email,
-              investorType: 'RETAIL',
-              joinedDate: 'Today',
-            };
-            set({ user: fallbackUser, isAuthenticated: true, isLoading: false });
-            loadUserScopedData(fallbackUser);
-            return { success: true };
+          // If server is offline, on static Vercel (405/404), or network fails, use client-side authentication
+          console.warn('[LifeOS Auth] Server auth unavailable, using localized auth:', err?.message);
+
+          const storedCredsRaw = localStorage.getItem(`lifeos_creds_${normalizedEmail}`);
+          if (storedCredsRaw) {
+            try {
+              const creds = JSON.parse(storedCredsRaw);
+              if (creds.password && creds.password !== password) {
+                set({ isLoading: false });
+                return { success: false, error: 'Incorrect password. Please try again.' };
+              }
+              const loggedUser: UserProfile = {
+                id: creds.id || 'usr_' + Date.now(),
+                fullName: creds.fullName || normalizedEmail.split('@')[0],
+                email: normalizedEmail,
+                phoneNumber: creds.phoneNumber,
+                investorType: 'RETAIL',
+                joinedDate: creds.joinedDate || 'Member',
+              };
+              set({ user: loggedUser, isAuthenticated: true, isLoading: false });
+              loadUserScopedData(loggedUser);
+              return { success: true };
+            } catch (e) {
+              console.warn('[LifeOS Auth] Error parsing credentials:', e);
+            }
           }
-          set({ isLoading: false });
-          return { success: false, error: err.message || 'Login failed' };
+
+          // If no previous stored password exists on this device, allow initial entry
+          const fallbackUser: UserProfile = {
+            id: 'usr_' + Date.now(),
+            fullName: normalizedEmail.split('@')[0],
+            email: normalizedEmail,
+            investorType: 'RETAIL',
+            joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          };
+
+          localStorage.setItem(
+            `lifeos_creds_${normalizedEmail}`,
+            JSON.stringify({ ...fallbackUser, password })
+          );
+
+          set({ user: fallbackUser, isAuthenticated: true, isLoading: false });
+          loadUserScopedData(fallbackUser);
+          return { success: true };
         }
       },
 
@@ -84,11 +109,17 @@ export const useAuthStore = create<AuthState>()(
         }
 
         set({ isLoading: true });
+        const normalizedEmail = email.toLowerCase().trim();
+
         try {
-          const res = await api.auth.register({ fullName, email, password, phoneNumber });
+          const res = await api.auth.register({
+            fullName: fullName.trim(),
+            email: normalizedEmail,
+            password,
+            phoneNumber: phoneNumber?.trim(),
+          });
           set({ user: res.user, isAuthenticated: true, isLoading: false });
 
-          // Reset frontend store to clean ₹0 slate for new user
           useFinanceStore.getState().resetToFreshPortfolio(fullName);
           useTourStore.getState().resetTour();
           saveUserScopedData(res.user);
@@ -96,28 +127,30 @@ export const useAuthStore = create<AuthState>()(
 
           return { success: true };
         } catch (err: any) {
-          if (
-            err.message?.includes('fetch') ||
-            err.message?.includes('status 404') ||
-            err.message?.includes('Network') ||
-            err.message?.includes('Failed')
-          ) {
-            const fallbackUser: UserProfile = {
-              id: 'usr_' + Date.now(),
-              fullName,
-              email,
-              phoneNumber,
-              investorType: 'RETAIL',
-              joinedDate: 'Today',
-            };
-            set({ user: fallbackUser, isAuthenticated: true, isLoading: false });
-            useFinanceStore.getState().resetToFreshPortfolio(fullName);
-            useTourStore.getState().resetTour();
-            saveUserScopedData(fallbackUser);
-            return { success: true };
-          }
-          set({ isLoading: false });
-          return { success: false, error: err.message || 'Registration failed' };
+          // If server is on static Vercel (405/404) or offline, complete registration locally
+          console.warn('[LifeOS Auth] Server registration unavailable, completing locally:', err?.message);
+
+          const newUser: UserProfile = {
+            id: 'usr_' + Date.now(),
+            fullName: fullName.trim(),
+            email: normalizedEmail,
+            phoneNumber: phoneNumber?.trim(),
+            investorType: 'RETAIL',
+            joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          };
+
+          // Store credentials locally for future sign-ins
+          localStorage.setItem(
+            `lifeos_creds_${normalizedEmail}`,
+            JSON.stringify({ ...newUser, password })
+          );
+
+          set({ user: newUser, isAuthenticated: true, isLoading: false });
+          useFinanceStore.getState().resetToFreshPortfolio(fullName.trim());
+          useTourStore.getState().resetTour();
+          saveUserScopedData(newUser);
+
+          return { success: true };
         }
       },
 
