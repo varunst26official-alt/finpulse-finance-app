@@ -16,6 +16,7 @@ import { StockPredictor } from '@/components/predictions/StockPredictor';
 import { MarketIntelligenceFeed } from '@/components/news/MarketIntelligenceFeed';
 import { TaxOptimizer } from '@/components/tax/TaxOptimizer';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
+import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -159,6 +160,9 @@ export function App() {
 
       {/* Floating AI Copilot & Conversational Trade Execution Widget */}
       <FloatingAiChatWidget />
+
+      {/* Interactive First-Time User Onboarding Demo Tour */}
+      <DemoTourGuide />
 
       {/* Record Transaction Modal */}
       <AddTransactionModal

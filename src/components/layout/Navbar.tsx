@@ -2,8 +2,9 @@ import React from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { Currency } from '@/types/finance';
-import { Plus, Wallet, Globe, LogOut } from 'lucide-react';
+import { Plus, Wallet, Globe, LogOut, Compass } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTourStore } from '@/stores/tourStore';
 
 interface NavbarProps {
   onOpenAddModal: () => void;
@@ -12,6 +13,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
   const { currency, setCurrency } = useFinanceStore();
   const { user, logout } = useAuthStore();
+  const { startTour } = useTourStore();
 
   const currencies: Currency[] = ['INR', 'AED', 'USD'];
 
@@ -45,7 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
       {/* Actions: Currency Switcher, Add Button & User Profile */}
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Multi-Currency Toggle */}
-        <div className="flex items-center gap-1 rounded-xl bg-[#f4efe4] p-1 border border-[#ded3bf]">
+        <div id="tour-currency-switcher" className="flex items-center gap-1 rounded-xl bg-[#f4efe4] p-1 border border-[#ded3bf]">
           <div className="hidden sm:flex items-center px-1.5 text-slate-600">
             <Globe className="h-3.5 w-3.5" />
           </div>
@@ -68,8 +70,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
           })}
         </div>
 
+        {/* Demo Tour Guide Button */}
+        <motion.button
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={startTour}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs font-bold text-[#866632] hover:bg-[#f4efe4] hover:text-slate-900 transition-all cursor-pointer shadow-xs"
+          title="Start interactive onboarding demo tour"
+        >
+          <Compass className="h-3.5 w-3.5 text-[#9e783e]" />
+          <span className="hidden md:inline">Demo Tour</span>
+        </motion.button>
+
         {/* Add Transaction Button with Tactile Animation */}
         <motion.button
+          id="tour-add-trade"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.96 }}
           onClick={onOpenAddModal}

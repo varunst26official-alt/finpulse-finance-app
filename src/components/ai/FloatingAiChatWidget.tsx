@@ -76,6 +76,7 @@ export const FloatingAiChatWidget: React.FC = () => {
         {/* Circular Floating Trigger Button */}
         {!isFloatingChatOpen && (
           <motion.button
+            id="tour-floating-copilot"
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             onClick={toggleFloatingChat}
