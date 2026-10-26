@@ -32,9 +32,10 @@ import {
 } from 'lucide-react';
 
 export function App() {
-  const { activeTab, setActiveTab } = useFinanceStore();
-  const { isAuthenticated } = useAuthStore();
+  const { activeTab, setActiveTab, assets, resetToFreshPortfolio } = useFinanceStore();
+  const { isAuthenticated, user } = useAuthStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDemoBannerDismissed, setIsDemoBannerDismissed] = useState(false);
 
   // If user is not authenticated, show the customer Login / Register screen
   if (!isAuthenticated) {
@@ -90,6 +91,43 @@ export function App() {
               );
             })}
           </div>
+
+          {/* Sample Demo Data Notice Banner for Registered Users */}
+          {user?.id !== 'usr_demo' && assets.length > 0 && !isDemoBannerDismissed && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-[#faf7f0] via-[#f7f2e6] to-[#faf8f5] border border-[#ded3bf] shadow-xs"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-[#9e783e]/15 text-[#9e783e] shrink-0">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900">
+                    Welcome {user?.fullName}! You are currently viewing sample demonstration data.
+                  </p>
+                  <p className="text-[11px] text-slate-600 font-medium">
+                    Brand-new accounts start with an empty ₹0 portfolio. Click below to clear demo data and start tracking your real investments.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => resetToFreshPortfolio(user?.fullName)}
+                  className="px-3.5 py-1.5 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>🧹 Start Fresh (₹0 Balance)</span>
+                </button>
+                <button
+                  onClick={() => setIsDemoBannerDismissed(true)}
+                  className="px-2.5 py-1.5 rounded-xl border border-[#ded3bf] bg-white text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </motion.div>
+          )}
 
           {/* Smooth Animated Tab Content Crossfade */}
           <AnimatePresence mode="wait">

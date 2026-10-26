@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useFinanceStore } from './financeStore';
+import { useTourStore } from './tourStore';
 
 export interface UserProfile {
   id: string;
@@ -75,6 +77,11 @@ export const useAuthStore = create<AuthState>()(
         };
 
         set({ user: newUser, isAuthenticated: true });
+
+        // Clean slate for brand-new users: 0 Net Worth, 0 Holdings, 0 Balances
+        useFinanceStore.getState().resetToFreshPortfolio(fullName);
+        useTourStore.getState().resetTour();
+
         return { success: true };
       },
 
@@ -90,6 +97,9 @@ export const useAuthStore = create<AuthState>()(
           },
           isAuthenticated: true,
         });
+
+        // Load sample demonstration data for demo review
+        useFinanceStore.getState().loadDemoSampleData();
       },
 
       logout: () => {

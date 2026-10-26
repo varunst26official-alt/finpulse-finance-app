@@ -85,6 +85,8 @@ interface FinanceState {
   addCalendarEvent: (event: Omit<CalendarEvent, 'id'>) => void;
   deleteCalendarEvent: (id: string) => void;
   toggleEventCompleted: (id: string) => void;
+  resetToFreshPortfolio: (userName?: string) => void;
+  loadDemoSampleData: () => void;
 
   // Computed Selectors
   getPortfolioSummary: () => PortfolioSummary;
@@ -189,6 +191,14 @@ export const useFinanceStore = create<FinanceState>()(
           } else if (lower.includes('tax') || lower.includes('ltcg') || lower.includes('capital gain')) {
             aiResponse = `🧾 **Capital Gains Tax Optimization (FY 2026-27):**\n\n- **Unrealized Long-Term Gains (LTCG):** ~$3,490 (₹2.95 Lakhs)\n- **Standard Tax-Free Exemption:** ₹1,25,000 per financial year.\n- **Tax Harvest Opportunity:** You have **$1,480 (₹1.25 Lakhs)** in tax-free exemption that resets on March 31!\n\n💡 **Action Item:** Sell partial shares of Reliance and TCS before March 31 and re-enter immediately to step up your cost basis.`;
             suggested = ['View full Tax Optimizer tab', 'Simulate selling 20 shares of Reliance'];
+          } else if (lower.includes('load sample') || lower.includes('demo data') || lower.includes('populate demo')) {
+            get().loadDemoSampleData();
+            aiResponse = `📦 **Sample Demo Portfolio Loaded!**\n\nI have loaded demonstration holdings (Reliance, TCS, HDFC, Sovereign Gold Bonds, Real Estate), cash flow ledgers, and calendar events so you can test all features.\n\nTo wipe this sample data and start your real 0-balance portfolio anytime, simply type *"Start fresh"* or click the button in the top navbar!`;
+            suggested = ['Show my updated Net Worth', 'Audit my asset allocation risk', 'Start fresh with 0 balance'];
+          } else if (lower.includes('start fresh') || lower.includes('clean slate') || lower.includes('reset') || lower.includes('clear data') || lower.includes('empty portfolio')) {
+            get().resetToFreshPortfolio();
+            aiResponse = `🧹 **Portfolio Successfully Cleared!**\n\nYour portfolio is now completely reset to **₹0.00 balance** with 0 holdings and 0 transactions. You're ready to log your real investments.\n\nClick **'+ Add Trade'** or tell me what you own (e.g. *"Bought 15 TCS at 3800"*).`;
+            suggested = ['How do I add my first trade?', 'Search 120+ listed stocks', 'Load Sample Demo Data'];
           } else if (lower.includes('predict') || lower.includes('forecast') || lower.includes('reliance') || lower.includes('btc') || lower.includes('bitcoin')) {
             aiResponse = `🔮 **AI Asset Projections (Next 30-90 Days):**\n\n- **Reliance Industries:** Target **$38.20** (+9.8%) with an **88% Bullish Confidence Score**. Support at $32.80.\n- **Bitcoin (Cold Storage):** Target **$76,500** (+11.8%) with institutional ETF volume driving supply squeeze.\n- **Sovereign Gold (SGB):** Strong Buy rating (91% confidence) with central bank purchases acting as a geopolitical floor.\n\nCheck the **AI Forecaster** tab for Monte Carlo upper/lower prediction bands!`;
             suggested = ['Buy 10 Reliance', 'Go to AI Stock Predictor', 'Audit my portfolio risk'];
@@ -443,6 +453,42 @@ export const useFinanceStore = create<FinanceState>()(
             e.id === id ? { ...e, isCompleted: !e.isCompleted } : e
           ),
         }));
+      },
+
+      resetToFreshPortfolio: (userName = 'Investor') => {
+        set({
+          assets: [],
+          transactions: [],
+          expenses: [],
+          incomes: [],
+          calendarEvents: [],
+          history: [],
+          aiMessages: [
+            {
+              id: `msg_welcome_${Date.now()}`,
+              role: 'assistant',
+              content: `👋 **Welcome to FinPulse, ${userName}!**\n\nYour portfolio is starting completely **fresh and clean** with 0 balances. You can now build your real investment portfolio from scratch.\n\n💡 **Quick Ways to Start:**\n- Click **'+ Add Trade'** in the navbar to log your stocks, mutual funds, gold, or property.\n- Or chat directly with me: Type **'Buy 10 Reliance'** or **'Spent 25000 rent'**.\n\n*(If you ever want to preview sample test data, click 'Load Sample Demo' in your profile menu anytime!)*`,
+              timestamp: 'Just now',
+              suggestedPrompts: [
+                'How do I add my first trade?',
+                'Search 120+ listed stocks',
+                'Load Sample Demo Data',
+              ],
+            },
+          ],
+        });
+      },
+
+      loadDemoSampleData: () => {
+        set({
+          assets: INITIAL_ASSETS,
+          transactions: INITIAL_TRANSACTIONS,
+          expenses: INITIAL_EXPENSES,
+          incomes: INITIAL_INCOMES,
+          calendarEvents: INITIAL_CALENDAR_EVENTS,
+          history: INITIAL_HISTORY,
+          aiMessages: INITIAL_AI_MESSAGES,
+        });
       },
 
       getPortfolioSummary: () => {

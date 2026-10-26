@@ -584,22 +584,40 @@ export const FinancialCalendarWidget: React.FC = () => {
             </p>
           </div>
 
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1ece1" />
-                <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }} />
-                <YAxis tick={{ fill: '#64748b', fontSize: 10 }} />
-                <Tooltip
-                  formatter={(val: any) => formatCurrency(Number(val) / (currency === 'INR' ? currentRate : 1), currency)}
-                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e8e0d1' }}
-                />
-                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-                <Bar dataKey="inflow" name="Expected Inflow" fill="#15803d" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="outflow" name="Planned Outflow" fill="#e11d48" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          {chartData.length === 0 ? (
+            <div className="h-64 w-full flex flex-col items-center justify-center text-center p-6 bg-[#faf8f5]/60 rounded-2xl border border-dashed border-[#e8e0d1]">
+              <div className="p-3 rounded-2xl bg-white border border-[#e8e0d1] text-[#9e783e] mb-2 shadow-xs">
+                <CalendarIcon className="h-5 w-5" />
+              </div>
+              <h5 className="text-xs font-bold text-slate-900 mb-0.5">No Scheduled Cashflows</h5>
+              <p className="text-[11px] text-slate-500 max-w-[240px] leading-snug font-medium mb-3">
+                Log upcoming salary, dividend receipts, planned SIPs, or medical bills to project your cashflow.
+              </p>
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="px-3 py-1.5 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] transition-all cursor-pointer shadow-xs"
+              >
+                + Add Calendar Event
+              </button>
+            </div>
+          ) : (
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1ece1" />
+                  <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }} />
+                  <YAxis tick={{ fill: '#64748b', fontSize: 10 }} />
+                  <Tooltip
+                    formatter={(val: any) => formatCurrency(Number(val) / (currency === 'INR' ? currentRate : 1), currency)}
+                    contentStyle={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e8e0d1' }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
+                  <Bar dataKey="inflow" name="Expected Inflow" fill="#15803d" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="outflow" name="Planned Outflow" fill="#e11d48" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
 
           {/* Selected Date Summary Box */}
           <div className="p-4 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1] text-xs">

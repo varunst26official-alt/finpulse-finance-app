@@ -7,7 +7,7 @@ import {
   CATEGORY_COLORS,
   CATEGORY_LABELS,
 } from '@/utils/formatters';
-import { Layers } from 'lucide-react';
+import { Layers, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const HoldingsTable: React.FC = () => {
@@ -44,50 +44,71 @@ export const HoldingsTable: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#f2ece1] text-slate-700">
-            {assets.map((asset: Asset) => {
-              const currentValue = asset.quantity * asset.currentMarketPrice;
-              const investedValue = asset.quantity * asset.averageBuyPrice;
-              const pnl = currentValue - investedValue;
-              const pnlPercent = investedValue > 0 ? (pnl / investedValue) * 100 : 0;
-              const isProfit = pnl >= 0;
+            {assets.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="py-12 text-center">
+                  <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-2.5">
+                    <div className="p-3.5 rounded-2xl bg-[#faf7f0] border border-[#e8e0d1] text-[#9e783e] shadow-xs">
+                      <Layers className="h-6 w-6" />
+                    </div>
+                    <p className="text-sm font-bold text-slate-900">Your Portfolio is Fresh & Clean</p>
+                    <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                      You do not have any recorded assets yet. Add your first stock, mutual fund, gold, or property using the "+ Add Trade" button in the top navbar or ask the AI Copilot.
+                    </p>
+                    <div className="pt-2 flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#f4efe4] border border-[#ded3bf] text-[11px] font-bold text-[#866632]">
+                        <Sparkles className="h-3 w-3" /> 0 Risk Active
+                      </span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              assets.map((asset: Asset) => {
+                const currentValue = asset.quantity * asset.currentMarketPrice;
+                const investedValue = asset.quantity * asset.averageBuyPrice;
+                const pnl = currentValue - investedValue;
+                const pnlPercent = investedValue > 0 ? (pnl / investedValue) * 100 : 0;
+                const isProfit = pnl >= 0;
 
-              return (
-                <tr key={asset.id} className="hover:bg-[#faf8f5] transition-colors">
-                  <td className="py-3.5">
-                    <div className="font-extrabold text-slate-900 text-sm">{asset.symbol}</div>
-                    <div className="text-xs text-slate-500 font-medium">{asset.name}</div>
-                  </td>
-                  <td className="py-3.5">
-                    <span
-                      className="inline-block px-2.5 py-1 rounded-md text-xs font-bold"
-                      style={{
-                        backgroundColor: `${CATEGORY_COLORS[asset.category]}18`,
-                        color: CATEGORY_COLORS[asset.category],
-                      }}
+                return (
+                  <tr key={asset.id} className="hover:bg-[#faf8f5] transition-colors">
+                    <td className="py-3.5">
+                      <div className="font-extrabold text-slate-900 text-sm">{asset.symbol}</div>
+                      <div className="text-xs text-slate-500 font-medium">{asset.name}</div>
+                    </td>
+                    <td className="py-3.5">
+                      <span
+                        className="inline-block px-2.5 py-1 rounded-md text-xs font-bold"
+                        style={{
+                          backgroundColor: `${CATEGORY_COLORS[asset.category]}18`,
+                          color: CATEGORY_COLORS[asset.category],
+                        }}
+                      >
+                        {CATEGORY_LABELS[asset.category]}
+                      </span>
+                    </td>
+                    <td className="py-3.5 text-right font-bold text-slate-900">{asset.quantity}</td>
+                    <td className="py-3.5 text-right text-slate-600 font-medium">
+                      {formatCurrency(asset.averageBuyPrice, currency)}
+                    </td>
+                    <td className="py-3.5 text-right font-semibold text-slate-900">
+                      {formatCurrency(asset.currentMarketPrice, currency)}
+                    </td>
+                    <td className="py-3.5 text-right font-extrabold text-slate-900">
+                      {formatCurrency(currentValue, currency)}
+                    </td>
+                    <td
+                      className={`py-3.5 text-right font-extrabold ${
+                        isProfit ? 'text-emerald-700' : 'text-rose-700'
+                      }`}
                     >
-                      {CATEGORY_LABELS[asset.category]}
-                    </span>
-                  </td>
-                  <td className="py-3.5 text-right font-bold text-slate-900">{asset.quantity}</td>
-                  <td className="py-3.5 text-right text-slate-600 font-medium">
-                    {formatCurrency(asset.averageBuyPrice, currency)}
-                  </td>
-                  <td className="py-3.5 text-right font-semibold text-slate-900">
-                    {formatCurrency(asset.currentMarketPrice, currency)}
-                  </td>
-                  <td className="py-3.5 text-right font-extrabold text-slate-900">
-                    {formatCurrency(currentValue, currency)}
-                  </td>
-                  <td
-                    className={`py-3.5 text-right font-extrabold ${
-                      isProfit ? 'text-emerald-700' : 'text-rose-700'
-                    }`}
-                  >
-                    {formatPercentage(pnlPercent)}
-                  </td>
-                </tr>
-              );
-            })}
+                      {formatPercentage(pnlPercent)}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

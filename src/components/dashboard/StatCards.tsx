@@ -15,8 +15,10 @@ export const StatCards: React.FC = () => {
     {
       title: 'Total Net Worth',
       value: formatCurrency(summary.totalNetWorth, currency),
-      subtext: `${formatPercentage(summary.todaysChangePercentage)} today (${formatCurrency(summary.todaysChange, currency)})`,
-      isPositive: true,
+      subtext: assets.length > 0
+        ? `${formatPercentage(summary.todaysChangePercentage)} today (${formatCurrency(summary.todaysChange, currency)})`
+        : 'Fresh 0-balance portfolio • Ready for entries',
+      isPositive: assets.length > 0 ? true : null,
       icon: Wallet,
       gradient: 'from-[#ffffff] to-[#faf7f0]',
       borderColor: 'border-[#e8e0d1]',
@@ -25,7 +27,9 @@ export const StatCards: React.FC = () => {
     {
       title: 'Total Invested Capital',
       value: formatCurrency(summary.totalInvested, currency),
-      subtext: `Principal cost basis across ${assets.length} multi-asset holdings`,
+      subtext: assets.length > 0
+        ? `Principal cost basis across ${assets.length} multi-asset holdings`
+        : '0 holdings recorded • Click + Add Trade',
       isPositive: null,
       icon: DollarSign,
       gradient: 'from-[#ffffff] to-[#f8f6f0]',
@@ -35,8 +39,10 @@ export const StatCards: React.FC = () => {
     {
       title: 'Unrealized Returns (P&L)',
       value: formatCurrency(summary.totalUnrealizedPnL, currency),
-      subtext: `${formatPercentage(summary.pnlPercentage)} overall return on capital`,
-      isPositive: isProfit,
+      subtext: assets.length > 0
+        ? `${formatPercentage(summary.pnlPercentage)} overall return on capital`
+        : '0.00% capital growth • No active risk',
+      isPositive: assets.length > 0 ? isProfit : null,
       icon: TrendingUp,
       gradient: isProfit ? 'from-[#ffffff] to-[#f2faf5]' : 'from-[#ffffff] to-[#fdf2f2]',
       borderColor: isProfit ? 'border-[#bbf7d0]' : 'border-[#fecaca]',
