@@ -163,6 +163,22 @@ export interface HistoricalDataPoint {
 // AI Copilot, Predictions & Intelligence Types
 // ============================================================================
 
+export interface TradeActionPayload {
+  id: string;
+  actionType: 'TRADE' | 'EXPENSE' | 'INCOME';
+  symbol?: string;
+  name: string;
+  tradeType: TransactionType; // 'BUY' | 'SELL' | 'DIVIDEND' | 'SIP'
+  quantity: number;
+  pricePerUnit: number; // in USD base
+  totalAmount: number; // in USD base
+  category: AssetCategory;
+  platform?: string;
+  date: string;
+  notes?: string;
+  status: 'PENDING' | 'EXECUTED' | 'DISMISSED';
+}
+
 export interface AiChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -174,6 +190,7 @@ export interface AiChatMessage {
     value: string;
     type?: 'neutral' | 'positive' | 'warning';
   }[];
+  tradeAction?: TradeActionPayload;
 }
 
 export interface PredictionPoint {

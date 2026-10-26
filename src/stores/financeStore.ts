@@ -12,6 +12,7 @@ import {
   ExpenseItem,
   IncomeItem,
   AssetCategory,
+  TradeActionPayload,
 } from '@/types/finance';
 import {
   INITIAL_ASSETS,
@@ -24,7 +25,8 @@ import {
   INITIAL_EXPENSES,
   INITIAL_INCOMES,
 } from '@/data/mockData';
-import { CATEGORY_COLORS } from '@/utils/formatters';
+import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
+import { parseTradeIntent } from '@/services/aiTradeParser';
 
 export type NavigationTab =
   | 'dashboard'
@@ -43,6 +45,11 @@ interface FinanceState {
   activeTab: NavigationTab;
   setActiveTab: (tab: NavigationTab) => void;
 
+  // Floating Chat Widget visibility
+  isFloatingChatOpen: boolean;
+  setIsFloatingChatOpen: (isOpen: boolean) => void;
+  toggleFloatingChat: () => void;
+
   // Portfolio & Wealth Data
   assets: Asset[];
   transactions: Transaction[];
@@ -54,6 +61,7 @@ interface FinanceState {
   aiMessages: AiChatMessage[];
   isAiTyping: boolean;
   sendAiMessage: (prompt: string) => void;
+  executeChatTradeAction: (messageId: string, actionPayload: TradeActionPayload) => void;
   clearAiChat: () => void;
 
   // Intelligence & Analytics Data
@@ -84,6 +92,10 @@ export const useFinanceStore = create<FinanceState>()(
       activeTab: 'dashboard',
       setActiveTab: (activeTab) => set({ activeTab }),
 
+      isFloatingChatOpen: false,
+      setIsFloatingChatOpen: (isFloatingChatOpen) => set({ isFloatingChatOpen }),
+      toggleFloatingChat: () => set((state) => ({ isFloatingChatOpen: !state.isFloatingChatOpen })),
+
       assets: INITIAL_ASSETS,
       transactions: INITIAL_TRANSACTIONS,
       expenses: INITIAL_EXPENSES,
@@ -110,33 +122,74 @@ export const useFinanceStore = create<FinanceState>()(
           isAiTyping: true,
         }));
 
-        // AI Logic Engine with context injection
+        // AI Engine with Trade Intent Detection and Context Injection
         setTimeout(() => {
-          const { assets, expenses, incomes, getPortfolioSummary } = get();
+          const { assets, expenses, incomes, currency, getPortfolioSummary, executeChatTradeAction } = get();
           const summary = getPortfolioSummary();
           const lower = prompt.toLowerCase();
 
+          // 1. Check if user is confirming a pending trade from conversation
+          if (
+            lower.includes('confirm') ||
+            lower.includes('execute') ||
+            lower.includes('yes proceed') ||
+            lower.includes('yes buy') ||
+            lower.includes('yes sell')
+          ) {
+            const pendingMsg = [...get().aiMessages]
+              .reverse()
+              .find((m) => m.tradeAction && m.tradeAction.status === 'PENDING');
+
+            if (pendingMsg && pendingMsg.tradeAction) {
+              executeChatTradeAction(pendingMsg.id, pendingMsg.tradeAction);
+              set({ isAiTyping: false });
+              return;
+            }
+          }
+
+          // 2. Check for Natural Language Trade / Outflow Intent
+          const tradeIntent = parseTradeIntent(prompt, currency);
+
           let aiResponse = '';
           let suggested: string[] = [];
+          let tradeActionPayload: TradeActionPayload | undefined = undefined;
 
-          if (lower.includes('cash flow') || lower.includes('expense') || lower.includes('spend') || lower.includes('savings')) {
-            aiResponse = `💰 **Cash Flow & Expense Health Analysis:**\n\n- **Monthly Inflow:** $${Math.round(summary.totalMonthlyIncome).toLocaleString()} (~₹${Math.round(summary.totalMonthlyIncome * 84.5).toLocaleString()})\n- **Monthly Outflows/Expenses:** $${Math.round(summary.totalMonthlyExpenses).toLocaleString()} (~₹${Math.round(summary.totalMonthlyExpenses * 84.5).toLocaleString()})\n- **Net Savings Rate:** **${summary.monthlySavingsRate.toFixed(1)}%** (Excellent benchmark: target > 40%)\n- **Liquid Cash Runway:** **${summary.liquidRunwayMonths.toFixed(1)} months** of emergency survival buffer.\n\n💡 **Copilot Recommendation:** Your savings rate allows you to automate an extra SIP into diversified equity without straining liquidity.`;
-            suggested = ['Show me Tax Harvesting tips', 'Audit my asset allocation risk'];
+          if (tradeIntent) {
+            tradeActionPayload = tradeIntent;
+
+            if (tradeIntent.actionType === 'TRADE') {
+              const formattedPrice = formatCurrency(tradeIntent.pricePerUnit, currency);
+              const formattedTotal = formatCurrency(tradeIntent.totalAmount, currency);
+
+              aiResponse = `⚡ **Trade Order Prepared for Execution:**\n\n- **Order Type:** ${tradeIntent.tradeType} ${tradeIntent.category}\n- **Instrument:** ${tradeIntent.symbol} (${tradeIntent.name})\n- **Quantity:** ${tradeIntent.quantity} shares / units\n- **Execution Price:** ${formattedPrice} / unit\n- **Total Order Value:** **${formattedTotal}**\n- **Broker Platform:** ${tradeIntent.platform || 'Zerodha Kite'}\n\nReview order specs below and click **Execute Trade Now** or reply *"Confirm trade"* to book it into your portfolio.`;
+              suggested = ['Execute Trade Now', 'Show Reliance 30-day target', 'Cancel Order'];
+            } else if (tradeIntent.actionType === 'EXPENSE') {
+              const formattedAmt = formatCurrency(tradeIntent.totalAmount, currency);
+              aiResponse = `💳 **Expense Entry Log Prepared:**\n\n- **Outflow Title:** ${tradeIntent.name}\n- **Amount:** **${formattedAmt}**\n- **Category:** General Outflows\n\nClick **Record Expense** below to update your monthly cash flow tracking.`;
+              suggested = ['Record Expense', 'View my monthly cash flow'];
+            } else if (tradeIntent.actionType === 'INCOME') {
+              const formattedAmt = formatCurrency(tradeIntent.totalAmount, currency);
+              aiResponse = `💵 **Income Inflow Prepared:**\n\n- **Source:** ${tradeIntent.name}\n- **Amount:** **+${formattedAmt}**\n\nClick **Confirm Inflow** below to credit this into your monthly savings rate.`;
+              suggested = ['Confirm Inflow', 'Audit my portfolio risk'];
+            }
+          } else if (lower.includes('cash flow') || lower.includes('expense') || lower.includes('spend') || lower.includes('savings')) {
+            aiResponse = `💰 **Cash Flow & Expense Health Analysis:**\n\n- **Monthly Inflow:** $${Math.round(summary.totalMonthlyIncome).toLocaleString()} (~₹${Math.round(summary.totalMonthlyIncome * 84.5).toLocaleString()})\n- **Monthly Outflows/Expenses:** $${Math.round(summary.totalMonthlyExpenses).toLocaleString()} (~₹${Math.round(summary.totalMonthlyExpenses * 84.5).toLocaleString()})\n- **Net Savings Rate:** **${summary.monthlySavingsRate.toFixed(1)}%** (Target: > 40%)\n- **Liquid Cash Runway:** **${summary.liquidRunwayMonths.toFixed(1)} months** of emergency survival buffer.\n\n💡 **Copilot Recommendation:** Your savings rate allows you to automate an extra SIP into diversified equity without straining liquidity.`;
+            suggested = ['Buy 10 Reliance', 'Show me Tax Harvesting tips', 'Audit my asset allocation risk'];
           } else if (lower.includes('risk') || lower.includes('audit') || lower.includes('allocation')) {
-            aiResponse = `📊 **Portfolio Risk & Allocation Audit:**\n\n- **Comprehensive Net Worth:** $${Math.round(summary.totalNetWorth).toLocaleString()} (₹${Math.round(summary.totalNetWorth * 84.5).toLocaleString()})\n- **Equity & Growth Assets:** ~44% across Listed Stocks, Mutual Funds & Crypto.\n- **Defensive & Real Assets:** ~56% distributed in Real Estate, Bank FDs, Sovereign Gold Bonds (SGB), and PPF.\n- **Emergency Runway:** **${summary.liquidRunwayMonths.toFixed(1)} months** of cash.\n\n💡 **Copilot Recommendation:** Your allocation exhibits balanced inflation-hedging with steady physical and liquid assets. Consider reviewing real estate yield vs capital appreciation.`;
-            suggested = ['Show me Tax Harvesting tips', 'What is Reliance 30-day forecast?'];
+            aiResponse = `📊 **Portfolio Risk & Allocation Audit:**\n\n- **Comprehensive Net Worth:** $${Math.round(summary.totalNetWorth).toLocaleString()} (₹${Math.round(summary.totalNetWorth * 84.5).toLocaleString()})\n- **Equity & Growth Assets:** ~44% across Listed Stocks, Mutual Funds & Crypto.\n- **Defensive & Real Assets:** ~56% distributed in Real Estate, Bank FDs, Sovereign Gold Bonds (SGB), and PPF.\n- **Emergency Runway:** **${summary.liquidRunwayMonths.toFixed(1)} months** of cash.\n\n💡 **Copilot Recommendation:** Your allocation exhibits balanced inflation-hedging with steady physical and liquid assets.`;
+            suggested = ['Buy 10 Reliance', 'Show me Tax Harvesting tips', 'What is Reliance 30-day forecast?'];
           } else if (lower.includes('tax') || lower.includes('ltcg') || lower.includes('capital gain')) {
-            aiResponse = `🧾 **Capital Gains Tax Optimization (FY 2026-27):**\n\n- **Unrealized Long-Term Gains (LTCG):** ~$3,490 (₹2.95 Lakhs)\n- **Standard Tax-Free Exemption:** ₹1,25,000 per financial year.\n- **Tax Harvest Opportunity:** You have **$1,480 (₹1.25 Lakhs)** in tax-free exemption that resets on March 31!\n\n💡 **Action Item:** Sell partial shares of Reliance and TCS before March 31 and re-enter immediately to step up your cost basis. You will pocket zero tax on ₹1.25 Lakhs.`;
+            aiResponse = `🧾 **Capital Gains Tax Optimization (FY 2026-27):**\n\n- **Unrealized Long-Term Gains (LTCG):** ~$3,490 (₹2.95 Lakhs)\n- **Standard Tax-Free Exemption:** ₹1,25,000 per financial year.\n- **Tax Harvest Opportunity:** You have **$1,480 (₹1.25 Lakhs)** in tax-free exemption that resets on March 31!\n\n💡 **Action Item:** Sell partial shares of Reliance and TCS before March 31 and re-enter immediately to step up your cost basis.`;
             suggested = ['View full Tax Optimizer tab', 'Simulate selling 20 shares of Reliance'];
           } else if (lower.includes('predict') || lower.includes('forecast') || lower.includes('reliance') || lower.includes('btc') || lower.includes('bitcoin')) {
             aiResponse = `🔮 **AI Asset Projections (Next 30-90 Days):**\n\n- **Reliance Industries:** Target **$38.20** (+9.8%) with an **88% Bullish Confidence Score**. Support at $32.80.\n- **Bitcoin (Cold Storage):** Target **$76,500** (+11.8%) with institutional ETF volume driving supply squeeze.\n- **Sovereign Gold (SGB):** Strong Buy rating (91% confidence) with central bank purchases acting as a geopolitical floor.\n\nCheck the **AI Forecaster** tab for Monte Carlo upper/lower prediction bands!`;
-            suggested = ['Go to AI Stock Predictor', 'Audit my portfolio risk'];
+            suggested = ['Buy 10 Reliance', 'Go to AI Stock Predictor', 'Audit my portfolio risk'];
           } else {
-            aiResponse = `🤖 I've analyzed your question across your **${assets.length} portfolio assets**, **${expenses.length} tracked expenses**, and **${incomes.length} income streams**.\n\nYour portfolio is generating a **${summary.monthlySavingsRate.toFixed(1)}% savings rate** and annualized return of **+${summary.pnlPercentage.toFixed(1)}%**. Would you like me to run a deep risk audit, simulate capital gains tax, or review monthly cash flow?`;
+            aiResponse = `🤖 I've analyzed your question across your **${assets.length} portfolio assets**, **${expenses.length} tracked expenses**, and **${incomes.length} income streams**.\n\nYour portfolio is generating a **${summary.monthlySavingsRate.toFixed(1)}% savings rate** and annualized return of **+${summary.pnlPercentage.toFixed(1)}%**.\n\n💡 *Tip: You can trade directly through me! Try typing **"Buy 10 Reliance"** or **"Spent 25000 rent"**.*`;
             suggested = [
+              'Buy 10 Reliance',
               'Analyze my monthly cash flow and expenses',
               'Audit my asset allocation risk',
-              'How much LTCG tax do I owe?',
             ];
           }
 
@@ -146,13 +199,86 @@ export const useFinanceStore = create<FinanceState>()(
             content: aiResponse,
             timestamp: 'Just now',
             suggestedPrompts: suggested,
+            tradeAction: tradeActionPayload,
           };
 
           set((state) => ({
             aiMessages: [...state.aiMessages, assistantMsg],
             isAiTyping: false,
           }));
-        }, 750);
+        }, 700);
+      },
+
+      executeChatTradeAction: (messageId, actionPayload) => {
+        const { addTransaction, addExpense, addIncome, currency } = get();
+
+        // 1. Dispatch to corresponding financial ledger
+        if (actionPayload.actionType === 'TRADE') {
+          addTransaction({
+            assetId: `ast_${(actionPayload.symbol || 'ASSET').toLowerCase()}`,
+            assetSymbol: actionPayload.symbol || 'ASSET',
+            assetName: actionPayload.name,
+            category: actionPayload.category,
+            type: actionPayload.tradeType,
+            quantity: actionPayload.quantity,
+            pricePerUnit: actionPayload.pricePerUnit,
+            totalAmount: actionPayload.totalAmount,
+            date: actionPayload.date,
+            platform: actionPayload.platform || 'Zerodha Kite',
+            notes: actionPayload.notes || 'Executed via FinPulse AI Copilot',
+          });
+        } else if (actionPayload.actionType === 'EXPENSE') {
+          addExpense({
+            title: actionPayload.name,
+            category: 'OTHER_EXPENSE',
+            amount: actionPayload.totalAmount,
+            paymentMethod: 'UPI',
+            frequency: 'ONE_TIME',
+            date: actionPayload.date,
+            notes: 'Logged via AI Copilot',
+          });
+        } else if (actionPayload.actionType === 'INCOME') {
+          addIncome({
+            source: actionPayload.name,
+            category: 'OTHER_INCOME',
+            amount: actionPayload.totalAmount,
+            frequency: 'ONE_TIME',
+            date: actionPayload.date,
+            notes: 'Logged via AI Copilot',
+          });
+        }
+
+        // 2. Mark action status as EXECUTED in the message
+        set((state) => ({
+          aiMessages: state.aiMessages.map((m) =>
+            m.id === messageId && m.tradeAction
+              ? {
+                  ...m,
+                  tradeAction: {
+                    ...m.tradeAction,
+                    status: 'EXECUTED',
+                  },
+                }
+              : m
+          ),
+        }));
+
+        // 3. Append confirmation response from the Copilot
+        const confirmationMsg: AiChatMessage = {
+          id: `msg_exec_${Date.now()}`,
+          role: 'assistant',
+          content: `✅ **Trade Order Successfully Executed & Recorded!**\n\n- **Order:** ${actionPayload.tradeType} ${actionPayload.quantity} ${actionPayload.symbol || actionPayload.name}\n- **Total Booked:** **${formatCurrency(actionPayload.totalAmount, currency)}**\n- **Platform:** ${actionPayload.platform || 'Zerodha Kite'}\n\nYour Portfolio Net Worth, Holdings Table, and Transaction Ledger have been updated in real-time.`,
+          timestamp: 'Just now',
+          suggestedPrompts: [
+            'Audit updated asset allocation',
+            'Show my updated Net Worth',
+            'Buy 5 Apple',
+          ],
+        };
+
+        set((state) => ({
+          aiMessages: [...state.aiMessages, confirmationMsg],
+        }));
       },
 
       clearAiChat: () => {

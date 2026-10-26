@@ -11,6 +11,7 @@ import { SipCalculator } from '@/components/dashboard/SipCalculator';
 import { TransactionTable } from '@/components/transactions/TransactionTable';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
 import { AiWealthCopilot } from '@/components/ai/AiWealthCopilot';
+import { FloatingAiChatWidget } from '@/components/ai/FloatingAiChatWidget';
 import { StockPredictor } from '@/components/predictions/StockPredictor';
 import { MarketIntelligenceFeed } from '@/components/news/MarketIntelligenceFeed';
 import { TaxOptimizer } from '@/components/tax/TaxOptimizer';
@@ -148,6 +149,9 @@ export function App() {
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Floating AI Copilot & Conversational Trade Execution Widget */}
+      <FloatingAiChatWidget />
 
       {/* Record Transaction Modal */}
       <AddTransactionModal
