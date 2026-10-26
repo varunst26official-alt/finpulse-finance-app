@@ -22,18 +22,18 @@ export const AllocationDonut: React.FC = () => {
     category: item.category,
     value: item.currentValue,
     percentage: item.percentage,
-    color: CATEGORY_COLORS[item.category] || '#6366f1',
+    color: CATEGORY_COLORS[item.category] || '#9c783e',
   }));
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 backdrop-blur-xs flex flex-col justify-between shadow-xs">
+    <div className="rounded-2xl border border-[#e8dfcf] bg-white p-5 shadow-xs flex flex-col justify-between">
       {/* Header */}
       <div className="mb-4">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
-          <PieIcon className="h-4 w-4 text-indigo-400" />
+        <h3 className="text-base font-bold text-[#2b2823] flex items-center gap-2">
+          <PieIcon className="h-4 w-4 text-[#9c783e]" />
           Asset Class Allocation
         </h3>
-        <p className="text-xs text-slate-400 font-mono mt-0.5">
+        <p className="text-xs text-[#786e5e] font-mono mt-0.5">
           Portfolio risk distribution & diversification
         </p>
       </div>
@@ -53,7 +53,7 @@ export const AllocationDonut: React.FC = () => {
                 dataKey="value"
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} stroke="#0f172a" strokeWidth={2} />
+                  <Cell key={`cell-${index}`} fill={entry.color} stroke="#ffffff" strokeWidth={2} />
                 ))}
               </Pie>
               <Tooltip
@@ -61,10 +61,14 @@ export const AllocationDonut: React.FC = () => {
                   if (active && payload && payload.length) {
                     const item = payload[0].payload;
                     return (
-                      <div className="rounded-xl border border-slate-700 bg-slate-900/95 p-2.5 shadow-xl font-mono text-xs">
-                        <div className="font-bold text-white">{item.name}</div>
-                        <div className="text-emerald-400">{formatCurrency(item.value, currency)}</div>
-                        <div className="text-slate-400 text-[11px]">{item.percentage.toFixed(1)}% of portfolio</div>
+                      <div className="rounded-xl border border-[#ded3bf] bg-white p-2.5 shadow-lg font-mono text-xs">
+                        <div className="font-bold text-[#2b2823]">{item.name}</div>
+                        <div className="text-[#2d6a4f] font-bold">
+                          {formatCurrency(item.value, currency)}
+                        </div>
+                        <div className="text-[#786e5e] text-[11px]">
+                          {item.percentage.toFixed(1)}% of portfolio
+                        </div>
                       </div>
                     );
                   }
@@ -74,8 +78,10 @@ export const AllocationDonut: React.FC = () => {
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-[10px] font-mono text-slate-400 font-semibold uppercase">Assets</span>
-            <span className="text-sm font-bold text-white">{data.length} Classes</span>
+            <span className="text-[10px] font-mono text-[#786e5e] font-semibold uppercase">
+              Assets
+            </span>
+            <span className="text-sm font-bold text-[#2b2823]">{data.length} Classes</span>
           </div>
         </div>
 
@@ -84,11 +90,14 @@ export const AllocationDonut: React.FC = () => {
           {data.map((item, idx) => (
             <div key={idx} className="flex items-center justify-between text-xs font-mono">
               <div className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>
-                <span className="text-slate-300 truncate max-w-[110px]">{item.name}</span>
+                <span
+                  className="h-2.5 w-2.5 rounded-full shrink-0"
+                  style={{ backgroundColor: item.color }}
+                ></span>
+                <span className="text-[#443f36] truncate max-w-[110px]">{item.name}</span>
               </div>
               <div className="text-right">
-                <span className="font-bold text-white">{item.percentage.toFixed(1)}%</span>
+                <span className="font-bold text-[#2b2823]">{item.percentage.toFixed(1)}%</span>
               </div>
             </div>
           ))}

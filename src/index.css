@@ -7,28 +7,28 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: #0f172a;
-    color: #f8fafc;
+    background-color: #faf8f5; /* Warm Sandal / Ivory Off-White */
+    color: #2b2823;           /* Deep Warm Graphite for high readability */
     min-height: 100vh;
     margin: 0;
   }
 }
 
-/* Custom Scrollbar for Financial Tables */
+/* Custom Scrollbar styled in mild Sandal & Soft Grey */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #f4efe6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.4);
+  background: #d4caa8;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.7);
+  background: #bcaa84;
 }

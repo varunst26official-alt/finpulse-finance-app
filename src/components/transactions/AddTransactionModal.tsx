@@ -66,24 +66,24 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="w-full max-w-md rounded-2xl border border-[#e8dfcf] bg-white p-6 shadow-2xl space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-[#e8dfcf] pb-3">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
+            <div className="p-2 rounded-xl bg-[#f4efe4] text-[#866632]">
               <DollarSign className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Record Transaction</h3>
-              <p className="text-[11px] text-slate-400 font-mono">
+              <h3 className="text-base font-bold text-[#2b2823]">Record Transaction</h3>
+              <p className="text-[11px] text-[#786e5e] font-mono">
                 Log a trade or yield event to update your portfolio
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1 rounded-lg text-[#8c8273] hover:text-[#2b2823] hover:bg-[#f4efe4] transition-colors cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
@@ -93,10 +93,10 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5 text-xs font-mono">
           {/* Asset Select */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Select Asset</label>
+            <label className="block text-[#443f36] font-semibold mb-1">Select Asset</label>
             <select
               {...register('assetId')}
-              className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-white focus:border-emerald-500 focus:outline-hidden"
+              className="w-full rounded-xl bg-[#faf8f5] border border-[#e4d9c7] px-3 py-2 text-[#2b2823] focus:border-[#9c783e] focus:bg-white focus:outline-hidden"
             >
               {assets.map((asset: Asset) => (
                 <option key={asset.id} value={asset.id}>
@@ -105,18 +105,18 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
               ))}
             </select>
             {errors.assetId && (
-              <p className="text-rose-400 text-[10px] mt-1">{errors.assetId.message}</p>
+              <p className="text-rose-600 text-[10px] mt-1">{errors.assetId.message}</p>
             )}
           </div>
 
           {/* Type Select */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Transaction Type</label>
+            <label className="block text-[#443f36] font-semibold mb-1">Transaction Type</label>
             <div className="grid grid-cols-3 gap-2">
               {(['BUY', 'SELL', 'DIVIDEND'] as const).map((t) => (
                 <label
                   key={t}
-                  className="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-slate-800 bg-slate-950 text-slate-300 cursor-pointer hover:border-slate-700 has-checked:border-emerald-500 has-checked:bg-emerald-500/10 has-checked:text-emerald-400 font-bold"
+                  className="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-[#e4d9c7] bg-[#faf8f5] text-[#5e574c] cursor-pointer hover:border-[#ded3bf] has-checked:border-[#9c783e] has-checked:bg-[#f4efe4] has-checked:text-[#866632] font-bold"
                 >
                   <input type="radio" value={t} {...register('type')} className="sr-only" />
                   {t}
@@ -128,69 +128,71 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
           {/* Quantity & Price Row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1">Quantity</label>
+              <label className="block text-[#443f36] font-semibold mb-1">Quantity</label>
               <input
                 type="number"
                 step="any"
                 {...register('quantity', { valueAsNumber: true })}
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-white focus:border-emerald-500 focus:outline-hidden"
+                className="w-full rounded-xl bg-[#faf8f5] border border-[#e4d9c7] px-3 py-2 text-[#2b2823] focus:border-[#9c783e] focus:bg-white focus:outline-hidden"
               />
               {errors.quantity && (
-                <p className="text-rose-400 text-[10px] mt-1">{errors.quantity.message}</p>
+                <p className="text-rose-600 text-[10px] mt-1">{errors.quantity.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1">Price / Unit ($)</label>
+              <label className="block text-[#443f36] font-semibold mb-1">Price / Unit ($)</label>
               <input
                 type="number"
                 step="any"
                 {...register('pricePerUnit', { valueAsNumber: true })}
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-white focus:border-emerald-500 focus:outline-hidden"
+                className="w-full rounded-xl bg-[#faf8f5] border border-[#e4d9c7] px-3 py-2 text-[#2b2823] focus:border-[#9c783e] focus:bg-white focus:outline-hidden"
               />
               {errors.pricePerUnit && (
-                <p className="text-rose-400 text-[10px] mt-1">{errors.pricePerUnit.message}</p>
+                <p className="text-rose-600 text-[10px] mt-1">{errors.pricePerUnit.message}</p>
               )}
             </div>
           </div>
 
           {/* Date */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Execution Date</label>
+            <label className="block text-[#443f36] font-semibold mb-1">Execution Date</label>
             <input
               type="date"
               {...register('date')}
-              className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-white focus:border-emerald-500 focus:outline-hidden"
+              className="w-full rounded-xl bg-[#faf8f5] border border-[#e4d9c7] px-3 py-2 text-[#2b2823] focus:border-[#9c783e] focus:bg-white focus:outline-hidden"
             />
             {errors.date && (
-              <p className="text-rose-400 text-[10px] mt-1">{errors.date.message}</p>
+              <p className="text-rose-600 text-[10px] mt-1">{errors.date.message}</p>
             )}
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Notes / Thesis (Optional)</label>
+            <label className="block text-[#443f36] font-semibold mb-1">
+              Notes / Thesis (Optional)
+            </label>
             <input
               type="text"
               placeholder="e.g. Monthly SIP or target breakout"
               {...register('notes')}
-              className="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-white placeholder-slate-600 focus:border-emerald-500 focus:outline-hidden"
+              className="w-full rounded-xl bg-[#faf8f5] border border-[#e4d9c7] px-3 py-2 text-[#2b2823] placeholder-[#8c8273] focus:border-[#9c783e] focus:bg-white focus:outline-hidden"
             />
           </div>
 
           {/* Submit Buttons */}
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#e8dfcf]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="px-4 py-2 rounded-xl text-[#786e5e] hover:text-[#2b2823] hover:bg-[#f4efe4] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 font-bold text-white shadow-md shadow-emerald-500/20 hover:from-emerald-400 hover:to-teal-500 active:scale-95 transition-all cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#9c783e] font-bold text-white shadow-md shadow-[#9c783e]/20 hover:bg-[#866632] active:scale-95 transition-all cursor-pointer"
             >
               Confirm Transaction
             </button>
