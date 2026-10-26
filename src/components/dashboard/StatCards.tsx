@@ -15,7 +15,9 @@ export const StatCards: React.FC = () => {
     {
       title: 'Total Net Worth',
       value: formatCurrency(summary.totalNetWorth, currency),
-      subtext: assets.length > 0
+      subtext: summary.totalDebt > 0
+        ? `${formatCurrency(summary.grossAssets, currency)} Assets − ${formatCurrency(summary.totalDebt, currency)} Debt`
+        : assets.length > 0
         ? `${formatPercentage(summary.todaysChangePercentage)} today (${formatCurrency(summary.todaysChange, currency)})`
         : 'Fresh 0-balance portfolio • Ready for entries',
       isPositive: assets.length > 0 ? true : null,

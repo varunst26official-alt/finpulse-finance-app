@@ -9,6 +9,7 @@ import {
   ExpenseItem,
   IncomeItem,
   CalendarEvent,
+  DebtItem,
 } from '@/types/finance';
 
 // All baseline prices stored in USD for universal calculation ($1 USD = ~₹84.5 INR)
@@ -675,3 +676,90 @@ export const TAX_REPORT_MOCK: TaxReport = {
   harvestingRecommendation:
     'You have $1,480 (₹1.25 Lakhs) in tax-free LTCG exemption available this financial year. Consider booking partial gains on Reliance and TCS before March 31 and immediately re-entering to step up your cost basis with ZERO tax liability!',
 };
+
+// ============================================================================
+// Sample Debt & Loan Repayments Data
+// ============================================================================
+
+export const INITIAL_DEBTS: DebtItem[] = [
+  {
+    id: 'debt_1',
+    title: 'HDFC Smart Home Loan',
+    category: 'HOME_LOAN',
+    lender: 'HDFC Bank',
+    originalPrincipal: 48000, // ~$48,000 = ~₹40.5 Lakhs
+    currentOutstanding: 29500, // ~$29,500 = ~₹24.9 Lakhs
+    interestRate: 8.55,
+    monthlyEmi: 420, // ~$420 = ~₹35,500
+    emiDueDay: 5,
+    startDate: '2022-04-10',
+    tenureMonths: 240,
+    repayments: [
+      {
+        id: 'rep_1',
+        debtId: 'debt_1',
+        amount: 420,
+        date: '2026-10-05',
+        type: 'REGULAR_EMI',
+        notes: 'October monthly EMI debited',
+      },
+      {
+        id: 'rep_2',
+        debtId: 'debt_1',
+        amount: 1500,
+        date: '2026-08-15',
+        type: 'LUMP_SUM_PREPAYMENT',
+        notes: 'Annual bonus prepayed directly to principal',
+      },
+    ],
+    notes: 'Primary residence 3BHK flat in Bangalore. Prepayment allowed with zero foreclosure penalty.',
+  },
+  {
+    id: 'debt_2',
+    title: 'ICICI Auto Loan - Creta SUV',
+    category: 'AUTO_LOAN',
+    lender: 'ICICI Bank',
+    originalPrincipal: 14000, // ~$14,000 = ~₹11.8 Lakhs
+    currentOutstanding: 5200, // ~$5,200 = ~₹4.4 Lakhs
+    interestRate: 8.85,
+    monthlyEmi: 285, // ~$285 = ~₹24,000
+    emiDueDay: 10,
+    startDate: '2024-01-15',
+    tenureMonths: 60,
+    repayments: [
+      {
+        id: 'rep_3',
+        debtId: 'debt_2',
+        amount: 285,
+        date: '2026-10-10',
+        type: 'REGULAR_EMI',
+        notes: 'Monthly auto-debit',
+      },
+    ],
+    notes: '5-year fixed-rate auto finance.',
+  },
+  {
+    id: 'debt_3',
+    title: 'SBI Card ELITE Outstanding',
+    category: 'CREDIT_CARD',
+    lender: 'SBI Cards',
+    originalPrincipal: 1200, // ~$1,200 = ~₹1,01,400
+    currentOutstanding: 650, // ~$650 = ~₹55,000
+    interestRate: 38.4,
+    monthlyEmi: 95, // Minimum due / monthly pay
+    emiDueDay: 22,
+    startDate: '2026-09-01',
+    tenureMonths: 12,
+    repayments: [
+      {
+        id: 'rep_4',
+        debtId: 'debt_3',
+        amount: 150,
+        date: '2026-10-22',
+        type: 'REGULAR_EMI',
+        notes: 'Paid above minimum due to cut high APR interest',
+      },
+    ],
+    notes: 'Top priority for Avalanche payoff acceleration (38.4% APR).',
+  },
+];

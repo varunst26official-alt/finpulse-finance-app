@@ -11,6 +11,7 @@ import { SipCalculator } from '@/components/dashboard/SipCalculator';
 import { TransactionTable } from '@/components/transactions/TransactionTable';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
+import { DebtRepaymentManager } from '@/components/debts/DebtRepaymentManager';
 import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,6 +22,7 @@ import {
   Calculator,
   CalendarDays,
   Sparkles,
+  Landmark,
 } from 'lucide-react';
 
 export function App() {
@@ -41,6 +43,7 @@ export function App() {
   }[] = [
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
     { id: 'investments', label: 'Holdings', icon: PieChart },
+    { id: 'debts', label: 'Debts', icon: Landmark },
     { id: 'transactions', label: 'Ledger', icon: ArrowLeftRight },
     { id: 'calendar', label: 'Calendar', icon: CalendarDays },
     { id: 'goals', label: 'SIP', icon: Calculator },
@@ -158,6 +161,9 @@ export function App() {
                   </div>
                 </>
               )}
+
+              {/* Tab: Debt & Repayment Engine */}
+              {activeTab === 'debts' && <DebtRepaymentManager />}
 
               {/* Tab 3: Transactions Ledger */}
               {activeTab === 'transactions' && <TransactionTable />}

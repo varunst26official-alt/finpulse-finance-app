@@ -1,4 +1,4 @@
-import { Currency, AssetCategory, ExpenseCategory, PaymentMethod, IncomeCategory, CalendarEventType } from '@/types/finance';
+import { Currency, AssetCategory, ExpenseCategory, PaymentMethod, IncomeCategory, CalendarEventType, DebtCategory } from '@/types/finance';
 
 export const CURRENCY_CONFIGS: Record<Currency, { symbol: string; rateFromUSD: number; locale: string }> = {
   USD: { symbol: '$', rateFromUSD: 1.0, locale: 'en-US' },
@@ -104,4 +104,24 @@ export const CALENDAR_EVENT_COLORS: Record<CalendarEventType, { badge: string; d
   LIFE_EVENT: { badge: 'bg-purple-50 text-purple-800 border-purple-200', dot: '#9333ea', text: 'text-purple-700' },
   MEDICAL_CHECKUP: { badge: 'bg-amber-50 text-amber-800 border-amber-200', dot: '#d97706', text: 'text-amber-700' },
   EXPECTED_INCOME: { badge: 'bg-emerald-50 text-emerald-800 border-emerald-200', dot: '#16a34a', text: 'text-emerald-700' },
+};
+
+export const DEBT_CATEGORY_LABELS: Record<DebtCategory, string> = {
+  HOME_LOAN: 'Home Loan / Mortgage',
+  AUTO_LOAN: 'Car & Auto Loan',
+  PERSONAL_LOAN: 'Personal Loan',
+  EDUCATION_LOAN: 'Education Loan',
+  CREDIT_CARD: 'Credit Card Outstanding',
+  BUSINESS_LOAN: 'Business & Commercial',
+  PEER_OR_FAMILY: 'Family & Peer Borrowing',
+};
+
+export const DEBT_CATEGORY_COLORS: Record<DebtCategory, { badge: string; border: string; text: string; hex: string }> = {
+  HOME_LOAN: { badge: 'bg-indigo-50 text-indigo-800', border: 'border-indigo-200', text: 'text-indigo-700', hex: '#6366f1' },
+  AUTO_LOAN: { badge: 'bg-sky-50 text-sky-800', border: 'border-sky-200', text: 'text-sky-700', hex: '#0284c7' },
+  PERSONAL_LOAN: { badge: 'bg-amber-50 text-amber-800', border: 'border-amber-200', text: 'text-amber-700', hex: '#d97706' },
+  EDUCATION_LOAN: { badge: 'bg-emerald-50 text-emerald-800', border: 'border-emerald-200', text: 'text-emerald-700', hex: '#16a34a' },
+  CREDIT_CARD: { badge: 'bg-rose-50 text-rose-800', border: 'border-rose-200', text: 'text-rose-700', hex: '#e11d48' },
+  BUSINESS_LOAN: { badge: 'bg-purple-50 text-purple-800', border: 'border-purple-200', text: 'text-purple-700', hex: '#9333ea' },
+  PEER_OR_FAMILY: { badge: 'bg-stone-50 text-stone-800', border: 'border-stone-200', text: 'text-stone-700', hex: '#78716c' },
 };

@@ -139,6 +139,45 @@ export interface CalendarEvent {
 }
 
 // ============================================================================
+// Debt, Loan & Repayment Types
+// ============================================================================
+
+export type DebtCategory =
+  | 'HOME_LOAN'
+  | 'AUTO_LOAN'
+  | 'PERSONAL_LOAN'
+  | 'EDUCATION_LOAN'
+  | 'CREDIT_CARD'
+  | 'BUSINESS_LOAN'
+  | 'PEER_OR_FAMILY';
+
+export interface DebtRepayment {
+  id: string;
+  debtId: string;
+  amount: number; // in USD base
+  date: string; // YYYY-MM-DD
+  type: 'REGULAR_EMI' | 'LUMP_SUM_PREPAYMENT';
+  notes?: string;
+}
+
+export interface DebtItem {
+  id: string;
+  title: string; // e.g. "HDFC Smart Home Loan"
+  category: DebtCategory;
+  lender: string; // e.g. "HDFC Bank", "ICICI Bank"
+  originalPrincipal: number; // in USD base
+  currentOutstanding: number; // in USD base
+  interestRate: number; // annual percentage e.g. 8.5
+  monthlyEmi: number; // in USD base
+  emiDueDay: number; // 1 to 31
+  startDate: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
+  tenureMonths: number; // e.g. 240 months
+  repayments: DebtRepayment[];
+  notes?: string;
+}
+
+// ============================================================================
 // Listed Stock Directory Model (Free searchable stock catalog)
 // ============================================================================
 
@@ -157,7 +196,10 @@ export interface ListedStockItem {
 // ============================================================================
 
 export interface PortfolioSummary {
-  totalNetWorth: number; // in USD base
+  totalNetWorth: number; // in USD base (Gross Assets - Total Debt)
+  grossAssets: number; // in USD base (Total Assets before debt)
+  totalDebt: number; // in USD base (Total Outstanding liabilities)
+  totalMonthlyDebtCommitment: number; // in USD base (Total Monthly EMIs)
   totalInvested: number; // in USD base
   totalUnrealizedPnL: number; // in USD base
   pnlPercentage: number;

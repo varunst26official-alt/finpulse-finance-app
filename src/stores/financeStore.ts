@@ -14,6 +14,8 @@ import {
   AssetCategory,
   TradeActionPayload,
   CalendarEvent,
+  DebtItem,
+  DebtRepayment,
 } from '@/types/finance';
 import {
   INITIAL_ASSETS,
@@ -26,6 +28,7 @@ import {
   INITIAL_EXPENSES,
   INITIAL_INCOMES,
   INITIAL_CALENDAR_EVENTS,
+  INITIAL_DEBTS,
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
@@ -33,6 +36,7 @@ import { parseTradeIntent } from '@/services/aiTradeParser';
 export type NavigationTab =
   | 'dashboard'
   | 'investments'
+  | 'debts'
   | 'transactions'
   | 'goals'
   | 'calendar';
@@ -55,6 +59,7 @@ interface FinanceState {
   expenses: ExpenseItem[];
   incomes: IncomeItem[];
   calendarEvents: CalendarEvent[];
+  debts: DebtItem[];
   history: typeof INITIAL_HISTORY;
 
   // AI Wealth Copilot State
@@ -81,6 +86,15 @@ interface FinanceState {
   addCalendarEvent: (event: Omit<CalendarEvent, 'id'>) => void;
   deleteCalendarEvent: (id: string) => void;
   toggleEventCompleted: (id: string) => void;
+  addDebt: (debt: Omit<DebtItem, 'id' | 'repayments'>) => void;
+  deleteDebt: (id: string) => void;
+  recordDebtRepayment: (
+    debtId: string,
+    amount: number,
+    type: 'REGULAR_EMI' | 'LUMP_SUM_PREPAYMENT',
+    date: string,
+    notes?: string
+  ) => void;
   resetToFreshPortfolio: (userName?: string) => void;
   loadDemoSampleData: () => void;
 
@@ -106,6 +120,7 @@ export const useFinanceStore = create<FinanceState>()(
       expenses: INITIAL_EXPENSES,
       incomes: INITIAL_INCOMES,
       calendarEvents: INITIAL_CALENDAR_EVENTS,
+      debts: INITIAL_DEBTS,
       history: INITIAL_HISTORY,
 
       aiMessages: INITIAL_AI_MESSAGES,
@@ -451,6 +466,50 @@ export const useFinanceStore = create<FinanceState>()(
         }));
       },
 
+      addDebt: (debtData) => {
+        const newDebt: DebtItem = {
+          ...debtData,
+          id: `debt_${Date.now()}`,
+          repayments: [],
+        };
+        set((state) => ({
+          debts: [newDebt, ...state.debts],
+        }));
+      },
+
+      deleteDebt: (id) => {
+        set((state) => ({
+          debts: state.debts.filter((d) => d.id !== id),
+        }));
+      },
+
+      recordDebtRepayment: (debtId, amount, type, date, notes) => {
+        set((state) => {
+          const repayment: DebtRepayment = {
+            id: `rep_${Date.now()}`,
+            debtId,
+            amount,
+            date,
+            type,
+            notes,
+          };
+
+          const updatedDebts = state.debts.map((d) => {
+            if (d.id === debtId) {
+              const newOutstanding = Math.max(0, d.currentOutstanding - amount);
+              return {
+                ...d,
+                currentOutstanding: newOutstanding,
+                repayments: [repayment, ...d.repayments],
+              };
+            }
+            return d;
+          });
+
+          return { debts: updatedDebts };
+        });
+      },
+
       resetToFreshPortfolio: (userName = 'Investor') => {
         set({
           assets: [],
@@ -458,6 +517,7 @@ export const useFinanceStore = create<FinanceState>()(
           expenses: [],
           incomes: [],
           calendarEvents: [],
+          debts: [],
           history: [],
           aiMessages: [
             {
@@ -482,15 +542,16 @@ export const useFinanceStore = create<FinanceState>()(
           expenses: INITIAL_EXPENSES,
           incomes: INITIAL_INCOMES,
           calendarEvents: INITIAL_CALENDAR_EVENTS,
+          debts: INITIAL_DEBTS,
           history: INITIAL_HISTORY,
           aiMessages: INITIAL_AI_MESSAGES,
         });
       },
 
       getPortfolioSummary: () => {
-        const { assets, expenses, incomes } = get();
+        const { assets, expenses, incomes, debts } = get();
 
-        let totalNetWorth = 0;
+        let grossAssets = 0;
         let totalInvested = 0;
         let liquidCash = 0;
 
@@ -500,7 +561,7 @@ export const useFinanceStore = create<FinanceState>()(
           const currentValue = asset.quantity * asset.currentMarketPrice;
           const investedValue = asset.quantity * asset.averageBuyPrice;
 
-          totalNetWorth += currentValue;
+          grossAssets += currentValue;
           totalInvested += investedValue;
 
           if (asset.category === 'LIQUID_CASH') {
@@ -510,7 +571,11 @@ export const useFinanceStore = create<FinanceState>()(
           categoryTotals[asset.category] = (categoryTotals[asset.category] || 0) + currentValue;
         });
 
-        const totalUnrealizedPnL = totalNetWorth - totalInvested;
+        const totalDebt = (debts || []).reduce((sum, d) => sum + d.currentOutstanding, 0);
+        const totalMonthlyDebtCommitment = (debts || []).reduce((sum, d) => sum + d.monthlyEmi, 0);
+        const totalNetWorth = grossAssets - totalDebt;
+
+        const totalUnrealizedPnL = grossAssets - totalInvested;
         const pnlPercentage = totalInvested > 0 ? (totalUnrealizedPnL / totalInvested) * 100 : 0;
 
         // Calculate Monthly Cash Flow
@@ -536,16 +601,19 @@ export const useFinanceStore = create<FinanceState>()(
         const allocationBreakdown = Object.entries(categoryTotals).map(([cat, val]) => ({
           category: cat as AssetCategory,
           currentValue: val,
-          percentage: totalNetWorth > 0 ? (val / totalNetWorth) * 100 : 0,
+          percentage: grossAssets > 0 ? (val / grossAssets) * 100 : 0,
           color: CATEGORY_COLORS[cat as AssetCategory] || '#9e783e',
         }));
 
         return {
           totalNetWorth,
+          grossAssets,
+          totalDebt,
+          totalMonthlyDebtCommitment,
           totalInvested,
           totalUnrealizedPnL,
           pnlPercentage,
-          todaysChange: totalNetWorth * 0.0124, // Simulated +1.24% today
+          todaysChange: grossAssets * 0.0124, // Simulated +1.24% today
           todaysChangePercentage: 1.24,
           totalMonthlyIncome,
           totalMonthlyExpenses,
@@ -565,6 +633,7 @@ export const useFinanceStore = create<FinanceState>()(
         expenses: state.expenses,
         incomes: state.incomes,
         calendarEvents: state.calendarEvents,
+        debts: state.debts,
         aiMessages: state.aiMessages,
       }),
     }
