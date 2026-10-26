@@ -1,39 +1,25 @@
 import { useState, useEffect } from 'react';
-import { useFinanceStore, NavigationTab } from '@/stores/financeStore';
+import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
-import { Navbar } from '@/components/layout/Navbar';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { StatCards } from '@/components/dashboard/StatCards';
-import { PortfolioChart } from '@/components/dashboard/PortfolioChart';
-import { AllocationDonut } from '@/components/dashboard/AllocationDonut';
-import { HoldingsTable } from '@/components/dashboard/HoldingsTable';
-import { GoalMilestoneManager } from '@/components/goals/GoalMilestoneManager';
-import { TransactionTable } from '@/components/transactions/TransactionTable';
+import { useLifeOSStore } from '@/stores/lifeosStore';
+import { LifeOSHeader } from '@/components/layout/LifeOSHeader';
+import { SectionSwitcher } from '@/components/layout/SectionSwitcher';
+import { LifeOverviewWorkspace } from '@/components/overview/LifeOverviewWorkspace';
+import { FinanceWorkspace } from '@/components/finance/FinanceWorkspace';
+import { WellnessWorkspace } from '@/components/wellness/WellnessWorkspace';
+import { ProductivityWorkspace } from '@/components/productivity/ProductivityWorkspace';
+import { LearningWorkspace } from '@/components/learning/LearningWorkspace';
+import { LifeAdminWorkspace } from '@/components/lifeadmin/LifeAdminWorkspace';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
-import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
-import { DebtRepaymentManager } from '@/components/debts/DebtRepaymentManager';
-import { InsuranceManager } from '@/components/insurance/InsuranceManager';
-import { EmergencyVaultHealthScore } from '@/components/health/EmergencyVaultHealthScore';
 import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  LayoutDashboard,
-  PieChart,
-  ArrowLeftRight,
-  Target,
-  CalendarDays,
-  Sparkles,
-  Landmark,
-  HeartPulse,
-  Activity,
-} from 'lucide-react';
 
 export function App() {
-  const { activeTab, setActiveTab, assets, resetToFreshPortfolio, syncWithBackend } = useFinanceStore();
-  const { isAuthenticated, user } = useAuthStore();
+  const { syncWithBackend } = useFinanceStore();
+  const { isAuthenticated } = useAuthStore();
+  const { currentSection } = useLifeOSStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isDemoBannerDismissed, setIsDemoBannerDismissed] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -46,160 +32,58 @@ export function App() {
     return <AuthScreen />;
   }
 
-  const mobileTabs: {
-    id: NavigationTab;
-    label: string;
-    icon: React.ComponentType<{ className?: string }>;
-  }[] = [
-    { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
-    { id: 'investments', label: 'Holdings', icon: PieChart },
-    { id: 'debts', label: 'Debts', icon: Landmark },
-    { id: 'protection', label: 'Insurance', icon: HeartPulse },
-    { id: 'health', label: 'Health Score', icon: Activity },
-    { id: 'transactions', label: 'Ledger', icon: ArrowLeftRight },
-    { id: 'calendar', label: 'Calendar', icon: CalendarDays },
-    { id: 'goals', label: 'Goals & SIP', icon: Target },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#fbf9f5] text-slate-900 flex flex-col font-sans selection:bg-[#9e783e] selection:text-white">
-      {/* Top Navbar */}
-      <Navbar onOpenAddModal={() => setIsAddModalOpen(true)} />
+    <div className="min-h-screen bg-[#f4f6fa] text-[#243047] flex flex-col font-sans selection:bg-[#a47b3c] selection:text-white">
+      {/* 1. LifeOS Sticky Command Header (72px) */}
+      <LifeOSHeader />
 
-      {/* Main Body with Sidebar + Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Desktop Sidebar */}
-        <Sidebar />
+      {/* 2. Sticky Section Switcher (6 Focused Workspaces) */}
+      <SectionSwitcher />
 
-        {/* Dynamic Main View Area with Smooth Transitions */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 pb-20 md:pb-8">
-          {/* Mobile Tab Bar (Scrollable on small viewports) */}
-          <div className="flex md:hidden overflow-x-auto rounded-2xl bg-white border border-[#e8e0d1] p-1.5 text-xs font-semibold scrollbar-none gap-1.5 shadow-xs">
-            {mobileTabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold transition-all whitespace-nowrap cursor-pointer ${
-                    isActive
-                      ? 'bg-[#9e783e] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-[#f5efe4]'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
+      {/* 3. Main Workspace Container */}
+      <main className="flex-1 w-full max-w-[1500px] mx-auto p-4 sm:p-7 space-y-6">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSection}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            {/* Workspace 1: Life Overview */}
+            {currentSection === 'overview' && <LifeOverviewWorkspace />}
 
-          {/* Sample Demo Data Notice Banner for Registered Users */}
-          {user?.id !== 'usr_demo' && assets.length > 0 && !isDemoBannerDismissed && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-[#faf7f0] via-[#f7f2e6] to-[#faf8f5] border border-[#ded3bf] shadow-xs"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-[#9e783e]/15 text-[#9e783e] shrink-0">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900">
-                    Welcome {user?.fullName}! You are currently viewing sample demonstration data.
-                  </p>
-                  <p className="text-[11px] text-slate-600 font-medium">
-                    Brand-new accounts start with an empty ₹0 portfolio. Click below to clear demo data and start tracking your real investments.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => resetToFreshPortfolio(user?.fullName)}
-                  className="px-3.5 py-1.5 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                  <span>🧹 Start Fresh (₹0 Balance)</span>
-                </button>
-                <button
-                  onClick={() => setIsDemoBannerDismissed(true)}
-                  className="px-2.5 py-1.5 rounded-xl border border-[#ded3bf] bg-white text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all cursor-pointer"
-                >
-                  Dismiss
-                </button>
-              </div>
-            </motion.div>
-          )}
+            {/* Workspace 2: Financial Portfolio (Holdings, Debts, Insurance, Ledger, Goals) */}
+            {currentSection === 'finance' && (
+              <FinanceWorkspace
+                onOpenAddTradeModal={() => setIsAddModalOpen(true)}
+              />
+            )}
 
-          {/* Smooth Animated Tab Content Crossfade */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="space-y-6"
-            >
-              {/* Tab 1: Overview Dashboard */}
-              {activeTab === 'dashboard' && (
-                <>
-                  <StatCards />
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2">
-                      <PortfolioChart />
-                    </div>
-                    <div>
-                      <AllocationDonut />
-                    </div>
-                  </div>
-                  <TransactionTable />
-                  <FinancialCalendarWidget />
-                </>
-              )}
+            {/* Workspace 3: Fitness & Wellness (BMI Calculator, Workouts, Food, Water) */}
+            {currentSection === 'wellness' && <WellnessWorkspace />}
 
-              {/* Tab 2: Holdings & Asset Allocation */}
-              {activeTab === 'investments' && (
-                <>
-                  <StatCards />
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2">
-                      <HoldingsTable />
-                    </div>
-                    <div>
-                      <AllocationDonut />
-                    </div>
-                  </div>
-                </>
-              )}
+            {/* Workspace 4: Productivity & Tasks (Agenda, Checklist, Unified Calendar) */}
+            {currentSection === 'productivity' && <ProductivityWorkspace />}
 
-              {/* Tab: Debt & Repayment Engine */}
-              {activeTab === 'debts' && <DebtRepaymentManager />}
+            {/* Workspace 5: Learning & Career (Skills Roadmap, Certifications) */}
+            {currentSection === 'learning' && <LearningWorkspace />}
 
-              {/* Tab: Insurance & Protection Portfolio */}
-              {activeTab === 'protection' && <InsuranceManager />}
+            {/* Workspace 6: Life Administration (Document Vault, Renewals, Household) */}
+            {currentSection === 'lifeadmin' && <LifeAdminWorkspace />}
+          </motion.div>
+        </AnimatePresence>
+      </main>
 
-              {/* Tab: Financial Health Scorecard & Emergency Vault */}
-              {activeTab === 'health' && <EmergencyVaultHealthScore />}
+      {/* 4. Footer */}
+      <footer className="text-center text-[#6f7c91] text-xs py-8 border-t border-[#e4e9f1] bg-white/50">
+        <p>
+          LifeOS · Personal Life Command Centre. Connected cross-module workspaces backed by persistent SQLite engine.
+        </p>
+      </footer>
 
-              {/* Tab 3: Transactions Ledger */}
-              {activeTab === 'transactions' && <TransactionTable />}
-
-              {/* Tab: Financial Calendar & Events Planner */}
-              {activeTab === 'calendar' && <FinancialCalendarWidget />}
-
-              {/* Tab 4: Goals, Milestones & SIP Wealth Planner */}
-              {activeTab === 'goals' && <GoalMilestoneManager />}
-            </motion.div>
-          </AnimatePresence>
-        </main>
-      </div>
-
-      {/* Interactive First-Time User Onboarding Demo Tour */}
+      {/* 5. Modals & Onboarding Tour */}
       <DemoTourGuide />
-
-      {/* Record Transaction Modal */}
       <AddTransactionModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
