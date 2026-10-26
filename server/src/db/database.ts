@@ -697,6 +697,116 @@ export function seedUserData(userId: string): void {
       [d.id, userId, d.title, d.category, d.documentNumber, d.expiryDate, d.status, d.authority, d.notes]
     );
   }
+
+  // 12. Workout Sessions & Sets (Phase 2)
+  const initialSessionId = `wsess_demo_1`;
+  run(
+    `INSERT OR REPLACE INTO workout_sessions
+     (id, user_id, date, split_name, duration_minutes, total_tonnage, total_sets, notes)
+     VALUES (?, ?, ?, 'Push (Chest & Triceps)', 45, 3420, 9, 'Heavy bench day with controlled eccentric')`,
+    [initialSessionId, userId, todayStr]
+  );
+
+  const initialSets = [
+    { exId: 'barbell_bench', name: 'Barbell Flat Bench Press', muscle: 'Chest', setNum: 1, weight: 60, reps: 10, rpe: 7 },
+    { exId: 'barbell_bench', name: 'Barbell Flat Bench Press', muscle: 'Chest', setNum: 2, weight: 70, reps: 8, rpe: 8 },
+    { exId: 'barbell_bench', name: 'Barbell Flat Bench Press', muscle: 'Chest', setNum: 3, weight: 75, reps: 6, rpe: 9 },
+    { exId: 'incline_dumbbell', name: 'Incline DB Press', muscle: 'Upper Chest', setNum: 1, weight: 24, reps: 10, rpe: 7.5 },
+    { exId: 'incline_dumbbell', name: 'Incline DB Press', muscle: 'Upper Chest', setNum: 2, weight: 26, reps: 8, rpe: 8.5 },
+    { exId: 'tricep_rope', name: 'Tricep Rope Pushdown', muscle: 'Triceps', setNum: 1, weight: 25, reps: 12, rpe: 7 },
+  ];
+
+  for (let idx = 0; idx < initialSets.length; idx++) {
+    const s = initialSets[idx];
+    run(
+      `INSERT OR REPLACE INTO workout_sets
+       (id, session_id, user_id, exercise_id, exercise_name, muscle_group, set_number, weight_kg, reps, rpe)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [`wset_${initialSessionId}_${idx}`, initialSessionId, userId, s.exId, s.name, s.muscle, s.setNum, s.weight, s.reps, s.rpe]
+    );
+  }
+
+  // 13. Nutrition Meal Logs (Phase 3)
+  const initialMeals = [
+    { id: `meal_1_${userId}`, type: 'BREAKFAST', name: 'Steel-Cut Oats with Whey, Chia & Blueberries', cal: 480, p: 38, c: 54, f: 12, desc: '1 bowl with 1 scoop whey' },
+    { id: `meal_2_${userId}`, type: 'LUNCH', name: 'Grilled Herb Chicken Breast with Quinoa & Steamed Greens', cal: 620, p: 52, c: 50, f: 16, desc: '200g chicken breast + 150g quinoa' },
+    { id: `meal_3_${userId}`, type: 'SNACK', name: 'Greek Yogurt with Crushed Walnuts & Honey', cal: 260, p: 20, c: 18, f: 10, desc: '1 cup Greek yogurt' },
+  ];
+
+  for (const m of initialMeals) {
+    run(
+      `INSERT OR REPLACE INTO meal_logs
+       (id, user_id, date, meal_type, name, calories, protein_grams, carbs_grams, fat_grams, portion_description)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [m.id, userId, todayStr, m.type, m.name, m.cal, m.p, m.c, m.f, m.desc]
+    );
+  }
+
+  // 14. Habits & Routines (Phase 4)
+  const initialHabits = [
+    { id: `hab_1_${userId}`, title: 'Morning Hydration (750ml) & Mobility Flow', cat: 'MORNING', streak: 14, icon: '💧' },
+    { id: `hab_2_${userId}`, title: 'Deep Work Focus Block (No Slack/Phone)', cat: 'AFTERNOON', streak: 8, icon: '🧠' },
+    { id: `hab_3_${userId}`, title: 'Evening Spending & Portfolio Log', cat: 'EVENING', streak: 21, icon: '📊' },
+    { id: `hab_4_${userId}`, title: 'Nightly Reflection & Sleep Wind-down', cat: 'EVENING', streak: 12, icon: '🌙' },
+  ];
+
+  for (const h of initialHabits) {
+    run(
+      `INSERT OR REPLACE INTO habits
+       (id, user_id, title, category, streak_count, last_completed_date, icon)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [h.id, userId, h.title, h.cat, h.streak, todayStr, h.icon]
+    );
+  }
+
+  // 15. Focus Sessions (Phase 4)
+  run(
+    `INSERT OR REPLACE INTO focus_sessions
+     (id, user_id, duration_minutes, session_type, task_title, date)
+     VALUES (?, ?, 50, 'DEEP_WORK', 'System Architecture & SQLite Schema Design', ?)`,
+    [`foc_1_${userId}`, userId, todayStr]
+  );
+
+  // 16. Learning Books & Courses (Phase 5)
+  const initialBooks = [
+    { id: `bk_1_${userId}`, title: 'Designing Data-Intensive Applications', author: 'Martin Kleppmann', cat: 'Distributed Systems', curPage: 290, totPage: 560, status: 'IN_PROGRESS', rating: 5, notes: 'Key insights on partitioning and replication lag' },
+    { id: `bk_2_${userId}`, title: 'The Intelligent Investor', author: 'Benjamin Graham', cat: 'Value Investing', curPage: 340, totPage: 340, status: 'COMPLETED', rating: 5, notes: 'Margin of safety & Mr. Market mindset' },
+    { id: `bk_3_${userId}`, title: 'Outlive: The Science and Art of Longevity', author: 'Dr. Peter Attia', cat: 'Health & Longevity', curPage: 180, totPage: 496, status: 'IN_PROGRESS', rating: 5, notes: 'Zone 2 cardio and VO2 max importance' },
+  ];
+
+  for (const b of initialBooks) {
+    run(
+      `INSERT OR REPLACE INTO learning_books
+       (id, user_id, title, author, category, current_page, total_pages, status, rating, notes)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [b.id, userId, b.title, b.author, b.cat, b.curPage, b.totPage, b.status, b.rating, b.notes]
+    );
+  }
+
+  // 17. Emergency Profile (Phase 6)
+  run(
+    `INSERT OR REPLACE INTO emergency_info
+     (user_id, blood_group, allergies, medical_conditions, primary_contact_name, primary_contact_phone, primary_contact_relation, secondary_contact_name, secondary_contact_phone, physician_name, physician_phone, tpa_helpline, notes)
+     VALUES (?, 'O+ Positive', 'Penicillin (mild rash)', 'None reported', 'Jane S T', '+91 98765 11223', 'Spouse', 'Senior Varun', '+91 98765 44332', 'Dr. Arvind Sharma (MD Cardiology)', '+91 80 4123 4567', '1800-102-4477 (HDFC ERGO Cashless)', 'Emergency ID and insurance cards located in LifeOS Document Vault')`,
+    [userId]
+  );
+
+  // 18. Recurring Admin Checklists (Phase 6)
+  const initialChecklists = [
+    { id: `chk_1_${userId}`, title: 'Income Tax Return (ITR-2) Filing', freq: 'ANNUAL', dueDate: '2027-07-31', isComp: 0, cat: 'TAX' },
+    { id: `chk_2_${userId}`, title: 'Vehicle Comprehensive Insurance Renewal', freq: 'ANNUAL', dueDate: '2027-03-15', isComp: 0, cat: 'VEHICLE' },
+    { id: `chk_3_${userId}`, title: 'Quarterly Net Worth & Asset Rebalance', freq: 'QUARTERLY', dueDate: '2026-12-31', isComp: 1, cat: 'FINANCE' },
+    { id: `chk_4_${userId}`, title: 'Annual Full-Body Health Checkup & Blood Panel', freq: 'ANNUAL', dueDate: '2027-04-10', isComp: 0, cat: 'HEALTH' },
+  ];
+
+  for (const c of initialChecklists) {
+    run(
+      `INSERT OR REPLACE INTO admin_checklists
+       (id, user_id, title, frequency, due_date, is_completed, category)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [c.id, userId, c.title, c.freq, c.dueDate, c.isComp, c.cat]
+    );
+  }
 }
 
 /**
@@ -717,6 +827,14 @@ export function clearUserData(userId: string): void {
   run('DELETE FROM learning_items WHERE user_id = ?', [userId]);
   run('DELETE FROM documents WHERE user_id = ?', [userId]);
   run('DELETE FROM user_blueprint WHERE user_id = ?', [userId]);
+  run('DELETE FROM workout_sessions WHERE user_id = ?', [userId]);
+  run('DELETE FROM workout_sets WHERE user_id = ?', [userId]);
+  run('DELETE FROM meal_logs WHERE user_id = ?', [userId]);
+  run('DELETE FROM habits WHERE user_id = ?', [userId]);
+  run('DELETE FROM focus_sessions WHERE user_id = ?', [userId]);
+  run('DELETE FROM learning_books WHERE user_id = ?', [userId]);
+  run('DELETE FROM emergency_info WHERE user_id = ?', [userId]);
+  run('DELETE FROM admin_checklists WHERE user_id = ?', [userId]);
 }
 
 /**
@@ -768,11 +886,11 @@ export async function initDatabase(): Promise<Database> {
     seedUserData('usr_demo');
     console.log('[Database] Seeded initial demo user and wealth portfolio.');
   } else {
-    // If demo user exists but tasks table is empty, seed defaults
-    const taskCount = queryOne<{ count: number }>('SELECT COUNT(*) as count FROM tasks WHERE user_id = ?', ['usr_demo']);
-    if (!taskCount || taskCount.count === 0) {
+    // If demo user exists but tasks or workout tables are empty, seed defaults
+    const workoutCount = queryOne<{ count: number }>('SELECT COUNT(*) as count FROM workout_sessions WHERE user_id = ?', ['usr_demo']);
+    if (!workoutCount || workoutCount.count === 0) {
       seedUserData('usr_demo');
-      console.log('[Database] Seeded LifeOS items for demo user.');
+      console.log('[Database] Seeded full LifeOS Phase 2-6 items for demo user.');
     }
   }
 

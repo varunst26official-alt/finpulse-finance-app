@@ -239,6 +239,118 @@ CREATE TABLE IF NOT EXISTS user_blueprint (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 16. LifeOS Workout Sessions & Sets (Phase 2)
+CREATE TABLE IF NOT EXISTS workout_sessions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  date TEXT NOT NULL,
+  split_name TEXT NOT NULL,
+  duration_minutes INTEGER DEFAULT 0,
+  total_tonnage REAL DEFAULT 0,
+  total_sets INTEGER DEFAULT 0,
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS workout_sets (
+  id TEXT PRIMARY KEY,
+  session_id TEXT NOT NULL REFERENCES workout_sessions(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  exercise_id TEXT NOT NULL,
+  exercise_name TEXT NOT NULL,
+  muscle_group TEXT NOT NULL,
+  set_number INTEGER NOT NULL,
+  weight_kg REAL NOT NULL,
+  reps INTEGER NOT NULL,
+  rpe REAL DEFAULT 7.5,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 17. LifeOS Nutrition & Meal Logs (Phase 3)
+CREATE TABLE IF NOT EXISTS meal_logs (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  date TEXT NOT NULL,
+  meal_type TEXT NOT NULL, -- BREAKFAST | LUNCH | DINNER | SNACK
+  name TEXT NOT NULL,
+  calories INTEGER NOT NULL,
+  protein_grams REAL DEFAULT 0,
+  carbs_grams REAL DEFAULT 0,
+  fat_grams REAL DEFAULT 0,
+  portion_description TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 18. LifeOS Habits & Routines (Phase 4)
+CREATE TABLE IF NOT EXISTS habits (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  category TEXT NOT NULL, -- MORNING | AFTERNOON | EVENING | ANYTIME
+  streak_count INTEGER DEFAULT 0,
+  last_completed_date TEXT,
+  target_frequency TEXT DEFAULT 'DAILY',
+  icon TEXT DEFAULT '⚡',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 19. LifeOS Focus & Deep Work Sessions (Phase 4)
+CREATE TABLE IF NOT EXISTS focus_sessions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  duration_minutes INTEGER NOT NULL,
+  session_type TEXT NOT NULL, -- POMODORO | DEEP_WORK | SHORT_BREAK
+  task_title TEXT,
+  date TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 20. LifeOS Learning Books & Resources (Phase 5)
+CREATE TABLE IF NOT EXISTS learning_books (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  author TEXT NOT NULL,
+  category TEXT NOT NULL,
+  current_page INTEGER DEFAULT 0,
+  total_pages INTEGER NOT NULL,
+  status TEXT DEFAULT 'IN_PROGRESS', -- NOT_STARTED | IN_PROGRESS | COMPLETED
+  rating INTEGER DEFAULT 5,
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 21. LifeOS Emergency Readiness Profile (Phase 6)
+CREATE TABLE IF NOT EXISTS emergency_info (
+  user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  blood_group TEXT DEFAULT 'O+ Positive',
+  allergies TEXT DEFAULT 'None reported',
+  medical_conditions TEXT DEFAULT 'None reported',
+  primary_contact_name TEXT DEFAULT 'Jane Doe',
+  primary_contact_phone TEXT DEFAULT '+91 98765 11223',
+  primary_contact_relation TEXT DEFAULT 'Spouse',
+  secondary_contact_name TEXT DEFAULT 'John Senior',
+  secondary_contact_phone TEXT DEFAULT '+91 98765 44332',
+  physician_name TEXT DEFAULT 'Dr. Arvind Sharma (MD)',
+  physician_phone TEXT DEFAULT '+91 80 4123 4567',
+  tpa_helpline TEXT DEFAULT '1800-102-4477 (Cashless 24x7)',
+  notes TEXT DEFAULT 'Emergency insurance card located in wallet and LifeOS Document Vault',
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 22. LifeOS Recurring Admin Checklists (Phase 6)
+CREATE TABLE IF NOT EXISTS admin_checklists (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  frequency TEXT NOT NULL, -- ANNUAL | BIANNUAL | QUARTERLY | MONTHLY
+  due_date TEXT NOT NULL,
+  is_completed INTEGER DEFAULT 0,
+  category TEXT NOT NULL,
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_assets_user ON assets(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
@@ -253,4 +365,11 @@ CREATE INDEX IF NOT EXISTS idx_tasks_user ON tasks(user_id);
 CREATE INDEX IF NOT EXISTS idx_wellness_user ON wellness_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_learning_user ON learning_items(user_id);
 CREATE INDEX IF NOT EXISTS idx_documents_user ON documents(user_id);
+CREATE INDEX IF NOT EXISTS idx_workout_user ON workout_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_workout_sets ON workout_sets(session_id);
+CREATE INDEX IF NOT EXISTS idx_meal_user ON meal_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_habits_user ON habits(user_id);
+CREATE INDEX IF NOT EXISTS idx_focus_user ON focus_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_books_user ON learning_books(user_id);
+CREATE INDEX IF NOT EXISTS idx_checklists_user ON admin_checklists(user_id);
 `;

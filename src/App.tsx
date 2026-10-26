@@ -12,6 +12,7 @@ import { LearningWorkspace } from '@/components/learning/LearningWorkspace';
 import { LifeAdminWorkspace } from '@/components/lifeadmin/LifeAdminWorkspace';
 import { AdaptiveBlueprintModal } from '@/components/adaptive/AdaptiveBlueprintModal';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
+import { FloatingAiChatWidget } from '@/components/ai/FloatingAiChatWidget';
 import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -87,6 +88,7 @@ export function App() {
       {/* 5. Modals & Onboarding Tour */}
       <DemoTourGuide />
       <AdaptiveBlueprintModal />
+      <FloatingAiChatWidget />
       <AddTransactionModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

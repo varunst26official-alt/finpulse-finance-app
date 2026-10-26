@@ -39,6 +39,7 @@ import {
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
 import { api } from '@/services/apiClient';
+import { useLifeOSStore } from './lifeosStore';
 
 export type NavigationTab =
   | 'dashboard'
@@ -170,7 +171,7 @@ export const useFinanceStore = create<FinanceState>()(
 
         // AI Engine with Trade Intent Detection and Context Injection
         setTimeout(() => {
-          const { assets, expenses, incomes, currency, getPortfolioSummary, executeChatTradeAction } = get();
+          const { assets, debts, currency, getPortfolioSummary, executeChatTradeAction } = get();
           const summary = getPortfolioSummary();
           const lower = prompt.toLowerCase();
 
@@ -238,12 +239,40 @@ export const useFinanceStore = create<FinanceState>()(
           } else if (lower.includes('predict') || lower.includes('forecast') || lower.includes('reliance') || lower.includes('btc') || lower.includes('bitcoin')) {
             aiResponse = `🔮 **AI Asset Projections (Next 30-90 Days):**\n\n- **Reliance Industries:** Target **$38.20** (+9.8%) with an **88% Bullish Confidence Score**. Support at $32.80.\n- **Bitcoin (Cold Storage):** Target **$76,500** (+11.8%) with institutional ETF volume driving supply squeeze.\n- **Sovereign Gold (SGB):** Strong Buy rating (91% confidence) with central bank purchases acting as a geopolitical floor.\n\nCheck the **AI Forecaster** tab for Monte Carlo upper/lower prediction bands!`;
             suggested = ['Buy 10 Reliance', 'Go to AI Stock Predictor', 'Audit my portfolio risk'];
+          } else if (lower.includes('workout') || lower.includes('gym') || lower.includes('fitness') || lower.includes('split') || lower.includes('exercise')) {
+            const life = useLifeOSStore.getState();
+            aiResponse = `💪 **LifeOS Fitness & Workout Blueprint:**\n\n- **Active Split:** **${life.activeBlueprint.workoutSplitName}**\n- **Weekly Logged:** **${life.wellness.workoutMinutesLogged} mins** (Target: 150m weekly)\n- **Body Mass Index:** **${Math.round((life.wellness.weightKg / Math.pow(life.wellness.heightCm / 100, 2)) * 10) / 10}** (${life.wellness.weightKg} kg · Target: ${life.wellness.targetWeightKg} kg)\n- **Workout Sessions Logged:** **${life.workoutSessions.length} sessions** with total tonnage tracked.\n\n💡 *Tip: Head over to the Fitness & Wellness workspace to record your set-by-set weight, reps, and RPE.*`;
+            suggested = ['What is my daily calorie target?', 'Show my today priorities', 'Audit my asset allocation risk'];
+          } else if (lower.includes('diet') || lower.includes('food') || lower.includes('calorie') || lower.includes('nutrition') || lower.includes('water') || lower.includes('hydration')) {
+            const life = useLifeOSStore.getState();
+            aiResponse = `🥗 **LifeOS Nutrition & Hydration Blueprint:**\n\n- **Energy Target:** **${life.activeBlueprint.targetCalories} kcal** (Current Logged: ${life.wellness.caloriesLogged} kcal)\n- **Macro Split:** Protein: **${life.activeBlueprint.macros.proteinGrams}g** · Carbs: **${life.activeBlueprint.macros.carbsGrams}g** · Fat: **${life.activeBlueprint.macros.fatGrams}g**\n- **Daily Water Target:** **${life.activeBlueprint.dailyWaterTargetLiters} L** (Logged: ${life.wellness.waterLitersLogged} L)\n- **Meals Logged Today:** **${life.mealLogs.length} entries**.\n\n💡 *Tip: Remember clinical guidelines recommend 35ml water per kg body weight plus workout adjustments.*`;
+            suggested = ['What workout should I do?', 'Log 250ml water', 'Analyze my monthly cash flow'];
+          } else if (lower.includes('habit') || lower.includes('streak') || lower.includes('priority') || lower.includes('task') || lower.includes('productivity')) {
+            const life = useLifeOSStore.getState();
+            const completed = life.tasks.filter((t) => t.status === 'COMPLETED').length;
+            aiResponse = `⚡ **LifeOS Productivity & Habit Command:**\n\n- **Today's Priorities:** **${completed} / ${life.tasks.length} tasks completed** (${life.tasks.length - completed} remaining).\n- **Active Daily Routines:** **${life.habits.length} habits** tracked.\n- **Top Streak:** **${Math.max(0, ...life.habits.map((h) => h.streakCount))} consecutive days** 🔥\n- **Deep Work Focus Blocks:** **${life.focusSessions.length} sessions** recorded.\n\n💡 *Tip: Use the Pomodoro stopwatch in the Productivity workspace to lock in 50-minute deep work blocks.*`;
+            suggested = ['Show my reading progress', 'What is my workout split?', 'Buy 10 Reliance'];
+          } else if (lower.includes('learning') || lower.includes('book') || lower.includes('study') || lower.includes('skill')) {
+            const life = useLifeOSStore.getState();
+            const totalHours = life.learningItems.reduce((acc, l) => acc + l.hoursSpent, 0);
+            aiResponse = `📚 **LifeOS Knowledge & Learning Track:**\n\n- **Active Skills in Progression:** **${life.learningItems.length} roadmaps**.\n- **Study Hours Compounded:** **${totalHours} verified hours** logged.\n- **Books in Vault:** **${life.learningBooks.length} titles** (Current book: *${life.learningBooks[0]?.title || 'None'}* on page ${life.learningBooks[0]?.currentPage || 0}).\n\n💡 *Tip: Compounding 1 hour of study daily yields 365 hours of competitive mastery every year.*`;
+            suggested = ['Show my vaulted documents', 'What is my net worth?', 'Audit my portfolio risk'];
+          } else if (lower.includes('vault') || lower.includes('document') || lower.includes('emergency') || lower.includes('passport')) {
+            const life = useLifeOSStore.getState();
+            const expiring = life.documents.filter((d) => d.status === 'EXPIRING_SOON').length;
+            aiResponse = `🛡️ **LifeOS Administration & Vault Readiness:**\n\n- **Encrypted Documents:** **${life.documents.length} official documents** secured.\n- **Expiring Soon Alert:** **${expiring} items** requiring renewal within 60 days.\n- **Blood Group:** **${life.emergencyInfo?.bloodGroup || 'O+'}** · Primary Contact: **${life.emergencyInfo?.primaryContactName || 'Configured'}**\n- **24x7 TPA Helpline:** **${life.emergencyInfo?.tpaHelpline || '1800-102-4477'}**\n\n💡 *Tip: You can 1-click copy your emergency medical sheet from the Life Administration workspace.*`;
+            suggested = ['Show full LifeOS summary', 'What are my priorities today?', 'Analyze my cash flow'];
+          } else if (lower.includes('lifeos') || lower.includes('summary') || lower.includes('life summary') || lower.includes('overview') || lower.includes('balance')) {
+            const life = useLifeOSStore.getState();
+            aiResponse = `🌐 **LifeOS Personal Executive Briefing:**\n\n- 💰 **Finance:** Net Worth **${formatCurrency(summary.totalNetWorth, currency)}** with ${summary.pnlPercentage.toFixed(1)}% growth and ${summary.liquidRunwayMonths.toFixed(1)} mo runway.\n- 🏋️ **Physical Vitality:** Split **${life.activeBlueprint.workoutSplitName}**, Daily **${life.activeBlueprint.targetCalories} kcal**, BMI **${Math.round((life.wellness.weightKg / Math.pow(life.wellness.heightCm / 100, 2)) * 10) / 10}**.\n- ⚡ **Daily Execution:** **${life.tasks.filter((t) => t.status === 'COMPLETED').length} / ${life.tasks.length} tasks completed**, **${life.habits.length} habits** active.\n- 📚 **Intellect:** **${life.learningItems.length} skills**, **${life.learningBooks.length} books** in vault.\n- 🛡️ **Life Admin:** **${life.documents.length} documents**, Emergency profile active.\n\nAll 6 workspaces are synchronized with persistent SQLite engine.`;
+            suggested = ['Buy 10 Reliance', 'Show my workout split', 'Check my reading progress'];
           } else {
-            aiResponse = `🤖 I've analyzed your question across your **${assets.length} portfolio assets**, **${expenses.length} tracked expenses**, and **${incomes.length} income streams**.\n\nYour portfolio is generating a **${summary.monthlySavingsRate.toFixed(1)}% savings rate** and annualized return of **+${summary.pnlPercentage.toFixed(1)}%**.\n\n💡 *Tip: You can trade directly through me! Try typing **"Buy 10 Reliance"** or **"Spent 25000 rent"**.*`;
+            const life = useLifeOSStore.getState();
+            aiResponse = `🤖 **LifeOS AI Intelligence Copilot:**\n\nI have complete real-time awareness across your entire life platform:\n- **Wealth:** ${formatCurrency(summary.totalNetWorth, currency)} net worth across ${assets.length} assets & ${debts.length} liabilities.\n- **Vitality:** ${life.activeBlueprint.workoutSplitName} · ${life.activeBlueprint.targetCalories} kcal · ${life.wellness.weightKg} kg.\n- **Productivity:** ${life.tasks.length} tasks · ${life.habits.length} habits · ${life.workoutSessions.length} workouts logged.\n\nAsk me anything: *"What should I do today?"*, *"Buy 10 Reliance"*, *"What is my calorie target?"*, or *"Who is my emergency contact?"*`;
             suggested = [
+              'Give me a full LifeOS summary',
               'Buy 10 Reliance',
-              'Analyze my monthly cash flow and expenses',
-              'Audit my asset allocation risk',
+              'What is my daily calorie target?',
             ];
           }
 

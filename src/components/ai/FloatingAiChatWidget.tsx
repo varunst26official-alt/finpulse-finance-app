@@ -69,7 +69,7 @@ export const FloatingAiChatWidget: React.FC = () => {
             className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 border border-[#e8e0d1] text-xs font-semibold text-slate-700 shadow-lg shadow-black/5 hover:border-[#9e783e] hover:text-[#9e783e] cursor-pointer backdrop-blur-md transition-all group"
           >
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Trade with AI: <strong>"Buy 10 Reliance"</strong></span>
+            <span>Ask LifeOS: <strong>"Show my life summary"</strong></span>
           </motion.div>
         )}
 
@@ -114,12 +114,12 @@ export const FloatingAiChatWidget: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-1.5">
                     <h4 className="text-sm font-bold text-slate-900 leading-none">
-                      FinPulse Copilot
+                      LifeOS Copilot
                     </h4>
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   </div>
                   <span className="text-[10px] text-slate-500 font-medium">
-                    Conversational Wealth & Trade Execution
+                    Wealth · Fitness · Habits · Learning · Life Admin
                   </span>
                 </div>
               </div>

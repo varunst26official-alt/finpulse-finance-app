@@ -12,6 +12,13 @@ import {
   WellnessState,
   LearningItem,
   DocumentItem,
+  WorkoutSession,
+  MealLogItem,
+  HabitItem,
+  FocusSessionItem,
+  LearningBookItem,
+  EmergencyProfile,
+  AdminChecklistItem,
 } from '@/types/lifeos';
 import { UserAdaptiveInputs, AdaptiveLifeBlueprint } from '@/services/adaptiveLifeEngine';
 import { UserProfile } from '@/stores/authStore';
@@ -270,6 +277,13 @@ export const api = {
         wellness: WellnessState;
         learningItems: LearningItem[];
         documents: DocumentItem[];
+        workoutSessions: WorkoutSession[];
+        mealLogs: MealLogItem[];
+        habits: HabitItem[];
+        focusSessions: FocusSessionItem[];
+        learningBooks: LearningBookItem[];
+        emergencyInfo: EmergencyProfile | null;
+        adminChecklists: AdminChecklistItem[];
         userInputs?: UserAdaptiveInputs;
         blueprint?: AdaptiveLifeBlueprint;
       };
@@ -336,6 +350,122 @@ export const api = {
       return request('/lifeos/blueprint', {
         method: 'POST',
         body: JSON.stringify({ userInputs, blueprint }),
+      });
+    },
+
+    // Workouts (Phase 2)
+    recordWorkoutSession: async (session: {
+      splitName: string;
+      durationMinutes: number;
+      notes?: string;
+      sets: Array<{
+        exerciseId: string;
+        exerciseName: string;
+        muscleGroup: string;
+        setNumber: number;
+        weightKg: number;
+        reps: number;
+        rpe?: number;
+      }>;
+    }): Promise<{ success: boolean; sessionId: string; totalTonnage: number; totalSets: number }> => {
+      return request('/lifeos/workouts/session', {
+        method: 'POST',
+        body: JSON.stringify(session),
+      });
+    },
+
+    deleteWorkoutSession: async (id: string): Promise<{ success: boolean }> => {
+      return request(`/lifeos/workouts/session/${id}`, {
+        method: 'DELETE',
+      });
+    },
+
+    // Meals (Phase 3)
+    createMealLog: async (meal: Partial<MealLogItem>): Promise<{ success: boolean; mealId: string }> => {
+      return request('/lifeos/meals', {
+        method: 'POST',
+        body: JSON.stringify(meal),
+      });
+    },
+
+    deleteMealLog: async (id: string): Promise<{ success: boolean }> => {
+      return request(`/lifeos/meals/${id}`, {
+        method: 'DELETE',
+      });
+    },
+
+    // Habits & Deep Work (Phase 4)
+    createHabit: async (habit: { title: string; category: string; icon?: string }): Promise<{ success: boolean; habitId: string }> => {
+      return request('/lifeos/habits', {
+        method: 'POST',
+        body: JSON.stringify(habit),
+      });
+    },
+
+    toggleHabit: async (id: string): Promise<{ success: boolean; isCompletedToday: boolean; streakCount: number }> => {
+      return request(`/lifeos/habits/${id}/toggle`, {
+        method: 'PATCH',
+      });
+    },
+
+    deleteHabit: async (id: string): Promise<{ success: boolean }> => {
+      return request(`/lifeos/habits/${id}`, {
+        method: 'DELETE',
+      });
+    },
+
+    logFocusSession: async (session: { durationMinutes: number; sessionType: string; taskTitle?: string }): Promise<{ success: boolean; focusId: string }> => {
+      return request('/lifeos/focus', {
+        method: 'POST',
+        body: JSON.stringify(session),
+      });
+    },
+
+    // Learning Books (Phase 5)
+    createBook: async (book: Partial<LearningBookItem>): Promise<{ success: boolean; bookId: string }> => {
+      return request('/lifeos/books', {
+        method: 'POST',
+        body: JSON.stringify(book),
+      });
+    },
+
+    updateBook: async (id: string, updates: Partial<LearningBookItem>): Promise<{ success: boolean }> => {
+      return request(`/lifeos/books/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(updates),
+      });
+    },
+
+    deleteBook: async (id: string): Promise<{ success: boolean }> => {
+      return request(`/lifeos/books/${id}`, {
+        method: 'DELETE',
+      });
+    },
+
+    // Life Admin (Phase 6)
+    saveEmergencyInfo: async (info: Partial<EmergencyProfile>): Promise<{ success: boolean }> => {
+      return request('/lifeos/emergency', {
+        method: 'POST',
+        body: JSON.stringify(info),
+      });
+    },
+
+    createChecklist: async (item: Partial<AdminChecklistItem>): Promise<{ success: boolean; checklistId: string }> => {
+      return request('/lifeos/checklists', {
+        method: 'POST',
+        body: JSON.stringify(item),
+      });
+    },
+
+    toggleChecklist: async (id: string): Promise<{ success: boolean; isCompleted: boolean }> => {
+      return request(`/lifeos/checklists/${id}/toggle`, {
+        method: 'PATCH',
+      });
+    },
+
+    deleteChecklist: async (id: string): Promise<{ success: boolean }> => {
+      return request(`/lifeos/checklists/${id}`, {
+        method: 'DELETE',
       });
     },
   },
