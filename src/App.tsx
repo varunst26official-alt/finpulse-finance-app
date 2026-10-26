@@ -12,6 +12,8 @@ import { TransactionTable } from '@/components/transactions/TransactionTable';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
 import { DebtRepaymentManager } from '@/components/debts/DebtRepaymentManager';
+import { InsuranceManager } from '@/components/insurance/InsuranceManager';
+import { EmergencyVaultHealthScore } from '@/components/health/EmergencyVaultHealthScore';
 import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,6 +25,8 @@ import {
   CalendarDays,
   Sparkles,
   Landmark,
+  HeartPulse,
+  Activity,
 } from 'lucide-react';
 
 export function App() {
@@ -44,6 +48,8 @@ export function App() {
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
     { id: 'investments', label: 'Holdings', icon: PieChart },
     { id: 'debts', label: 'Debts', icon: Landmark },
+    { id: 'protection', label: 'Insurance', icon: HeartPulse },
+    { id: 'health', label: 'Health Score', icon: Activity },
     { id: 'transactions', label: 'Ledger', icon: ArrowLeftRight },
     { id: 'calendar', label: 'Calendar', icon: CalendarDays },
     { id: 'goals', label: 'SIP', icon: Calculator },
@@ -164,6 +170,12 @@ export function App() {
 
               {/* Tab: Debt & Repayment Engine */}
               {activeTab === 'debts' && <DebtRepaymentManager />}
+
+              {/* Tab: Insurance & Protection Portfolio */}
+              {activeTab === 'protection' && <InsuranceManager />}
+
+              {/* Tab: Financial Health Scorecard & Emergency Vault */}
+              {activeTab === 'health' && <EmergencyVaultHealthScore />}
 
               {/* Tab 3: Transactions Ledger */}
               {activeTab === 'transactions' && <TransactionTable />}

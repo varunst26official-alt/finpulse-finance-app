@@ -9,6 +9,8 @@ import {
   TrendingUp,
   CalendarDays,
   Landmark,
+  HeartPulse,
+  Activity,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -23,6 +25,8 @@ export const Sidebar: React.FC = () => {
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
     { id: 'investments', label: 'Holdings & Allocation', icon: PieChart },
     { id: 'debts', label: 'Debts & Repayments', icon: Landmark },
+    { id: 'protection', label: 'Protection & Insurance', icon: HeartPulse },
+    { id: 'health', label: 'Health Score & Vault', icon: Activity },
     { id: 'transactions', label: 'Transactions Ledger', icon: ArrowLeftRight },
     { id: 'calendar', label: 'Financial Calendar', icon: CalendarDays },
     { id: 'goals', label: 'SIP & Wealth Planner', icon: Calculator },

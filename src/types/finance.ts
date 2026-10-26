@@ -178,6 +178,52 @@ export interface DebtItem {
 }
 
 // ============================================================================
+// Insurance & Protection Domain Types
+// ============================================================================
+
+export type InsuranceType =
+  | 'TERM_LIFE'
+  | 'HEALTH_FLOATER'
+  | 'CRITICAL_ILLNESS'
+  | 'MOTOR_VEHICLE'
+  | 'HOME_PROPERTY';
+
+export type PolicyStatus = 'ACTIVE' | 'DUE_SOON' | 'LAPSED';
+
+export interface InsurancePolicy {
+  id: string;
+  policyName: string; // e.g. "HDFC Life Click 2 Protect Super"
+  type: InsuranceType;
+  provider: string; // e.g. "HDFC Life", "Star Health", "ICICI Lombard"
+  policyNumber: string; // e.g. "HD-982144-X"
+  sumAssured: number; // in USD base (Coverage amount)
+  annualPremium: number; // in USD base
+  renewalDueDate: string; // YYYY-MM-DD
+  coveredMembers: string; // e.g. "Self, Spouse, 1 Child"
+  status: PolicyStatus;
+  cashlessHospitalsCount?: number;
+  tpaHelpline?: string;
+  notes?: string;
+}
+
+// ============================================================================
+// Emergency Fund & Financial Health Scorecard Types
+// ============================================================================
+
+export interface FinancialHealthScore {
+  totalScore: number; // 0 to 100
+  rating: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'NEEDS_ATTENTION';
+  pillarScores: {
+    savingsRate: { score: number; maxScore: number; detail: string };
+    emergencyRunway: { score: number; maxScore: number; detail: string };
+    debtLoad: { score: number; maxScore: number; detail: string };
+    diversification: { score: number; maxScore: number; detail: string };
+    insuranceProtection: { score: number; maxScore: number; detail: string };
+  };
+  keyRecommendations: string[];
+}
+
+// ============================================================================
 // Listed Stock Directory Model (Free searchable stock catalog)
 // ============================================================================
 

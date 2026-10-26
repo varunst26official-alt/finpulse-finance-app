@@ -16,6 +16,9 @@ import {
   CalendarEvent,
   DebtItem,
   DebtRepayment,
+  InsurancePolicy,
+  PolicyStatus,
+  FinancialHealthScore,
 } from '@/types/finance';
 import {
   INITIAL_ASSETS,
@@ -29,6 +32,7 @@ import {
   INITIAL_INCOMES,
   INITIAL_CALENDAR_EVENTS,
   INITIAL_DEBTS,
+  INITIAL_POLICIES,
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
@@ -37,6 +41,8 @@ export type NavigationTab =
   | 'dashboard'
   | 'investments'
   | 'debts'
+  | 'protection'
+  | 'health'
   | 'transactions'
   | 'goals'
   | 'calendar';
@@ -60,6 +66,8 @@ interface FinanceState {
   incomes: IncomeItem[];
   calendarEvents: CalendarEvent[];
   debts: DebtItem[];
+  policies: InsurancePolicy[];
+  emergencyTargetMonths: number;
   history: typeof INITIAL_HISTORY;
 
   // AI Wealth Copilot State
@@ -95,11 +103,16 @@ interface FinanceState {
     date: string,
     notes?: string
   ) => void;
+  addPolicy: (policy: Omit<InsurancePolicy, 'id'>) => void;
+  deletePolicy: (id: string) => void;
+  updatePolicyStatus: (id: string, status: PolicyStatus) => void;
+  setEmergencyTargetMonths: (months: number) => void;
   resetToFreshPortfolio: (userName?: string) => void;
   loadDemoSampleData: () => void;
 
   // Computed Selectors
   getPortfolioSummary: () => PortfolioSummary;
+  getFinancialHealthScore: () => FinancialHealthScore;
 }
 
 export const useFinanceStore = create<FinanceState>()(
@@ -121,6 +134,8 @@ export const useFinanceStore = create<FinanceState>()(
       incomes: INITIAL_INCOMES,
       calendarEvents: INITIAL_CALENDAR_EVENTS,
       debts: INITIAL_DEBTS,
+      policies: INITIAL_POLICIES,
+      emergencyTargetMonths: 6,
       history: INITIAL_HISTORY,
 
       aiMessages: INITIAL_AI_MESSAGES,
@@ -510,6 +525,32 @@ export const useFinanceStore = create<FinanceState>()(
         });
       },
 
+      addPolicy: (policyData) => {
+        const newPolicy: InsurancePolicy = {
+          ...policyData,
+          id: `pol_${Date.now()}`,
+        };
+        set((state) => ({
+          policies: [newPolicy, ...state.policies],
+        }));
+      },
+
+      deletePolicy: (id) => {
+        set((state) => ({
+          policies: state.policies.filter((p) => p.id !== id),
+        }));
+      },
+
+      updatePolicyStatus: (id, status) => {
+        set((state) => ({
+          policies: state.policies.map((p) => (p.id === id ? { ...p, status } : p)),
+        }));
+      },
+
+      setEmergencyTargetMonths: (emergencyTargetMonths) => {
+        set({ emergencyTargetMonths });
+      },
+
       resetToFreshPortfolio: (userName = 'Investor') => {
         set({
           assets: [],
@@ -518,6 +559,8 @@ export const useFinanceStore = create<FinanceState>()(
           incomes: [],
           calendarEvents: [],
           debts: [],
+          policies: [],
+          emergencyTargetMonths: 6,
           history: [],
           aiMessages: [
             {
@@ -543,6 +586,8 @@ export const useFinanceStore = create<FinanceState>()(
           incomes: INITIAL_INCOMES,
           calendarEvents: INITIAL_CALENDAR_EVENTS,
           debts: INITIAL_DEBTS,
+          policies: INITIAL_POLICIES,
+          emergencyTargetMonths: 6,
           history: INITIAL_HISTORY,
           aiMessages: INITIAL_AI_MESSAGES,
         });
@@ -622,6 +667,167 @@ export const useFinanceStore = create<FinanceState>()(
           allocationBreakdown,
         };
       },
+
+      getFinancialHealthScore: () => {
+        const { policies, getPortfolioSummary } = get();
+        const summary = getPortfolioSummary();
+
+        // 1. Savings Rate Score (Max 25 pts)
+        let savingsScore = 0;
+        let savingsDetail = '';
+        if (summary.monthlySavingsRate >= 40) {
+          savingsScore = 25;
+          savingsDetail = `Superb ${summary.monthlySavingsRate.toFixed(1)}% savings rate (Benchmark: >40%)`;
+        } else if (summary.monthlySavingsRate >= 25) {
+          savingsScore = 20;
+          savingsDetail = `Healthy ${summary.monthlySavingsRate.toFixed(1)}% savings rate (Benchmark: >25%)`;
+        } else if (summary.monthlySavingsRate >= 15) {
+          savingsScore = 15;
+          savingsDetail = `Moderate ${summary.monthlySavingsRate.toFixed(1)}% savings rate (Target: 30%)`;
+        } else if (summary.monthlySavingsRate > 0) {
+          savingsScore = 10;
+          savingsDetail = `Low ${summary.monthlySavingsRate.toFixed(1)}% savings rate`;
+        } else {
+          savingsScore = 5;
+          savingsDetail = 'Expenses equal or exceed monthly income';
+        }
+
+        // 2. Emergency Runway Score (Max 25 pts)
+        let runwayScore = 0;
+        let runwayDetail = '';
+        if (summary.liquidRunwayMonths >= 6) {
+          runwayScore = 25;
+          runwayDetail = `${summary.liquidRunwayMonths.toFixed(1)} months of emergency cash buffer (Target: 6m)`;
+        } else if (summary.liquidRunwayMonths >= 4) {
+          runwayScore = 20;
+          runwayDetail = `${summary.liquidRunwayMonths.toFixed(1)} months buffer (Almost at 6-month target)`;
+        } else if (summary.liquidRunwayMonths >= 2) {
+          runwayScore = 12;
+          runwayDetail = `${summary.liquidRunwayMonths.toFixed(1)} months runway (Consider building to 6m)`;
+        } else {
+          runwayScore = 5;
+          runwayDetail = 'Under 2 months of emergency cash reserves';
+        }
+
+        // 3. Debt-to-Income / Leverage Score (Max 20 pts)
+        let debtScore = 0;
+        let debtDetail = '';
+        const dti = summary.totalMonthlyIncome > 0
+          ? (summary.totalMonthlyDebtCommitment / summary.totalMonthlyIncome) * 100
+          : summary.totalMonthlyDebtCommitment > 0 ? 100 : 0;
+
+        if (summary.totalDebt === 0) {
+          debtScore = 20;
+          debtDetail = '100% Debt Free with zero loan liabilities';
+        } else if (dti <= 20) {
+          debtScore = 20;
+          debtDetail = `Conservative debt-to-income of ${dti.toFixed(1)}% (Well under 30% ceiling)`;
+        } else if (dti <= 35) {
+          debtScore = 15;
+          debtDetail = `Manageable debt-to-income of ${dti.toFixed(1)}%`;
+        } else if (dti <= 50) {
+          debtScore = 8;
+          debtDetail = `High debt-to-income of ${dti.toFixed(1)}% (Exceeds 35% safe limit)`;
+        } else {
+          debtScore = 3;
+          debtDetail = `Critical debt burden: ${dti.toFixed(1)}% of income going to debt service`;
+        }
+
+        // 4. Asset Diversification Score (Max 15 pts)
+        const activeCategories = summary.allocationBreakdown.filter((a) => a.percentage >= 5).length;
+        let divScore = 0;
+        let divDetail = '';
+        if (activeCategories >= 4) {
+          divScore = 15;
+          divDetail = `Well diversified across ${activeCategories} distinct asset classes`;
+        } else if (activeCategories === 3) {
+          divScore = 12;
+          divDetail = `Good spread across ${activeCategories} asset classes`;
+        } else if (activeCategories === 2) {
+          divScore = 8;
+          divDetail = 'Concentrated in 2 asset classes; consider adding gold or debt funds';
+        } else if (activeCategories === 1) {
+          divScore = 4;
+          divDetail = 'Single asset concentration risk';
+        } else {
+          divScore = 0;
+          divDetail = 'No active asset classes recorded';
+        }
+
+        // 5. Insurance & Protection Score (Max 15 pts)
+        const hasLife = (policies || []).some((p) => p.type === 'TERM_LIFE' && p.status !== 'LAPSED');
+        const hasHealth = (policies || []).some((p) => p.type === 'HEALTH_FLOATER' && p.status !== 'LAPSED');
+        let insScore = 0;
+        let insDetail = '';
+        if (hasLife && hasHealth) {
+          insScore = 15;
+          insDetail = 'Comprehensive protection: Term Life and Family Health Floater active';
+        } else if (hasHealth) {
+          insScore = 8;
+          insDetail = 'Health insurance active; Term life insurance recommended to protect dependents';
+        } else if (hasLife) {
+          insScore = 7;
+          insDetail = 'Term life active; Family health insurance strongly recommended';
+        } else {
+          insScore = 0;
+          insDetail = 'No active health or life insurance recorded (High vulnerability)';
+        }
+
+        const totalScore = savingsScore + runwayScore + debtScore + divScore + insScore;
+        const rating =
+          totalScore >= 85
+            ? 'EXCELLENT'
+            : totalScore >= 70
+            ? 'GOOD'
+            : totalScore >= 50
+            ? 'FAIR'
+            : 'NEEDS_ATTENTION';
+
+        const recommendations: string[] = [];
+        if (summary.liquidRunwayMonths < 6) {
+          recommendations.push(
+            'Build your emergency fund to 6 months of living expenses in an auto-sweep bank account or liquid mutual fund.'
+          );
+        }
+        if (!hasHealth) {
+          recommendations.push(
+            'Secure a comprehensive family health insurance floater (minimum ₹15-25 Lakhs) to shield your portfolio against hospital bills.'
+          );
+        }
+        if (!hasLife && summary.totalMonthlyIncome > 0) {
+          recommendations.push(
+            'Consider a pure term life insurance policy covering 10-15x your annual income.'
+          );
+        }
+        if (dti > 35) {
+          recommendations.push(
+            'Accelerate high-APR debt payments using the Avalanche strategy to bring your debt service below 30% of income.'
+          );
+        }
+        if (activeCategories < 3 && summary.grossAssets > 0) {
+          recommendations.push(
+            'Diversify across non-correlated asset classes like Sovereign Gold Bonds (SGB) or short-term fixed deposits.'
+          );
+        }
+        if (recommendations.length === 0) {
+          recommendations.push(
+            'Outstanding financial discipline! Continue automating your regular monthly SIPs and review policy renewals annually.'
+          );
+        }
+
+        return {
+          totalScore,
+          rating,
+          pillarScores: {
+            savingsRate: { score: savingsScore, maxScore: 25, detail: savingsDetail },
+            emergencyRunway: { score: runwayScore, maxScore: 25, detail: runwayDetail },
+            debtLoad: { score: debtScore, maxScore: 20, detail: debtDetail },
+            diversification: { score: divScore, maxScore: 15, detail: divDetail },
+            insuranceProtection: { score: insScore, maxScore: 15, detail: insDetail },
+          },
+          keyRecommendations: recommendations,
+        };
+      },
     }),
     {
       name: 'finpulse-storage',
@@ -634,6 +840,8 @@ export const useFinanceStore = create<FinanceState>()(
         incomes: state.incomes,
         calendarEvents: state.calendarEvents,
         debts: state.debts,
+        policies: state.policies,
+        emergencyTargetMonths: state.emergencyTargetMonths,
         aiMessages: state.aiMessages,
       }),
     }

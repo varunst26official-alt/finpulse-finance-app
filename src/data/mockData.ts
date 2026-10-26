@@ -10,6 +10,7 @@ import {
   IncomeItem,
   CalendarEvent,
   DebtItem,
+  InsurancePolicy,
 } from '@/types/finance';
 
 // All baseline prices stored in USD for universal calculation ($1 USD = ~₹84.5 INR)
@@ -761,5 +762,55 @@ export const INITIAL_DEBTS: DebtItem[] = [
       },
     ],
     notes: 'Top priority for Avalanche payoff acceleration (38.4% APR).',
+  },
+];
+
+// ============================================================================
+// Sample Protection & Insurance Policies Data
+// ============================================================================
+
+export const INITIAL_POLICIES: InsurancePolicy[] = [
+  {
+    id: 'pol_1',
+    policyName: 'HDFC Life Click 2 Protect Super',
+    type: 'TERM_LIFE',
+    provider: 'HDFC Life Insurance Co.',
+    policyNumber: 'HD-884192-TL',
+    sumAssured: 120000, // ~$120,000 = ~₹1.01 Crore
+    annualPremium: 280, // ~$280 = ~₹23,600 / year
+    renewalDueDate: '2026-11-20',
+    coveredMembers: 'Self (Age 32, Non-smoker)',
+    status: 'DUE_SOON',
+    tpaHelpline: '1800-266-9777',
+    notes: 'Pure protection term plan up to age 75 with terminal illness rider.',
+  },
+  {
+    id: 'pol_2',
+    policyName: 'Star Health Comprehensive Family Floater',
+    type: 'HEALTH_FLOATER',
+    provider: 'Star Health & Allied Insurance',
+    policyNumber: 'SH-229104-HF',
+    sumAssured: 25000, // ~$25,000 = ~₹21.1 Lakhs
+    annualPremium: 350, // ~$350 = ~₹29,500 / year
+    renewalDueDate: '2027-02-15',
+    coveredMembers: 'Self, Spouse & 1 Child',
+    status: 'ACTIVE',
+    cashlessHospitalsCount: 14200,
+    tpaHelpline: '1800-425-2255',
+    notes: 'Zero room rent capping, pre/post hospitalisation covered, maternity benefit included.',
+  },
+  {
+    id: 'pol_3',
+    policyName: 'Tata AIG Auto Secure Comprehensive',
+    type: 'MOTOR_VEHICLE',
+    provider: 'Tata AIG General Insurance',
+    policyNumber: 'TA-449102-MC',
+    sumAssured: 12000, // ~$12,000 = ~₹10.1 Lakhs IDV
+    annualPremium: 180, // ~$180 = ~₹15,200 / year
+    renewalDueDate: '2027-04-10',
+    coveredMembers: 'Hyundai Creta SX (KA-01-MJ-2024)',
+    status: 'ACTIVE',
+    tpaHelpline: '1800-266-7780',
+    notes: 'Bumper-to-bumper zero depreciation cover + engine protector rider.',
   },
 ];

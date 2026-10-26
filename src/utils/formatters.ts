@@ -1,4 +1,13 @@
-import { Currency, AssetCategory, ExpenseCategory, PaymentMethod, IncomeCategory, CalendarEventType, DebtCategory } from '@/types/finance';
+import {
+  Currency,
+  AssetCategory,
+  ExpenseCategory,
+  PaymentMethod,
+  IncomeCategory,
+  CalendarEventType,
+  DebtCategory,
+  InsuranceType,
+} from '@/types/finance';
 
 export const CURRENCY_CONFIGS: Record<Currency, { symbol: string; rateFromUSD: number; locale: string }> = {
   USD: { symbol: '$', rateFromUSD: 1.0, locale: 'en-US' },
@@ -124,4 +133,20 @@ export const DEBT_CATEGORY_COLORS: Record<DebtCategory, { badge: string; border:
   CREDIT_CARD: { badge: 'bg-rose-50 text-rose-800', border: 'border-rose-200', text: 'text-rose-700', hex: '#e11d48' },
   BUSINESS_LOAN: { badge: 'bg-purple-50 text-purple-800', border: 'border-purple-200', text: 'text-purple-700', hex: '#9333ea' },
   PEER_OR_FAMILY: { badge: 'bg-stone-50 text-stone-800', border: 'border-stone-200', text: 'text-stone-700', hex: '#78716c' },
+};
+
+export const INSURANCE_TYPE_LABELS: Record<InsuranceType, string> = {
+  TERM_LIFE: 'Term Life Insurance',
+  HEALTH_FLOATER: 'Family Health Floater',
+  CRITICAL_ILLNESS: 'Critical Illness Rider',
+  MOTOR_VEHICLE: 'Comprehensive Motor Auto',
+  HOME_PROPERTY: 'Home & Property Protection',
+};
+
+export const INSURANCE_TYPE_COLORS: Record<InsuranceType, { badge: string; border: string; text: string; hex: string }> = {
+  TERM_LIFE: { badge: 'bg-indigo-50 text-indigo-800', border: 'border-indigo-200', text: 'text-indigo-700', hex: '#6366f1' },
+  HEALTH_FLOATER: { badge: 'bg-emerald-50 text-emerald-800', border: 'border-emerald-200', text: 'text-emerald-700', hex: '#16a34a' },
+  CRITICAL_ILLNESS: { badge: 'bg-rose-50 text-rose-800', border: 'border-rose-200', text: 'text-rose-700', hex: '#e11d48' },
+  MOTOR_VEHICLE: { badge: 'bg-sky-50 text-sky-800', border: 'border-sky-200', text: 'text-sky-700', hex: '#0284c7' },
+  HOME_PROPERTY: { badge: 'bg-amber-50 text-amber-800', border: 'border-amber-200', text: 'text-amber-700', hex: '#d97706' },
 };
