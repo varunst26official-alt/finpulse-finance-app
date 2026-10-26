@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useFinanceStore } from '@/stores/financeStore';
+import { useLifeOSStore } from '@/stores/lifeosStore';
 import { Currency } from '@/types/finance';
 import { CURRENCY_CONFIGS } from '@/utils/formatters';
 import {
@@ -17,6 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export const LifeOSHeader: React.FC = () => {
   const { user, logout } = useAuthStore();
   const { currency, setCurrency, resetToFreshPortfolio, loadDemoSampleData } = useFinanceStore();
+  const { setIsAiModalOpen } = useLifeOSStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
 
@@ -48,6 +50,16 @@ export const LifeOSHeader: React.FC = () => {
 
       {/* Header Actions */}
       <div className="flex items-center gap-2.5 sm:gap-3">
+        {/* Adaptive AI Life Blueprint Generator Button */}
+        <button
+          onClick={() => setIsAiModalOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[#17365d] to-[#2c527e] text-white hover:from-[#132c4d] hover:to-[#24456b] text-xs font-extrabold transition-all shadow-sm shadow-[#17365d]/20 cursor-pointer"
+          title="Adaptive LifeOS Blueprint Engine"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-[#a47b3c]" />
+          <span className="hidden sm:inline">AI Blueprint</span>
+        </button>
+
         {/* Currency Switcher */}
         <div className="relative">
           <button

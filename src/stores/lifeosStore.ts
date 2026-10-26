@@ -8,6 +8,25 @@ import {
   LearningItem,
   DocumentItem,
 } from '@/types/lifeos';
+import {
+  computeAdaptiveBlueprint,
+  UserAdaptiveInputs,
+  AdaptiveLifeBlueprint,
+} from '@/services/adaptiveLifeEngine';
+
+const DEFAULT_USER_INPUTS: UserAdaptiveInputs = {
+  age: 29,
+  gender: 'MALE',
+  heightCm: 175,
+  weightKg: 74,
+  fitnessGoal: 'FAT_LOSS',
+  intensityLevel: 'MODERATE_FITNESS',
+  dietaryPreference: 'BALANCED_NON_VEG',
+  workHoursPerDay: 8,
+  riskProfile: 'BALANCED',
+};
+
+const INITIAL_BLUEPRINT = computeAdaptiveBlueprint(DEFAULT_USER_INPUTS);
 
 interface LifeOSState {
   currentSection: LifeOSSection;
@@ -18,6 +37,13 @@ interface LifeOSState {
 
   timePeriod: 'week' | 'month' | 'year';
   setTimePeriod: (period: 'week' | 'month' | 'year') => void;
+
+  // Adaptive LifeOS Engine State
+  userInputs: UserAdaptiveInputs;
+  activeBlueprint: AdaptiveLifeBlueprint;
+  isAiModalOpen: boolean;
+  setIsAiModalOpen: (isOpen: boolean) => void;
+  generateAndApplyBlueprint: (customInputs?: Partial<UserAdaptiveInputs>) => void;
 
   // Tasks & Agenda
   tasks: TaskItem[];
@@ -54,6 +80,47 @@ export const useLifeOSStore = create<LifeOSState>()(
 
       timePeriod: 'week',
       setTimePeriod: (timePeriod) => set({ timePeriod }),
+
+      userInputs: DEFAULT_USER_INPUTS,
+      activeBlueprint: INITIAL_BLUEPRINT,
+      isAiModalOpen: false,
+      setIsAiModalOpen: (isAiModalOpen) => set({ isAiModalOpen }),
+
+      generateAndApplyBlueprint: (customInputs) => {
+        set((state) => {
+          const mergedInputs: UserAdaptiveInputs = {
+            ...state.userInputs,
+            ...customInputs,
+          };
+          const blueprint = computeAdaptiveBlueprint(mergedInputs);
+
+          // Dynamically map adaptive agenda to tasks
+          const updatedTasks: TaskItem[] = blueprint.productivityAgenda.map((item, idx) => ({
+            id: `tsk_gen_${Date.now()}_${idx}`,
+            title: item.title,
+            time: item.time,
+            category: item.category,
+            priority: item.priority,
+            status: 'TODO',
+            badgeLabel: item.badge,
+            iconSymbol: item.icon,
+            notes: item.notes,
+          }));
+
+          return {
+            userInputs: mergedInputs,
+            activeBlueprint: blueprint,
+            tasks: updatedTasks,
+            wellness: {
+              ...state.wellness,
+              heightCm: mergedInputs.heightCm,
+              weightKg: mergedInputs.weightKg,
+              caloriesTarget: blueprint.targetCalories,
+              waterTargetLiters: blueprint.dailyWaterTargetLiters,
+            },
+          };
+        });
+      },
 
       tasks: [
         {

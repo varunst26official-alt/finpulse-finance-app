@@ -10,6 +10,7 @@ import { WellnessWorkspace } from '@/components/wellness/WellnessWorkspace';
 import { ProductivityWorkspace } from '@/components/productivity/ProductivityWorkspace';
 import { LearningWorkspace } from '@/components/learning/LearningWorkspace';
 import { LifeAdminWorkspace } from '@/components/lifeadmin/LifeAdminWorkspace';
+import { AdaptiveBlueprintModal } from '@/components/adaptive/AdaptiveBlueprintModal';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
 import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
@@ -84,6 +85,7 @@ export function App() {
 
       {/* 5. Modals & Onboarding Tour */}
       <DemoTourGuide />
+      <AdaptiveBlueprintModal />
       <AddTransactionModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

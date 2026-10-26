@@ -4,13 +4,16 @@ import { useFinanceStore } from '@/stores/financeStore';
 import { SectionHero } from '@/components/layout/SectionHero';
 import { formatCurrency } from '@/utils/formatters';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CheckCircle2, Circle, Sparkles } from 'lucide-react';
 
 export const LifeOverviewWorkspace: React.FC = () => {
   const {
     tasks,
     toggleTaskComplete,
     wellness,
+    userInputs,
+    activeBlueprint,
+    setIsAiModalOpen,
     setCurrentSection,
     timePeriod,
     setTimePeriod,
@@ -40,13 +43,38 @@ export const LifeOverviewWorkspace: React.FC = () => {
       {/* 1. Gradient Hero Banner */}
       <SectionHero
         section="overview"
-        onPrimaryAction={() => {
-          const el = document.getElementById('todays-plan');
-          el?.scrollIntoView({ behavior: 'smooth' });
-        }}
+        onPrimaryAction={() => setIsAiModalOpen(true)}
+        primaryActionLabel="✨ AI Adaptive Engine"
         onSecondaryAction={() => setCurrentSection('finance')}
         secondaryActionLabel="Open Finance Portfolio"
       />
+
+      {/* Adaptive Blueprint Active Status Card */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-[#f5eee3] via-[#fbf9f5] to-white border border-[#e8e0d1] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-[#a47b3c] text-white flex items-center justify-center shrink-0 shadow-sm shadow-[#a47b3c]/20">
+            <Sparkles className="w-4 h-4 text-[#f5eee3]" />
+          </div>
+          <div>
+            <div className="text-xs font-extrabold text-[#243047] flex items-center gap-2">
+              <span>Personalized LifeOS Blueprint Active</span>
+              <span className="px-2 py-0.5 rounded-full bg-[#f5eee3] text-[#a47b3c] text-[10px] font-bold">
+                {userInputs.fitnessGoal.replace('_', ' ')}
+              </span>
+            </div>
+            <p className="text-[11px] text-[#6f7c91] font-medium mt-0.5">
+              Split: <strong className="text-slate-800">{activeBlueprint.workoutSplitName}</strong> · Daily Target: <strong className="text-slate-800">{activeBlueprint.targetCalories} kcal</strong> · Water: <strong className="text-slate-800">{activeBlueprint.dailyWaterTargetLiters} L</strong>
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsAiModalOpen(true)}
+          className="px-3.5 py-1.5 rounded-xl bg-white border border-[#a47b3c] text-[#a47b3c] text-xs font-bold hover:bg-[#f5eee3] transition-all cursor-pointer shadow-xs whitespace-nowrap"
+        >
+          ⚡ Recalibrate Entire LifeOS
+        </button>
+      </div>
 
       {/* 2. Heading Row with Period Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pt-2">
