@@ -61,8 +61,8 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
       />
 
       {/* 2. In-Workspace Sub-module Navigation Pills */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none w-full sm:w-auto">
           {subTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = financeSubTab === tab.id;
@@ -71,7 +71,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setFinanceSubTab(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
                   isActive
                     ? 'bg-[#16836b] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-[#f5f7fb]'
@@ -86,7 +86,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
 
         <button
           onClick={onOpenAddTradeModal}
-          className="px-4 py-2 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-md shadow-[#16836b]/20 transition-all cursor-pointer flex items-center gap-1.5"
+          className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-md shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Record Trade / Inflow</span>

@@ -44,7 +44,7 @@ export function App() {
       <SectionSwitcher />
 
       {/* 3. Main Workspace Container */}
-      <main className="flex-1 w-full max-w-[1500px] mx-auto p-4 sm:p-7 space-y-6">
+      <main className="flex-1 w-full max-w-[1500px] mx-auto p-3.5 sm:p-7 space-y-5 sm:space-y-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSection}

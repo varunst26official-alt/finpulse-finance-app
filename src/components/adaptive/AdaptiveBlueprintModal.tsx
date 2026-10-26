@@ -66,7 +66,7 @@ export const AdaptiveBlueprintModal: React.FC = () => {
         </div>
 
         {/* Modal Subtabs (Inputs vs Live Scientific Preview) */}
-        <div className="flex items-center gap-2 px-6 pt-4 border-b border-[#e4e9f1] shrink-0 bg-[#fafcfe]">
+        <div className="flex items-center gap-4 px-4 sm:px-6 pt-4 border-b border-[#e4e9f1] shrink-0 bg-[#fafcfe] overflow-x-auto scrollbar-none whitespace-nowrap">
           <button
             type="button"
             onClick={() => setActiveTab('PARAMETERS')}

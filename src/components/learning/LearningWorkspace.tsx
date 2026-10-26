@@ -209,7 +209,7 @@ export const LearningWorkspace: React.FC = () => {
       </div>
 
       {/* 3. Sub-Tab Navigation */}
-      <div className="flex items-center gap-2 border-b border-[#e4e9f1] pb-2 text-xs font-bold">
+      <div className="flex items-center gap-2 border-b border-[#e4e9f1] pb-2 text-xs font-bold overflow-x-auto scrollbar-none whitespace-nowrap">
         <button
           onClick={() => setActiveTab('SKILLS')}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
@@ -355,7 +355,7 @@ export const LearningWorkspace: React.FC = () => {
 
           {/* Stopwatch Display */}
           <div className="py-4">
-            <div className="text-6xl sm:text-7xl font-mono font-black text-[#8a5bd6] tracking-tight">
+            <div className="text-4xl sm:text-6xl lg:text-7xl font-mono font-black text-[#8a5bd6] tracking-tight">
               {Math.floor(studySeconds / 3600)}:
               {Math.floor((studySeconds % 3600) / 60)
                 .toString()
@@ -366,7 +366,7 @@ export const LearningWorkspace: React.FC = () => {
           </div>
 
           {/* Controls */}
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             <button
               onClick={() => setIsStudyTimerRunning(!isStudyTimerRunning)}
               className="px-6 py-3 rounded-2xl bg-[#8a5bd6] hover:bg-[#7747c4] text-white text-sm font-extrabold transition-all shadow-lg shadow-[#8a5bd6]/30 cursor-pointer flex items-center gap-2"

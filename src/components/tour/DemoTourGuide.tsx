@@ -102,12 +102,14 @@ export const DemoTourGuide: React.FC = () => {
     const cardWidth = Math.min(480, window.innerWidth - 32);
 
     if (isMobile) {
-      // Mobile: Anchor near bottom
+      // Mobile: Anchor near bottom with comfortable margin
       cardStyle = {
         position: 'fixed',
-        bottom: '24px',
-        left: '16px',
-        right: '16px',
+        bottom: '16px',
+        left: '12px',
+        right: '12px',
+        maxHeight: '85vh',
+        overflowY: 'auto',
         zIndex: 60,
       };
     } else {
@@ -172,7 +174,7 @@ export const DemoTourGuide: React.FC = () => {
       <div
         className={
           !isTargeted
-            ? 'fixed inset-0 z-60 flex items-center justify-center p-4'
+            ? 'fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-4'
             : ''
         }
       >
@@ -183,7 +185,7 @@ export const DemoTourGuide: React.FC = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 15 }}
           transition={{ type: 'spring', damping: 25, stiffness: 320 }}
-          className="w-full max-w-lg rounded-3xl border border-[#e8e0d1] bg-white p-6 shadow-2xl space-y-4 relative z-60"
+          className="w-full max-w-lg max-h-[88vh] overflow-y-auto rounded-3xl border border-[#e8e0d1] bg-white p-4 sm:p-6 shadow-2xl space-y-3.5 sm:space-y-4 relative z-60"
         >
           {/* Top Header Badge & Close Button */}
           <div className="flex items-center justify-between border-b border-[#e8e0d1] pb-3">

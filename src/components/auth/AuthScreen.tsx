@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import {
-  Wallet,
   ShieldCheck,
   Lock,
   Mail,
@@ -62,7 +61,7 @@ export const AuthScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fbf9f5] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
+    <div className="min-h-screen bg-[#fbf9f5] flex items-center justify-center p-3 sm:p-6 lg:p-8 font-sans">
       <motion.div
         initial={{ opacity: 0, scale: 0.97, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -70,56 +69,56 @@ export const AuthScreen: React.FC = () => {
         className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-12 rounded-3xl border border-[#e8e0d1] bg-white shadow-xl shadow-[#dfd5c0]/30 overflow-hidden"
       >
         {/* Left Side: Brand & Value Proposition */}
-        <div className="md:col-span-5 bg-gradient-to-br from-[#f5eee1] via-[#ece2cd] to-[#e4d6bc] p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#e4d7bf]">
+        <div className="md:col-span-5 bg-gradient-to-br from-[#f5eee1] via-[#ece2cd] to-[#e4d6bc] p-5 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#e4d7bf]">
           <div>
             {/* Brand Logo */}
-            <div className="flex items-center gap-3 mb-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-md shadow-[#9e783e]/30">
-                <Wallet className="h-6 w-6" />
+            <div className="flex items-center gap-3 mb-6 sm:mb-8">
+              <div className="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-[#17365d] text-white shadow-md shadow-[#17365d]/30 font-extrabold text-xl sm:text-2xl">
+                L
               </div>
               <div>
-                <span className="font-heading text-2xl font-extrabold tracking-tight text-slate-900">
-                  FinPulse
+                <span className="font-heading text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
+                  LifeOS
                 </span>
                 <span className="block text-xs text-[#866632] font-bold">
-                  Personal Wealth OS
+                  Personal Life Command Centre
                 </span>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <h2 className="text-2xl font-heading font-extrabold text-slate-900 leading-snug">
-                One-Stop Wealth & Fund Intelligence
+            <div className="space-y-2.5">
+              <h2 className="text-xl sm:text-2xl font-heading font-extrabold text-slate-900 leading-snug">
+                One Operating System for Your Whole Life
               </h2>
               <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                Track personal equity, mutual funds, gold bonds, fixed deposits, and crypto with
-                built-in AI forecasting and capital gains tax optimization.
+                Unifying your Finances, Fitness & Clinical Nutrition, Deep Work Productivity,
+                Learning Roadmaps, and Life Administration into a high-performance command centre.
               </p>
             </div>
 
             {/* Feature Checkpoints */}
-            <div className="mt-8 space-y-3.5 text-xs text-slate-800 font-semibold">
+            <div className="mt-6 sm:mt-8 space-y-3 text-xs text-slate-800 font-semibold">
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="h-4 w-4 text-[#9e783e] shrink-0" />
-                <span>Multi-currency real-time conversion (₹, د.إ, $)</span>
+                <span>6 connected lifecycle command workspaces</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="h-4 w-4 text-[#9e783e] shrink-0" />
-                <span>Context-aware AI Wealth Copilot assistant</span>
+                <span>Adaptive AI Blueprint (BMR, TDEE, macro split)</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="h-4 w-4 text-[#9e783e] shrink-0" />
-                <span>FY 2026-27 automated tax harvesting engine</span>
+                <span>Cross-domain situational LifeOS AI Copilot</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="h-4 w-4 text-[#9e783e] shrink-0" />
-                <span>100% Private local encrypted storage</span>
+                <span>Persistent encrypted SQLite storage engine</span>
               </div>
             </div>
           </div>
 
           {/* Quick Demo CTA */}
-          <div className="mt-8 pt-6 border-t border-[#dfd2ba]">
+          <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-[#dfd2ba]">
             <span className="text-xs text-slate-600 block mb-2 font-medium">
               Evaluating as a recruiter or visitor?
             </span>
@@ -136,7 +135,7 @@ export const AuthScreen: React.FC = () => {
         </div>
 
         {/* Right Side: Auth Forms */}
-        <div className="md:col-span-7 p-6 sm:p-10 flex flex-col justify-center bg-white">
+        <div className="md:col-span-7 p-5 sm:p-8 lg:p-10 flex flex-col justify-center bg-white">
           {/* Mode Switcher Tabs */}
           <div className="flex rounded-xl bg-[#f4efe4] p-1.5 border border-[#ded3bf] mb-6">
             <button
