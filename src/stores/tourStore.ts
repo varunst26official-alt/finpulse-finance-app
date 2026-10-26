@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useLifeOSStore } from './lifeosStore';
 
 export interface TourStep {
   id: string;
@@ -15,78 +16,96 @@ export interface TourStep {
 export const TOUR_STEPS: TourStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to FinPulse Wealth OS!',
-    badge: 'Step 1 of 5 • Introduction',
+    title: 'Welcome to LifeOS Command Centre!',
+    badge: 'Step 1 of 6 • Welcome',
     description:
-      'Your next-generation all-in-one financial operating system. Track listed stocks, physical real estate, fixed deposits, spent expenses, and life events with real-time portfolio intelligence.',
+      'Your next-generation personal operating system. Seamlessly uniting your finances, fitness, clinical nutrition, deep work productivity, learning vault, and critical life administration into one high-performance dashboard.',
     featureList: [
-      'Multi-asset net worth & asset allocation donut',
-      'Real-time cash flow & 50%+ savings rate tracking',
-      'Unified multi-asset trade & expense logging',
-      'Financial calendar with life events & report downloads',
+      '6 connected lifecycle workspaces with zero context fragmentation',
+      'Clinical Mifflin-St Jeor BMR, TDEE & macro blueprint recalibration',
+      'Unified task, calendar, habit, and document expiry trackers',
+      'Cross-domain situational AI Copilot with real-time awareness',
     ],
     position: 'center',
-    actionHint: 'Click "Start Tour" to take an interactive walkthrough of your dashboard.',
+    actionHint: 'Click "Start Tour" to take an interactive walkthrough of your command centre.',
   },
   {
-    id: 'kpis',
-    targetId: 'tour-kpi-cards',
-    title: 'Real-time Net Worth & Savings KPIs',
-    badge: 'Step 2 of 5 • Portfolio Health',
+    id: 'workspaces',
+    targetId: 'tour-section-switcher',
+    title: '6 Dedicated Life Workspaces',
+    badge: 'Step 2 of 6 • Navigation',
     description:
-      'Monitor your Total Net Worth across all asset classes, cumulative invested capital, unrealized capital gains (P&L), and your Net Monthly Savings Rate with real-time liquidity surplus.',
+      'Effortlessly switch between your 6 life dimensions: Life Overview, Financial Portfolio, Fitness & Wellness, Productivity & Focus, Learning & Career, and Life Administration.',
     featureList: [
-      'Automatically aggregates physical, liquid, and market holdings',
-      '24-hour return percentage and daily rupee/dollar change',
-      'Dynamic emergency cash runway estimation',
+      'Overview: Daily vitals, priority tasks, and 1-click rapid logging',
+      'Finance: Multi-asset net worth, investment ledger & wealth goals',
+      'Wellness: Mifflin-St Jeor TDEE, workout volume & hydration station',
+      'Productivity & Admin: Pomodoro focus, skill trees & document vault',
     ],
     position: 'bottom',
-    actionHint: 'These metrics refresh automatically with every trade or expense logged.',
+    actionHint: 'Click any workspace button in this sticky navigation bar to switch contexts.',
   },
   {
-    id: 'add-trade',
-    targetId: 'tour-add-trade',
-    title: 'Unified Multi-Asset Entry Hub',
-    badge: 'Step 3 of 5 • One-Click Logging',
+    id: 'blueprint',
+    targetId: 'tour-adaptive-blueprint',
+    title: 'Adaptive AI Life Blueprint',
+    badge: 'Step 3 of 6 • Personal Intelligence',
     description:
-      'Log any trade or financial record in a single place! Features a free live searchable directory of 120+ Indian (NSE/BSE) and US (NASDAQ/NYSE) stocks, crypto, and mutual funds.',
+      'Recalibrate your lifestyle in seconds! Input your age, height, weight, activity factor, and target goal. LifeOS computes your Mifflin-St Jeor BMR, TDEE, protein targets (1.8–2.2g/kg), workout split, and hydration baseline.',
     featureList: [
-      'Instant autocomplete with live prices & custom ticker adder',
-      'Fixed Assets mode: Real estate, Bank FDs, SGB gold, PPF',
-      'Spent Expenses mode: Rent, EMI, groceries, utilities via UPI/Card',
-      'Income Inflows mode: Salary, rental yields, freelance payouts',
+      'Clinical Mifflin-St Jeor BMR & PAL energy calculation formula',
+      'Tailored 7-day hypertrophy, strength, or endurance workout split',
+      'Dynamic macro targets (Protein, Carbs, Fat) & daily meal plan',
+      'Real-time recalculation whenever your biometrics or goals change',
     ],
     position: 'bottom',
-    actionHint: 'Click "+ Add Trade" in the navbar anytime to open the unified hub.',
+    actionHint: 'Click "AI Blueprint" in the top bar anytime to recalibrate your personalized plan.',
+  },
+  {
+    id: 'quick-actions',
+    targetId: 'tour-quick-actions',
+    title: '1-Click Rapid Action Logger',
+    badge: 'Step 4 of 6 • Rapid Logging',
+    description:
+      'Log daily habits in seconds without leaving your flow. Log hydration glasses, record workout sessions, track daily meals and calories, or create urgent prioritized tasks directly from your overview.',
+    featureList: [
+      '+250ml & +500ml instant water bottle logging',
+      '+15m & +30m workout session quick tracker',
+      'Food & calorie intake logger with macro tracking',
+      'Fast task creation with High/Medium/Low priority flags',
+    ],
+    position: 'bottom',
+    actionHint: 'Use these 1-click quick action buttons throughout your day to maintain momentum.',
   },
   {
     id: 'currency',
     targetId: 'tour-currency-switcher',
-    title: 'Instant Multi-Currency Engine',
-    badge: 'Step 4 of 5 • Global Benchmarking',
+    title: 'Multi-Currency & Global Data Engine',
+    badge: 'Step 5 of 6 • Global Settings',
     description:
-      'Seamlessly switch your active display currency between Indian Rupee (₹ INR), UAE Dirham (د.إ AED), and US Dollar ($ USD). All conversions calculate in real-time across charts, holdings, and reports.',
+      'Seamlessly switch your active display currency between Indian Rupee (₹ INR), US Dollar ($ USD), and UAE Dirham (د.إ AED). All investment charts, net worth totals, and financial targets update instantly.',
     featureList: [
-      'Anchored with institutional FX exchange rates',
-      'Zero reload needed — converts charts and tooltips instantly',
+      'Instant real-time currency conversion across all financial tabs',
+      'One-click demo sample data loader for portfolio exploration',
+      'Safe reset to a clean ₹0 fresh portfolio from your profile',
     ],
     position: 'bottom',
-    actionHint: 'Try clicking "د.إ AED" or "$ USD" to convert your portfolio on the fly.',
+    actionHint: 'Click the currency badge to switch between INR, USD, and AED.',
   },
   {
-    id: 'calendar',
-    targetId: 'tour-calendar-nav',
-    title: 'Financial Calendar & Life Events',
-    badge: 'Step 5 of 5 • Cash Flow Planning',
+    id: 'copilot',
+    targetId: 'tour-floating-copilot',
+    title: 'Conversational LifeOS AI Copilot',
+    badge: 'Step 6 of 6 • AI Strategist',
     description:
-      'Schedule planned expenses, EMI due dates, mutual fund SIP debits, family birthdays, and annual medical checkups. Visualizes expected inflows vs. outflows and exports PDF/CSV reports!',
+      'Your 24/7 personal strategist. The AI Copilot has full cross-domain situational awareness across all 6 workspaces. Ask about your net worth, macro balance, study roadmap, or upcoming document renewals.',
     featureList: [
-      'Color-coded event dots on month calendar cells',
-      'Dual-bar cash flow projection chart with net balance curve',
-      'Download print-ready PDF statements or export CSV spreadsheets',
+      'Full cross-domain awareness across finances, health, tasks & admin',
+      'Pre-configured 1-click prompt starters for rapid guidance',
+      'Clean formatted markdown responses with actionable recommendations',
     ],
-    position: 'right',
-    actionHint: 'Access via the sidebar navigation or scroll down to the calendar on your dashboard.',
+    position: 'top',
+    actionHint: 'Click the floating robot icon at the bottom-right anytime to chat with LifeOS AI!',
   },
 ];
 
@@ -94,11 +113,13 @@ interface TourState {
   hasSeenTour: boolean;
   isTourOpen: boolean;
   currentStepIndex: number;
+  seenUserIds: string[];
   startTour: () => void;
-  nextStep: () => void;
+  nextStep: (userId?: string) => void;
   prevStep: () => void;
-  skipTour: () => void;
+  skipTour: (userId?: string) => void;
   resetTour: () => void;
+  markTourCompleted: (userId?: string) => void;
 }
 
 export const useTourStore = create<TourState>()(
@@ -107,18 +128,27 @@ export const useTourStore = create<TourState>()(
       hasSeenTour: false,
       isTourOpen: false,
       currentStepIndex: 0,
+      seenUserIds: [],
 
       startTour: () => {
+        // Ensure overview section is active so quick actions are visible in the DOM
+        try {
+          useLifeOSStore.getState().setCurrentSection('overview');
+        } catch (_) {}
         set({ isTourOpen: true, currentStepIndex: 0 });
       },
 
-      nextStep: () => {
-        const { currentStepIndex } = get();
+      nextStep: (userId?: string) => {
+        const { currentStepIndex, seenUserIds } = get();
         if (currentStepIndex < TOUR_STEPS.length - 1) {
           set({ currentStepIndex: currentStepIndex + 1 });
         } else {
           // Completed all steps
-          set({ isTourOpen: false, hasSeenTour: true });
+          const newSeen =
+            userId && !seenUserIds.includes(userId)
+              ? [...seenUserIds, userId]
+              : seenUserIds;
+          set({ isTourOpen: false, hasSeenTour: true, seenUserIds: newSeen });
         }
       },
 
@@ -129,19 +159,37 @@ export const useTourStore = create<TourState>()(
         }
       },
 
-      skipTour: () => {
-        set({ isTourOpen: false, hasSeenTour: true });
+      skipTour: (userId?: string) => {
+        const { seenUserIds } = get();
+        const newSeen =
+          userId && !seenUserIds.includes(userId)
+            ? [...seenUserIds, userId]
+            : seenUserIds;
+        set({ isTourOpen: false, hasSeenTour: true, seenUserIds: newSeen });
       },
 
       resetTour: () => {
+        try {
+          useLifeOSStore.getState().setCurrentSection('overview');
+        } catch (_) {}
         set({ hasSeenTour: false, isTourOpen: true, currentStepIndex: 0 });
+      },
+
+      markTourCompleted: (userId?: string) => {
+        const { seenUserIds } = get();
+        const newSeen =
+          userId && !seenUserIds.includes(userId)
+            ? [...seenUserIds, userId]
+            : seenUserIds;
+        set({ isTourOpen: false, hasSeenTour: true, seenUserIds: newSeen });
       },
     }),
     {
-      name: 'finpulse-tour-storage',
+      name: 'lifeos-tour-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         hasSeenTour: state.hasSeenTour,
+        seenUserIds: state.seenUserIds || [],
       }),
     }
   )

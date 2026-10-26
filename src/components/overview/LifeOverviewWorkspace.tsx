@@ -259,7 +259,10 @@ export const LifeOverviewWorkspace: React.FC = () => {
       </div>
 
       {/* 4. Interactive Quick-Action Drawer Bar */}
-      <div className="p-4 rounded-2xl bg-white border border-[#e4e9f1] shadow-xs flex flex-wrap items-center justify-between gap-3">
+      <div
+        id="tour-quick-actions"
+        className="p-4 rounded-2xl bg-white border border-[#e4e9f1] shadow-xs flex flex-wrap items-center justify-between gap-3"
+      >
         <div className="flex items-center gap-2">
           <span className="text-xs font-extrabold text-[#243047] flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-[#a47b3c]" />

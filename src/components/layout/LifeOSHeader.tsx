@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useFinanceStore } from '@/stores/financeStore';
 import { useLifeOSStore } from '@/stores/lifeosStore';
+import { useTourStore } from '@/stores/tourStore';
 import { Currency } from '@/types/finance';
 import { CURRENCY_CONFIGS } from '@/utils/formatters';
 import {
@@ -12,6 +13,7 @@ import {
   Trash2,
   DollarSign,
   ShieldCheck,
+  Compass,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -19,6 +21,7 @@ export const LifeOSHeader: React.FC = () => {
   const { user, logout } = useAuthStore();
   const { currency, setCurrency, resetToFreshPortfolio, loadDemoSampleData } = useFinanceStore();
   const { setIsAiModalOpen } = useLifeOSStore();
+  const { startTour, resetTour } = useTourStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
 
@@ -49,9 +52,10 @@ export const LifeOSHeader: React.FC = () => {
       </div>
 
       {/* Header Actions */}
-      <div className="flex items-center gap-2.5 sm:gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* Adaptive AI Life Blueprint Generator Button */}
         <button
+          id="tour-adaptive-blueprint"
           onClick={() => setIsAiModalOpen(true)}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[#17365d] to-[#2c527e] text-white hover:from-[#132c4d] hover:to-[#24456b] text-xs font-extrabold transition-all shadow-sm shadow-[#17365d]/20 cursor-pointer"
           title="Adaptive LifeOS Blueprint Engine"
@@ -60,8 +64,18 @@ export const LifeOSHeader: React.FC = () => {
           <span className="hidden sm:inline">AI Blueprint</span>
         </button>
 
+        {/* Guided Walkthrough Tour Button */}
+        <button
+          onClick={startTour}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#a47b3c]/35 bg-[#faf6ef] text-[#866632] hover:bg-[#f5eee3] hover:border-[#a47b3c] text-xs font-bold transition-all shadow-xs cursor-pointer group"
+          title="Take an Interactive Guided Tour of LifeOS"
+        >
+          <Compass className="w-3.5 h-3.5 text-[#a47b3c] group-hover:rotate-45 transition-transform duration-300 shrink-0" />
+          <span className="font-extrabold">Tour</span>
+        </button>
+
         {/* Currency Switcher */}
-        <div className="relative">
+        <div className="relative" id="tour-currency-switcher">
           <button
             onClick={() => {
               setIsCurrencyOpen(!isCurrencyOpen);
@@ -157,6 +171,17 @@ export const LifeOSHeader: React.FC = () => {
                 </div>
 
                 <div className="py-1">
+                  <button
+                    onClick={() => {
+                      setIsProfileOpen(false);
+                      resetTour();
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-xl text-slate-700 hover:bg-[#f5f7fb] transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <Compass className="w-3.5 h-3.5 text-[#a47b3c]" />
+                    <span>Restart LifeOS Tour</span>
+                  </button>
+
                   <button
                     onClick={() => {
                       loadDemoSampleData();

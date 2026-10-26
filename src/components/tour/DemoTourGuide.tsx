@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTourStore, TOUR_STEPS } from '@/stores/tourStore';
+import { useAuthStore } from '@/stores/authStore';
+import { useLifeOSStore } from '@/stores/lifeosStore';
 import {
   Sparkles,
   ArrowRight,
@@ -12,10 +14,13 @@ import {
 import { motion } from 'framer-motion';
 
 export const DemoTourGuide: React.FC = () => {
+  const { user } = useAuthStore();
+  const { currentSection, setCurrentSection } = useLifeOSStore();
   const {
     isTourOpen,
     currentStepIndex,
     hasSeenTour,
+    seenUserIds,
     startTour,
     nextStep,
     prevStep,
@@ -25,17 +30,28 @@ export const DemoTourGuide: React.FC = () => {
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Automatically trigger tour for first-time user after 700ms initial mount delay
+  // Automatically trigger tour for first-time login user after 750ms mount delay
   useEffect(() => {
-    if (!hasSeenTour && !isTourOpen) {
+    const isFirstTimeUser = user?.id
+      ? !seenUserIds?.includes(user.id)
+      : !hasSeenTour;
+
+    if (isFirstTimeUser && !isTourOpen) {
       const timer = setTimeout(() => {
         startTour();
-      }, 700);
+      }, 750);
       return () => clearTimeout(timer);
     }
-  }, [hasSeenTour, isTourOpen, startTour]);
+  }, [user?.id, seenUserIds, hasSeenTour, isTourOpen, startTour]);
 
   const currentStep = TOUR_STEPS[currentStepIndex];
+
+  // If step requires overview workspace (like quick-actions), switch section if needed
+  useEffect(() => {
+    if (isTourOpen && currentStep?.id === 'quick-actions' && currentSection !== 'overview') {
+      setCurrentSection('overview');
+    }
+  }, [isTourOpen, currentStep, currentSection, setCurrentSection]);
 
   // Measure and scroll to target element
   useEffect(() => {
@@ -45,28 +61,27 @@ export const DemoTourGuide: React.FC = () => {
     }
 
     if (currentStep && currentStep.targetId) {
-      const el = document.getElementById(currentStep.targetId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        const updateRect = () => {
+      const updatePosition = () => {
+        const el = document.getElementById(currentStep.targetId!);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
           const rect = el.getBoundingClientRect();
           setTargetRect(rect);
-        };
+        } else {
+          setTargetRect(null);
+        }
+      };
 
-        // Initial delay to let smooth scroll settle
-        const timer = setTimeout(updateRect, 300);
-        window.addEventListener('resize', updateRect);
-        window.addEventListener('scroll', updateRect);
+      // Slight delay to allow smooth scrolling and workspace animations to settle
+      const timer = setTimeout(updatePosition, 320);
+      window.addEventListener('resize', updatePosition);
+      window.addEventListener('scroll', updatePosition);
 
-        return () => {
-          clearTimeout(timer);
-          window.removeEventListener('resize', updateRect);
-          window.removeEventListener('scroll', updateRect);
-        };
-      } else {
-        setTargetRect(null);
-      }
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('resize', updatePosition);
+        window.removeEventListener('scroll', updatePosition);
+      };
     } else {
       setTargetRect(null);
     }
@@ -84,7 +99,7 @@ export const DemoTourGuide: React.FC = () => {
   if (isTargeted && targetRect) {
     const isMobile = window.innerWidth < 768;
     const padding = 16;
-    const cardWidth = Math.min(460, window.innerWidth - 32);
+    const cardWidth = Math.min(480, window.innerWidth - 32);
 
     if (isMobile) {
       // Mobile: Anchor near bottom
@@ -100,7 +115,7 @@ export const DemoTourGuide: React.FC = () => {
       const targetCenterX = targetRect.left + targetRect.width / 2;
       let left = targetCenterX - cardWidth / 2;
 
-      // Ensure card stays on-screen
+      // Ensure card stays on-screen horizontally
       if (left < padding) left = padding;
       if (left + cardWidth > window.innerWidth - padding) {
         left = window.innerWidth - cardWidth - padding;
@@ -108,8 +123,8 @@ export const DemoTourGuide: React.FC = () => {
 
       // Check vertical space (Prefer below target, otherwise above)
       let top = targetRect.bottom + 14;
-      if (top + 340 > window.innerHeight) {
-        top = Math.max(padding, targetRect.top - 360);
+      if (top + 380 > window.innerHeight) {
+        top = Math.max(padding, targetRect.top - 400);
       }
 
       cardStyle = {
@@ -130,7 +145,7 @@ export const DemoTourGuide: React.FC = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25 }}
-        onClick={skipTour}
+        onClick={() => skipTour(user?.id)}
         className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs cursor-pointer"
       />
 
@@ -149,7 +164,7 @@ export const DemoTourGuide: React.FC = () => {
             pointerEvents: 'none',
             zIndex: 55,
           }}
-          className="rounded-2xl border-2 border-[#9e783e] shadow-[0_0_0_9999px_rgba(15,23,42,0.45)] ring-4 ring-[#9e783e]/30 transition-all duration-300"
+          className="rounded-2xl border-2 border-[#a47b3c] shadow-[0_0_0_9999px_rgba(15,23,42,0.50)] ring-4 ring-[#a47b3c]/35 transition-all duration-300"
         />
       )}
 
@@ -173,7 +188,7 @@ export const DemoTourGuide: React.FC = () => {
           {/* Top Header Badge & Close Button */}
           <div className="flex items-center justify-between border-b border-[#e8e0d1] pb-3">
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#faf8f5] text-[#9e783e] border border-[#e8e0d1]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#faf8f5] text-[#a47b3c] border border-[#e8e0d1]">
                 <Compass className="h-4 w-4" />
               </span>
               <span className="text-xs font-bold text-[#866632] uppercase tracking-wider">
@@ -182,9 +197,9 @@ export const DemoTourGuide: React.FC = () => {
             </div>
 
             <button
-              onClick={skipTour}
+              onClick={() => skipTour(user?.id)}
               className="rounded-xl p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-              title="Skip Demo Tour"
+              title="Skip Tour"
             >
               <X className="h-4 w-4" />
             </button>
@@ -193,7 +208,7 @@ export const DemoTourGuide: React.FC = () => {
           {/* Title & Description */}
           <div className="space-y-1.5">
             <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-[#9e783e] shrink-0" />
+              <Sparkles className="h-5 w-5 text-[#a47b3c] shrink-0" />
               {currentStep.title}
             </h3>
             <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans">
@@ -215,7 +230,7 @@ export const DemoTourGuide: React.FC = () => {
 
           {/* Action Hint / Tip Box */}
           {currentStep.actionHint && (
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50/60 border border-amber-200/60 text-xs text-amber-900">
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/70 text-xs text-amber-900">
               <Lightbulb className="h-4 w-4 text-amber-600 shrink-0" />
               <span className="font-semibold text-[11px]">{currentStep.actionHint}</span>
             </div>
@@ -230,7 +245,7 @@ export const DemoTourGuide: React.FC = () => {
                   key={i}
                   className={`h-2 rounded-full transition-all ${
                     i === currentStepIndex
-                      ? 'w-6 bg-[#9e783e]'
+                      ? 'w-6 bg-[#a47b3c]'
                       : i < currentStepIndex
                       ? 'w-2 bg-emerald-600'
                       : 'w-2 bg-slate-200'
@@ -254,8 +269,8 @@ export const DemoTourGuide: React.FC = () => {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={nextStep}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#9e783e] text-white text-xs font-bold shadow-md shadow-[#9e783e]/20 hover:bg-[#866632] transition-all cursor-pointer"
+                onClick={() => nextStep(user?.id)}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#17365d] text-white text-xs font-bold shadow-md shadow-[#17365d]/20 hover:bg-[#132c4d] transition-all cursor-pointer"
               >
                 <span>{isLastStep ? 'Explore Dashboard' : isFirstStep ? 'Start Tour' : 'Next Step'}</span>
                 <ArrowRight className="h-3.5 w-3.5" />

@@ -126,6 +126,7 @@ export const SectionSwitcher: React.FC = () => {
 
   return (
     <nav
+      id="tour-section-switcher"
       className="bg-white border-b border-[#e4e9f1] px-4 sm:px-7 py-3 sticky top-[72px] z-20 select-none overflow-x-auto scrollbar-none"
       aria-label="Application sections"
     >
