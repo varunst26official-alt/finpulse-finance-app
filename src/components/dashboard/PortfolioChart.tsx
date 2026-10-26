@@ -12,6 +12,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export const PortfolioChart: React.FC = () => {
   const { history, currency } = useFinanceStore();
@@ -24,60 +25,63 @@ export const PortfolioChart: React.FC = () => {
   }));
 
   return (
-    <div className="rounded-2xl border border-[#e8dfcf] bg-white p-5 shadow-xs flex flex-col justify-between">
+    <motion.div
+      whileHover={{ y: -2, transition: { duration: 0.2 } }}
+      className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
         <div>
-          <h3 className="text-base font-bold text-[#2b2823] flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-[#2d6a4f]" />
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-emerald-700" />
             12-Month Net Worth Trajectory
           </h3>
-          <p className="text-xs text-[#786e5e] font-mono mt-0.5">
-            Compound growth vs cumulative invested capital
+          <p className="text-xs text-slate-600 mt-0.5">
+            Historical compound growth versus cumulative invested capital
           </p>
         </div>
-        <div className="flex items-center gap-3 text-xs font-mono">
-          <div className="flex items-center gap-1.5 text-[#2d6a4f] font-bold">
-            <span className="h-2 w-2 rounded-full bg-[#2d6a4f]"></span>
+        <div className="flex items-center gap-4 text-xs font-semibold">
+          <div className="flex items-center gap-1.5 text-emerald-700">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-600"></span>
             <span>Net Worth</span>
           </div>
-          <div className="flex items-center gap-1.5 text-[#9c783e]">
-            <span className="h-2 w-2 rounded-full bg-[#9c783e]"></span>
+          <div className="flex items-center gap-1.5 text-amber-800">
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-600"></span>
             <span>Invested</span>
           </div>
         </div>
       </div>
 
       {/* Recharts Area Container */}
-      <div className="h-64 w-full">
+      <div className="h-72 w-full pt-2">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="netWorthGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#2d6a4f" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#2d6a4f" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#15803d" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#15803d" stopOpacity={0.0} />
               </linearGradient>
               <linearGradient id="investedGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#9c783e" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#9c783e" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#b45309" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#b45309" stopOpacity={0.0} />
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0ebe1" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
 
             <XAxis
               dataKey="date"
-              stroke="#8c8273"
-              fontSize={11}
-              fontFamily="monospace"
+              stroke="#64748b"
+              fontSize={12}
+              fontWeight={600}
               tickLine={false}
               axisLine={false}
             />
 
             <YAxis
-              stroke="#8c8273"
-              fontSize={11}
-              fontFamily="monospace"
+              stroke="#64748b"
+              fontSize={12}
+              fontWeight={600}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => {
@@ -91,9 +95,9 @@ export const PortfolioChart: React.FC = () => {
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div className="rounded-xl border border-[#ded3bf] bg-white p-3 shadow-lg font-mono text-xs space-y-1">
-                      <div className="text-[#786e5e] font-semibold mb-1">{label}</div>
-                      <div className="flex justify-between gap-4 text-[#2d6a4f] font-bold">
+                    <div className="rounded-xl border border-[#e2d8c7] bg-white p-3.5 shadow-xl text-xs space-y-1.5">
+                      <div className="text-slate-500 font-bold mb-1">{label}</div>
+                      <div className="flex justify-between gap-6 text-emerald-800 font-extrabold text-sm">
                         <span>Net Worth:</span>
                         <span>
                           {formatCurrency(
@@ -102,7 +106,7 @@ export const PortfolioChart: React.FC = () => {
                           )}
                         </span>
                       </div>
-                      <div className="flex justify-between gap-4 text-[#9c783e]">
+                      <div className="flex justify-between gap-6 text-amber-900 font-semibold">
                         <span>Invested:</span>
                         <span>
                           {formatCurrency(
@@ -121,15 +125,15 @@ export const PortfolioChart: React.FC = () => {
             <Area
               type="monotone"
               dataKey="netWorth"
-              stroke="#2d6a4f"
-              strokeWidth={2.5}
+              stroke="#15803d"
+              strokeWidth={3}
               fillOpacity={1}
               fill="url(#netWorthGrad)"
             />
             <Area
               type="monotone"
               dataKey="invested"
-              stroke="#9c783e"
+              stroke="#b45309"
               strokeWidth={2}
               strokeDasharray="4 4"
               fillOpacity={1}
@@ -138,6 +142,6 @@ export const PortfolioChart: React.FC = () => {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </motion.div>
   );
 };

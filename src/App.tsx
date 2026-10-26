@@ -15,6 +15,7 @@ import { StockPredictor } from '@/components/predictions/StockPredictor';
 import { MarketIntelligenceFeed } from '@/components/news/MarketIntelligenceFeed';
 import { TaxOptimizer } from '@/components/tax/TaxOptimizer';
 import { AuthScreen } from '@/components/auth/AuthScreen';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   PieChart,
@@ -52,7 +53,7 @@ export function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-[#2b2823] flex flex-col font-sans selection:bg-[#9c783e] selection:text-white">
+    <div className="min-h-screen bg-[#fbf9f5] text-slate-900 flex flex-col font-sans selection:bg-[#9e783e] selection:text-white">
       {/* Top Navbar */}
       <Navbar onOpenAddModal={() => setIsAddModalOpen(true)} />
 
@@ -61,10 +62,10 @@ export function App() {
         {/* Desktop Sidebar */}
         <Sidebar />
 
-        {/* Dynamic Main View Area */}
+        {/* Dynamic Main View Area with Smooth Transitions */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 pb-20 md:pb-8">
           {/* Mobile Tab Bar (Scrollable on small viewports) */}
-          <div className="flex md:hidden overflow-x-auto rounded-xl bg-white border border-[#e8dfcf] p-1 text-xs font-mono scrollbar-none gap-1 shadow-xs">
+          <div className="flex md:hidden overflow-x-auto rounded-2xl bg-white border border-[#e8e0d1] p-1.5 text-xs font-semibold scrollbar-none gap-1.5 shadow-xs">
             {mobileTabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -72,93 +73,79 @@ export function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  className={`flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold transition-all whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-[#9c783e] text-white shadow-xs'
-                      : 'text-[#786e5e] hover:text-[#2b2823] hover:bg-[#f4efe4]'
+                      ? 'bg-[#9e783e] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-[#f5efe4]'
                   }`}
                 >
-                  <Icon className="h-3.5 w-3.5" />
+                  <Icon className="h-4 w-4" />
                   <span>{tab.label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Tab 1: Overview Dashboard */}
-          {activeTab === 'dashboard' && (
-            <div className="space-y-6">
-              <StatCards />
+          {/* Smooth Animated Tab Content Crossfade */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="space-y-6"
+            >
+              {/* Tab 1: Overview Dashboard */}
+              {activeTab === 'dashboard' && (
+                <>
+                  <StatCards />
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2">
+                      <PortfolioChart />
+                    </div>
+                    <div>
+                      <AllocationDonut />
+                    </div>
+                  </div>
+                  <TransactionTable />
+                </>
+              )}
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <PortfolioChart />
-                </div>
-                <div>
-                  <AllocationDonut />
-                </div>
-              </div>
+              {/* Tab 2: Holdings & Asset Allocation */}
+              {activeTab === 'investments' && (
+                <>
+                  <StatCards />
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2">
+                      <HoldingsTable />
+                    </div>
+                    <div>
+                      <AllocationDonut />
+                    </div>
+                  </div>
+                </>
+              )}
 
-              <TransactionTable />
-            </div>
-          )}
+              {/* Tab 3: Transactions Ledger */}
+              {activeTab === 'transactions' && <TransactionTable />}
 
-          {/* Tab 2: Holdings & Asset Allocation */}
-          {activeTab === 'investments' && (
-            <div className="space-y-6">
-              <StatCards />
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <HoldingsTable />
-                </div>
-                <div>
-                  <AllocationDonut />
-                </div>
-              </div>
-            </div>
-          )}
+              {/* Tab 4: SIP & Wealth Projection Calculator */}
+              {activeTab === 'goals' && <SipCalculator />}
 
-          {/* Tab 3: Transactions Ledger */}
-          {activeTab === 'transactions' && (
-            <div className="space-y-6">
-              <TransactionTable />
-            </div>
-          )}
+              {/* Tab 5: AI Wealth Copilot (Chatbot) */}
+              {activeTab === 'ai-chat' && <AiWealthCopilot />}
 
-          {/* Tab 4: SIP & Wealth Projection Calculator */}
-          {activeTab === 'goals' && (
-            <div className="space-y-6">
-              <SipCalculator />
-            </div>
-          )}
+              {/* Tab 6: AI Stock & Asset Price Predictor */}
+              {activeTab === 'predictions' && <StockPredictor />}
 
-          {/* Tab 5: AI Wealth Copilot (Chatbot) */}
-          {activeTab === 'ai-chat' && (
-            <div className="space-y-6">
-              <AiWealthCopilot />
-            </div>
-          )}
+              {/* Tab 7: Live Market Intelligence & Macro News */}
+              {activeTab === 'news' && <MarketIntelligenceFeed />}
 
-          {/* Tab 6: AI Stock & Asset Price Predictor */}
-          {activeTab === 'predictions' && (
-            <div className="space-y-6">
-              <StockPredictor />
-            </div>
-          )}
-
-          {/* Tab 7: Live Market Intelligence & Macro News */}
-          {activeTab === 'news' && (
-            <div className="space-y-6">
-              <MarketIntelligenceFeed />
-            </div>
-          )}
-
-          {/* Tab 8: Capital Gains & Tax Harvesting Optimizer */}
-          {activeTab === 'tax' && (
-            <div className="space-y-6">
-              <TaxOptimizer />
-            </div>
-          )}
+              {/* Tab 8: Capital Gains & Tax Harvesting Optimizer */}
+              {activeTab === 'tax' && <TaxOptimizer />}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 

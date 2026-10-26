@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
 import { formatCurrency, CURRENCY_CONFIGS } from '@/utils/formatters';
 import { Calculator, ShieldAlert } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export const SipCalculator: React.FC = () => {
   const { currency } = useFinanceStore();
@@ -28,25 +29,28 @@ export const SipCalculator: React.FC = () => {
   }, [monthlyInvestment, expectedReturnRate, timePeriodYears, config.rateFromUSD]);
 
   return (
-    <div className="rounded-2xl border border-[#e8dfcf] bg-white p-6 shadow-xs space-y-6">
+    <motion.div
+      whileHover={{ y: -2, transition: { duration: 0.2 } }}
+      className="rounded-2xl border border-[#e8e0d1] bg-white p-7 shadow-xs hover:shadow-md transition-all space-y-6"
+    >
       <div>
-        <h3 className="text-lg font-bold text-[#2b2823] flex items-center gap-2">
-          <Calculator className="h-5 w-5 text-[#9c783e]" />
+        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <Calculator className="h-5 w-5 text-[#9e783e]" />
           SIP & Compound Wealth Projection Calculator
         </h3>
-        <p className="text-xs text-[#786e5e] font-mono mt-0.5">
+        <p className="text-xs text-slate-600 mt-0.5 font-medium">
           Simulate long-term capital accumulation with automated rupee-cost averaging
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Sliders Input Controls */}
-        <div className="space-y-5 font-mono text-xs">
+        <div className="space-y-6 text-xs">
           {/* Monthly Investment Slider */}
           <div>
-            <div className="flex justify-between items-center mb-1 text-[#443f36]">
-              <span className="font-semibold">Monthly Contribution</span>
-              <span className="text-[#9c783e] font-bold text-sm">
+            <div className="flex justify-between items-center mb-1.5 text-slate-800">
+              <span className="font-bold text-sm">Monthly Contribution</span>
+              <span className="text-[#9e783e] font-extrabold text-base">
                 {formatCurrency(monthlyInvestment / config.rateFromUSD, currency)}/mo
               </span>
             </div>
@@ -57,9 +61,9 @@ export const SipCalculator: React.FC = () => {
               step={1000}
               value={monthlyInvestment}
               onChange={(e) => setMonthlyInvestment(Number(e.target.value))}
-              className="w-full accent-[#9c783e] cursor-pointer"
+              className="w-full accent-[#9e783e] cursor-pointer h-2 bg-slate-200 rounded-lg"
             />
-            <div className="flex justify-between text-[10px] text-[#786e5e] mt-0.5">
+            <div className="flex justify-between text-xs text-slate-500 font-medium mt-1">
               <span>{formatCurrency(1000 / config.rateFromUSD, currency)}</span>
               <span>{formatCurrency(200000 / config.rateFromUSD, currency)}</span>
             </div>
@@ -67,9 +71,9 @@ export const SipCalculator: React.FC = () => {
 
           {/* Expected Return Rate */}
           <div>
-            <div className="flex justify-between items-center mb-1 text-[#443f36]">
-              <span className="font-semibold">Expected Annual Return</span>
-              <span className="text-[#9c783e] font-bold text-sm">{expectedReturnRate}% p.a.</span>
+            <div className="flex justify-between items-center mb-1.5 text-slate-800">
+              <span className="font-bold text-sm">Expected Annual Return</span>
+              <span className="text-[#9e783e] font-extrabold text-base">{expectedReturnRate}% p.a.</span>
             </div>
             <input
               type="range"
@@ -78,9 +82,9 @@ export const SipCalculator: React.FC = () => {
               step={0.5}
               value={expectedReturnRate}
               onChange={(e) => setExpectedReturnRate(Number(e.target.value))}
-              className="w-full accent-[#9c783e] cursor-pointer"
+              className="w-full accent-[#9e783e] cursor-pointer h-2 bg-slate-200 rounded-lg"
             />
-            <div className="flex justify-between text-[10px] text-[#786e5e] mt-0.5">
+            <div className="flex justify-between text-xs text-slate-500 font-medium mt-1">
               <span>6% (Conservative)</span>
               <span>15% (Aggressive)</span>
               <span>25%</span>
@@ -89,9 +93,9 @@ export const SipCalculator: React.FC = () => {
 
           {/* Time Horizon */}
           <div>
-            <div className="flex justify-between items-center mb-1 text-[#443f36]">
-              <span className="font-semibold">Investment Horizon</span>
-              <span className="text-[#9c783e] font-bold text-sm">{timePeriodYears} Years</span>
+            <div className="flex justify-between items-center mb-1.5 text-slate-800">
+              <span className="font-bold text-sm">Investment Horizon</span>
+              <span className="text-[#9e783e] font-extrabold text-base">{timePeriodYears} Years</span>
             </div>
             <input
               type="range"
@@ -100,9 +104,9 @@ export const SipCalculator: React.FC = () => {
               step={1}
               value={timePeriodYears}
               onChange={(e) => setTimePeriodYears(Number(e.target.value))}
-              className="w-full accent-[#9c783e] cursor-pointer"
+              className="w-full accent-[#9e783e] cursor-pointer h-2 bg-slate-200 rounded-lg"
             />
-            <div className="flex justify-between text-[10px] text-[#786e5e] mt-0.5">
+            <div className="flex justify-between text-xs text-slate-500 font-medium mt-1">
               <span>1 Year</span>
               <span>15 Years</span>
               <span>30 Years</span>
@@ -111,37 +115,37 @@ export const SipCalculator: React.FC = () => {
         </div>
 
         {/* Projection Results Card */}
-        <div className="rounded-2xl border border-[#ded3bf] bg-gradient-to-br from-[#f8f5ee] via-[#faf7f2] to-[#f4eee4] p-6 space-y-4">
-          <div className="text-[#786e5e] font-mono text-[11px] uppercase tracking-wider font-semibold">
+        <div className="rounded-2xl border border-[#ded3bf] bg-gradient-to-br from-[#f8f5ee] via-[#faf7f2] to-[#f4eee4] p-7 space-y-4 shadow-xs">
+          <div className="text-slate-600 text-xs uppercase tracking-wider font-bold">
             Projected Corpus at Year {timePeriodYears}
           </div>
 
-          <div className="text-3xl sm:text-4xl font-heading font-extrabold text-[#2b2823] tracking-tight">
+          <div className="text-3xl sm:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">
             {formatCurrency(calculation.futureValueUSD, currency)}
           </div>
 
-          <div className="space-y-2.5 pt-4 border-t border-[#e2d8c5] font-mono text-xs">
+          <div className="space-y-3 pt-4 border-t border-[#e2d8c5] text-xs font-semibold">
             <div className="flex justify-between">
-              <span className="text-[#6e6657]">Total Capital Invested:</span>
-              <span className="text-[#2b2823] font-bold">
+              <span className="text-slate-600">Total Capital Invested:</span>
+              <span className="text-slate-900 font-extrabold text-sm">
                 {formatCurrency(calculation.totalInvestedUSD, currency)}
               </span>
             </div>
 
             <div className="flex justify-between">
-              <span className="text-[#6e6657]">Estimated Wealth Gain:</span>
-              <span className="text-[#2d6a4f] font-bold">
+              <span className="text-slate-600">Estimated Wealth Gain:</span>
+              <span className="text-emerald-700 font-extrabold text-sm">
                 +{formatCurrency(calculation.wealthGainUSD, currency)}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-xl bg-white p-2.5 text-[11px] text-[#786e5e] font-mono border border-[#e8dfcf]">
-            <ShieldAlert className="h-4 w-4 text-[#9c783e] shrink-0" />
+          <div className="flex items-center gap-2 rounded-xl bg-white p-3 text-xs text-slate-700 font-medium border border-[#e8e0d1]">
+            <ShieldAlert className="h-4 w-4 text-[#9e783e] shrink-0" />
             <span>Compound growth accelerates exponentially past Year 5.</span>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

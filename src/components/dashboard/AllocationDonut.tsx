@@ -4,6 +4,7 @@ import { AssetCategory } from '@/types/finance';
 import { formatCurrency, CATEGORY_COLORS, CATEGORY_LABELS } from '@/utils/formatters';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { PieChart as PieIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface AllocationItem {
   name: string;
@@ -22,38 +23,41 @@ export const AllocationDonut: React.FC = () => {
     category: item.category,
     value: item.currentValue,
     percentage: item.percentage,
-    color: CATEGORY_COLORS[item.category] || '#9c783e',
+    color: CATEGORY_COLORS[item.category] || '#9e783e',
   }));
 
   return (
-    <div className="rounded-2xl border border-[#e8dfcf] bg-white p-5 shadow-xs flex flex-col justify-between">
+    <motion.div
+      whileHover={{ y: -2, transition: { duration: 0.2 } }}
+      className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+    >
       {/* Header */}
       <div className="mb-4">
-        <h3 className="text-base font-bold text-[#2b2823] flex items-center gap-2">
-          <PieIcon className="h-4 w-4 text-[#9c783e]" />
+        <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+          <PieIcon className="h-5 w-5 text-[#9e783e]" />
           Asset Class Allocation
         </h3>
-        <p className="text-xs text-[#786e5e] font-mono mt-0.5">
+        <p className="text-xs text-slate-600 mt-0.5">
           Portfolio risk distribution & diversification
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
         {/* Donut Chart */}
-        <div className="h-48 w-full relative">
+        <div className="h-52 w-full relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
                 cx="50%"
                 cy="50%"
-                innerRadius={50}
-                outerRadius={75}
-                paddingAngle={3}
+                innerRadius={55}
+                outerRadius={80}
+                paddingAngle={4}
                 dataKey="value"
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} stroke="#ffffff" strokeWidth={2} />
+                  <Cell key={`cell-${index}`} fill={entry.color} stroke="#ffffff" strokeWidth={2.5} />
                 ))}
               </Pie>
               <Tooltip
@@ -61,13 +65,13 @@ export const AllocationDonut: React.FC = () => {
                   if (active && payload && payload.length) {
                     const item = payload[0].payload;
                     return (
-                      <div className="rounded-xl border border-[#ded3bf] bg-white p-2.5 shadow-lg font-mono text-xs">
-                        <div className="font-bold text-[#2b2823]">{item.name}</div>
-                        <div className="text-[#2d6a4f] font-bold">
+                      <div className="rounded-xl border border-[#e2d8c7] bg-white p-3 shadow-xl text-xs space-y-1">
+                        <div className="font-extrabold text-slate-900">{item.name}</div>
+                        <div className="text-emerald-800 font-bold text-sm">
                           {formatCurrency(item.value, currency)}
                         </div>
-                        <div className="text-[#786e5e] text-[11px]">
-                          {item.percentage.toFixed(1)}% of portfolio
+                        <div className="text-slate-500 font-semibold">
+                          {item.percentage.toFixed(1)}% of total portfolio
                         </div>
                       </div>
                     );
@@ -78,31 +82,33 @@ export const AllocationDonut: React.FC = () => {
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-[10px] font-mono text-[#786e5e] font-semibold uppercase">
-              Assets
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              Classes
             </span>
-            <span className="text-sm font-bold text-[#2b2823]">{data.length} Classes</span>
+            <span className="text-base font-extrabold text-slate-900">{data.length} Types</span>
           </div>
         </div>
 
         {/* Legend List */}
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {data.map((item, idx) => (
-            <div key={idx} className="flex items-center justify-between text-xs font-mono">
-              <div className="flex items-center gap-2">
+            <div key={idx} className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2.5">
                 <span
-                  className="h-2.5 w-2.5 rounded-full shrink-0"
+                  className="h-3 w-3 rounded-full shrink-0 shadow-xs"
                   style={{ backgroundColor: item.color }}
                 ></span>
-                <span className="text-[#443f36] truncate max-w-[110px]">{item.name}</span>
+                <span className="font-semibold text-slate-800 truncate max-w-[120px]">
+                  {item.name}
+                </span>
               </div>
               <div className="text-right">
-                <span className="font-bold text-[#2b2823]">{item.percentage.toFixed(1)}%</span>
+                <span className="font-bold text-slate-900">{item.percentage.toFixed(1)}%</span>
               </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

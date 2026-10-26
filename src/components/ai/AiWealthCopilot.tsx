@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
 import { Bot, Send, Sparkles, RotateCcw, User, ShieldCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const AiWealthCopilot: React.FC = () => {
   const { aiMessages, isAiTyping, sendAiMessage, clearAiChat, getPortfolioSummary } =
@@ -27,22 +28,24 @@ export const AiWealthCopilot: React.FC = () => {
   };
 
   return (
-    <div className="rounded-2xl border border-[#e8dfcf] bg-white p-5 shadow-xs space-y-4 flex flex-col h-[750px]">
+    <div className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs space-y-4 flex flex-col h-[750px]">
       {/* Header with AI Status & Context */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e8dfcf] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e8e0d1] pb-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#9c783e] text-white shadow-md shadow-[#9c783e]/20">
-            <Bot className="h-5 w-5" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-md shadow-[#9e783e]/25">
+            <Bot className="h-6 w-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-[#2b2823]">FinPulse AI Wealth Copilot</h3>
-              <span className="flex items-center gap-1 rounded-full bg-[#eef7f2] px-2 py-0.5 text-[10px] font-mono font-bold text-[#2d6a4f] border border-[#c6e4d2]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2d6a4f] animate-pulse"></span>
+              <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                FinPulse AI Wealth Copilot
+              </h3>
+              <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-800 border border-emerald-200">
+                <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse"></span>
                 Active Engine
               </span>
             </div>
-            <p className="text-xs text-[#786e5e] font-mono mt-0.5">
+            <p className="text-xs text-slate-600 mt-0.5 font-medium">
               Trained on your real-time holdings, risk appetite, and tax guidelines
             </p>
           </div>
@@ -51,7 +54,7 @@ export const AiWealthCopilot: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={clearAiChat}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#e8dfcf] bg-[#faf8f5] text-xs font-mono text-[#786e5e] hover:text-[#2b2823] hover:bg-[#f4efe4] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#e8e0d1] bg-[#faf8f5] text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-[#f4efe4] transition-colors cursor-pointer"
             title="Reset conversation"
           >
             <RotateCcw className="h-3.5 w-3.5" />
@@ -61,130 +64,143 @@ export const AiWealthCopilot: React.FC = () => {
       </div>
 
       {/* Portfolio Quick Context Pill Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
-        <div className="p-2.5 rounded-xl bg-[#faf8f5] border border-[#e8dfcf]">
-          <span className="text-[10px] text-[#786e5e] uppercase block">Monitored Corpus</span>
-          <span className="text-[#2b2823] font-bold">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="p-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1]">
+          <span className="text-[11px] text-slate-500 uppercase font-bold block">
+            Monitored Corpus
+          </span>
+          <span className="text-slate-900 font-extrabold text-sm">
             ${Math.round(summary.totalNetWorth).toLocaleString()}
           </span>
         </div>
-        <div className="p-2.5 rounded-xl bg-[#faf8f5] border border-[#e8dfcf]">
-          <span className="text-[10px] text-[#786e5e] uppercase block">Unrealized P&L</span>
-          <span className="text-[#2d6a4f] font-bold">
+        <div className="p-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1]">
+          <span className="text-[11px] text-slate-500 uppercase font-bold block">
+            Unrealized P&L
+          </span>
+          <span className="text-emerald-700 font-extrabold text-sm">
             +{summary.pnlPercentage.toFixed(1)}% Return
           </span>
         </div>
-        <div className="p-2.5 rounded-xl bg-[#faf8f5] border border-[#e8dfcf]">
-          <span className="text-[10px] text-[#786e5e] uppercase block">Risk Score</span>
-          <span className="text-[#866632] font-bold flex items-center gap-1">
-            <ShieldCheck className="h-3.5 w-3.5" /> Balanced
+        <div className="p-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1]">
+          <span className="text-[11px] text-slate-500 uppercase font-bold block">
+            Risk Profile
+          </span>
+          <span className="text-[#866632] font-extrabold text-sm flex items-center gap-1">
+            <ShieldCheck className="h-4 w-4" /> Balanced
           </span>
         </div>
-        <div className="p-2.5 rounded-xl bg-[#faf8f5] border border-[#e8dfcf]">
-          <span className="text-[10px] text-[#786e5e] uppercase block">Tax Harvesting</span>
-          <span className="text-[#9c783e] font-bold">₹1.25L Eligible</span>
+        <div className="p-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1]">
+          <span className="text-[11px] text-slate-500 uppercase font-bold block">
+            Tax Harvesting
+          </span>
+          <span className="text-[#9e783e] font-extrabold text-sm">₹1.25L Eligible</span>
         </div>
       </div>
 
       {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto space-y-4 pr-1">
-        {aiMessages.map((msg) => {
-          const isUser = msg.role === 'user';
-          return (
-            <div
-              key={msg.id}
-              className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
-            >
-              {!isUser && (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#f4efe4] text-[#866632] border border-[#ded3bf]">
-                  <Bot className="h-4 w-4" />
-                </div>
-              )}
-
-              <div
-                className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 text-xs leading-relaxed space-y-3 ${
-                  isUser
-                    ? 'bg-[#9c783e] text-white font-medium rounded-tr-none shadow-xs'
-                    : 'bg-[#faf8f5] border border-[#e8dfcf] text-[#2b2823] rounded-tl-none font-sans shadow-xs'
-                }`}
+        <AnimatePresence initial={false}>
+          {aiMessages.map((msg) => {
+            const isUser = msg.role === 'user';
+            return (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.2 }}
+                className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
               >
-                {/* Message Body */}
-                <div className="whitespace-pre-wrap font-sans">
-                  {msg.content.split('\n').map((paragraph, idx) => (
-                    <p key={idx} className="mb-2 last:mb-0">
-                      {paragraph.startsWith('- ') ? (
-                        <span className="inline-block pl-2 border-l-2 border-[#9c783e]/50 my-0.5">
-                          {paragraph.slice(2)}
-                        </span>
-                      ) : (
-                        paragraph
-                      )}
-                    </p>
-                  ))}
-                </div>
+                {!isUser && (
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#f4efe4] text-[#866632] border border-[#ded3bf]">
+                    <Bot className="h-5 w-5" />
+                  </div>
+                )}
 
-                {/* Metrics Context Badges (if present) */}
-                {msg.metricsContext && (
-                  <div className="pt-2 border-t border-[#e8dfcf] flex flex-wrap gap-2 font-mono text-[11px]">
-                    {msg.metricsContext.map((metric, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-0.5 rounded-md bg-white border border-[#ded3bf] text-[#443f36]"
-                      >
-                        <strong className="text-[#2b2823]">{metric.label}:</strong> {metric.value}
-                      </span>
+                <div
+                  className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 text-xs leading-relaxed space-y-3 shadow-xs ${
+                    isUser
+                      ? 'bg-[#9e783e] text-white font-medium rounded-tr-none'
+                      : 'bg-[#faf8f5] border border-[#e8e0d1] text-slate-800 rounded-tl-none font-sans'
+                  }`}
+                >
+                  {/* Message Body */}
+                  <div className="whitespace-pre-wrap font-sans text-xs leading-relaxed">
+                    {msg.content.split('\n').map((paragraph, idx) => (
+                      <p key={idx} className="mb-2 last:mb-0">
+                        {paragraph.startsWith('- ') ? (
+                          <span className="inline-block pl-2 border-l-2 border-[#9e783e] my-0.5 font-medium">
+                            {paragraph.slice(2)}
+                          </span>
+                        ) : (
+                          paragraph
+                        )}
+                      </p>
                     ))}
                   </div>
-                )}
 
-                {/* Suggested Follow-up Prompt Pills */}
-                {msg.suggestedPrompts && msg.suggestedPrompts.length > 0 && (
-                  <div className="pt-2 border-t border-[#e8dfcf]">
-                    <span className="text-[10px] font-mono uppercase text-[#786e5e] block mb-1.5">
-                      Suggested Inquiries:
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {msg.suggestedPrompts.map((prompt, i) => (
-                        <button
+                  {/* Metrics Context Badges */}
+                  {msg.metricsContext && (
+                    <div className="pt-2 border-t border-[#e8e0d1] flex flex-wrap gap-2 text-[11px]">
+                      {msg.metricsContext.map((metric, i) => (
+                        <span
                           key={i}
-                          onClick={() => handleSend(prompt)}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-[#ded3bf] text-[#866632] text-[11px] font-mono hover:bg-[#f4efe4] hover:text-[#2b2823] transition-all cursor-pointer text-left"
+                          className="px-2.5 py-1 rounded-md bg-white border border-[#ded3bf] text-slate-700 font-semibold"
                         >
-                          <Sparkles className="h-3 w-3 shrink-0 text-[#9c783e]" />
-                          <span>{prompt}</span>
-                        </button>
+                          <strong className="text-slate-900">{metric.label}:</strong> {metric.value}
+                        </span>
                       ))}
                     </div>
+                  )}
+
+                  {/* Suggested Follow-up Prompt Pills */}
+                  {msg.suggestedPrompts && msg.suggestedPrompts.length > 0 && (
+                    <div className="pt-2.5 border-t border-[#e8e0d1]">
+                      <span className="text-[11px] font-bold uppercase text-slate-500 block mb-1.5">
+                        Suggested Inquiries:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {msg.suggestedPrompts.map((prompt, i) => (
+                          <button
+                            key={i}
+                            onClick={() => handleSend(prompt)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#ded3bf] text-[#866632] text-xs font-semibold hover:bg-[#f4efe4] hover:text-slate-900 transition-all cursor-pointer text-left shadow-xs active:scale-95"
+                          >
+                            <Sparkles className="h-3 w-3 shrink-0 text-[#9e783e]" />
+                            <span>{prompt}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {isUser && (
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#9e783e]/20 text-[#866632] border border-[#9e783e]/30">
+                    <User className="h-5 w-5" />
                   </div>
                 )}
-              </div>
-
-              {isUser && (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#9c783e]/20 text-[#866632] border border-[#9c783e]/30">
-                  <User className="h-4 w-4" />
-                </div>
-              )}
-            </div>
-          );
-        })}
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
 
         {/* Typing Indicator */}
         {isAiTyping && (
           <div className="flex gap-3 justify-start items-center">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#f4efe4] text-[#866632] border border-[#ded3bf]">
-              <Bot className="h-4 w-4" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#f4efe4] text-[#866632] border border-[#ded3bf]">
+              <Bot className="h-5 w-5" />
             </div>
-            <div className="rounded-2xl rounded-tl-none bg-[#faf8f5] border border-[#e8dfcf] px-4 py-3 text-xs text-[#786e5e] flex items-center gap-1.5 font-mono">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#9c783e] animate-bounce"></span>
+            <div className="rounded-2xl rounded-tl-none bg-[#faf8f5] border border-[#e8e0d1] px-4 py-3 text-xs text-slate-600 flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full bg-[#9e783e] animate-bounce"></span>
               <span
-                className="inline-block h-1.5 w-1.5 rounded-full bg-[#9c783e] animate-bounce"
+                className="inline-block h-2 w-2 rounded-full bg-[#9e783e] animate-bounce"
                 style={{ animationDelay: '0.2s' }}
               ></span>
               <span
-                className="inline-block h-1.5 w-1.5 rounded-full bg-[#9c783e] animate-bounce"
+                className="inline-block h-2 w-2 rounded-full bg-[#9e783e] animate-bounce"
                 style={{ animationDelay: '0.4s' }}
               ></span>
-              <span className="ml-1 text-[11px] text-[#786e5e]">
+              <span className="ml-1 text-xs text-slate-600 font-semibold">
                 Synthesizing portfolio intelligence...
               </span>
             </div>
@@ -195,7 +211,7 @@ export const AiWealthCopilot: React.FC = () => {
       </div>
 
       {/* Input Box Bar */}
-      <div className="pt-3 border-t border-[#e8dfcf]">
+      <div className="pt-3 border-t border-[#e8e0d1]">
         <div className="relative flex items-center">
           <input
             type="text"
@@ -204,17 +220,17 @@ export const AiWealthCopilot: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isAiTyping}
-            className="w-full h-11 rounded-xl bg-[#faf8f5] border border-[#e4d9c7] pl-4 pr-12 text-xs text-[#2b2823] placeholder-[#8c8273] focus:border-[#9c783e] focus:bg-white focus:outline-hidden font-sans"
+            className="w-full h-12 rounded-xl bg-[#faf8f5] border border-[#e2d8c7] pl-4 pr-12 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden font-medium"
           />
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || isAiTyping}
-            className="absolute right-1.5 h-8 w-8 rounded-lg bg-[#9c783e] text-white flex items-center justify-center hover:bg-[#866632] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
+            className="absolute right-1.5 h-9 w-9 rounded-lg bg-[#9e783e] text-white flex items-center justify-center hover:bg-[#88642e] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs active:scale-95"
           >
             <Send className="h-4 w-4" />
           </button>
         </div>
-        <div className="flex items-center justify-between text-[10px] font-mono text-[#786e5e] mt-1.5 px-1">
+        <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1.5 px-1 font-medium">
           <span>AI outputs are for analytical guidance. Always verify with qualified advisors.</span>
           <span>Shift + Enter for multiline</span>
         </div>

@@ -8,27 +8,31 @@ import {
   CATEGORY_LABELS,
 } from '@/utils/formatters';
 import { Layers } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export const HoldingsTable: React.FC = () => {
   const { assets, currency } = useFinanceStore();
 
   return (
-    <div className="rounded-2xl border border-[#e8dfcf] bg-white p-5 shadow-xs space-y-4">
+    <motion.div
+      whileHover={{ y: -2, transition: { duration: 0.2 } }}
+      className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs hover:shadow-md transition-all space-y-4"
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-bold text-[#2b2823] flex items-center gap-2">
-            <Layers className="h-4 w-4 text-[#9c783e]" />
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Layers className="h-5 w-5 text-[#9e783e]" />
             Asset Portfolio & Holdings
           </h3>
-          <p className="text-xs text-[#786e5e] font-mono mt-0.5">
+          <p className="text-xs text-slate-600 mt-0.5">
             Real-time positions, entry price, and unrealized profit & loss
           </p>
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs font-mono">
-          <thead className="border-b border-[#e8dfcf] text-[#786e5e] uppercase text-[10px] tracking-wider">
+        <table className="w-full text-left text-xs">
+          <thead className="border-b border-[#e8e0d1] text-slate-600 uppercase text-[11px] font-bold tracking-wider">
             <tr>
               <th className="pb-3 pt-1">Instrument</th>
               <th className="pb-3 pt-1">Asset Class</th>
@@ -39,7 +43,7 @@ export const HoldingsTable: React.FC = () => {
               <th className="pb-3 pt-1 text-right">P&L (%)</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f2ece1] text-[#443f36]">
+          <tbody className="divide-y divide-[#f2ece1] text-slate-700">
             {assets.map((asset: Asset) => {
               const currentValue = asset.quantity * asset.currentMarketPrice;
               const investedValue = asset.quantity * asset.averageBuyPrice;
@@ -48,14 +52,14 @@ export const HoldingsTable: React.FC = () => {
               const isProfit = pnl >= 0;
 
               return (
-                <tr key={asset.id} className="hover:bg-[#faf7f2] transition-colors">
-                  <td className="py-3">
-                    <div className="font-bold text-[#2b2823]">{asset.symbol}</div>
-                    <div className="text-[10px] text-[#786e5e]">{asset.name}</div>
+                <tr key={asset.id} className="hover:bg-[#faf8f5] transition-colors">
+                  <td className="py-3.5">
+                    <div className="font-extrabold text-slate-900 text-sm">{asset.symbol}</div>
+                    <div className="text-xs text-slate-500 font-medium">{asset.name}</div>
                   </td>
-                  <td className="py-3">
+                  <td className="py-3.5">
                     <span
-                      className="inline-block px-2 py-0.5 rounded text-[10px] font-bold"
+                      className="inline-block px-2.5 py-1 rounded-md text-xs font-bold"
                       style={{
                         backgroundColor: `${CATEGORY_COLORS[asset.category]}18`,
                         color: CATEGORY_COLORS[asset.category],
@@ -64,19 +68,19 @@ export const HoldingsTable: React.FC = () => {
                       {CATEGORY_LABELS[asset.category]}
                     </span>
                   </td>
-                  <td className="py-3 text-right font-semibold text-[#2b2823]">{asset.quantity}</td>
-                  <td className="py-3 text-right text-[#786e5e]">
+                  <td className="py-3.5 text-right font-bold text-slate-900">{asset.quantity}</td>
+                  <td className="py-3.5 text-right text-slate-600 font-medium">
                     {formatCurrency(asset.averageBuyPrice, currency)}
                   </td>
-                  <td className="py-3 text-right font-medium text-[#2b2823]">
+                  <td className="py-3.5 text-right font-semibold text-slate-900">
                     {formatCurrency(asset.currentMarketPrice, currency)}
                   </td>
-                  <td className="py-3 text-right font-bold text-[#2b2823]">
+                  <td className="py-3.5 text-right font-extrabold text-slate-900">
                     {formatCurrency(currentValue, currency)}
                   </td>
                   <td
-                    className={`py-3 text-right font-bold ${
-                      isProfit ? 'text-[#2d6a4f]' : 'text-rose-600'
+                    className={`py-3.5 text-right font-extrabold ${
+                      isProfit ? 'text-emerald-700' : 'text-rose-700'
                     }`}
                   >
                     {formatPercentage(pnlPercent)}
@@ -87,6 +91,6 @@ export const HoldingsTable: React.FC = () => {
           </tbody>
         </table>
       </div>
-    </div>
+    </motion.div>
   );
 };
