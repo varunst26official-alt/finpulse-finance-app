@@ -38,6 +38,7 @@ import {
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
+import { api } from '@/services/apiClient';
 
 export type NavigationTab =
   | 'dashboard'
@@ -116,6 +117,7 @@ interface FinanceState {
   setEmergencyTargetMonths: (months: number) => void;
   resetToFreshPortfolio: (userName?: string) => void;
   loadDemoSampleData: () => void;
+  syncWithBackend: () => Promise<void>;
 
   // Computed Selectors
   getPortfolioSummary: () => PortfolioSummary;
@@ -344,6 +346,11 @@ export const useFinanceStore = create<FinanceState>()(
           id,
         };
 
+        // Fire background persistence to SQLite database
+        api.transactions.create(newTransaction).catch((err) => {
+          console.warn('[SQLite Sync] Transaction save fallback:', err);
+        });
+
         set((state) => {
           const updatedTransactions = [newTransaction, ...state.transactions];
 
@@ -406,6 +413,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       deleteTransaction: (id) => {
+        api.transactions.delete(id).catch((err) => console.warn('[SQLite Sync] Delete tx:', err));
         set((state) => ({
           transactions: state.transactions.filter((tx: Transaction) => tx.id !== id),
         }));
@@ -418,12 +426,15 @@ export const useFinanceStore = create<FinanceState>()(
           lastUpdated: new Date().toISOString(),
         };
 
+        api.portfolio.addAsset(newAsset).catch((err) => console.warn('[SQLite Sync] Add asset:', err));
+
         set((state) => ({
           assets: [newAsset, ...state.assets],
         }));
       },
 
       deleteAsset: (id) => {
+        api.portfolio.deleteAsset(id).catch((err) => console.warn('[SQLite Sync] Delete asset:', err));
         set((state) => ({
           assets: state.assets.filter((a: Asset) => a.id !== id),
         }));
@@ -470,18 +481,22 @@ export const useFinanceStore = create<FinanceState>()(
           isCompleted: false,
         };
 
+        api.calendar.create(newEvent).catch((err) => console.warn('[SQLite Sync] Add event:', err));
+
         set((state) => ({
           calendarEvents: [...state.calendarEvents, newEvent],
         }));
       },
 
       deleteCalendarEvent: (id) => {
+        api.calendar.delete(id).catch((err) => console.warn('[SQLite Sync] Delete event:', err));
         set((state) => ({
           calendarEvents: state.calendarEvents.filter((e) => e.id !== id),
         }));
       },
 
       toggleEventCompleted: (id) => {
+        api.calendar.toggle(id).catch((err) => console.warn('[SQLite Sync] Toggle event:', err));
         set((state) => ({
           calendarEvents: state.calendarEvents.map((e) =>
             e.id === id ? { ...e, isCompleted: !e.isCompleted } : e
@@ -495,18 +510,21 @@ export const useFinanceStore = create<FinanceState>()(
           id: `debt_${Date.now()}`,
           repayments: [],
         };
+        api.debts.create(newDebt).catch((err) => console.warn('[SQLite Sync] Add debt:', err));
         set((state) => ({
           debts: [newDebt, ...state.debts],
         }));
       },
 
       deleteDebt: (id) => {
+        api.debts.delete(id).catch((err) => console.warn('[SQLite Sync] Delete debt:', err));
         set((state) => ({
           debts: state.debts.filter((d) => d.id !== id),
         }));
       },
 
       recordDebtRepayment: (debtId, amount, type, date, notes) => {
+        api.debts.repay(debtId, { amount, type, date, notes }).catch((err) => console.warn('[SQLite Sync] Repay debt:', err));
         set((state) => {
           const repayment: DebtRepayment = {
             id: `rep_${Date.now()}`,
@@ -538,18 +556,21 @@ export const useFinanceStore = create<FinanceState>()(
           ...policyData,
           id: `pol_${Date.now()}`,
         };
+        api.policies.create(newPolicy).catch((err) => console.warn('[SQLite Sync] Add policy:', err));
         set((state) => ({
           policies: [newPolicy, ...state.policies],
         }));
       },
 
       deletePolicy: (id) => {
+        api.policies.delete(id).catch((err) => console.warn('[SQLite Sync] Delete policy:', err));
         set((state) => ({
           policies: state.policies.filter((p) => p.id !== id),
         }));
       },
 
       updatePolicyStatus: (id, status) => {
+        api.policies.update(id, { status }).catch((err) => console.warn('[SQLite Sync] Update policy status:', err));
         set((state) => ({
           policies: state.policies.map((p) => (p.id === id ? { ...p, status } : p)),
         }));
@@ -565,18 +586,21 @@ export const useFinanceStore = create<FinanceState>()(
           id: `goal_${Date.now()}`,
           isAchieved: false,
         };
+        api.goals.create(newGoal).catch((err) => console.warn('[SQLite Sync] Add goal:', err));
         set((state) => ({
           goals: [newGoal, ...state.goals],
         }));
       },
 
       deleteGoal: (id) => {
+        api.goals.delete(id).catch((err) => console.warn('[SQLite Sync] Delete goal:', err));
         set((state) => ({
           goals: state.goals.filter((g) => g.id !== id),
         }));
       },
 
       contributeToGoal: (id, amount) => {
+        api.goals.contribute(id, amount).catch((err) => console.warn('[SQLite Sync] Contribute goal:', err));
         set((state) => ({
           goals: state.goals.map((g) => {
             if (g.id === id) {
@@ -599,6 +623,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       resetToFreshPortfolio: (userName = 'Investor') => {
+        api.portfolio.resetToFresh().catch((err) => console.warn('[SQLite Sync] Reset portfolio:', err));
         set({
           assets: [],
           transactions: [],
@@ -627,19 +652,43 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       loadDemoSampleData: () => {
-        set({
-          assets: INITIAL_ASSETS,
-          transactions: INITIAL_TRANSACTIONS,
-          expenses: INITIAL_EXPENSES,
-          incomes: INITIAL_INCOMES,
-          calendarEvents: INITIAL_CALENDAR_EVENTS,
-          debts: INITIAL_DEBTS,
-          policies: INITIAL_POLICIES,
-          goals: INITIAL_GOALS,
-          emergencyTargetMonths: 6,
-          history: INITIAL_HISTORY,
-          aiMessages: INITIAL_AI_MESSAGES,
-        });
+        api.portfolio.seedDemo()
+          .then(() => get().syncWithBackend())
+          .catch((err) => {
+            console.warn('[SQLite Sync] Seed demo fallback:', err);
+            set({
+              assets: INITIAL_ASSETS,
+              transactions: INITIAL_TRANSACTIONS,
+              expenses: INITIAL_EXPENSES,
+              incomes: INITIAL_INCOMES,
+              calendarEvents: INITIAL_CALENDAR_EVENTS,
+              debts: INITIAL_DEBTS,
+              policies: INITIAL_POLICIES,
+              goals: INITIAL_GOALS,
+              emergencyTargetMonths: 6,
+              history: INITIAL_HISTORY,
+              aiMessages: INITIAL_AI_MESSAGES,
+            });
+          });
+      },
+
+      syncWithBackend: async () => {
+        try {
+          const res = await api.portfolio.fetchData();
+          if (res.success && res.data) {
+            set({
+              assets: res.data.assets,
+              transactions: res.data.transactions,
+              debts: res.data.debts,
+              policies: res.data.policies,
+              goals: res.data.goals,
+              calendarEvents: res.data.calendarEvents,
+              emergencyTargetMonths: res.data.emergencyTargetMonths || get().emergencyTargetMonths,
+            });
+          }
+        } catch (err) {
+          console.warn('[SQLite Sync] Backend unreachable (offline mode):', err);
+        }
       },
 
       getPortfolioSummary: () => {

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { useFinanceStore } from './financeStore';
 import { useTourStore } from './tourStore';
+import { api } from '@/services/apiClient';
 
 export interface UserProfile {
   id: string;
@@ -15,14 +16,15 @@ export interface UserProfile {
 interface AuthState {
   user: UserProfile | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => { success: boolean; error?: string };
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (data: {
     fullName: string;
     email: string;
     password: string;
     phoneNumber?: string;
-  }) => { success: boolean; error?: string };
-  loginAsDemo: () => void;
+  }) => Promise<{ success: boolean; error?: string }>;
+  loginAsDemo: () => Promise<void>;
   logout: () => void;
 }
 
@@ -38,8 +40,9 @@ export const useAuthStore = create<AuthState>()(
         joinedDate: 'March 2024',
       },
       isAuthenticated: true, // Default to demo session for instant review, full logout available
+      isLoading: false,
 
-      login: (email, password) => {
+      login: async (email, password) => {
         if (!email || !password) {
           return { success: false, error: 'Email and password are required' };
         }
@@ -47,19 +50,20 @@ export const useAuthStore = create<AuthState>()(
           return { success: false, error: 'Password must be at least 4 characters' };
         }
 
-        const loggedInUser: UserProfile = {
-          id: `usr_${Date.now()}`,
-          fullName: email.split('@')[0].toUpperCase(),
-          email,
-          investorType: 'RETAIL',
-          joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        };
-
-        set({ user: loggedInUser, isAuthenticated: true });
-        return { success: true };
+        set({ isLoading: true });
+        try {
+          const res = await api.auth.login(email, password);
+          set({ user: res.user, isAuthenticated: true, isLoading: false });
+          // Synchronize store with persistent backend SQLite database
+          await useFinanceStore.getState().syncWithBackend();
+          return { success: true };
+        } catch (err: any) {
+          set({ isLoading: false });
+          return { success: false, error: err.message || 'Login failed' };
+        }
       },
 
-      register: ({ fullName, email, password, phoneNumber }) => {
+      register: async ({ fullName, email, password, phoneNumber }) => {
         if (!fullName || !email || !password) {
           return { success: false, error: 'Name, email, and password are required' };
         }
@@ -67,43 +71,50 @@ export const useAuthStore = create<AuthState>()(
           return { success: false, error: 'Password must be at least 6 characters' };
         }
 
-        const newUser: UserProfile = {
-          id: `usr_${Date.now()}`,
-          fullName,
-          email,
-          phoneNumber,
-          investorType: 'RETAIL',
-          joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        };
+        set({ isLoading: true });
+        try {
+          const res = await api.auth.register({ fullName, email, password, phoneNumber });
+          set({ user: res.user, isAuthenticated: true, isLoading: false });
 
-        set({ user: newUser, isAuthenticated: true });
+          // Reset frontend store to clean ₹0 slate
+          useFinanceStore.getState().resetToFreshPortfolio(fullName);
+          useTourStore.getState().resetTour();
+          await useFinanceStore.getState().syncWithBackend();
 
-        // Clean slate for brand-new users: 0 Net Worth, 0 Holdings, 0 Balances
-        useFinanceStore.getState().resetToFreshPortfolio(fullName);
-        useTourStore.getState().resetTour();
-
-        return { success: true };
+          return { success: true };
+        } catch (err: any) {
+          set({ isLoading: false });
+          return { success: false, error: err.message || 'Registration failed' };
+        }
       },
 
-      loginAsDemo: () => {
-        set({
-          user: {
-            id: 'usr_demo',
-            fullName: 'Varun S T',
-            email: 'varunst26official@gmail.com',
-            phoneNumber: '+91 98765 43210',
-            investorType: 'HNI',
-            joinedDate: 'March 2024',
-          },
-          isAuthenticated: true,
-        });
-
-        // Load sample demonstration data for demo review
-        useFinanceStore.getState().loadDemoSampleData();
+      loginAsDemo: async () => {
+        set({ isLoading: true });
+        try {
+          const res = await api.auth.demo();
+          set({ user: res.user, isAuthenticated: true, isLoading: false });
+          await useFinanceStore.getState().syncWithBackend();
+        } catch (err) {
+          console.warn('Backend offline, using local demo fallback:', err);
+          set({
+            user: {
+              id: 'usr_demo',
+              fullName: 'Varun S T',
+              email: 'varunst26official@gmail.com',
+              phoneNumber: '+91 98765 43210',
+              investorType: 'HNI',
+              joinedDate: 'March 2024',
+            },
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          useFinanceStore.getState().loadDemoSampleData();
+        }
       },
 
       logout: () => {
-        set({ user: null, isAuthenticated: false });
+        api.auth.logout();
+        set({ user: null, isAuthenticated: false, isLoading: false });
       },
     }),
     {

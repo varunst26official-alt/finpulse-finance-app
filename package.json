@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node --experimental-strip-types server/src/index.ts",
+    "server:dev": "node --watch --experimental-strip-types server/src/index.ts",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"

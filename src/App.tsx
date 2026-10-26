@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFinanceStore, NavigationTab } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { Navbar } from '@/components/layout/Navbar';
@@ -30,10 +30,16 @@ import {
 } from 'lucide-react';
 
 export function App() {
-  const { activeTab, setActiveTab, assets, resetToFreshPortfolio } = useFinanceStore();
+  const { activeTab, setActiveTab, assets, resetToFreshPortfolio, syncWithBackend } = useFinanceStore();
   const { isAuthenticated, user } = useAuthStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDemoBannerDismissed, setIsDemoBannerDismissed] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      syncWithBackend();
+    }
+  }, [isAuthenticated, syncWithBackend]);
 
   // If user is not authenticated, show the customer Login / Register screen
   if (!isAuthenticated) {

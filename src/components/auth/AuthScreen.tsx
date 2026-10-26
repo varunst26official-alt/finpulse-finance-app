@@ -31,16 +31,16 @@ export const AuthScreen: React.FC = () => {
   // UI Error / Feedback
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-    const result = login(loginEmail, loginPassword);
+    const result = await login(loginEmail, loginPassword);
     if (!result.success && result.error) {
       setErrorMessage(result.error);
     }
   };
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -49,7 +49,7 @@ export const AuthScreen: React.FC = () => {
       return;
     }
 
-    const result = register({
+    const result = await register({
       fullName: regFullName,
       email: regEmail,
       phoneNumber: regPhone,
