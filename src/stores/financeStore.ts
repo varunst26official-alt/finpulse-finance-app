@@ -19,6 +19,7 @@ import {
   InsurancePolicy,
   PolicyStatus,
   FinancialHealthScore,
+  GoalItem,
 } from '@/types/finance';
 import {
   INITIAL_ASSETS,
@@ -33,6 +34,7 @@ import {
   INITIAL_CALENDAR_EVENTS,
   INITIAL_DEBTS,
   INITIAL_POLICIES,
+  INITIAL_GOALS,
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
@@ -67,6 +69,7 @@ interface FinanceState {
   calendarEvents: CalendarEvent[];
   debts: DebtItem[];
   policies: InsurancePolicy[];
+  goals: GoalItem[];
   emergencyTargetMonths: number;
   history: typeof INITIAL_HISTORY;
 
@@ -106,6 +109,10 @@ interface FinanceState {
   addPolicy: (policy: Omit<InsurancePolicy, 'id'>) => void;
   deletePolicy: (id: string) => void;
   updatePolicyStatus: (id: string, status: PolicyStatus) => void;
+  addGoal: (goal: Omit<GoalItem, 'id'>) => void;
+  deleteGoal: (id: string) => void;
+  contributeToGoal: (id: string, amount: number) => void;
+  updateGoal: (id: string, updates: Partial<GoalItem>) => void;
   setEmergencyTargetMonths: (months: number) => void;
   resetToFreshPortfolio: (userName?: string) => void;
   loadDemoSampleData: () => void;
@@ -135,6 +142,7 @@ export const useFinanceStore = create<FinanceState>()(
       calendarEvents: INITIAL_CALENDAR_EVENTS,
       debts: INITIAL_DEBTS,
       policies: INITIAL_POLICIES,
+      goals: INITIAL_GOALS,
       emergencyTargetMonths: 6,
       history: INITIAL_HISTORY,
 
@@ -551,6 +559,45 @@ export const useFinanceStore = create<FinanceState>()(
         set({ emergencyTargetMonths });
       },
 
+      addGoal: (goalData) => {
+        const newGoal: GoalItem = {
+          ...goalData,
+          id: `goal_${Date.now()}`,
+          isAchieved: false,
+        };
+        set((state) => ({
+          goals: [newGoal, ...state.goals],
+        }));
+      },
+
+      deleteGoal: (id) => {
+        set((state) => ({
+          goals: state.goals.filter((g) => g.id !== id),
+        }));
+      },
+
+      contributeToGoal: (id, amount) => {
+        set((state) => ({
+          goals: state.goals.map((g) => {
+            if (g.id === id) {
+              const newSaved = g.currentSaved + amount;
+              return {
+                ...g,
+                currentSaved: newSaved,
+                isAchieved: newSaved >= g.targetAmount,
+              };
+            }
+            return g;
+          }),
+        }));
+      },
+
+      updateGoal: (id, updates) => {
+        set((state) => ({
+          goals: state.goals.map((g) => (g.id === id ? { ...g, ...updates } : g)),
+        }));
+      },
+
       resetToFreshPortfolio: (userName = 'Investor') => {
         set({
           assets: [],
@@ -560,6 +607,7 @@ export const useFinanceStore = create<FinanceState>()(
           calendarEvents: [],
           debts: [],
           policies: [],
+          goals: [],
           emergencyTargetMonths: 6,
           history: [],
           aiMessages: [
@@ -587,6 +635,7 @@ export const useFinanceStore = create<FinanceState>()(
           calendarEvents: INITIAL_CALENDAR_EVENTS,
           debts: INITIAL_DEBTS,
           policies: INITIAL_POLICIES,
+          goals: INITIAL_GOALS,
           emergencyTargetMonths: 6,
           history: INITIAL_HISTORY,
           aiMessages: INITIAL_AI_MESSAGES,
@@ -841,6 +890,7 @@ export const useFinanceStore = create<FinanceState>()(
         calendarEvents: state.calendarEvents,
         debts: state.debts,
         policies: state.policies,
+        goals: state.goals,
         emergencyTargetMonths: state.emergencyTargetMonths,
         aiMessages: state.aiMessages,
       }),

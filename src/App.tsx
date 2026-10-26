@@ -7,7 +7,7 @@ import { StatCards } from '@/components/dashboard/StatCards';
 import { PortfolioChart } from '@/components/dashboard/PortfolioChart';
 import { AllocationDonut } from '@/components/dashboard/AllocationDonut';
 import { HoldingsTable } from '@/components/dashboard/HoldingsTable';
-import { SipCalculator } from '@/components/dashboard/SipCalculator';
+import { GoalMilestoneManager } from '@/components/goals/GoalMilestoneManager';
 import { TransactionTable } from '@/components/transactions/TransactionTable';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
@@ -21,7 +21,7 @@ import {
   LayoutDashboard,
   PieChart,
   ArrowLeftRight,
-  Calculator,
+  Target,
   CalendarDays,
   Sparkles,
   Landmark,
@@ -52,7 +52,7 @@ export function App() {
     { id: 'health', label: 'Health Score', icon: Activity },
     { id: 'transactions', label: 'Ledger', icon: ArrowLeftRight },
     { id: 'calendar', label: 'Calendar', icon: CalendarDays },
-    { id: 'goals', label: 'SIP', icon: Calculator },
+    { id: 'goals', label: 'Goals & SIP', icon: Target },
   ];
 
   return (
@@ -183,8 +183,8 @@ export function App() {
               {/* Tab: Financial Calendar & Events Planner */}
               {activeTab === 'calendar' && <FinancialCalendarWidget />}
 
-              {/* Tab 4: SIP & Wealth Projection Calculator */}
-              {activeTab === 'goals' && <SipCalculator />}
+              {/* Tab 4: Goals, Milestones & SIP Wealth Planner */}
+              {activeTab === 'goals' && <GoalMilestoneManager />}
             </motion.div>
           </AnimatePresence>
         </main>

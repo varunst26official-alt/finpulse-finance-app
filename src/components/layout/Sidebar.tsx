@@ -4,13 +4,13 @@ import {
   LayoutDashboard,
   PieChart,
   ArrowLeftRight,
-  Calculator,
   ShieldCheck,
   TrendingUp,
   CalendarDays,
   Landmark,
   HeartPulse,
   Activity,
+  Target,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -29,7 +29,7 @@ export const Sidebar: React.FC = () => {
     { id: 'health', label: 'Health Score & Vault', icon: Activity },
     { id: 'transactions', label: 'Transactions Ledger', icon: ArrowLeftRight },
     { id: 'calendar', label: 'Financial Calendar', icon: CalendarDays },
-    { id: 'goals', label: 'SIP & Wealth Planner', icon: Calculator },
+    { id: 'goals', label: 'Goals & Milestones', icon: Target },
   ];
 
   return (

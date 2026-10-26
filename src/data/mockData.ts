@@ -11,6 +11,7 @@ import {
   CalendarEvent,
   DebtItem,
   InsurancePolicy,
+  GoalItem,
 } from '@/types/finance';
 
 // All baseline prices stored in USD for universal calculation ($1 USD = ~₹84.5 INR)
@@ -812,5 +813,66 @@ export const INITIAL_POLICIES: InsurancePolicy[] = [
     status: 'ACTIVE',
     tpaHelpline: '1800-266-7780',
     notes: 'Bumper-to-bumper zero depreciation cover + engine protector rider.',
+  },
+];
+
+// ============================================================================
+// Sample Goal-Based Bucket Investing & Milestones Data
+// ============================================================================
+
+export const INITIAL_GOALS: GoalItem[] = [
+  {
+    id: 'goal_1',
+    title: 'Retire Early at 48 (FIRE Corpus)',
+    category: 'RETIREMENT_FIRE',
+    targetAmount: 240000, // ~$240,000 = ~₹2.02 Crore
+    targetDate: '2036-12-31',
+    currentSaved: 88000, // ~$88,000 = ~₹74.3 Lakhs
+    monthlyContribution: 450, // ~$450/mo = ~₹38,000/mo
+    priority: 'HIGH',
+    inflationRate: 6.5,
+    expectedReturnRate: 12.0,
+    allocatedAssetIds: ['ast_1', 'ast_3', 'ast_4'],
+    notes: 'Financial independence fund based on 30x annual expenses safe withdrawal rate.',
+  },
+  {
+    id: 'goal_2',
+    title: 'Aarav Overseas College Fund',
+    category: 'CHILD_EDUCATION',
+    targetAmount: 60000, // ~$60,000 = ~₹50.7 Lakhs
+    targetDate: '2034-06-30',
+    currentSaved: 19500, // ~$19,500 = ~₹16.5 Lakhs
+    monthlyContribution: 280, // ~$280/mo = ~₹23,600/mo
+    priority: 'HIGH',
+    inflationRate: 9.5, // High education inflation
+    expectedReturnRate: 12.5,
+    allocatedAssetIds: ['ast_3', 'ast_4'],
+    notes: 'Targeting top engineering / business school in US or Europe.',
+  },
+  {
+    id: 'goal_3',
+    title: 'Coorg Holiday Villa Down Payment',
+    category: 'HOME_PURCHASE',
+    targetAmount: 38000, // ~$38,000 = ~₹32.1 Lakhs
+    targetDate: '2028-10-31',
+    currentSaved: 24000, // ~$24,000 = ~₹20.3 Lakhs
+    monthlyContribution: 320, // ~$320/mo = ~₹27,000/mo
+    priority: 'MEDIUM',
+    inflationRate: 6.0,
+    expectedReturnRate: 10.0,
+    notes: 'Down payment for scenic plantation cottage.',
+  },
+  {
+    id: 'goal_4',
+    title: 'Europe & Alps Sabbatical Tour',
+    category: 'LUXURY_VACATION',
+    targetAmount: 8500, // ~$8,500 = ~₹7.18 Lakhs
+    targetDate: '2027-05-15',
+    currentSaved: 4600, // ~$4,600 = ~₹3.88 Lakhs
+    monthlyContribution: 190, // ~$190/mo = ~₹16,000/mo
+    priority: 'LOW',
+    inflationRate: 5.0,
+    expectedReturnRate: 8.0,
+    notes: '3-week family vacation across Switzerland, Italy and Austria.',
   },
 ];

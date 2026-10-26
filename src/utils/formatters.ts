@@ -7,6 +7,7 @@ import {
   CalendarEventType,
   DebtCategory,
   InsuranceType,
+  GoalCategory,
 } from '@/types/finance';
 
 export const CURRENCY_CONFIGS: Record<Currency, { symbol: string; rateFromUSD: number; locale: string }> = {
@@ -149,4 +150,26 @@ export const INSURANCE_TYPE_COLORS: Record<InsuranceType, { badge: string; borde
   CRITICAL_ILLNESS: { badge: 'bg-rose-50 text-rose-800', border: 'border-rose-200', text: 'text-rose-700', hex: '#e11d48' },
   MOTOR_VEHICLE: { badge: 'bg-sky-50 text-sky-800', border: 'border-sky-200', text: 'text-sky-700', hex: '#0284c7' },
   HOME_PROPERTY: { badge: 'bg-amber-50 text-amber-800', border: 'border-amber-200', text: 'text-amber-700', hex: '#d97706' },
+};
+
+export const GOAL_CATEGORY_LABELS: Record<GoalCategory, string> = {
+  RETIREMENT_FIRE: 'FIRE & Retirement',
+  CHILD_EDUCATION: "Child's Education",
+  HOME_PURCHASE: 'Home / Real Estate',
+  DREAM_CAR: 'Vehicle / Car Purchase',
+  LUXURY_VACATION: 'Travel & Sabbatical',
+  WEDDING_FAMILY: 'Family & Marriage',
+  WEALTH_CORPUS: 'Wealth Milestones',
+  CUSTOM_GOAL: 'Personal Milestone',
+};
+
+export const GOAL_CATEGORY_COLORS: Record<GoalCategory, { badge: string; border: string; text: string; hex: string }> = {
+  RETIREMENT_FIRE: { badge: 'bg-emerald-50 text-emerald-800', border: 'border-emerald-200', text: 'text-emerald-700', hex: '#10b981' },
+  CHILD_EDUCATION: { badge: 'bg-indigo-50 text-indigo-800', border: 'border-indigo-200', text: 'text-indigo-700', hex: '#6366f1' },
+  HOME_PURCHASE: { badge: 'bg-purple-50 text-purple-800', border: 'border-purple-200', text: 'text-purple-700', hex: '#8b5cf6' },
+  DREAM_CAR: { badge: 'bg-sky-50 text-sky-800', border: 'border-sky-200', text: 'text-sky-700', hex: '#0284c7' },
+  LUXURY_VACATION: { badge: 'bg-amber-50 text-amber-800', border: 'border-amber-200', text: 'text-amber-700', hex: '#d97706' },
+  WEDDING_FAMILY: { badge: 'bg-rose-50 text-rose-800', border: 'border-rose-200', text: 'text-rose-700', hex: '#e11d48' },
+  WEALTH_CORPUS: { badge: 'bg-teal-50 text-teal-800', border: 'border-teal-200', text: 'text-teal-700', hex: '#0d9488' },
+  CUSTOM_GOAL: { badge: 'bg-stone-50 text-stone-800', border: 'border-stone-200', text: 'text-stone-700', hex: '#78716c' },
 };

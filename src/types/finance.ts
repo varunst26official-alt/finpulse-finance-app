@@ -224,6 +224,38 @@ export interface FinancialHealthScore {
 }
 
 // ============================================================================
+// Goal-Based Bucket Investing & Milestones Types
+// ============================================================================
+
+export type GoalCategory =
+  | 'RETIREMENT_FIRE'
+  | 'CHILD_EDUCATION'
+  | 'HOME_PURCHASE'
+  | 'DREAM_CAR'
+  | 'LUXURY_VACATION'
+  | 'WEDDING_FAMILY'
+  | 'WEALTH_CORPUS'
+  | 'CUSTOM_GOAL';
+
+export type GoalPriority = 'HIGH' | 'MEDIUM' | 'LOW';
+
+export interface GoalItem {
+  id: string;
+  title: string;
+  category: GoalCategory;
+  targetAmount: number; // in USD base
+  targetDate: string; // YYYY-MM-DD
+  currentSaved: number; // in USD base
+  monthlyContribution: number; // in USD base (Monthly SIP committed)
+  priority: GoalPriority;
+  inflationRate: number; // annual percentage e.g. 6.0 or 10.0
+  expectedReturnRate: number; // annual percentage e.g. 12.0
+  allocatedAssetIds?: string[];
+  isAchieved?: boolean;
+  notes?: string;
+}
+
+// ============================================================================
 // Listed Stock Directory Model (Free searchable stock catalog)
 // ============================================================================
 
