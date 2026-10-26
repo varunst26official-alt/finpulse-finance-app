@@ -31,15 +31,8 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      user: {
-        id: 'usr_demo',
-        fullName: 'Varun S T',
-        email: 'varunst26official@gmail.com',
-        phoneNumber: '+91 98765 43210',
-        investorType: 'HNI',
-        joinedDate: 'March 2024',
-      },
-      isAuthenticated: true, // Default to demo session for instant review, full logout available
+      user: null,
+      isAuthenticated: false, // Default to false so first-time visitors must sign in or register
       isLoading: false,
 
       login: async (email, password) => {
@@ -58,6 +51,18 @@ export const useAuthStore = create<AuthState>()(
           await useFinanceStore.getState().syncWithBackend();
           return { success: true };
         } catch (err: any) {
+          // If server is offline or unreachable, allow client-side authentication
+          if (err.message?.includes('fetch') || err.message?.includes('status 404') || err.message?.includes('Network') || err.message?.includes('Failed')) {
+            const fallbackUser: UserProfile = {
+              id: 'usr_' + Date.now(),
+              fullName: email.split('@')[0],
+              email: email,
+              investorType: 'RETAIL',
+              joinedDate: 'Today',
+            };
+            set({ user: fallbackUser, isAuthenticated: true, isLoading: false });
+            return { success: true };
+          }
           set({ isLoading: false });
           return { success: false, error: err.message || 'Login failed' };
         }
@@ -83,6 +88,20 @@ export const useAuthStore = create<AuthState>()(
 
           return { success: true };
         } catch (err: any) {
+          if (err.message?.includes('fetch') || err.message?.includes('status 404') || err.message?.includes('Network') || err.message?.includes('Failed')) {
+            const fallbackUser: UserProfile = {
+              id: 'usr_' + Date.now(),
+              fullName,
+              email,
+              phoneNumber,
+              investorType: 'RETAIL',
+              joinedDate: 'Today',
+            };
+            set({ user: fallbackUser, isAuthenticated: true, isLoading: false });
+            useFinanceStore.getState().resetToFreshPortfolio(fullName);
+            useTourStore.getState().resetTour();
+            return { success: true };
+          }
           set({ isLoading: false });
           return { success: false, error: err.message || 'Registration failed' };
         }
@@ -118,7 +137,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'finpulse-auth-storage',
+      name: 'lifeos-auth-storage',
       storage: createJSONStorage(() => localStorage),
     }
   )

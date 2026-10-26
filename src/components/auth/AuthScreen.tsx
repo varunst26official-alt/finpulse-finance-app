@@ -239,6 +239,23 @@ export const AuthScreen: React.FC = () => {
                 <ArrowRight className="h-4 w-4" />
               </motion.button>
 
+              <div className="relative flex py-2 items-center">
+                <div className="flex-grow border-t border-slate-200"></div>
+                <span className="flex-shrink mx-3 text-slate-400 text-[10px] font-bold uppercase tracking-wider">or instant preview</span>
+                <div className="flex-grow border-t border-slate-200"></div>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
+                onClick={loginAsDemo}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#f5ede0] hover:bg-[#ebdcc6] text-[#6b4e20] text-xs font-bold transition-all border border-[#dec9ab] cursor-pointer"
+              >
+                <Sparkles className="h-4 w-4 text-[#9e783e]" />
+                <span>1-Click Investor Demo Access</span>
+              </motion.button>
+
               <div className="text-center text-xs text-slate-600 pt-2 font-medium">
                 Don't have an account yet?{' '}
                 <button
