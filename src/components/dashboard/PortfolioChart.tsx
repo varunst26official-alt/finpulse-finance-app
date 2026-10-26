@@ -27,7 +27,7 @@ export const PortfolioChart: React.FC = () => {
   return (
     <motion.div
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
-      className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+      className="rounded-2xl border border-[#e8e0d1] bg-white p-5 sm:p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between w-full min-w-0 max-w-full overflow-hidden"
     >
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
@@ -53,7 +53,7 @@ export const PortfolioChart: React.FC = () => {
       </div>
 
       {/* Recharts Area Container or Empty State */}
-      <div className="h-72 w-full pt-2">
+      <div className="h-72 w-full min-w-0 pt-2">
         {chartData.length === 0 ? (
           <div className="h-full w-full flex flex-col items-center justify-center text-center p-6 bg-[#faf8f5]/60 rounded-2xl border border-dashed border-[#e8e0d1]">
             <div className="p-3.5 rounded-2xl bg-white border border-[#e8e0d1] text-[#9e783e] mb-3 shadow-xs">

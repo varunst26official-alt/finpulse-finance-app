@@ -36,7 +36,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f6fa] text-[#243047] flex flex-col font-sans selection:bg-[#a47b3c] selection:text-white">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f4f6fa] text-[#243047] flex flex-col font-sans selection:bg-[#a47b3c] selection:text-white">
       {/* 1. LifeOS Sticky Command Header (72px) */}
       <LifeOSHeader />
 
@@ -44,10 +44,11 @@ export function App() {
       <SectionSwitcher />
 
       {/* 3. Main Workspace Container */}
-      <main className="flex-1 w-full max-w-[1500px] mx-auto p-3.5 sm:p-7 space-y-5 sm:space-y-6">
+      <main className="flex-1 w-full max-w-[1500px] min-w-0 mx-auto p-3.5 sm:p-7 space-y-5 sm:space-y-6 pb-24 sm:pb-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSection}
+            className="w-full min-w-0"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}

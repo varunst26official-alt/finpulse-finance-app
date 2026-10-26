@@ -363,7 +363,7 @@ export const WellnessWorkspace: React.FC = () => {
       </div>
 
       {/* 3. Navigation Sub-Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#e4e9f1] pb-2 text-xs font-bold overflow-x-auto scrollbar-none whitespace-nowrap">
+      <div className="flex items-center gap-2 border-b border-[#e4e9f1] pb-2 text-xs font-bold overflow-x-auto scrollbar-none whitespace-nowrap w-full max-w-full min-w-0">
         <button
           onClick={() => setActiveTab('OVERVIEW')}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${

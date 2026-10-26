@@ -29,7 +29,7 @@ export const AllocationDonut: React.FC = () => {
   return (
     <motion.div
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
-      className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+      className="rounded-2xl border border-[#e8e0d1] bg-white p-5 sm:p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between w-full min-w-0 max-w-full overflow-hidden"
     >
       {/* Header */}
       <div className="mb-4">
@@ -58,7 +58,7 @@ export const AllocationDonut: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
           {/* Donut Chart */}
-          <div className="h-52 w-full relative">
+          <div className="h-52 w-full min-w-0 relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie

@@ -62,7 +62,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
 
       {/* 2. In-Workspace Sub-module Navigation Pills */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none w-full sm:w-auto">
+        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none w-full sm:w-auto min-w-0 max-w-full">
           {subTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = financeSubTab === tab.id;

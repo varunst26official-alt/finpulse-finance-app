@@ -21,7 +21,7 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
 
   return (
     <section
-      className="relative text-white rounded-3xl p-6 sm:p-8 lg:p-9 shadow-xl overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+      className="relative text-white rounded-3xl p-5 sm:p-8 lg:p-9 shadow-xl overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-5 sm:gap-6 w-full max-w-full min-w-0"
       style={{
         background: config.heroGradient,
       }}
@@ -36,22 +36,22 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
       />
 
       {/* Hero Content */}
-      <div className="relative z-10 max-w-2xl space-y-2.5">
+      <div className="relative z-10 max-w-2xl space-y-2.5 w-full min-w-0">
         <div className="text-[10px] font-extrabold uppercase tracking-widest text-white/75">
           {config.eyebrow}
         </div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+        <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
           {config.title}
         </h1>
         <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-xl">
           {config.description}
         </p>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5 pt-2">
+        {/* Action Buttons (Full width on mobile, inline on desktop) */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 pt-2 w-full sm:w-auto">
           <button
             onClick={onPrimaryAction}
-            className="px-4 py-2.5 rounded-xl bg-white text-slate-900 text-xs font-bold shadow-md hover:bg-slate-50 transition-all cursor-pointer flex items-center gap-1.5"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white text-slate-900 text-xs font-bold shadow-md hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-center gap-1.5"
             style={{ color: config.heroColor1 }}
           >
             <span>{primaryActionLabel || config.action}</span>
@@ -60,7 +60,7 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
 
           <button
             onClick={onSecondaryAction}
-            className="px-4 py-2.5 rounded-xl bg-white/15 text-white border border-white/25 text-xs font-bold hover:bg-white/20 transition-all cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/15 text-white border border-white/25 text-xs font-bold hover:bg-white/20 transition-all cursor-pointer text-center justify-center"
           >
             <span>{secondaryActionLabel || config.secondary}</span>
           </button>

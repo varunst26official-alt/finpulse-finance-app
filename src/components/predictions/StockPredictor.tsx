@@ -140,7 +140,7 @@ export const StockPredictor: React.FC = () => {
       {/* Forecast Chart Container */}
       <motion.div
         whileHover={{ y: -2 }}
-        className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs space-y-4"
+        className="rounded-2xl border border-[#e8e0d1] bg-white p-5 sm:p-6 shadow-xs space-y-4 w-full min-w-0 max-w-full overflow-hidden"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
@@ -164,7 +164,7 @@ export const StockPredictor: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-72 w-full pt-2">
+        <div className="h-72 w-full min-w-0 pt-2">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>

@@ -572,7 +572,7 @@ export const FinancialCalendarWidget: React.FC = () => {
         {/* Right Column: Inflow vs Outflow Projection Chart (5 cols) */}
         <motion.div
           whileHover={{ y: -2, transition: { duration: 0.2 } }}
-          className="lg:col-span-5 rounded-3xl border border-[#e8e0d1] bg-white p-6 shadow-xs flex flex-col justify-between space-y-4"
+          className="lg:col-span-5 rounded-3xl border border-[#e8e0d1] bg-white p-5 sm:p-6 shadow-xs flex flex-col justify-between space-y-4 w-full min-w-0 max-w-full overflow-hidden"
         >
           <div>
             <h4 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -601,7 +601,7 @@ export const FinancialCalendarWidget: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className="h-64 w-full">
+            <div className="h-64 w-full min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1ece1" />
