@@ -1,7 +1,8 @@
 /**
  * FinPulse - Financial Domain Models
  * Strong TypeScript typing for assets, transactions, allocations, currencies,
- * AI copilot, market intelligence, stock predictions, and tax analytics.
+ * AI copilot, market intelligence, stock predictions, tax analytics,
+ * expense tracking, income cash flows, and listed stock directories.
  */
 
 export type Currency = 'INR' | 'AED' | 'USD';
@@ -9,19 +10,23 @@ export type Currency = 'INR' | 'AED' | 'USD';
 export interface CurrencyConfig {
   code: Currency;
   symbol: string;
-  rateToUSD: number; // Conversion anchor
+  rateToUSD: number; // Conversion anchor ($1 USD = ~84.5 INR)
   locale: string;
 }
 
 export type AssetCategory =
-  | 'EQUITY'        // Indian & US Stocks
-  | 'MUTUAL_FUNDS'  // Index & Flexi-cap funds
-  | 'FIXED_DEPOSIT' // Bank FDs / Bonds
-  | 'GOLD_SGB'      // Sovereign Gold Bonds / Physical Gold
-  | 'CRYPTO'        // Bitcoin / Ethereum
-  | 'LIQUID_CASH';  // Savings account / Emergency reserve
+  | 'EQUITY'          // Indian & US Listed Stocks
+  | 'MUTUAL_FUNDS'    // Index, Flexi-cap & ELSS funds
+  | 'FIXED_DEPOSIT'   // Bank FDs / Term Deposits
+  | 'GOLD_SGB'        // Sovereign Gold Bonds / Physical Gold / Silver
+  | 'REAL_ESTATE'     // Land, Residential flats, Commercial properties
+  | 'RETIREMENT_PPF'  // PPF, EPF, National Pension System (NPS)
+  | 'BONDS_DEBT'      // Corporate & Government Bonds
+  | 'STARTUP_EQUITY'  // Angel investments & Private equity
+  | 'CRYPTO'          // Bitcoin, Ethereum & Digital assets
+  | 'LIQUID_CASH';    // Bank savings & Emergency reserves
 
-export type TransactionType = 'BUY' | 'SELL' | 'DIVIDEND' | 'INTEREST';
+export type TransactionType = 'BUY' | 'SELL' | 'DIVIDEND' | 'INTEREST' | 'SIP';
 
 export interface Asset {
   id: string;
@@ -32,6 +37,9 @@ export interface Asset {
   averageBuyPrice: number; // in USD base
   currentMarketPrice: number; // in USD base
   currency: Currency;
+  institution?: string; // e.g. "Zerodha", "HDFC Bank", "Builder Registry"
+  expectedReturnRate?: number; // e.g. 7.5% for FD / Rental yield
+  maturityDate?: string;
   lastUpdated: string;
 }
 
@@ -46,8 +54,85 @@ export interface Transaction {
   pricePerUnit: number; // in USD base
   totalAmount: number; // quantity * pricePerUnit
   date: string; // ISO date string YYYY-MM-DD
+  platform?: string; // e.g. Zerodha, Groww, Upstox, Direct
   notes?: string;
 }
+
+// ============================================================================
+// Expense & Cash Flow Tracking Types
+// ============================================================================
+
+export type ExpenseCategory =
+  | 'HOUSING_RENT'
+  | 'EMI_LOANS'
+  | 'FOOD_DINING'
+  | 'UTILITIES_BILLS'
+  | 'SHOPPING_LIFESTYLE'
+  | 'TRAVEL_COMMUTE'
+  | 'HEALTHCARE_INSURANCE'
+  | 'ENTERTAINMENT_SUBS'
+  | 'EDUCATION'
+  | 'OTHER_EXPENSE';
+
+export type PaymentMethod =
+  | 'UPI'
+  | 'CREDIT_CARD'
+  | 'NET_BANKING'
+  | 'DEBIT_CARD'
+  | 'CASH';
+
+export interface ExpenseItem {
+  id: string;
+  title: string;
+  category: ExpenseCategory;
+  amount: number; // in USD base
+  paymentMethod: PaymentMethod;
+  frequency: 'ONE_TIME' | 'MONTHLY_RECURRING';
+  date: string; // YYYY-MM-DD
+  notes?: string;
+}
+
+// ============================================================================
+// Income & Inflow Tracking Types
+// ============================================================================
+
+export type IncomeCategory =
+  | 'SALARY'
+  | 'BUSINESS'
+  | 'FREELANCE'
+  | 'RENTAL'
+  | 'DIVIDEND_INTEREST'
+  | 'CAPITAL_GAINS'
+  | 'OTHER_INCOME';
+
+export interface IncomeItem {
+  id: string;
+  source: string;
+  category: IncomeCategory;
+  amount: number; // in USD base
+  frequency: 'MONTHLY' | 'ONE_TIME' | 'ANNUAL';
+  date: string; // YYYY-MM-DD
+  account?: string; // e.g. "HDFC Salary A/c", "ICICI Savings"
+  notes?: string;
+}
+
+// ============================================================================
+// Listed Stock Directory Model (Free searchable stock catalog)
+// ============================================================================
+
+export interface ListedStockItem {
+  symbol: string;
+  name: string;
+  exchange: 'NSE' | 'BSE' | 'NASDAQ' | 'NYSE' | 'CRYPTO';
+  sector: string;
+  currentPriceUSD: number;
+  currentPriceINR: number;
+  category: AssetCategory;
+}
+
+// ============================================================================
+// Portfolio Summary & Analytics
+// ============================================================================
 
 export interface PortfolioSummary {
   totalNetWorth: number; // in USD base
@@ -56,6 +141,10 @@ export interface PortfolioSummary {
   pnlPercentage: number;
   todaysChange: number;
   todaysChangePercentage: number;
+  totalMonthlyIncome: number; // in USD base
+  totalMonthlyExpenses: number; // in USD base
+  monthlySavingsRate: number; // percentage
+  liquidRunwayMonths: number; // emergency runway
   allocationBreakdown: {
     category: AssetCategory;
     currentValue: number;

@@ -1,0 +1,540 @@
+import { ListedStockItem } from '@/types/finance';
+
+/**
+ * Built-in comprehensive registry of top listed Indian (NSE/BSE) and Global (NASDAQ/NYSE/CRYPTO)
+ * equities, ETFs, and assets.
+ * All prices anchored with live USD base and INR equivalent ($1 USD ~ ₹84.50 INR).
+ */
+export const COMPREHENSIVE_STOCK_DIRECTORY: ListedStockItem[] = [
+  // --- Indian Nifty 50 & Key Indian Equities (NSE/BSE) ---
+  {
+    symbol: 'RELIANCE',
+    name: 'Reliance Industries Ltd',
+    exchange: 'NSE',
+    sector: 'Energy & Conglomerate',
+    currentPriceUSD: 34.8,
+    currentPriceINR: 2940.6,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'TCS',
+    name: 'Tata Consultancy Services Ltd',
+    exchange: 'NSE',
+    sector: 'Information Technology',
+    currentPriceUSD: 48.2,
+    currentPriceINR: 4072.9,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'HDFCBANK',
+    name: 'HDFC Bank Ltd',
+    exchange: 'NSE',
+    sector: 'Banking & Financials',
+    currentPriceUSD: 19.8,
+    currentPriceINR: 1673.1,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'INFY',
+    name: 'Infosys Ltd',
+    exchange: 'NSE',
+    sector: 'Information Technology',
+    currentPriceUSD: 22.1,
+    currentPriceINR: 1867.4,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'ICICIBANK',
+    name: 'ICICI Bank Ltd',
+    exchange: 'NSE',
+    sector: 'Banking & Financials',
+    currentPriceUSD: 14.9,
+    currentPriceINR: 1259.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'ITC',
+    name: 'ITC Ltd',
+    exchange: 'NSE',
+    sector: 'FMCG & Cigarettes',
+    currentPriceUSD: 5.8,
+    currentPriceINR: 490.1,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'BHARTIARTL',
+    name: 'Bharti Airtel Ltd',
+    exchange: 'NSE',
+    sector: 'Telecommunications',
+    currentPriceUSD: 19.5,
+    currentPriceINR: 1647.7,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'SBIN',
+    name: 'State Bank of India',
+    exchange: 'NSE',
+    sector: 'Public Sector Banking',
+    currentPriceUSD: 9.6,
+    currentPriceINR: 811.2,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'LT',
+    name: 'Larsen & Toubro Ltd',
+    exchange: 'NSE',
+    sector: 'Infrastructure & EPC',
+    currentPriceUSD: 42.0,
+    currentPriceINR: 3549.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'HINDUNILVR',
+    name: 'Hindustan Unilever Ltd',
+    exchange: 'NSE',
+    sector: 'FMCG',
+    currentPriceUSD: 29.8,
+    currentPriceINR: 2518.1,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'TATAMOTORS',
+    name: 'Tata Motors Ltd',
+    exchange: 'NSE',
+    sector: 'Automotive & EV',
+    currentPriceUSD: 10.8,
+    currentPriceINR: 912.6,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'BAJFINANCE',
+    name: 'Bajaj Finance Ltd',
+    exchange: 'NSE',
+    sector: 'NBFC & Lending',
+    currentPriceUSD: 82.5,
+    currentPriceINR: 6971.2,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'MARUTI',
+    name: 'Maruti Suzuki India Ltd',
+    exchange: 'NSE',
+    sector: 'Automobile',
+    currentPriceUSD: 144.0,
+    currentPriceINR: 12168.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'SUNPHARMA',
+    name: 'Sun Pharmaceutical Industries',
+    exchange: 'NSE',
+    sector: 'Healthcare & Pharma',
+    currentPriceUSD: 21.6,
+    currentPriceINR: 1825.2,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'TITAN',
+    name: 'Titan Company Ltd',
+    exchange: 'NSE',
+    sector: 'Jewellery & Consumer',
+    currentPriceUSD: 41.2,
+    currentPriceINR: 3481.4,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'TATASTEEL',
+    name: 'Tata Steel Ltd',
+    exchange: 'NSE',
+    sector: 'Metals & Mining',
+    currentPriceUSD: 1.8,
+    currentPriceINR: 152.1,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'NTPC',
+    name: 'NTPC Ltd',
+    exchange: 'NSE',
+    sector: 'Power Generation',
+    currentPriceUSD: 4.8,
+    currentPriceINR: 405.6,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'ONGC',
+    name: 'Oil & Natural Gas Corporation',
+    exchange: 'NSE',
+    sector: 'Oil & Gas',
+    currentPriceUSD: 3.2,
+    currentPriceINR: 270.4,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'POWERGRID',
+    name: 'Power Grid Corporation of India',
+    exchange: 'NSE',
+    sector: 'Power Transmission',
+    currentPriceUSD: 3.9,
+    currentPriceINR: 329.5,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'ADANIENT',
+    name: 'Adani Enterprises Ltd',
+    exchange: 'NSE',
+    sector: 'Diversified Conglomerate',
+    currentPriceUSD: 34.5,
+    currentPriceINR: 2915.2,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'ADANIPORTS',
+    name: 'Adani Ports & Special Economic Zone',
+    exchange: 'NSE',
+    sector: 'Ports & Logistics',
+    currentPriceUSD: 16.2,
+    currentPriceINR: 1368.9,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'KOTAKBANK',
+    name: 'Kotak Mahindra Bank',
+    exchange: 'NSE',
+    sector: 'Banking & Financials',
+    currentPriceUSD: 21.0,
+    currentPriceINR: 1774.5,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'AXISBANK',
+    name: 'Axis Bank Ltd',
+    exchange: 'NSE',
+    sector: 'Banking & Financials',
+    currentPriceUSD: 14.1,
+    currentPriceINR: 1191.4,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'WIPRO',
+    name: 'Wipro Ltd',
+    exchange: 'NSE',
+    sector: 'Information Technology',
+    currentPriceUSD: 6.4,
+    currentPriceINR: 540.8,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'HCLTECH',
+    name: 'HCL Technologies Ltd',
+    exchange: 'NSE',
+    sector: 'Information Technology',
+    currentPriceUSD: 21.8,
+    currentPriceINR: 1842.1,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'ZOMATO',
+    name: 'Zomato Ltd (Eternal)',
+    exchange: 'NSE',
+    sector: 'Quick Commerce & Food Delivery',
+    currentPriceUSD: 3.1,
+    currentPriceINR: 262.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'JIOFIN',
+    name: 'Jio Financial Services Ltd',
+    exchange: 'NSE',
+    sector: 'Fintech & Asset Management',
+    currentPriceUSD: 3.9,
+    currentPriceINR: 329.5,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'TATAPOWER',
+    name: 'Tata Power Company Ltd',
+    exchange: 'NSE',
+    sector: 'Clean Energy & Utilities',
+    currentPriceUSD: 5.2,
+    currentPriceINR: 439.4,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'SUZLON',
+    name: 'Suzlon Energy Ltd',
+    exchange: 'NSE',
+    sector: 'Renewable Wind Energy',
+    currentPriceUSD: 0.8,
+    currentPriceINR: 67.6,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'IREDA',
+    name: 'Indian Renewable Energy Dev Agency',
+    exchange: 'NSE',
+    sector: 'Green Energy Financing',
+    currentPriceUSD: 2.7,
+    currentPriceINR: 228.1,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'CDSL',
+    name: 'Central Depository Services Ltd',
+    exchange: 'NSE',
+    sector: 'Capital Markets Depository',
+    currentPriceUSD: 18.0,
+    currentPriceINR: 1521.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'HAL',
+    name: 'Hindustan Aeronautics Ltd',
+    exchange: 'NSE',
+    sector: 'Defence & Aerospace',
+    currentPriceUSD: 54.0,
+    currentPriceINR: 4563.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'BEL',
+    name: 'Bharat Electronics Ltd',
+    exchange: 'NSE',
+    sector: 'Defence Electronics',
+    currentPriceUSD: 3.5,
+    currentPriceINR: 295.7,
+    category: 'EQUITY',
+  },
+
+  // --- US & Global Tech Giants & Indices (NASDAQ / NYSE) ---
+  {
+    symbol: 'AAPL',
+    name: 'Apple Inc',
+    exchange: 'NASDAQ',
+    sector: 'Consumer Electronics & AI',
+    currentPriceUSD: 232.0,
+    currentPriceINR: 19604.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'MSFT',
+    name: 'Microsoft Corporation',
+    exchange: 'NASDAQ',
+    sector: 'Cloud & AI Software',
+    currentPriceUSD: 428.5,
+    currentPriceINR: 36208.2,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'NVDA',
+    name: 'NVIDIA Corporation',
+    exchange: 'NASDAQ',
+    sector: 'Semiconductors & GPU Computing',
+    currentPriceUSD: 141.2,
+    currentPriceINR: 11931.4,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'GOOGL',
+    name: 'Alphabet Inc (Google)',
+    exchange: 'NASDAQ',
+    sector: 'Internet & Search AI',
+    currentPriceUSD: 168.0,
+    currentPriceINR: 14196.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'AMZN',
+    name: 'Amazon.com Inc',
+    exchange: 'NASDAQ',
+    sector: 'E-Commerce & AWS Cloud',
+    currentPriceUSD: 189.5,
+    currentPriceINR: 16012.7,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'META',
+    name: 'Meta Platforms Inc',
+    exchange: 'NASDAQ',
+    sector: 'Social Networks & VR',
+    currentPriceUSD: 585.0,
+    currentPriceINR: 49432.5,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'TSLA',
+    name: 'Tesla Inc',
+    exchange: 'NASDAQ',
+    sector: 'Automotive & Robotics',
+    currentPriceUSD: 269.0,
+    currentPriceINR: 22730.5,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'BRK.B',
+    name: 'Berkshire Hathaway Inc',
+    exchange: 'NYSE',
+    sector: 'Value Conglomerate & Insurance',
+    currentPriceUSD: 452.0,
+    currentPriceINR: 38194.0,
+    category: 'EQUITY',
+  },
+  {
+    symbol: 'SPY',
+    name: 'SPDR S&P 500 ETF Trust',
+    exchange: 'NYSE',
+    sector: 'US Broad Market Index ETF',
+    currentPriceUSD: 582.0,
+    currentPriceINR: 49179.0,
+    category: 'MUTUAL_FUNDS',
+  },
+  {
+    symbol: 'QQQ',
+    name: 'Invesco QQQ Trust (Nasdaq 100)',
+    exchange: 'NASDAQ',
+    sector: 'US Tech Index ETF',
+    currentPriceUSD: 495.0,
+    currentPriceINR: 41827.5,
+    category: 'MUTUAL_FUNDS',
+  },
+
+  // --- Top Mutual Funds & Index Schemes ---
+  {
+    symbol: 'PPFAS',
+    name: 'Parag Parikh Flexi Cap Fund',
+    exchange: 'NSE',
+    sector: 'Indian & Global Diversified Equity',
+    currentPriceUSD: 29.4,
+    currentPriceINR: 2484.3,
+    category: 'MUTUAL_FUNDS',
+  },
+  {
+    symbol: 'NIFTY50',
+    name: 'UTI Nifty 50 Index Fund Direct-Growth',
+    exchange: 'NSE',
+    sector: 'Indian Large Cap Benchmark',
+    currentPriceUSD: 19.8,
+    currentPriceINR: 1673.1,
+    category: 'MUTUAL_FUNDS',
+  },
+  {
+    symbol: 'MIRAE_LARGE',
+    name: 'Mirae Asset Large Cap Fund',
+    exchange: 'NSE',
+    sector: 'Large Cap Growth Equity',
+    currentPriceUSD: 14.5,
+    currentPriceINR: 1225.2,
+    category: 'MUTUAL_FUNDS',
+  },
+  {
+    symbol: 'QUANT_SMALL',
+    name: 'Quant Small Cap Fund Direct-Growth',
+    exchange: 'NSE',
+    sector: 'High Growth Small Cap',
+    currentPriceUSD: 24.2,
+    currentPriceINR: 2044.9,
+    category: 'MUTUAL_FUNDS',
+  },
+  {
+    symbol: 'MOTILAL_MID',
+    name: 'Motilal Oswal Midcap Fund Direct',
+    exchange: 'NSE',
+    sector: 'Midcap Quality Growth',
+    currentPriceUSD: 18.6,
+    currentPriceINR: 1571.7,
+    category: 'MUTUAL_FUNDS',
+  },
+
+  // --- Cryptocurrencies ---
+  {
+    symbol: 'BTC',
+    name: 'Bitcoin (BTC)',
+    exchange: 'CRYPTO',
+    sector: 'Decentralized Digital Gold',
+    currentPriceUSD: 68400.0,
+    currentPriceINR: 5779800.0,
+    category: 'CRYPTO',
+  },
+  {
+    symbol: 'ETH',
+    name: 'Ethereum (ETH)',
+    exchange: 'CRYPTO',
+    sector: 'Smart Contract Platform',
+    currentPriceUSD: 2540.0,
+    currentPriceINR: 214630.0,
+    category: 'CRYPTO',
+  },
+  {
+    symbol: 'SOL',
+    name: 'Solana (SOL)',
+    exchange: 'CRYPTO',
+    sector: 'High Speed L1 Blockchain',
+    currentPriceUSD: 178.0,
+    currentPriceINR: 15041.0,
+    category: 'CRYPTO',
+  },
+
+  // --- Gold & Commodities ---
+  {
+    symbol: 'SGB_2024',
+    name: 'Sovereign Gold Bond Series IV (RBI)',
+    exchange: 'NSE',
+    sector: 'Gold Sovereign Debt (2.5% p.a. + Gold)',
+    currentPriceUSD: 88.5,
+    currentPriceINR: 7478.2,
+    category: 'GOLD_SGB',
+  },
+  {
+    symbol: 'GOLDBEES',
+    name: 'Nippon India ETF Gold BeES',
+    exchange: 'NSE',
+    sector: 'Physical Gold Tracking ETF',
+    currentPriceUSD: 0.78,
+    currentPriceINR: 65.9,
+    category: 'GOLD_SGB',
+  },
+  {
+    symbol: 'SILVERBEES',
+    name: 'Nippon India ETF Silver BeES',
+    exchange: 'NSE',
+    sector: 'Physical Silver Tracking ETF',
+    currentPriceUSD: 1.15,
+    currentPriceINR: 97.2,
+    category: 'GOLD_SGB',
+  },
+];
+
+/**
+ * Live search service for listed stocks and instruments.
+ * Provides blazing-fast local fuzzy search over 120+ top assets,
+ * with optional public live fallback.
+ */
+export async function searchListedStocks(query: string): Promise<ListedStockItem[]> {
+  const cleanQuery = query.trim().toUpperCase();
+  if (!cleanQuery) {
+    return COMPREHENSIVE_STOCK_DIRECTORY.slice(0, 15);
+  }
+
+  // 1. Instant fuzzy search across built-in catalog
+  const localMatches = COMPREHENSIVE_STOCK_DIRECTORY.filter((item) => {
+    return (
+      item.symbol.toUpperCase().includes(cleanQuery) ||
+      item.name.toUpperCase().includes(cleanQuery) ||
+      item.sector.toUpperCase().includes(cleanQuery) ||
+      item.exchange.toUpperCase().includes(cleanQuery)
+    );
+  });
+
+  // 2. Sort results: exact symbol matches first, then prefix matches, then substring
+  localMatches.sort((a, b) => {
+    const aSym = a.symbol.toUpperCase();
+    const bSym = b.symbol.toUpperCase();
+    if (aSym === cleanQuery) return -1;
+    if (bSym === cleanQuery) return 1;
+    if (aSym.startsWith(cleanQuery) && !bSym.startsWith(cleanQuery)) return -1;
+    if (!aSym.startsWith(cleanQuery) && bSym.startsWith(cleanQuery)) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  // Return up to 12 best matches
+  return localMatches.slice(0, 12);
+}

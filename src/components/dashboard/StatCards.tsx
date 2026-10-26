@@ -1,14 +1,15 @@
 import React from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
 import { formatCurrency, formatPercentage } from '@/utils/formatters';
-import { Wallet, TrendingUp, ArrowUpRight, DollarSign } from 'lucide-react';
+import { Wallet, TrendingUp, ArrowUpRight, DollarSign, PiggyBank } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const StatCards: React.FC = () => {
-  const { currency, getPortfolioSummary } = useFinanceStore();
+  const { currency, assets, getPortfolioSummary } = useFinanceStore();
   const summary = getPortfolioSummary();
 
   const isProfit = summary.totalUnrealizedPnL >= 0;
+  const monthlySurplus = summary.totalMonthlyIncome - summary.totalMonthlyExpenses;
 
   const cards = [
     {
@@ -24,7 +25,7 @@ export const StatCards: React.FC = () => {
     {
       title: 'Total Invested Capital',
       value: formatCurrency(summary.totalInvested, currency),
-      subtext: 'Principal cost basis across 8 holdings',
+      subtext: `Principal cost basis across ${assets.length} multi-asset holdings`,
       isPositive: null,
       icon: DollarSign,
       gradient: 'from-[#ffffff] to-[#f8f6f0]',
@@ -41,20 +42,30 @@ export const StatCards: React.FC = () => {
       borderColor: isProfit ? 'border-[#bbf7d0]' : 'border-[#fecaca]',
       iconBg: isProfit ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800',
     },
+    {
+      title: 'Monthly Savings Rate',
+      value: `${summary.monthlySavingsRate.toFixed(1)}%`,
+      subtext: `${formatCurrency(monthlySurplus, currency)} net monthly surplus`,
+      isPositive: monthlySurplus >= 0,
+      icon: PiggyBank,
+      gradient: 'from-[#ffffff] to-[#f5fbf7]',
+      borderColor: 'border-[#bbf7d0]',
+      iconBg: 'bg-emerald-100 text-emerald-800',
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card, i) => {
         const Icon = card.icon;
         return (
           <motion.div
             key={i}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className={`rounded-2xl border ${card.borderColor} bg-gradient-to-b ${card.gradient} p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between`}
+            className={`rounded-2xl border ${card.borderColor} bg-gradient-to-b ${card.gradient} p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between`}
           >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
                 {card.title}
               </span>
               <div className={`p-2.5 rounded-xl ${card.iconBg}`}>
@@ -63,22 +74,22 @@ export const StatCards: React.FC = () => {
             </div>
 
             <div>
-              <div className="text-3xl sm:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">
+              <div className="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900 tracking-tight font-mono">
                 {card.value}
               </div>
-              <div className="flex items-center gap-1.5 mt-2.5 text-xs font-semibold">
+              <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold">
                 {card.isPositive !== null && (
                   <span
-                    className={`inline-flex items-center text-[11px] font-bold px-1.5 py-0.5 rounded-md ${
+                    className={`inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                       card.isPositive
                         ? 'bg-emerald-100 text-emerald-800'
                         : 'bg-rose-100 text-rose-800'
                     }`}
                   >
-                    <ArrowUpRight className={`h-3.5 w-3.5 ${card.isPositive ? '' : 'rotate-90'}`} />
+                    <ArrowUpRight className={`h-3 w-3 ${card.isPositive ? '' : 'rotate-90'}`} />
                   </span>
                 )}
-                <span className="text-slate-600">{card.subtext}</span>
+                <span className="text-slate-600 truncate">{card.subtext}</span>
               </div>
             </div>
           </motion.div>

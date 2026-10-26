@@ -6,6 +6,8 @@ import {
   StockPrediction,
   MarketNewsItem,
   TaxReport,
+  ExpenseItem,
+  IncomeItem,
 } from '@/types/finance';
 
 // All baseline prices stored in USD for universal calculation ($1 USD = ~₹84.5 INR)
@@ -98,6 +100,32 @@ export const INITIAL_ASSETS: Asset[] = [
     currency: 'USD',
     lastUpdated: '2026-10-26T10:00:00Z',
   },
+  {
+    id: 'ast_9',
+    symbol: 'REALESTATE_BLR',
+    name: 'Bangalore East 2BHK Rental Flat',
+    category: 'REAL_ESTATE',
+    quantity: 1,
+    averageBuyPrice: 9500.0,
+    currentMarketPrice: 11200.0,
+    currency: 'USD',
+    institution: 'Prestige Group / Sub-Registrar',
+    expectedReturnRate: 8.5,
+    lastUpdated: '2026-10-26T10:00:00Z',
+  },
+  {
+    id: 'ast_10',
+    symbol: 'PPF_GOVT',
+    name: 'Public Provident Fund (PPF 7.1%)',
+    category: 'RETIREMENT_PPF',
+    quantity: 1,
+    averageBuyPrice: 2800.0,
+    currentMarketPrice: 3100.0,
+    currency: 'USD',
+    institution: 'State Bank of India',
+    expectedReturnRate: 7.1,
+    lastUpdated: '2026-10-26T10:00:00Z',
+  },
 ];
 
 export const INITIAL_TRANSACTIONS: Transaction[] = [
@@ -152,6 +180,92 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
     totalAmount: 45.0,
     date: '2026-09-01',
     notes: 'Interim dividend credited',
+  },
+];
+
+export const INITIAL_EXPENSES: ExpenseItem[] = [
+  {
+    id: 'exp_1',
+    title: 'Apartment Rent & Society Maintenance',
+    category: 'HOUSING_RENT',
+    amount: 320.0,
+    paymentMethod: 'NET_BANKING',
+    frequency: 'MONTHLY_RECURRING',
+    date: '2026-10-01',
+    notes: 'Paid to Landlord via Net Banking',
+  },
+  {
+    id: 'exp_2',
+    title: 'Car Loan EMI (HDFC Bank)',
+    category: 'EMI_LOANS',
+    amount: 185.0,
+    paymentMethod: 'NET_BANKING',
+    frequency: 'MONTHLY_RECURRING',
+    date: '2026-10-05',
+    notes: 'Auto-debit for EV Car loan',
+  },
+  {
+    id: 'exp_3',
+    title: 'Supermarket Groceries & Organic Produce',
+    category: 'FOOD_DINING',
+    amount: 140.0,
+    paymentMethod: 'UPI',
+    frequency: 'ONE_TIME',
+    date: '2026-10-18',
+    notes: 'Nature Basket monthly grocery haul',
+  },
+  {
+    id: 'exp_4',
+    title: 'Electricity, High-speed Fiber & Utility Bills',
+    category: 'UTILITIES_BILLS',
+    amount: 45.0,
+    paymentMethod: 'UPI',
+    frequency: 'MONTHLY_RECURRING',
+    date: '2026-10-10',
+    notes: 'BESCOM + Airtel Fiber broadband',
+  },
+  {
+    id: 'exp_5',
+    title: 'Cloud & Productivity Subscriptions',
+    category: 'ENTERTAINMENT_SUBS',
+    amount: 35.0,
+    paymentMethod: 'CREDIT_CARD',
+    frequency: 'MONTHLY_RECURRING',
+    date: '2026-10-12',
+    notes: 'ChatGPT Plus, Spotify, Netflix 4K',
+  },
+];
+
+export const INITIAL_INCOMES: IncomeItem[] = [
+  {
+    id: 'inc_1',
+    source: 'Tech Enterprise Lead Salary',
+    category: 'SALARY',
+    amount: 1950.0,
+    frequency: 'MONTHLY',
+    date: '2026-10-01',
+    account: 'HDFC Corporate Salary A/c',
+    notes: 'Monthly fixed salary after PF deduction',
+  },
+  {
+    id: 'inc_2',
+    source: 'Software Consulting & Architecture Advisory',
+    category: 'FREELANCE',
+    amount: 450.0,
+    frequency: 'ONE_TIME',
+    date: '2026-10-14',
+    account: 'ICICI Current A/c',
+    notes: 'Fintech microservices architecture sprint',
+  },
+  {
+    id: 'inc_3',
+    source: 'Bangalore Flat Tenant Rental Yield',
+    category: 'RENTAL',
+    amount: 220.0,
+    frequency: 'MONTHLY',
+    date: '2026-10-05',
+    account: 'SBI Savings A/c',
+    notes: 'Direct tenant UPI transfer',
   },
 ];
 

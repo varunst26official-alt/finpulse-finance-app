@@ -9,6 +9,9 @@ import {
   StockPrediction,
   MarketNewsItem,
   TaxReport,
+  ExpenseItem,
+  IncomeItem,
+  AssetCategory,
 } from '@/types/finance';
 import {
   INITIAL_ASSETS,
@@ -18,7 +21,10 @@ import {
   STOCK_PREDICTIONS,
   MARKET_NEWS_ITEMS,
   TAX_REPORT_MOCK,
+  INITIAL_EXPENSES,
+  INITIAL_INCOMES,
 } from '@/data/mockData';
+import { CATEGORY_COLORS } from '@/utils/formatters';
 
 export type NavigationTab =
   | 'dashboard'
@@ -37,9 +43,11 @@ interface FinanceState {
   activeTab: NavigationTab;
   setActiveTab: (tab: NavigationTab) => void;
 
-  // Portfolio Data
+  // Portfolio & Wealth Data
   assets: Asset[];
   transactions: Transaction[];
+  expenses: ExpenseItem[];
+  incomes: IncomeItem[];
   history: typeof INITIAL_HISTORY;
 
   // AI Wealth Copilot State
@@ -56,6 +64,12 @@ interface FinanceState {
   // Actions
   addTransaction: (tx: Omit<Transaction, 'id'>) => void;
   deleteTransaction: (id: string) => void;
+  addAsset: (asset: Omit<Asset, 'id' | 'lastUpdated'>) => void;
+  deleteAsset: (id: string) => void;
+  addExpense: (expense: Omit<ExpenseItem, 'id'>) => void;
+  deleteExpense: (id: string) => void;
+  addIncome: (income: Omit<IncomeItem, 'id'>) => void;
+  deleteIncome: (id: string) => void;
 
   // Computed Selectors
   getPortfolioSummary: () => PortfolioSummary;
@@ -72,6 +86,8 @@ export const useFinanceStore = create<FinanceState>()(
 
       assets: INITIAL_ASSETS,
       transactions: INITIAL_TRANSACTIONS,
+      expenses: INITIAL_EXPENSES,
+      incomes: INITIAL_INCOMES,
       history: INITIAL_HISTORY,
 
       aiMessages: INITIAL_AI_MESSAGES,
@@ -96,15 +112,18 @@ export const useFinanceStore = create<FinanceState>()(
 
         // AI Logic Engine with context injection
         setTimeout(() => {
-          const { assets, getPortfolioSummary } = get();
+          const { assets, expenses, incomes, getPortfolioSummary } = get();
           const summary = getPortfolioSummary();
           const lower = prompt.toLowerCase();
 
           let aiResponse = '';
           let suggested: string[] = [];
 
-          if (lower.includes('risk') || lower.includes('audit') || lower.includes('allocation')) {
-            aiResponse = `📊 **Portfolio Risk & Allocation Audit:**\n\n- **Net Worth Analyzed:** $${Math.round(summary.totalNetWorth).toLocaleString()} (₹${Math.round(summary.totalNetWorth * 84.5).toLocaleString()})\n- **Equity Concentration:** ~47% across Bluechips (Reliance, TCS) and Mutual Funds.\n- **Defensive Buffer:** 16% in Sovereign Gold Bonds (SGB) and 15% in Bank FDs.\n- **Liquid Cash Reserve:** $2,000 (~₹1.69 Lakhs) providing **4.8 months of emergency runway**.\n\n💡 **Copilot Recommendation:** Your Sharpe Ratio is an optimal **1.84**. Allocation is well-hedged against inflation. Consider adding international index exposure (Nasdaq 100) on pullbacks.`;
+          if (lower.includes('cash flow') || lower.includes('expense') || lower.includes('spend') || lower.includes('savings')) {
+            aiResponse = `💰 **Cash Flow & Expense Health Analysis:**\n\n- **Monthly Inflow:** $${Math.round(summary.totalMonthlyIncome).toLocaleString()} (~₹${Math.round(summary.totalMonthlyIncome * 84.5).toLocaleString()})\n- **Monthly Outflows/Expenses:** $${Math.round(summary.totalMonthlyExpenses).toLocaleString()} (~₹${Math.round(summary.totalMonthlyExpenses * 84.5).toLocaleString()})\n- **Net Savings Rate:** **${summary.monthlySavingsRate.toFixed(1)}%** (Excellent benchmark: target > 40%)\n- **Liquid Cash Runway:** **${summary.liquidRunwayMonths.toFixed(1)} months** of emergency survival buffer.\n\n💡 **Copilot Recommendation:** Your savings rate allows you to automate an extra SIP into diversified equity without straining liquidity.`;
+            suggested = ['Show me Tax Harvesting tips', 'Audit my asset allocation risk'];
+          } else if (lower.includes('risk') || lower.includes('audit') || lower.includes('allocation')) {
+            aiResponse = `📊 **Portfolio Risk & Allocation Audit:**\n\n- **Comprehensive Net Worth:** $${Math.round(summary.totalNetWorth).toLocaleString()} (₹${Math.round(summary.totalNetWorth * 84.5).toLocaleString()})\n- **Equity & Growth Assets:** ~44% across Listed Stocks, Mutual Funds & Crypto.\n- **Defensive & Real Assets:** ~56% distributed in Real Estate, Bank FDs, Sovereign Gold Bonds (SGB), and PPF.\n- **Emergency Runway:** **${summary.liquidRunwayMonths.toFixed(1)} months** of cash.\n\n💡 **Copilot Recommendation:** Your allocation exhibits balanced inflation-hedging with steady physical and liquid assets. Consider reviewing real estate yield vs capital appreciation.`;
             suggested = ['Show me Tax Harvesting tips', 'What is Reliance 30-day forecast?'];
           } else if (lower.includes('tax') || lower.includes('ltcg') || lower.includes('capital gain')) {
             aiResponse = `🧾 **Capital Gains Tax Optimization (FY 2026-27):**\n\n- **Unrealized Long-Term Gains (LTCG):** ~$3,490 (₹2.95 Lakhs)\n- **Standard Tax-Free Exemption:** ₹1,25,000 per financial year.\n- **Tax Harvest Opportunity:** You have **$1,480 (₹1.25 Lakhs)** in tax-free exemption that resets on March 31!\n\n💡 **Action Item:** Sell partial shares of Reliance and TCS before March 31 and re-enter immediately to step up your cost basis. You will pocket zero tax on ₹1.25 Lakhs.`;
@@ -113,11 +132,11 @@ export const useFinanceStore = create<FinanceState>()(
             aiResponse = `🔮 **AI Asset Projections (Next 30-90 Days):**\n\n- **Reliance Industries:** Target **$38.20** (+9.8%) with an **88% Bullish Confidence Score**. Support at $32.80.\n- **Bitcoin (Cold Storage):** Target **$76,500** (+11.8%) with institutional ETF volume driving supply squeeze.\n- **Sovereign Gold (SGB):** Strong Buy rating (91% confidence) with central bank purchases acting as a geopolitical floor.\n\nCheck the **AI Forecaster** tab for Monte Carlo upper/lower prediction bands!`;
             suggested = ['Go to AI Stock Predictor', 'Audit my portfolio risk'];
           } else {
-            aiResponse = `🤖 I've analyzed your question against your active portfolio of **${assets.length} instruments**.\n\nYour portfolio is currently yielding an annualized return of **+${summary.pnlPercentage.toFixed(1)}%**. Would you like me to run a deep risk audit, simulate capital gains tax, or check live news impacting your holdings?`;
+            aiResponse = `🤖 I've analyzed your question across your **${assets.length} portfolio assets**, **${expenses.length} tracked expenses**, and **${incomes.length} income streams**.\n\nYour portfolio is generating a **${summary.monthlySavingsRate.toFixed(1)}% savings rate** and annualized return of **+${summary.pnlPercentage.toFixed(1)}%**. Would you like me to run a deep risk audit, simulate capital gains tax, or review monthly cash flow?`;
             suggested = [
+              'Analyze my monthly cash flow and expenses',
               'Audit my asset allocation risk',
               'How much LTCG tax do I owe?',
-              'Show latest market news affecting my stocks',
             ];
           }
 
@@ -150,22 +169,55 @@ export const useFinanceStore = create<FinanceState>()(
         set((state) => {
           const updatedTransactions = [newTransaction, ...state.transactions];
 
-          // Recompute asset positions
-          const existingAsset = state.assets.find((a: Asset) => a.id === newTxData.assetId);
+          // Check if asset already exists
+          const existingAsset = state.assets.find(
+            (a: Asset) => a.id === newTxData.assetId || a.symbol === newTxData.assetSymbol
+          );
           let updatedAssets = [...state.assets];
 
           if (existingAsset) {
-            const quantityChange = newTxData.type === 'BUY' ? newTxData.quantity : -newTxData.quantity;
+            const quantityChange =
+              newTxData.type === 'BUY' || newTxData.type === 'SIP'
+                ? newTxData.quantity
+                : newTxData.type === 'SELL'
+                ? -newTxData.quantity
+                : 0;
             const newQty = Math.max(0, existingAsset.quantity + quantityChange);
 
+            // Recompute average buy price if BUY
+            let newAvgPrice = existingAsset.averageBuyPrice;
+            if (newTxData.type === 'BUY' || newTxData.type === 'SIP') {
+              const oldCost = existingAsset.quantity * existingAsset.averageBuyPrice;
+              const newCost = newTxData.quantity * newTxData.pricePerUnit;
+              newAvgPrice = newQty > 0 ? (oldCost + newCost) / newQty : newTxData.pricePerUnit;
+            }
+
             updatedAssets = state.assets.map((a: Asset) =>
-              a.id === newTxData.assetId
+              a.id === existingAsset.id
                 ? {
                     ...a,
                     quantity: newQty,
+                    averageBuyPrice: newAvgPrice,
+                    currentMarketPrice: newTxData.pricePerUnit,
+                    lastUpdated: new Date().toISOString(),
                   }
                 : a
             );
+          } else {
+            // Automatically register new asset into portfolio!
+            const newAsset: Asset = {
+              id: newTxData.assetId || `ast_${Date.now()}`,
+              symbol: newTxData.assetSymbol,
+              name: newTxData.assetName,
+              category: newTxData.category,
+              quantity: newTxData.quantity,
+              averageBuyPrice: newTxData.pricePerUnit,
+              currentMarketPrice: newTxData.pricePerUnit,
+              currency: 'USD',
+              institution: newTxData.platform || 'Direct Demat',
+              lastUpdated: new Date().toISOString(),
+            };
+            updatedAssets = [newAsset, ...updatedAssets];
           }
 
           return {
@@ -181,11 +233,64 @@ export const useFinanceStore = create<FinanceState>()(
         }));
       },
 
+      addAsset: (newAssetData) => {
+        const newAsset: Asset = {
+          ...newAssetData,
+          id: `ast_${Date.now()}`,
+          lastUpdated: new Date().toISOString(),
+        };
+
+        set((state) => ({
+          assets: [newAsset, ...state.assets],
+        }));
+      },
+
+      deleteAsset: (id) => {
+        set((state) => ({
+          assets: state.assets.filter((a: Asset) => a.id !== id),
+        }));
+      },
+
+      addExpense: (newExpenseData) => {
+        const newExpense: ExpenseItem = {
+          ...newExpenseData,
+          id: `exp_${Date.now()}`,
+        };
+
+        set((state) => ({
+          expenses: [newExpense, ...state.expenses],
+        }));
+      },
+
+      deleteExpense: (id) => {
+        set((state) => ({
+          expenses: state.expenses.filter((e) => e.id !== id),
+        }));
+      },
+
+      addIncome: (newIncomeData) => {
+        const newIncome: IncomeItem = {
+          ...newIncomeData,
+          id: `inc_${Date.now()}`,
+        };
+
+        set((state) => ({
+          incomes: [newIncome, ...state.incomes],
+        }));
+      },
+
+      deleteIncome: (id) => {
+        set((state) => ({
+          incomes: state.incomes.filter((i) => i.id !== id),
+        }));
+      },
+
       getPortfolioSummary: () => {
-        const { assets } = get();
+        const { assets, expenses, incomes } = get();
 
         let totalNetWorth = 0;
         let totalInvested = 0;
+        let liquidCash = 0;
 
         const categoryTotals: Record<string, number> = {};
 
@@ -196,18 +301,41 @@ export const useFinanceStore = create<FinanceState>()(
           totalNetWorth += currentValue;
           totalInvested += investedValue;
 
+          if (asset.category === 'LIQUID_CASH') {
+            liquidCash += currentValue;
+          }
+
           categoryTotals[asset.category] = (categoryTotals[asset.category] || 0) + currentValue;
         });
 
         const totalUnrealizedPnL = totalNetWorth - totalInvested;
         const pnlPercentage = totalInvested > 0 ? (totalUnrealizedPnL / totalInvested) * 100 : 0;
 
-        // Allocation breakdown with percentages
+        // Calculate Monthly Cash Flow
+        const totalMonthlyIncome = incomes.reduce((acc, inc) => {
+          if (inc.frequency === 'MONTHLY') return acc + inc.amount;
+          if (inc.frequency === 'ANNUAL') return acc + inc.amount / 12;
+          return acc + inc.amount; // One-time recorded in current month
+        }, 0);
+
+        const totalMonthlyExpenses = expenses.reduce((acc, exp) => {
+          return acc + exp.amount;
+        }, 0);
+
+        const monthlySavingsRate =
+          totalMonthlyIncome > 0
+            ? Math.max(0, ((totalMonthlyIncome - totalMonthlyExpenses) / totalMonthlyIncome) * 100)
+            : 0;
+
+        const liquidRunwayMonths =
+          totalMonthlyExpenses > 0 ? (liquidCash || 2000) / totalMonthlyExpenses : 6;
+
+        // Allocation breakdown with mapped colors
         const allocationBreakdown = Object.entries(categoryTotals).map(([cat, val]) => ({
-          category: cat as any,
+          category: cat as AssetCategory,
           currentValue: val,
           percentage: totalNetWorth > 0 ? (val / totalNetWorth) * 100 : 0,
-          color: '#6366f1',
+          color: CATEGORY_COLORS[cat as AssetCategory] || '#9e783e',
         }));
 
         return {
@@ -217,6 +345,10 @@ export const useFinanceStore = create<FinanceState>()(
           pnlPercentage,
           todaysChange: totalNetWorth * 0.0124, // Simulated +1.24% today
           todaysChangePercentage: 1.24,
+          totalMonthlyIncome,
+          totalMonthlyExpenses,
+          monthlySavingsRate,
+          liquidRunwayMonths,
           allocationBreakdown,
         };
       },
@@ -228,6 +360,8 @@ export const useFinanceStore = create<FinanceState>()(
         currency: state.currency,
         transactions: state.transactions,
         assets: state.assets,
+        expenses: state.expenses,
+        incomes: state.incomes,
         aiMessages: state.aiMessages,
       }),
     }
