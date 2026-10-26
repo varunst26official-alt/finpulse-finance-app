@@ -23,7 +23,9 @@ import {
 import { UserAdaptiveInputs, AdaptiveLifeBlueprint } from '@/services/adaptiveLifeEngine';
 import { UserProfile } from '@/stores/authStore';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL
+  ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')}/api`
+  : '/api';
 const TOKEN_KEY = 'finpulse_auth_token';
 
 export function getStoredToken(): string | null {
