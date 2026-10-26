@@ -8,6 +8,7 @@ import {
   TaxReport,
   ExpenseItem,
   IncomeItem,
+  CalendarEvent,
 } from '@/types/finance';
 
 // All baseline prices stored in USD for universal calculation ($1 USD = ~₹84.5 INR)
@@ -266,6 +267,129 @@ export const INITIAL_INCOMES: IncomeItem[] = [
     date: '2026-10-05',
     account: 'SBI Savings A/c',
     notes: 'Direct tenant UPI transfer',
+  },
+];
+
+export const INITIAL_CALENDAR_EVENTS: CalendarEvent[] = [
+  {
+    id: 'cal_1',
+    title: "Sister's 30th Birthday Dinner & Gift",
+    date: '2026-10-28',
+    type: 'LIFE_EVENT',
+    amount: 100.0, // ~₹8,450
+    categoryName: 'Celebration & Gifts',
+    isCompleted: false,
+    notes: 'Reservation at The Leela Palace',
+  },
+  {
+    id: 'cal_2',
+    title: 'Enterprise Tech Lead Salary Credit',
+    date: '2026-11-01',
+    type: 'EXPECTED_INCOME',
+    amount: 1950.0, // ~₹1,65,000
+    categoryName: 'Employment Salary',
+    isCompleted: false,
+    notes: 'HDFC Corporate Salary Account',
+  },
+  {
+    id: 'cal_3',
+    title: 'Apartment Rent & Society Maintenance',
+    date: '2026-11-01',
+    type: 'PLANNED_EXPENSE',
+    amount: 320.0, // ~₹27,000
+    categoryName: 'Housing & Rent',
+    isCompleted: false,
+    notes: 'Auto-schedule transfer to landlord',
+  },
+  {
+    id: 'cal_4',
+    title: 'Car Loan EMI (HDFC Bank Auto-Debit)',
+    date: '2026-11-05',
+    type: 'PLANNED_EXPENSE',
+    amount: 185.0, // ~₹15,600
+    categoryName: 'EMI & Loans',
+    isCompleted: false,
+    notes: 'Standing instruction active',
+  },
+  {
+    id: 'cal_5',
+    title: 'Monthly SIP: Parag Parikh Flexi Cap & UTI Nifty 50',
+    date: '2026-11-05',
+    type: 'PLANNED_INVESTMENT',
+    amount: 415.0, // ~₹35,000
+    categoryName: 'Equity Mutual Funds',
+    isCompleted: false,
+    notes: 'BSE Star MF mandate auto-debit',
+  },
+  {
+    id: 'cal_6',
+    title: 'Annual Executive Health Checkup & Blood Screening',
+    date: '2026-11-10',
+    type: 'MEDICAL_CHECKUP',
+    amount: 140.0, // ~₹11,800
+    categoryName: 'Preventive Healthcare',
+    isCompleted: false,
+    notes: 'Apollo Hospitals - Fasting lipid & cardiac profile',
+  },
+  {
+    id: 'cal_7',
+    title: 'Diwali Festival Celebrations & Family Sweets',
+    date: '2026-11-12',
+    type: 'LIFE_EVENT',
+    amount: 295.0, // ~₹25,000
+    categoryName: 'Festival & Family',
+    isCompleted: false,
+    notes: 'Budget for festive decorations and gift hampers',
+  },
+  {
+    id: 'cal_8',
+    title: 'Electricity (BESCOM) & Fiber Broadband Bill',
+    date: '2026-11-15',
+    type: 'PLANNED_EXPENSE',
+    amount: 45.0, // ~₹3,800
+    categoryName: 'Utilities & Bills',
+    isCompleted: false,
+    notes: 'Auto-paid via BBPS UPI',
+  },
+  {
+    id: 'cal_9',
+    title: 'Routine Dental Cleaning & Health Review',
+    date: '2026-11-18',
+    type: 'MEDICAL_CHECKUP',
+    amount: 55.0, // ~₹4,650
+    categoryName: 'Dental & Oral Health',
+    isCompleted: false,
+    notes: 'Smile Clinic appointment at 4:30 PM',
+  },
+  {
+    id: 'cal_10',
+    title: 'Sovereign Gold Bond (SGB) Semi-Annual Interest Inflow',
+    date: '2026-11-20',
+    type: 'EXPECTED_INCOME',
+    amount: 50.0, // ~₹4,225
+    categoryName: 'SGB RBI Interest Yield',
+    isCompleted: false,
+    notes: '2.5% p.a. RBI interest credited to bank',
+  },
+  {
+    id: 'cal_11',
+    title: 'Credit Card Statement Settlement',
+    date: '2026-11-25',
+    type: 'PLANNED_EXPENSE',
+    amount: 215.0, // ~₹18,150
+    categoryName: 'Credit Card Bill',
+    isCompleted: false,
+    notes: 'Total amount due zero interest rollover',
+  },
+  {
+    id: 'cal_12',
+    title: 'Dad 60th Milestone Birthday Celebration',
+    date: '2026-12-15',
+    type: 'LIFE_EVENT',
+    amount: 240.0, // ~₹20,300
+    categoryName: 'Milestone Celebration',
+    isCompleted: false,
+    notes: 'Family gathering dinner & gift planning',
   },
 ];
 

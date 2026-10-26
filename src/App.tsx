@@ -15,6 +15,7 @@ import { FloatingAiChatWidget } from '@/components/ai/FloatingAiChatWidget';
 import { StockPredictor } from '@/components/predictions/StockPredictor';
 import { MarketIntelligenceFeed } from '@/components/news/MarketIntelligenceFeed';
 import { TaxOptimizer } from '@/components/tax/TaxOptimizer';
+import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -22,6 +23,7 @@ import {
   PieChart,
   ArrowLeftRight,
   Calculator,
+  CalendarDays,
   Bot,
   Sparkles,
   Newspaper,
@@ -49,6 +51,7 @@ export function App() {
     { id: 'predictions', label: 'Forecaster', icon: Sparkles },
     { id: 'news', label: 'News', icon: Newspaper },
     { id: 'tax', label: 'Tax', icon: ReceiptText },
+    { id: 'calendar', label: 'Calendar', icon: CalendarDays },
     { id: 'transactions', label: 'Ledger', icon: ArrowLeftRight },
     { id: 'goals', label: 'SIP', icon: Calculator },
   ];
@@ -110,6 +113,7 @@ export function App() {
                     </div>
                   </div>
                   <TransactionTable />
+                  <FinancialCalendarWidget />
                 </>
               )}
 
@@ -130,6 +134,9 @@ export function App() {
 
               {/* Tab 3: Transactions Ledger */}
               {activeTab === 'transactions' && <TransactionTable />}
+
+              {/* Tab: Financial Calendar & Events Planner */}
+              {activeTab === 'calendar' && <FinancialCalendarWidget />}
 
               {/* Tab 4: SIP & Wealth Projection Calculator */}
               {activeTab === 'goals' && <SipCalculator />}

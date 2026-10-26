@@ -1,4 +1,4 @@
-import { Currency, AssetCategory, ExpenseCategory, PaymentMethod, IncomeCategory } from '@/types/finance';
+import { Currency, AssetCategory, ExpenseCategory, PaymentMethod, IncomeCategory, CalendarEventType } from '@/types/finance';
 
 export const CURRENCY_CONFIGS: Record<Currency, { symbol: string; rateFromUSD: number; locale: string }> = {
   USD: { symbol: '$', rateFromUSD: 1.0, locale: 'en-US' },
@@ -88,4 +88,20 @@ export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   NET_BANKING: 'Net Banking',
   DEBIT_CARD: 'Debit Card',
   CASH: 'Cash',
+};
+
+export const CALENDAR_EVENT_LABELS: Record<CalendarEventType, string> = {
+  PLANNED_EXPENSE: 'Planned Expense & Bills',
+  PLANNED_INVESTMENT: 'Planned Investment / SIP',
+  LIFE_EVENT: 'Life Event & Celebration',
+  MEDICAL_CHECKUP: 'Health & Medical Checkup',
+  EXPECTED_INCOME: 'Expected Income Inflow',
+};
+
+export const CALENDAR_EVENT_COLORS: Record<CalendarEventType, { badge: string; dot: string; text: string }> = {
+  PLANNED_EXPENSE: { badge: 'bg-rose-50 text-rose-800 border-rose-200', dot: '#e11d48', text: 'text-rose-700' },
+  PLANNED_INVESTMENT: { badge: 'bg-sky-50 text-sky-800 border-sky-200', dot: '#0284c7', text: 'text-sky-700' },
+  LIFE_EVENT: { badge: 'bg-purple-50 text-purple-800 border-purple-200', dot: '#9333ea', text: 'text-purple-700' },
+  MEDICAL_CHECKUP: { badge: 'bg-amber-50 text-amber-800 border-amber-200', dot: '#d97706', text: 'text-amber-700' },
+  EXPECTED_INCOME: { badge: 'bg-emerald-50 text-emerald-800 border-emerald-200', dot: '#16a34a', text: 'text-emerald-700' },
 };

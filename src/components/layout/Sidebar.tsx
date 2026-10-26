@@ -11,6 +11,7 @@ import {
   Sparkles,
   Newspaper,
   ReceiptText,
+  CalendarDays,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -25,6 +26,7 @@ export const Sidebar: React.FC = () => {
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
     { id: 'investments', label: 'Holdings & Allocation', icon: PieChart },
     { id: 'transactions', label: 'Transactions Ledger', icon: ArrowLeftRight },
+    { id: 'calendar', label: 'Financial Calendar', icon: CalendarDays },
     { id: 'goals', label: 'SIP & Wealth Planner', icon: Calculator },
   ];
 

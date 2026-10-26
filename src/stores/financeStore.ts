@@ -13,6 +13,7 @@ import {
   IncomeItem,
   AssetCategory,
   TradeActionPayload,
+  CalendarEvent,
 } from '@/types/finance';
 import {
   INITIAL_ASSETS,
@@ -24,6 +25,7 @@ import {
   TAX_REPORT_MOCK,
   INITIAL_EXPENSES,
   INITIAL_INCOMES,
+  INITIAL_CALENDAR_EVENTS,
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
@@ -33,6 +35,7 @@ export type NavigationTab =
   | 'investments'
   | 'transactions'
   | 'goals'
+  | 'calendar'
   | 'ai-chat'
   | 'predictions'
   | 'news'
@@ -55,6 +58,7 @@ interface FinanceState {
   transactions: Transaction[];
   expenses: ExpenseItem[];
   incomes: IncomeItem[];
+  calendarEvents: CalendarEvent[];
   history: typeof INITIAL_HISTORY;
 
   // AI Wealth Copilot State
@@ -78,6 +82,9 @@ interface FinanceState {
   deleteExpense: (id: string) => void;
   addIncome: (income: Omit<IncomeItem, 'id'>) => void;
   deleteIncome: (id: string) => void;
+  addCalendarEvent: (event: Omit<CalendarEvent, 'id'>) => void;
+  deleteCalendarEvent: (id: string) => void;
+  toggleEventCompleted: (id: string) => void;
 
   // Computed Selectors
   getPortfolioSummary: () => PortfolioSummary;
@@ -100,6 +107,7 @@ export const useFinanceStore = create<FinanceState>()(
       transactions: INITIAL_TRANSACTIONS,
       expenses: INITIAL_EXPENSES,
       incomes: INITIAL_INCOMES,
+      calendarEvents: INITIAL_CALENDAR_EVENTS,
       history: INITIAL_HISTORY,
 
       aiMessages: INITIAL_AI_MESSAGES,
@@ -411,6 +419,32 @@ export const useFinanceStore = create<FinanceState>()(
         }));
       },
 
+      addCalendarEvent: (eventData) => {
+        const newEvent: CalendarEvent = {
+          ...eventData,
+          id: `cal_${Date.now()}`,
+          isCompleted: false,
+        };
+
+        set((state) => ({
+          calendarEvents: [...state.calendarEvents, newEvent],
+        }));
+      },
+
+      deleteCalendarEvent: (id) => {
+        set((state) => ({
+          calendarEvents: state.calendarEvents.filter((e) => e.id !== id),
+        }));
+      },
+
+      toggleEventCompleted: (id) => {
+        set((state) => ({
+          calendarEvents: state.calendarEvents.map((e) =>
+            e.id === id ? { ...e, isCompleted: !e.isCompleted } : e
+          ),
+        }));
+      },
+
       getPortfolioSummary: () => {
         const { assets, expenses, incomes } = get();
 
@@ -488,6 +522,7 @@ export const useFinanceStore = create<FinanceState>()(
         assets: state.assets,
         expenses: state.expenses,
         incomes: state.incomes,
+        calendarEvents: state.calendarEvents,
         aiMessages: state.aiMessages,
       }),
     }

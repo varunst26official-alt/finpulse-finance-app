@@ -117,6 +117,28 @@ export interface IncomeItem {
 }
 
 // ============================================================================
+// Financial Calendar & Life Events Planner Types
+// ============================================================================
+
+export type CalendarEventType =
+  | 'PLANNED_EXPENSE'    // Bills, Rent, EMI, Utilities
+  | 'PLANNED_INVESTMENT' // SIP debits, Stock buys, FD booking
+  | 'LIFE_EVENT'         // Birthdays, Anniversaries, Vacations, Festivals
+  | 'MEDICAL_CHECKUP'    // Doctor visit, Dental, Health checkups, Insurance
+  | 'EXPECTED_INCOME';   // Salary, Tenant rent, Freelance credit, Dividend
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: string; // YYYY-MM-DD
+  type: CalendarEventType;
+  amount: number; // in USD base (positive value)
+  categoryName: string; // e.g. "Rent & Society", "Car EMI", "Birthday Dinner"
+  isCompleted?: boolean;
+  notes?: string;
+}
+
+// ============================================================================
 // Listed Stock Directory Model (Free searchable stock catalog)
 // ============================================================================
 
