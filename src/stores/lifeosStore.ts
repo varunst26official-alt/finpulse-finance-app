@@ -122,6 +122,8 @@ interface LifeOSState {
   addChecklist: (item: Omit<AdminChecklistItem, 'id' | 'isCompleted'>) => void;
   toggleChecklist: (id: string) => void;
   deleteChecklist: (id: string) => void;
+
+  resetToFreshState: () => void;
 }
 
 export const useLifeOSStore = create<LifeOSState>()(
@@ -213,63 +215,7 @@ export const useLifeOSStore = create<LifeOSState>()(
         }).catch(() => {});
       },
 
-      tasks: [
-        {
-          id: 'tsk_1',
-          title: 'Workout session',
-          time: '7:00 AM',
-          category: 'WELLNESS',
-          priority: 'HIGH',
-          status: 'TODO',
-          badgeLabel: 'Planned',
-          notes: 'Full-body movement and mobility · 30 minutes',
-          iconSymbol: '♡',
-        },
-        {
-          id: 'tsk_2',
-          title: 'Review monthly spending',
-          time: '1:00 PM',
-          category: 'FINANCE',
-          priority: 'MEDIUM',
-          status: 'TODO',
-          badgeLabel: 'To do',
-          notes: 'Check transactions, mutual fund SIPs, and upcoming bills',
-          iconSymbol: '₹',
-        },
-        {
-          id: 'tsk_3',
-          title: 'Learning milestone',
-          time: '4:30 PM',
-          category: 'LEARNING',
-          priority: 'MEDIUM',
-          status: 'IN_PROGRESS',
-          badgeLabel: 'In progress',
-          notes: 'Complete the next system architecture chapter',
-          iconSymbol: '▧',
-        },
-        {
-          id: 'tsk_4',
-          title: 'Hydration goal (2.5L)',
-          time: '6:00 PM',
-          category: 'WELLNESS',
-          priority: 'LOW',
-          status: 'TODO',
-          badgeLabel: 'In progress',
-          notes: 'Drink 4 full bottles of water today',
-          iconSymbol: '◒',
-        },
-        {
-          id: 'tsk_5',
-          title: 'Daily check-in & reflection',
-          time: '8:30 PM',
-          category: 'PRODUCTIVITY',
-          priority: 'LOW',
-          status: 'TODO',
-          badgeLabel: 'Planned',
-          notes: 'Record nutrition estimates, gratitude, and wrap up today',
-          iconSymbol: '↻',
-        },
-      ],
+      tasks: [],
 
       toggleTaskComplete: (id) => {
         const state = get();
@@ -313,14 +259,14 @@ export const useLifeOSStore = create<LifeOSState>()(
 
       wellness: {
         heightCm: 175,
-        weightKg: 74.0,
+        weightKg: 70.0,
         targetWeightKg: 70.0,
-        workoutMinutesLogged: 45,
-        caloriesLogged: 1650,
-        caloriesTarget: 2200,
-        waterLitersLogged: 1.8,
+        workoutMinutesLogged: 0,
+        caloriesLogged: 0,
+        caloriesTarget: 2000,
+        waterLitersLogged: 0,
         waterTargetLiters: 2.5,
-        sleepHours: 7.5,
+        sleepHours: 0,
       },
 
       updateBodyMetrics: (heightCm, weightKg) => {
@@ -380,25 +326,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       // Phase 2: Workouts
-      workoutSessions: [
-        {
-          id: 'wsess_demo_1',
-          date: new Date().toISOString().split('T')[0],
-          splitName: 'Push (Chest & Triceps)',
-          durationMinutes: 45,
-          totalTonnage: 3420,
-          totalSets: 6,
-          notes: 'Heavy bench day with controlled eccentric',
-          sets: [
-            { id: 'st_1', exerciseId: 'barbell_bench', exerciseName: 'Barbell Flat Bench Press', muscleGroup: 'Chest', setNumber: 1, weightKg: 60, reps: 10, rpe: 7 },
-            { id: 'st_2', exerciseId: 'barbell_bench', exerciseName: 'Barbell Flat Bench Press', muscleGroup: 'Chest', setNumber: 2, weightKg: 70, reps: 8, rpe: 8 },
-            { id: 'st_3', exerciseId: 'barbell_bench', exerciseName: 'Barbell Flat Bench Press', muscleGroup: 'Chest', setNumber: 3, weightKg: 75, reps: 6, rpe: 9 },
-            { id: 'st_4', exerciseId: 'incline_dumbbell', exerciseName: 'Incline DB Press', muscleGroup: 'Upper Chest', setNumber: 1, weightKg: 24, reps: 10, rpe: 7.5 },
-            { id: 'st_5', exerciseId: 'incline_dumbbell', exerciseName: 'Incline DB Press', muscleGroup: 'Upper Chest', setNumber: 2, weightKg: 26, reps: 8, rpe: 8.5 },
-            { id: 'st_6', exerciseId: 'tricep_rope', exerciseName: 'Tricep Rope Pushdown', muscleGroup: 'Triceps', setNumber: 1, weightKg: 25, reps: 12, rpe: 7 },
-          ],
-        },
-      ],
+      workoutSessions: [],
 
       recordWorkoutSession: (sessionData) => {
         const newSessionId = `wsess_${Date.now()}`;
@@ -448,11 +376,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       // Phase 3: Meal Logs
-      mealLogs: [
-        { id: 'meal_1', date: new Date().toISOString().split('T')[0], mealType: 'BREAKFAST', name: 'Steel-Cut Oats with Whey, Chia & Blueberries', calories: 480, proteinGrams: 38, carbsGrams: 54, fatGrams: 12, portionDescription: '1 bowl with 1 scoop whey' },
-        { id: 'meal_2', date: new Date().toISOString().split('T')[0], mealType: 'LUNCH', name: 'Grilled Herb Chicken Breast with Quinoa & Steamed Greens', calories: 620, proteinGrams: 52, carbsGrams: 50, fatGrams: 16, portionDescription: '200g chicken breast + 150g quinoa' },
-        { id: 'meal_3', date: new Date().toISOString().split('T')[0], mealType: 'SNACK', name: 'Greek Yogurt with Crushed Walnuts & Honey', calories: 260, proteinGrams: 20, carbsGrams: 18, fatGrams: 10, portionDescription: '1 cup Greek yogurt' },
-      ],
+      mealLogs: [],
 
       addMealLog: (mealData) => {
         const todayStr = new Date().toISOString().split('T')[0];
@@ -489,12 +413,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       // Phase 4: Habits & Focus
-      habits: [
-        { id: 'hab_1', title: 'Morning Hydration (750ml) & Mobility Flow', category: 'MORNING', streakCount: 14, isCompletedToday: true, icon: '💧' },
-        { id: 'hab_2', title: 'Deep Work Focus Block (No Slack/Phone)', category: 'AFTERNOON', streakCount: 8, isCompletedToday: false, icon: '🧠' },
-        { id: 'hab_3', title: 'Evening Spending & Portfolio Log', category: 'EVENING', streakCount: 21, isCompletedToday: true, icon: '📊' },
-        { id: 'hab_4', title: 'Nightly Reflection & Sleep Wind-down', category: 'EVENING', streakCount: 12, isCompletedToday: false, icon: '🌙' },
-      ],
+      habits: [],
 
       addHabit: (habitData) => {
         const newHabit: HabitItem = {
@@ -538,9 +457,7 @@ export const useLifeOSStore = create<LifeOSState>()(
         api.lifeos.deleteHabit(id).catch(() => {});
       },
 
-      focusSessions: [
-        { id: 'foc_1', durationMinutes: 50, sessionType: 'DEEP_WORK', taskTitle: 'System Architecture & SQLite Schema Design', date: new Date().toISOString().split('T')[0] },
-      ],
+      focusSessions: [],
 
       logFocusSession: (sessionData) => {
         const newSession: FocusSessionItem = {
@@ -559,38 +476,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       // Phase 5: Learning & Books
-      learningItems: [
-        {
-          id: 'lrn_1',
-          title: 'System Design & Distributed Data',
-          field: 'Engineering',
-          progressPercent: 68,
-          hoursSpent: 34,
-          targetHours: 50,
-          status: 'IN_PROGRESS',
-          notes: 'Node.js, PostgreSQL, Distributed Caching & Event Sinks',
-        },
-        {
-          id: 'lrn_2',
-          title: 'Advanced Personal Portfolio Management',
-          field: 'Finance',
-          progressPercent: 45,
-          hoursSpent: 18,
-          targetHours: 40,
-          status: 'IN_PROGRESS',
-          notes: 'Asset allocation theory, Beta hedged portfolios, Bond yields',
-        },
-        {
-          id: 'lrn_3',
-          title: 'Full-Stack React & Next.js Architecture',
-          field: 'Web Development',
-          progressPercent: 85,
-          hoursSpent: 42,
-          targetHours: 50,
-          status: 'IN_PROGRESS',
-          notes: 'React 19 hooks, Server actions, Component library design',
-        },
-      ],
+      learningItems: [],
 
       addLearningItem: (item) =>
         set((state) => ({
@@ -600,11 +486,7 @@ export const useLifeOSStore = create<LifeOSState>()(
           ],
         })),
 
-      learningBooks: [
-        { id: 'bk_1', title: 'Designing Data-Intensive Applications', author: 'Martin Kleppmann', category: 'Distributed Systems', currentPage: 290, totalPages: 560, status: 'IN_PROGRESS', rating: 5, notes: 'Key insights on partitioning and replication lag' },
-        { id: 'bk_2', title: 'The Intelligent Investor', author: 'Benjamin Graham', category: 'Value Investing', currentPage: 340, totalPages: 340, status: 'COMPLETED', rating: 5, notes: 'Margin of safety & Mr. Market mindset' },
-        { id: 'bk_3', title: 'Outlive: The Science and Art of Longevity', author: 'Dr. Peter Attia', category: 'Health & Longevity', currentPage: 180, totalPages: 496, status: 'IN_PROGRESS', rating: 5, notes: 'Zone 2 cardio and VO2 max importance' },
-      ],
+      learningBooks: [],
 
       addBook: (bookData) => {
         const newBook: LearningBookItem = {
@@ -632,43 +514,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       // Phase 6: Documents, Emergency & Checklists
-      documents: [
-        {
-          id: 'doc_1',
-          title: 'Republic of India Passport',
-          category: 'ID_CARD',
-          documentNumber: 'Z8942019',
-          expiryDate: '2031-10-15',
-          status: 'ACTIVE',
-          authority: 'Ministry of External Affairs',
-        },
-        {
-          id: 'doc_2',
-          title: 'Comprehensive Health Insurance Card',
-          category: 'INSURANCE',
-          documentNumber: 'SH-551029-B',
-          expiryDate: '2026-11-20',
-          status: 'EXPIRING_SOON',
-          authority: 'Star Health & Allied',
-        },
-        {
-          id: 'doc_3',
-          title: 'Permanent Driving License',
-          category: 'ID_CARD',
-          documentNumber: 'KA-04-2016-004921',
-          expiryDate: '2036-05-24',
-          status: 'ACTIVE',
-          authority: 'Bangalore Central RTO',
-        },
-        {
-          id: 'doc_4',
-          title: 'Villa Sale Deed & Khata Certificate',
-          category: 'PROPERTY',
-          documentNumber: 'BLR-REG-2022-771',
-          status: 'ACTIVE',
-          authority: 'Sub-Registrar Karnataka',
-        },
-      ],
+      documents: [],
 
       addDocument: (doc) =>
         set((state) => ({
@@ -683,32 +529,14 @@ export const useLifeOSStore = create<LifeOSState>()(
           documents: state.documents.filter((d) => d.id !== id),
         })),
 
-      emergencyInfo: {
-        bloodGroup: 'O+ Positive',
-        allergies: 'Penicillin (mild rash)',
-        medicalConditions: 'None reported',
-        primaryContactName: 'Jane S T',
-        primaryContactPhone: '+91 98765 11223',
-        primaryContactRelation: 'Spouse',
-        secondaryContactName: 'Senior Varun',
-        secondaryContactPhone: '+91 98765 44332',
-        physicianName: 'Dr. Arvind Sharma (MD Cardiology)',
-        physicianPhone: '+91 80 4123 4567',
-        tpaHelpline: '1800-102-4477 (HDFC ERGO Cashless)',
-        notes: 'Emergency ID and insurance cards located in LifeOS Document Vault',
-      },
+      emergencyInfo: null,
 
       saveEmergencyInfo: (info) => {
         set({ emergencyInfo: info });
         api.lifeos.saveEmergencyInfo(info).catch(() => {});
       },
 
-      adminChecklists: [
-        { id: 'chk_1', title: 'Income Tax Return (ITR-2) Filing', frequency: 'ANNUAL', dueDate: '2027-07-31', isCompleted: false, category: 'TAX' },
-        { id: 'chk_2', title: 'Vehicle Comprehensive Insurance Renewal', frequency: 'ANNUAL', dueDate: '2027-03-15', isCompleted: false, category: 'VEHICLE' },
-        { id: 'chk_3', title: 'Quarterly Net Worth & Asset Rebalance', frequency: 'QUARTERLY', dueDate: '2026-12-31', isCompleted: true, category: 'FINANCE' },
-        { id: 'chk_4', title: 'Annual Full-Body Health Checkup & Blood Panel', frequency: 'ANNUAL', dueDate: '2027-04-10', isCompleted: false, category: 'HEALTH' },
-      ],
+      adminChecklists: [],
 
       addChecklist: (itemData) => {
         const newItem: AdminChecklistItem = {
@@ -736,6 +564,32 @@ export const useLifeOSStore = create<LifeOSState>()(
           adminChecklists: state.adminChecklists.filter((c) => c.id !== id),
         }));
         api.lifeos.deleteChecklist(id).catch(() => {});
+      },
+
+      resetToFreshState: () => {
+        set({
+          tasks: [],
+          workoutSessions: [],
+          mealLogs: [],
+          habits: [],
+          focusSessions: [],
+          learningItems: [],
+          learningBooks: [],
+          documents: [],
+          emergencyInfo: null,
+          adminChecklists: [],
+          wellness: {
+            heightCm: 175,
+            weightKg: 70.0,
+            targetWeightKg: 70.0,
+            workoutMinutesLogged: 0,
+            caloriesLogged: 0,
+            caloriesTarget: 2000,
+            waterLitersLogged: 0,
+            waterTargetLiters: 2.5,
+            sleepHours: 0,
+          },
+        });
       },
     }),
     {

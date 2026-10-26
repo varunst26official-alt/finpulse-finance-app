@@ -642,7 +642,7 @@ export const LifeOverviewWorkspace: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Review mutual fund portfolios"
+                    placeholder="e.g., Complete priority milestone"
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-hidden focus:ring-2 focus:ring-[#17365d]/20 focus:border-[#17365d]"

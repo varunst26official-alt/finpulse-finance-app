@@ -7,13 +7,12 @@ import {
   User,
   Phone,
   ArrowRight,
-  Sparkles,
   CheckCircle2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const AuthScreen: React.FC = () => {
-  const { login, register, loginAsDemo } = useAuthStore();
+  const { login, register } = useAuthStore();
   const [mode, setMode] = useState<'login' | 'register'>('login');
 
   // Login Form State
@@ -117,20 +116,15 @@ export const AuthScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Demo CTA */}
+          {/* Privacy & Security Guarantee */}
           <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-[#dfd2ba]">
-            <span className="text-xs text-slate-600 block mb-2 font-medium">
-              Evaluating as a recruiter or visitor?
-            </span>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={loginAsDemo}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all shadow-md cursor-pointer"
-            >
-              <Sparkles className="h-4 w-4 text-[#d9bf8f]" />
-              <span>1-Click Investor Demo Access</span>
-            </motion.button>
+            <div className="flex items-center gap-2 text-xs text-slate-800 font-bold mb-1">
+              <ShieldCheck className="h-4 w-4 text-[#9e783e]" />
+              <span>Private & Secure Workspace</span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-relaxed font-medium">
+              Your financial ledgers, biometric logs, and personal agenda are isolated and securely maintained per user.
+            </p>
           </div>
         </div>
 
@@ -193,7 +187,7 @@ export const AuthScreen: React.FC = () => {
                     <input
                       type="email"
                       required
-                      placeholder="e.g. varun@example.com"
+                      placeholder="name@example.com"
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
                       className="w-full h-11 rounded-xl bg-[#faf8f5] border border-[#e4d9c7] pl-10 pr-3 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden font-medium"
@@ -208,7 +202,7 @@ export const AuthScreen: React.FC = () => {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        alert('Demo mode: Click "1-Click Investor Demo Access" on the left!');
+                        alert('Password recovery: Please contact support or check your registered email.');
                       }}
                       className="text-xs text-[#9e783e] font-semibold hover:underline"
                     >
@@ -239,24 +233,7 @@ export const AuthScreen: React.FC = () => {
                 <ArrowRight className="h-4 w-4" />
               </motion.button>
 
-              <div className="relative flex py-2 items-center">
-                <div className="flex-grow border-t border-slate-200"></div>
-                <span className="flex-shrink mx-3 text-slate-400 text-[10px] font-bold uppercase tracking-wider">or instant preview</span>
-                <div className="flex-grow border-t border-slate-200"></div>
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                type="button"
-                onClick={loginAsDemo}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#f5ede0] hover:bg-[#ebdcc6] text-[#6b4e20] text-xs font-bold transition-all border border-[#dec9ab] cursor-pointer"
-              >
-                <Sparkles className="h-4 w-4 text-[#9e783e]" />
-                <span>1-Click Investor Demo Access</span>
-              </motion.button>
-
-              <div className="text-center text-xs text-slate-600 pt-2 font-medium">
+              <div className="text-center text-xs text-slate-600 pt-3 font-medium">
                 Don't have an account yet?{' '}
                 <button
                   type="button"
@@ -287,7 +264,7 @@ export const AuthScreen: React.FC = () => {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Varun S T"
+                      placeholder="Enter your full name"
                       value={regFullName}
                       onChange={(e) => setRegFullName(e.target.value)}
                       className="w-full h-11 rounded-xl bg-[#faf8f5] border border-[#e4d9c7] pl-10 pr-3 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden font-medium"
@@ -303,7 +280,7 @@ export const AuthScreen: React.FC = () => {
                       <input
                         type="email"
                         required
-                        placeholder="you@domain.com"
+                        placeholder="name@example.com"
                         value={regEmail}
                         onChange={(e) => setRegEmail(e.target.value)}
                         className="w-full h-11 rounded-xl bg-[#faf8f5] border border-[#e4d9c7] pl-10 pr-3 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden font-medium"
@@ -319,7 +296,7 @@ export const AuthScreen: React.FC = () => {
                       <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                       <input
                         type="tel"
-                        placeholder="+91 98765 43210"
+                        placeholder="Phone number"
                         value={regPhone}
                         onChange={(e) => setRegPhone(e.target.value)}
                         className="w-full h-11 rounded-xl bg-[#faf8f5] border border-[#e4d9c7] pl-10 pr-3 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden font-medium"
@@ -336,7 +313,7 @@ export const AuthScreen: React.FC = () => {
                       <input
                         type="password"
                         required
-                        placeholder="Min 6 characters"
+                        placeholder="Password (min 6 chars)"
                         value={regPassword}
                         onChange={(e) => setRegPassword(e.target.value)}
                         className="w-full h-11 rounded-xl bg-[#faf8f5] border border-[#e4d9c7] pl-10 pr-3 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden font-medium"
@@ -351,7 +328,7 @@ export const AuthScreen: React.FC = () => {
                       <input
                         type="password"
                         required
-                        placeholder="Re-enter password"
+                        placeholder="Confirm password"
                         value={regConfirmPassword}
                         onChange={(e) => setRegConfirmPassword(e.target.value)}
                         className="w-full h-11 rounded-xl bg-[#faf8f5] border border-[#e4d9c7] pl-10 pr-3 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden font-medium"

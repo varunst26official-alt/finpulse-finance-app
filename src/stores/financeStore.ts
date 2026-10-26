@@ -20,21 +20,12 @@ import {
   PolicyStatus,
   FinancialHealthScore,
   GoalItem,
+  HistoricalDataPoint,
 } from '@/types/finance';
 import {
-  INITIAL_ASSETS,
-  INITIAL_TRANSACTIONS,
-  INITIAL_HISTORY,
-  INITIAL_AI_MESSAGES,
   STOCK_PREDICTIONS,
   MARKET_NEWS_ITEMS,
   TAX_REPORT_MOCK,
-  INITIAL_EXPENSES,
-  INITIAL_INCOMES,
-  INITIAL_CALENDAR_EVENTS,
-  INITIAL_DEBTS,
-  INITIAL_POLICIES,
-  INITIAL_GOALS,
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
@@ -73,7 +64,7 @@ interface FinanceState {
   policies: InsurancePolicy[];
   goals: GoalItem[];
   emergencyTargetMonths: number;
-  history: typeof INITIAL_HISTORY;
+  history: HistoricalDataPoint[];
 
   // AI Wealth Copilot State
   aiMessages: AiChatMessage[];
@@ -138,18 +129,18 @@ export const useFinanceStore = create<FinanceState>()(
       setIsFloatingChatOpen: (isFloatingChatOpen) => set({ isFloatingChatOpen }),
       toggleFloatingChat: () => set((state) => ({ isFloatingChatOpen: !state.isFloatingChatOpen })),
 
-      assets: INITIAL_ASSETS,
-      transactions: INITIAL_TRANSACTIONS,
-      expenses: INITIAL_EXPENSES,
-      incomes: INITIAL_INCOMES,
-      calendarEvents: INITIAL_CALENDAR_EVENTS,
-      debts: INITIAL_DEBTS,
-      policies: INITIAL_POLICIES,
-      goals: INITIAL_GOALS,
+      assets: [],
+      transactions: [],
+      expenses: [],
+      incomes: [],
+      calendarEvents: [],
+      debts: [],
+      policies: [],
+      goals: [],
       emergencyTargetMonths: 6,
-      history: INITIAL_HISTORY,
+      history: [],
 
-      aiMessages: INITIAL_AI_MESSAGES,
+      aiMessages: [],
       isAiTyping: false,
 
       predictions: STOCK_PREDICTIONS,
@@ -228,14 +219,10 @@ export const useFinanceStore = create<FinanceState>()(
           } else if (lower.includes('tax') || lower.includes('ltcg') || lower.includes('capital gain')) {
             aiResponse = `🧾 **Capital Gains Tax Optimization (FY 2026-27):**\n\n- **Unrealized Long-Term Gains (LTCG):** ~$3,490 (₹2.95 Lakhs)\n- **Standard Tax-Free Exemption:** ₹1,25,000 per financial year.\n- **Tax Harvest Opportunity:** You have **$1,480 (₹1.25 Lakhs)** in tax-free exemption that resets on March 31!\n\n💡 **Action Item:** Sell partial shares of Reliance and TCS before March 31 and re-enter immediately to step up your cost basis.`;
             suggested = ['View full Tax Optimizer tab', 'Simulate selling 20 shares of Reliance'];
-          } else if (lower.includes('load sample') || lower.includes('demo data') || lower.includes('populate demo')) {
-            get().loadDemoSampleData();
-            aiResponse = `📦 **Sample Demo Portfolio Loaded!**\n\nI have loaded demonstration holdings (Reliance, TCS, HDFC, Sovereign Gold Bonds, Real Estate), cash flow ledgers, and calendar events so you can test all features.\n\nTo wipe this sample data and start your real 0-balance portfolio anytime, simply type *"Start fresh"* or click the button in the top navbar!`;
-            suggested = ['Show my updated Net Worth', 'Audit my asset allocation risk', 'Start fresh with 0 balance'];
           } else if (lower.includes('start fresh') || lower.includes('clean slate') || lower.includes('reset') || lower.includes('clear data') || lower.includes('empty portfolio')) {
             get().resetToFreshPortfolio();
-            aiResponse = `🧹 **Portfolio Successfully Cleared!**\n\nYour portfolio is now completely reset to **₹0.00 balance** with 0 holdings and 0 transactions. You're ready to log your real investments.\n\nClick **'+ Add Trade'** or tell me what you own (e.g. *"Bought 15 TCS at 3800"*).`;
-            suggested = ['How do I add my first trade?', 'Search 120+ listed stocks', 'Load Sample Demo Data'];
+            aiResponse = `🧹 **Portfolio Successfully Cleared!**\n\nYour portfolio is now completely reset to **₹0.00 balance** with 0 holdings and 0 transactions. You're ready to log your real investments.\n\nClick **'+ Add Trade'** or tell me what you own (e.g. *"Bought 15 shares of Apple at 180"*).`;
+            suggested = ['How do I add my first trade?', 'Search 120+ listed stocks', 'View my portfolio summary'];
           } else if (lower.includes('predict') || lower.includes('forecast') || lower.includes('reliance') || lower.includes('btc') || lower.includes('bitcoin')) {
             aiResponse = `🔮 **AI Asset Projections (Next 30-90 Days):**\n\n- **Reliance Industries:** Target **$38.20** (+9.8%) with an **88% Bullish Confidence Score**. Support at $32.80.\n- **Bitcoin (Cold Storage):** Target **$76,500** (+11.8%) with institutional ETF volume driving supply squeeze.\n- **Sovereign Gold (SGB):** Strong Buy rating (91% confidence) with central bank purchases acting as a geopolitical floor.\n\nCheck the **AI Forecaster** tab for Monte Carlo upper/lower prediction bands!`;
             suggested = ['Buy 10 Reliance', 'Go to AI Stock Predictor', 'Audit my portfolio risk'];
@@ -365,7 +352,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       clearAiChat: () => {
-        set({ aiMessages: INITIAL_AI_MESSAGES });
+        set({ aiMessages: [] });
       },
 
       addTransaction: (newTxData) => {
@@ -651,7 +638,7 @@ export const useFinanceStore = create<FinanceState>()(
         }));
       },
 
-      resetToFreshPortfolio: (userName = 'Investor') => {
+      resetToFreshPortfolio: (userName = 'User') => {
         api.portfolio.resetToFresh().catch((err) => console.warn('[SQLite Sync] Reset portfolio:', err));
         set({
           assets: [],
@@ -668,12 +655,12 @@ export const useFinanceStore = create<FinanceState>()(
             {
               id: `msg_welcome_${Date.now()}`,
               role: 'assistant',
-              content: `👋 **Welcome to LifeOS, ${userName}!**\n\nYour portfolio is starting completely **fresh and clean** with 0 balances. You can now build your real investment portfolio from scratch.\n\n💡 **Quick Ways to Start:**\n- Click **'+ Add Trade'** in the navbar to log your stocks, mutual funds, gold, or property.\n- Switch to **Financial Calendar** to schedule your upcoming expenses and SIP dates.\n\n*(If you ever want to preview sample test data, click 'Load Sample Demo' in the top navbar anytime!)*`,
+              content: `👋 **Welcome to LifeOS, ${userName || 'User'}!**\n\nYour personal command centre is initialized and ready. Your records are securely isolated to your account.\n\n💡 **Quick Ways to Start:**\n- Log an asset or trade via **'+ Add Trade'** in the top navigation.\n- Schedule upcoming expenses or routines in **Productivity & Agenda**.\n- Ask me any questions or track expenses directly via this AI Copilot!`,
               timestamp: 'Just now',
               suggestedPrompts: [
-                'How do I add my first trade?',
-                'Search 120+ listed stocks',
-                'Load Sample Demo Data',
+                'How do I add my first asset?',
+                'Help me set up my monthly budget',
+                'What features are available in LifeOS?',
               ],
             },
           ],
@@ -681,24 +668,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       loadDemoSampleData: () => {
-        api.portfolio.seedDemo()
-          .then(() => get().syncWithBackend())
-          .catch((err) => {
-            console.warn('[SQLite Sync] Seed demo fallback:', err);
-            set({
-              assets: INITIAL_ASSETS,
-              transactions: INITIAL_TRANSACTIONS,
-              expenses: INITIAL_EXPENSES,
-              incomes: INITIAL_INCOMES,
-              calendarEvents: INITIAL_CALENDAR_EVENTS,
-              debts: INITIAL_DEBTS,
-              policies: INITIAL_POLICIES,
-              goals: INITIAL_GOALS,
-              emergencyTargetMonths: 6,
-              history: INITIAL_HISTORY,
-              aiMessages: INITIAL_AI_MESSAGES,
-            });
-          });
+        // Demo sample data removed per production policy
       },
 
       syncWithBackend: async () => {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useLifeOSStore } from '@/stores/lifeosStore';
+import { initUserStorageAutoSave, loadUserScopedData } from '@/services/userStorage';
 import { LifeOSHeader } from '@/components/layout/LifeOSHeader';
 import { SectionSwitcher } from '@/components/layout/SectionSwitcher';
 import { LifeOverviewWorkspace } from '@/components/overview/LifeOverviewWorkspace';
@@ -19,16 +20,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export function App() {
   const { syncWithBackend } = useFinanceStore();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { currentSection, fetchLifeOSData } = useLifeOSStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    initUserStorageAutoSave();
+    if (isAuthenticated && user) {
+      loadUserScopedData(user);
       syncWithBackend();
       fetchLifeOSData();
     }
-  }, [isAuthenticated, syncWithBackend, fetchLifeOSData]);
+  }, [isAuthenticated, user, syncWithBackend, fetchLifeOSData]);
 
   // If user is not authenticated, show the customer Login / Register screen
   if (!isAuthenticated) {

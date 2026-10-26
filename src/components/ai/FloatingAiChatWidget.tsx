@@ -356,7 +356,7 @@ export const FloatingAiChatWidget: React.FC = () => {
                   <div className="relative flex items-center">
                     <input
                       type="text"
-                      placeholder="Ask anything or trade: 'Buy 10 Reliance'..."
+                      placeholder="Ask anything or log an entry..."
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}

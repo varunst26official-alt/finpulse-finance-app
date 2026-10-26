@@ -747,7 +747,7 @@ export const ProductivityWorkspace: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Pay quarterly advance tax"
+                    placeholder="e.g., Review weekly project milestones"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200"
@@ -852,7 +852,7 @@ export const ProductivityWorkspace: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Read 20 pages of architecture books"
+                    placeholder="e.g., Read 20 pages, Morning Hydration"
                     value={habitTitle}
                     onChange={(e) => setHabitTitle(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200"

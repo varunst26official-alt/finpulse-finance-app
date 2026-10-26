@@ -733,7 +733,7 @@ export const DebtRepaymentManager: React.FC = () => {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. HDFC Home Loan, Car EMI"
+                      placeholder="e.g. Home Mortgage, Auto Loan, Personal Loan"
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -763,7 +763,7 @@ export const DebtRepaymentManager: React.FC = () => {
                     <label className="block mb-1 text-slate-600">Lender / Institution Name</label>
                     <input
                       type="text"
-                      placeholder="e.g. HDFC Bank, SBI, ICICI"
+                      placeholder="e.g. Bank or Lending Institution"
                       value={newLender}
                       onChange={(e) => setNewLender(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -856,7 +856,7 @@ export const DebtRepaymentManager: React.FC = () => {
                   <label className="block mb-1 text-slate-600">Notes / Prepayment Terms</label>
                   <textarea
                     rows={2}
-                    placeholder="e.g. Fixed rate for 2 years, zero prepayment penalty"
+                    placeholder="e.g. Interest terms, repayment schedule notes"
                     value={newNotes}
                     onChange={(e) => setNewNotes(e.target.value)}
                     className="w-full p-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -970,7 +970,7 @@ export const DebtRepaymentManager: React.FC = () => {
                   <label className="block mb-1 text-slate-600">Notes (Optional)</label>
                   <input
                     type="text"
-                    placeholder="e.g. October monthly installment, Diwali bonus"
+                    placeholder="e.g. Monthly installment, principal prepayment"
                     value={repayNotes}
                     onChange={(e) => setRepayNotes(e.target.value)}
                     className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"

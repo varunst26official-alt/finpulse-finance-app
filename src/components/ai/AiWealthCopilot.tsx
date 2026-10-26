@@ -296,7 +296,7 @@ export const AiWealthCopilot: React.FC = () => {
         <div className="relative flex items-center">
           <input
             type="text"
-            placeholder="Ask anything or trade directly: 'Buy 10 Reliance', 'Sell 5 TCS', or 'Audit portfolio'..."
+            placeholder="Ask anything or log an action: 'Buy 10 shares of AAPL', 'Spent 50 on groceries'..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -312,7 +312,7 @@ export const AiWealthCopilot: React.FC = () => {
           </button>
         </div>
         <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1.5 px-1 font-medium">
-          <span>Commands supported: "Buy 10 Reliance", "Spent ₹1500 grocery", "Earned ₹180000 salary"</span>
+          <span>Commands supported: "Buy 10 AAPL", "Spent 50 lunch", "Earned 2000 salary"</span>
           <span>Shift + Enter for multiline</span>
         </div>
       </div>

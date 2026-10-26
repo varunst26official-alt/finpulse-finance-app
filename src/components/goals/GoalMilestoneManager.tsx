@@ -799,7 +799,7 @@ export const GoalMilestoneManager: React.FC = () => {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Higher Education, Dream Home"
+                      placeholder="e.g. Emergency Fund, Home Downpayment, Vacation"
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -927,7 +927,7 @@ export const GoalMilestoneManager: React.FC = () => {
                   <label className="block mb-1 text-slate-600">Notes & Milestones Strategy</label>
                   <textarea
                     rows={2}
-                    placeholder="e.g. Target top 10 universities, review SIP every 12 months"
+                    placeholder="e.g. Savings plan, monthly targets, milestone notes"
                     value={newNotes}
                     onChange={(e) => setNewNotes(e.target.value)}
                     className="w-full p-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"

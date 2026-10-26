@@ -310,7 +310,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                         setIsSearchOpen(true);
                       }}
                       onFocus={() => setIsSearchOpen(true)}
-                      placeholder="Type stock ticker or company (e.g. Reliance, TCS, HDFC, Nvidia, Apple, Zomato)..."
+                      placeholder="Type asset symbol or company name (e.g. AAPL, MSFT, GOOG)..."
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-4 py-2.5 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden transition-all"
                     />
                     <Search className="absolute right-3.5 top-3 h-4 w-4 text-slate-400" />
@@ -497,7 +497,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Bangalore Whitefield 2BHK Apartment"
+                      placeholder="e.g. Residential Property, High Yield Bond"
                       value={assetName}
                       onChange={(e) => setAssetName(e.target.value)}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs font-medium text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -559,7 +559,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. State Bank of India, Sub-Registrar"
+                      placeholder="e.g. Bank or Financial Institution"
                       value={assetInstitution}
                       onChange={(e) => setAssetInstitution(e.target.value)}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs font-medium text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -585,7 +585,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. 5-year lock-in for retirement goal, East facing plot"
+                    placeholder="e.g. Long-term investment, lock-in period details"
                     value={assetNotes}
                     onChange={(e) => setAssetNotes(e.target.value)}
                     className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -733,7 +733,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Lead Tech Architect Salary, Rental Yield"
+                      placeholder="e.g. Monthly Salary, Freelance Consulting, Rental Income"
                       value={incomeSource}
                       onChange={(e) => setIncomeSource(e.target.value)}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs font-medium text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -794,7 +794,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. HDFC Salary A/c"
+                      placeholder="e.g. Primary Bank Account"
                       value={incomeAccount}
                       onChange={(e) => setIncomeAccount(e.target.value)}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs font-medium text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -821,7 +821,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Q3 bonus or client milestone payout"
+                      placeholder="e.g. Performance bonus or milestone payment"
                       value={incomeNotes}
                       onChange={(e) => setIncomeNotes(e.target.value)}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"

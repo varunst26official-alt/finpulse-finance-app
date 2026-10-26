@@ -19,7 +19,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const LifeOSHeader: React.FC = () => {
   const { user, logout } = useAuthStore();
-  const { currency, setCurrency, resetToFreshPortfolio, loadDemoSampleData } = useFinanceStore();
+  const { currency, setCurrency, resetToFreshPortfolio } = useFinanceStore();
   const { setIsAiModalOpen } = useLifeOSStore();
   const { startTour, resetTour } = useTourStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -187,17 +187,6 @@ export const LifeOSHeader: React.FC = () => {
                   >
                     <Compass className="w-3.5 h-3.5 text-[#a47b3c]" />
                     <span>Restart LifeOS Tour</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      loadDemoSampleData();
-                      setIsProfileOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-xl text-slate-700 hover:bg-[#f5f7fb] transition-all cursor-pointer flex items-center gap-2"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-[#a47b3c]" />
-                    <span>Load Sample Demo Data</span>
                   </button>
 
                   <button

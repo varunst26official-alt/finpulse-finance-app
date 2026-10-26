@@ -520,7 +520,7 @@ export const LearningWorkspace: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Cryptographic Protocols & Zero-Knowledge"
+                    placeholder="e.g., System Design, Cloud Architecture"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200"
@@ -613,7 +613,7 @@ export const LearningWorkspace: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Clean Architecture"
+                    placeholder="e.g., Book or Publication Title"
                     value={bookTitle}
                     onChange={(e) => setBookTitle(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200"
@@ -625,7 +625,7 @@ export const LearningWorkspace: React.FC = () => {
                     <label className="block text-slate-700 mb-1">Author</label>
                     <input
                       type="text"
-                      placeholder="e.g., Robert C. Martin"
+                      placeholder="e.g., Author Name"
                       value={bookAuthor}
                       onChange={(e) => setBookAuthor(e.target.value)}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200"

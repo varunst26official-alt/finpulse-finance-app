@@ -1054,7 +1054,7 @@ export const WellnessWorkspace: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Grilled salmon with brown rice & broccoli"
+                    placeholder="e.g., Healthy lunch, Protein shake, Salad"
                     value={mealName}
                     onChange={(e) => setMealName(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200"
@@ -1077,7 +1077,7 @@ export const WellnessWorkspace: React.FC = () => {
                     <label className="block text-slate-700 mb-1">Portion Size</label>
                     <input
                       type="text"
-                      placeholder="e.g., 200g salmon + 1 cup rice"
+                      placeholder="e.g., 1 bowl, 200g, 1 serving"
                       value={mealPortion}
                       onChange={(e) => setMealPortion(e.target.value)}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200"

@@ -558,7 +558,7 @@ export const InsuranceManager: React.FC = () => {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. HDFC Life Click 2 Protect, Star Health"
+                      placeholder="e.g. Term Life Plan, Family Health Cover"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -587,7 +587,7 @@ export const InsuranceManager: React.FC = () => {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. HDFC Life, Tata AIG, Star Health"
+                      placeholder="e.g. Insurance Company"
                       value={newProvider}
                       onChange={(e) => setNewProvider(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -598,7 +598,7 @@ export const InsuranceManager: React.FC = () => {
                     <label className="block mb-1 text-slate-600">Policy Number / ID</label>
                     <input
                       type="text"
-                      placeholder="e.g. HD-982144-TL"
+                      placeholder="e.g. Policy ID number"
                       value={newNumber}
                       onChange={(e) => setNewNumber(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -652,7 +652,7 @@ export const InsuranceManager: React.FC = () => {
                     <label className="block mb-1 text-slate-600">Covered Members / Vehicle</label>
                     <input
                       type="text"
-                      placeholder="e.g. Self, Spouse & 1 Child"
+                      placeholder="e.g. Self or Family members"
                       value={newMembers}
                       onChange={(e) => setNewMembers(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -665,7 +665,7 @@ export const InsuranceManager: React.FC = () => {
                     <label className="block mb-1 text-slate-600">Claims / TPA Helpline</label>
                     <input
                       type="text"
-                      placeholder="e.g. 1800-266-9777"
+                      placeholder="e.g. Customer helpline number"
                       value={newHelpline}
                       onChange={(e) => setNewHelpline(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -676,7 +676,7 @@ export const InsuranceManager: React.FC = () => {
                     <label className="block mb-1 text-slate-600">Notes / Riders</label>
                     <input
                       type="text"
-                      placeholder="e.g. Critical illness rider, zero room rent cap"
+                      placeholder="e.g. Policy riders or notes"
                       value={newNotes}
                       onChange={(e) => setNewNotes(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"

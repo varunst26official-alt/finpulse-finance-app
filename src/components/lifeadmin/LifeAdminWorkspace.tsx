@@ -563,7 +563,7 @@ Notes: ${emNotes}`;
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Passport (Republic of India)"
+                    placeholder="e.g., Passport, Health Card, Driver License"
                     value={docTitle}
                     onChange={(e) => setDocTitle(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200"
@@ -590,7 +590,7 @@ Notes: ${emNotes}`;
                     <input
                       type="text"
                       required
-                      placeholder="e.g., Z9874521"
+                      placeholder="e.g., ID or Registration Number"
                       value={docNumber}
                       onChange={(e) => setDocNumber(e.target.value)}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono"
@@ -612,7 +612,7 @@ Notes: ${emNotes}`;
                     <label className="block text-slate-700 mb-1">Issuing Authority</label>
                     <input
                       type="text"
-                      placeholder="e.g., MEA, Govt of India"
+                      placeholder="e.g., Issuing Department or Authority"
                       value={docAuthority}
                       onChange={(e) => setDocAuthority(e.target.value)}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200"
@@ -624,7 +624,7 @@ Notes: ${emNotes}`;
                   <label className="block text-slate-700 mb-1">Storage Location / Safe Notes</label>
                   <textarea
                     rows={2}
-                    placeholder="e.g., Physical original in home locker drawer 2"
+                    placeholder="e.g., Physical location or digital vault notes"
                     value={docNotes}
                     onChange={(e) => setDocNotes(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200"
@@ -847,7 +847,7 @@ Notes: ${emNotes}`;
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Annual Municipal Property Tax Payment"
+                    placeholder="e.g., Annual Tax Filing, Vehicle Insurance Renewal"
                     value={chkTitle}
                     onChange={(e) => setChkTitle(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200"

@@ -856,7 +856,7 @@ export const FinancialCalendarWidget: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Sister's Birthday, Executive Health Checkup, Rent"
+                    placeholder="e.g. Rent Payment, Health Checkup, Scheduled Bill"
                     value={eventTitle}
                     onChange={(e) => setEventTitle(e.target.value)}
                     className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -910,7 +910,7 @@ export const FinancialCalendarWidget: React.FC = () => {
                     <label className="block font-bold text-slate-900 mb-1">Category / Tag</label>
                     <input
                       type="text"
-                      placeholder="e.g. Health, Family, Rent"
+                      placeholder="e.g. Utilities, Housing, Personal"
                       value={eventCategoryName}
                       onChange={(e) => setEventCategoryName(e.target.value)}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2 text-xs font-medium text-slate-900 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
@@ -922,7 +922,7 @@ export const FinancialCalendarWidget: React.FC = () => {
                   <label className="block font-bold text-slate-900 mb-1">Notes / Description (Optional)</label>
                   <input
                     type="text"
-                    placeholder="e.g. Dr. appointment at 10 AM, Gift budget"
+                    placeholder="e.g. Appointment details or budget notes"
                     value={eventNotes}
                     onChange={(e) => setEventNotes(e.target.value)}
                     className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
