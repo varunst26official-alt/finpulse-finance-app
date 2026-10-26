@@ -1,7 +1,7 @@
 {
-  "name": "finpulse-backend",
+  "name": "lifeos-backend",
   "version": "1.0.0",
-  "description": "FinPulse Wealth & Finance OS Backend REST API with SQLite Database",
+  "description": "LifeOS Command Centre Backend REST API with SQLite Database",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {

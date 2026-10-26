@@ -228,7 +228,7 @@ export const FinancialCalendarWidget: React.FC = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `FinPulse_Financial_Report_${reportRange}.csv`);
+    link.setAttribute('download', `LifeOS_Financial_Report_${reportRange}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -265,10 +265,10 @@ export const FinancialCalendarWidget: React.FC = () => {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>FinPulse - Financial & Event Planning Report</title>
+          <title>LifeOS - Financial & Event Planning Report</title>
           <style>
             body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; padding: 40px; color: #0f172a; line-height: 1.5; }
-            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #9e783e; padding-bottom: 16px; margin-bottom: 24px; }
+            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #17365d; padding-bottom: 16px; margin-bottom: 24px; }
             .kpis { display: flex; gap: 20px; margin-bottom: 30px; }
             .kpi-card { flex: 1; padding: 16px; background: #faf8f5; border: 1px solid #e8e0d1; border-radius: 12px; }
             table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -278,7 +278,7 @@ export const FinancialCalendarWidget: React.FC = () => {
         <body>
           <div class="header">
             <div>
-              <h1 style="margin: 0; font-size: 24px; color: #9e783e;">FinPulse Wealth & Event Schedule</h1>
+              <h1 style="margin: 0; font-size: 24px; color: #17365d;">LifeOS Wealth & Event Schedule</h1>
               <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Official Cash Flow Projection & Scheduled Life Events Statement</p>
             </div>
             <div style="text-align: right; font-size: 12px; color: #64748b;">

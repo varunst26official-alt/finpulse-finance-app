@@ -33,7 +33,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
     status: 'UP',
-    name: 'FinPulse Wealth & Finance OS Backend API',
+    name: 'LifeOS Command Centre Backend API',
     database: 'SQLite 3 (sql.js WASM engine)',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
@@ -67,7 +67,7 @@ async function startServer() {
     await initDatabase();
     app.listen(PORT, () => {
       console.log(`=======================================================`);
-      console.log(`🚀 FinPulse Backend API running on http://localhost:${PORT}`);
+      console.log(`🚀 LifeOS Backend API running on http://localhost:${PORT}`);
       console.log(`📁 Database: SQLite persistent engine via sql.js`);
       console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
       console.log(`=======================================================`);

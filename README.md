@@ -1,32 +1,85 @@
-# React + TypeScript + Vite
+# 🌟 LifeOS — Personal Life Command Centre
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> **An all-in-one personal operating system uniting Finances, Fitness & Clinical Nutrition, Deep Work Productivity, Learning Vault, and Critical Life Administration into a high-performance command platform.**
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ⚡ Core Life Workspaces
 
-## React Compiler
+1. **⌂ Life Overview**
+   - High-level daily dashboard with vitals, active priority tasks, and urgent goals.
+   - 1-click rapid action logger (hydration station, workout logging, calorie intake, quick tasks).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. **▤ Financial Portfolio**
+   - Multi-asset net worth tracking (listed equities, fixed assets, real estate, debts, and insurance policies).
+   - Real-time multi-currency engine supporting Indian Rupee (₹ INR), US Dollar ($ USD), and UAE Dirham (د.إ AED).
+   - Cash flow projections, financial calendar, and PDF/CSV statement exports.
 
-## Expanding the Oxlint configuration
+3. **♡ Fitness & Wellness**
+   - **Clinical Biometrics Engine:** Mifflin-St Jeor formula calculating Resting BMR, Physical Activity Level (PAL), and Total Daily Energy Expenditure (TDEE).
+   - **Exercise Movement Catalog:** Form cues, mechanics, and set-by-set tracker with tonnage calculation and rest countdown stopwatch.
+   - **Hydration & Nutrition:** Animated water bottle hydration station ($35\text{ ml/kg}$ baseline) and macro targets (protein $1.8\text{--}2.2\text{ g/kg}$, carbs, healthy fats).
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+4. **☑ Productivity & Habits**
+   - Daily checklist with urgency/impact priority tags.
+   - Habit routine trackers with streak counters.
+   - Integrated Deep Work & Pomodoro countdown focus stopwatch.
+   - Cross-module master calendar integrating debt EMIs, SIPs, renewals, and tasks.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+5. **▧ Learning & Knowledge Vault**
+   - Skill competency roadmaps with verified hours tracking.
+   - Integrated deep study stopwatch.
+   - Books & courses vault with reading progress and notes.
+
+6. **◇ Life Administration**
+   - Encrypted document vault with expiration countdown warning badges.
+   - Emergency medical & hospital readiness card with 1-click clipboard summary export.
+   - Recurring annual legal, insurance, and tax checklists.
+
+---
+
+## 🤖 Adaptive AI Blueprint & Conversational Copilot
+
+- **Adaptive Life Blueprint:** Input age, gender, height, weight, activity factor, and target goal to generate an automated personalized 7-day hypertrophy/strength workout split, macro targets, and daily meal plans.
+- **Situational LifeOS AI Copilot:** Floating AI assistant with cross-domain situational awareness across all 6 workspaces.
+
+---
+
+## 🚀 Tech Stack
+
+- **Frontend:** React 19, TypeScript, Vite, TailwindCSS v4, Framer Motion, Lucide Icons, Recharts, Zustand.
+- **Backend:** Node.js, Express, SQLite 3 (sql.js WASM engine).
+- **Deployment:** Vercel (Frontend SPA) + Railway / Render / Fly.io (Backend REST API).
+
+---
+
+## 💻 Local Development
+
+### 1. Install Dependencies
+```bash
+npm install
+cd server && npm install && cd ..
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+### 2. Start Frontend & Backend
+```bash
+# Terminal 1: Frontend Dev Server (port 5173)
+npm run dev
+
+# Terminal 2: Backend REST Server (port 5001)
+npm run server
+```
+
+### 3. Build for Production
+```bash
+npm run build
+```
+
+---
+
+## ☁️ Deployment to Vercel
+
+1. Push your repository to GitHub.
+2. In [Vercel](https://vercel.com), click **Add New Project** and select this repository.
+3. Vercel automatically detects the Vite framework settings from `package.json` and [`vercel.json`](./vercel.json).
+4. Click **Deploy**!

@@ -233,9 +233,9 @@ export const AuthScreen: React.FC = () => {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] transition-all shadow-md shadow-[#9e783e]/20 mt-4 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#17365d] text-white text-xs font-bold hover:bg-[#132c4d] transition-all shadow-md shadow-[#17365d]/20 mt-4 cursor-pointer"
               >
-                <span>Sign In to FinPulse</span>
+                <span>Sign In to LifeOS</span>
                 <ArrowRight className="h-4 w-4" />
               </motion.button>
 
