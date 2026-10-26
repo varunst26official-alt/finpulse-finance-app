@@ -53,7 +53,7 @@ export const HoldingsTable: React.FC = () => {
                     </div>
                     <p className="text-sm font-bold text-slate-900">Your Portfolio is Fresh & Clean</p>
                     <p className="text-xs text-slate-500 leading-relaxed font-medium">
-                      You do not have any recorded assets yet. Add your first stock, mutual fund, gold, or property using the "+ Add Trade" button in the top navbar or ask the AI Copilot.
+                      You do not have any recorded assets yet. Add your first stock, mutual fund, gold, or property using the "+ Add Trade" button in the top navbar.
                     </p>
                     <div className="pt-2 flex items-center gap-2">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#f4efe4] border border-[#ded3bf] text-[11px] font-bold text-[#866632]">

@@ -35,11 +35,7 @@ export type NavigationTab =
   | 'investments'
   | 'transactions'
   | 'goals'
-  | 'calendar'
-  | 'ai-chat'
-  | 'predictions'
-  | 'news'
-  | 'tax';
+  | 'calendar';
 
 interface FinanceState {
   // Preferences
@@ -467,7 +463,7 @@ export const useFinanceStore = create<FinanceState>()(
             {
               id: `msg_welcome_${Date.now()}`,
               role: 'assistant',
-              content: `👋 **Welcome to FinPulse, ${userName}!**\n\nYour portfolio is starting completely **fresh and clean** with 0 balances. You can now build your real investment portfolio from scratch.\n\n💡 **Quick Ways to Start:**\n- Click **'+ Add Trade'** in the navbar to log your stocks, mutual funds, gold, or property.\n- Or chat directly with me: Type **'Buy 10 Reliance'** or **'Spent 25000 rent'**.\n\n*(If you ever want to preview sample test data, click 'Load Sample Demo' in your profile menu anytime!)*`,
+              content: `👋 **Welcome to FinPulse, ${userName}!**\n\nYour portfolio is starting completely **fresh and clean** with 0 balances. You can now build your real investment portfolio from scratch.\n\n💡 **Quick Ways to Start:**\n- Click **'+ Add Trade'** in the navbar to log your stocks, mutual funds, gold, or property.\n- Switch to **Financial Calendar** to schedule your upcoming expenses and SIP dates.\n\n*(If you ever want to preview sample test data, click 'Load Sample Demo' in the top navbar anytime!)*`,
               timestamp: 'Just now',
               suggestedPrompts: [
                 'How do I add my first trade?',

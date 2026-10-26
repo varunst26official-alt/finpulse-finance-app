@@ -7,10 +7,6 @@ import {
   Calculator,
   ShieldCheck,
   TrendingUp,
-  Bot,
-  Sparkles,
-  Newspaper,
-  ReceiptText,
   CalendarDays,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -28,37 +24,6 @@ export const Sidebar: React.FC = () => {
     { id: 'transactions', label: 'Transactions Ledger', icon: ArrowLeftRight },
     { id: 'calendar', label: 'Financial Calendar', icon: CalendarDays },
     { id: 'goals', label: 'SIP & Wealth Planner', icon: Calculator },
-  ];
-
-  const intelligenceNavItems: {
-    id: NavigationTab;
-    label: string;
-    icon: React.ComponentType<{ className?: string }>;
-    badge?: string;
-  }[] = [
-    {
-      id: 'ai-chat',
-      label: 'AI Wealth Copilot',
-      icon: Bot,
-      badge: 'GPT-4o',
-    },
-    {
-      id: 'predictions',
-      label: 'AI Stock Forecaster',
-      icon: Sparkles,
-      badge: 'Monte Carlo',
-    },
-    {
-      id: 'news',
-      label: 'Market Intelligence',
-      icon: Newspaper,
-    },
-    {
-      id: 'tax',
-      label: 'Tax & Capital Gains',
-      icon: ReceiptText,
-      badge: 'FY 26-27',
-    },
   ];
 
   return (
@@ -87,50 +52,6 @@ export const Sidebar: React.FC = () => {
                 >
                   <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
                   <span>{item.label}</span>
-                </motion.button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* AI & Market Intelligence Section */}
-        <div>
-          <div className="px-3 mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
-            <span>AI & Market Intel</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[#f4efe4] text-[#866632] font-bold border border-[#ded3bf]">
-              PRO
-            </span>
-          </div>
-          <nav className="space-y-1">
-            {intelligenceNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-[#9e783e] text-white shadow-xs'
-                      : 'text-slate-700 hover:text-slate-900 hover:bg-[#f5efe4]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
-                    <span>{item.label}</span>
-                  </div>
-                  {item.badge && (
-                    <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${
-                        isActive
-                          ? 'bg-white/20 text-white border-white/30'
-                          : 'bg-[#f4efe4] text-[#866632] border-[#ded3bf]'
-                      }`}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
                 </motion.button>
               );
             })}

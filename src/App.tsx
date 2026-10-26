@@ -10,11 +10,6 @@ import { HoldingsTable } from '@/components/dashboard/HoldingsTable';
 import { SipCalculator } from '@/components/dashboard/SipCalculator';
 import { TransactionTable } from '@/components/transactions/TransactionTable';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
-import { AiWealthCopilot } from '@/components/ai/AiWealthCopilot';
-import { FloatingAiChatWidget } from '@/components/ai/FloatingAiChatWidget';
-import { StockPredictor } from '@/components/predictions/StockPredictor';
-import { MarketIntelligenceFeed } from '@/components/news/MarketIntelligenceFeed';
-import { TaxOptimizer } from '@/components/tax/TaxOptimizer';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
 import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
@@ -25,10 +20,7 @@ import {
   ArrowLeftRight,
   Calculator,
   CalendarDays,
-  Bot,
   Sparkles,
-  Newspaper,
-  ReceiptText,
 } from 'lucide-react';
 
 export function App() {
@@ -49,12 +41,8 @@ export function App() {
   }[] = [
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
     { id: 'investments', label: 'Holdings', icon: PieChart },
-    { id: 'ai-chat', label: 'AI Copilot', icon: Bot },
-    { id: 'predictions', label: 'Forecaster', icon: Sparkles },
-    { id: 'news', label: 'News', icon: Newspaper },
-    { id: 'tax', label: 'Tax', icon: ReceiptText },
-    { id: 'calendar', label: 'Calendar', icon: CalendarDays },
     { id: 'transactions', label: 'Ledger', icon: ArrowLeftRight },
+    { id: 'calendar', label: 'Calendar', icon: CalendarDays },
     { id: 'goals', label: 'SIP', icon: Calculator },
   ];
 
@@ -179,25 +167,10 @@ export function App() {
 
               {/* Tab 4: SIP & Wealth Projection Calculator */}
               {activeTab === 'goals' && <SipCalculator />}
-
-              {/* Tab 5: AI Wealth Copilot (Chatbot) */}
-              {activeTab === 'ai-chat' && <AiWealthCopilot />}
-
-              {/* Tab 6: AI Stock & Asset Price Predictor */}
-              {activeTab === 'predictions' && <StockPredictor />}
-
-              {/* Tab 7: Live Market Intelligence & Macro News */}
-              {activeTab === 'news' && <MarketIntelligenceFeed />}
-
-              {/* Tab 8: Capital Gains & Tax Harvesting Optimizer */}
-              {activeTab === 'tax' && <TaxOptimizer />}
             </motion.div>
           </AnimatePresence>
         </main>
       </div>
-
-      {/* Floating AI Copilot & Conversational Trade Execution Widget */}
-      <FloatingAiChatWidget />
 
       {/* Interactive First-Time User Onboarding Demo Tour */}
       <DemoTourGuide />
