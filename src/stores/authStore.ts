@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { useFinanceStore } from './financeStore';
+import { useLifeOSStore } from './lifeosStore';
 import { useTourStore } from './tourStore';
 import { api } from '@/services/apiClient';
 import { loadUserScopedData, clearActiveUserStores, saveUserScopedData } from '@/services/userStorage';
@@ -121,6 +122,7 @@ export const useAuthStore = create<AuthState>()(
           set({ user: res.user, isAuthenticated: true, isLoading: false });
 
           useFinanceStore.getState().resetToFreshPortfolio(fullName);
+          useLifeOSStore.getState().resetToFreshState();
           useTourStore.getState().resetTour();
           saveUserScopedData(res.user);
           await useFinanceStore.getState().syncWithBackend();
@@ -147,6 +149,7 @@ export const useAuthStore = create<AuthState>()(
 
           set({ user: newUser, isAuthenticated: true, isLoading: false });
           useFinanceStore.getState().resetToFreshPortfolio(fullName.trim());
+          useLifeOSStore.getState().resetToFreshState();
           useTourStore.getState().resetTour();
           saveUserScopedData(newUser);
 

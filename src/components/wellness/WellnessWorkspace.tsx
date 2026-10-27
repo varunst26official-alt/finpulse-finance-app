@@ -148,8 +148,8 @@ export const WellnessWorkspace: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'WORKOUTS' | 'NUTRITION'>('OVERVIEW');
 
   // Body Metrics Slider State
-  const [height, setHeight] = useState(wellness.heightCm);
-  const [weight, setWeight] = useState(wellness.weightKg);
+  const [height, setHeight] = useState(wellness.heightCm || 170);
+  const [weight, setWeight] = useState(wellness.weightKg || 70);
 
   // Phase 2: Live Workout Session Builder State
   const [activeExerciseId, setActiveExerciseId] = useState(EXERCISE_CATALOG[0].id);
@@ -225,8 +225,8 @@ export const WellnessWorkspace: React.FC = () => {
   };
 
   const bmiCat = getBmiCategory(bmi);
-  const waterProgress = Math.min(100, Math.round((wellness.waterLitersLogged / wellness.waterTargetLiters) * 100));
-  const calorieProgress = Math.min(100, Math.round((wellness.caloriesLogged / wellness.caloriesTarget) * 100));
+  const waterProgress = wellness.waterTargetLiters > 0 ? Math.min(100, Math.round((wellness.waterLitersLogged / wellness.waterTargetLiters) * 100)) : 0;
+  const calorieProgress = wellness.caloriesTarget > 0 ? Math.min(100, Math.round((wellness.caloriesLogged / wellness.caloriesTarget) * 100)) : 0;
 
   // Macronutrient Totals from Meal Logs
   const totalProteinLogged = mealLogs.reduce((acc, m) => acc + m.proteinGrams, 0);
@@ -345,7 +345,7 @@ export const WellnessWorkspace: React.FC = () => {
             <div className="text-xs font-extrabold text-[#243047] flex items-center gap-2">
               <span>Active Adaptive Plan:</span>
               <span className="text-[#d45b73] uppercase tracking-wider text-[11px]">
-                {userInputs.fitnessGoal.replace('_', ' ')} · {userInputs.intensityLevel.replace('_', ' ')}
+                {userInputs.fitnessGoal ? userInputs.fitnessGoal.replace(/_/g, ' ') : 'Custom Protocol'} · {userInputs.intensityLevel ? userInputs.intensityLevel.replace(/_/g, ' ') : 'Standard'}
               </span>
             </div>
             <p className="text-[11px] text-[#6f7c91] font-medium mt-0.5">
@@ -445,10 +445,10 @@ export const WellnessWorkspace: React.FC = () => {
                 </div>
               </div>
               <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3">
-                {wellness.caloriesLogged} / {wellness.caloriesTarget}
+                {wellness.caloriesLogged} / {wellness.caloriesTarget > 0 ? wellness.caloriesTarget : '--'}
               </div>
               <div className="text-[11px] text-[#6f7c91] mt-1 font-medium">
-                {calorieProgress}% of estimated energy intake
+                {wellness.caloriesTarget > 0 ? `${calorieProgress}% of estimated energy intake` : 'Calorie target not set'}
               </div>
             </article>
 
@@ -463,7 +463,7 @@ export const WellnessWorkspace: React.FC = () => {
                 {wellness.waterLitersLogged} L
               </div>
               <div className="text-[11px] text-[#6f7c91] mt-1 font-medium">
-                {waterProgress}% toward {wellness.waterTargetLiters} L daily target
+                {wellness.waterTargetLiters > 0 ? `${waterProgress}% toward ${wellness.waterTargetLiters} L daily target` : 'Hydration target not set'}
               </div>
             </article>
           </div>
@@ -579,10 +579,12 @@ export const WellnessWorkspace: React.FC = () => {
                   <div className="flex-1 space-y-1">
                     <div className="text-xs font-bold text-slate-700">Daily Hydration Target:</div>
                     <div className="text-xl font-extrabold text-sky-800">
-                      {wellness.waterLitersLogged} / {wellness.waterTargetLiters} Liters
+                      {wellness.waterLitersLogged} / {wellness.waterTargetLiters > 0 ? `${wellness.waterTargetLiters} Liters` : 'Not Set'}
                     </div>
                     <p className="text-[11px] text-sky-700">
-                      Based on clinical standard of 35ml water per kg bodyweight ({wellness.weightKg}kg × 35ml).
+                      {wellness.weightKg > 0
+                        ? `Based on clinical standard of 35ml water per kg bodyweight (${wellness.weightKg}kg × 35ml).`
+                        : 'Set your body weight to calculate clinical hydration needs.'}
                     </p>
                   </div>
                 </div>
@@ -656,7 +658,7 @@ export const WellnessWorkspace: React.FC = () => {
                 {activeBlueprint.workoutSplitName}
               </h3>
               <p className="text-xs text-[#6f7c91] mt-0.5">
-                Calibrated for your {userInputs.fitnessGoal.replace('_', ' ')} goal and {userInputs.intensityLevel.replace('_', ' ')} intensity.
+                Calibrated for your {userInputs.fitnessGoal ? userInputs.fitnessGoal.replace(/_/g, ' ') : 'custom'} goal and {userInputs.intensityLevel ? userInputs.intensityLevel.replace(/_/g, ' ') : 'balanced'} intensity.
               </p>
             </div>
 
@@ -1187,7 +1189,7 @@ export const WellnessWorkspace: React.FC = () => {
                   <span>Adaptive Meal Plan Suggestions</span>
                 </h3>
                 <p className="text-xs text-[#6f7c91]">
-                  Tailored to your {userInputs.dietaryPreference.replace('_', ' ')} preference and {activeBlueprint.targetCalories} kcal target.
+                  Tailored to your {userInputs.dietaryPreference ? userInputs.dietaryPreference.replace(/_/g, ' ') : 'balanced'} preference and {activeBlueprint.targetCalories} kcal target.
                 </p>
               </div>
             </div>

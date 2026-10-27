@@ -23,15 +23,15 @@ import {
 import { api } from '@/services/apiClient';
 
 const DEFAULT_USER_INPUTS: UserAdaptiveInputs = {
-  age: 29,
-  gender: 'MALE',
-  heightCm: 175,
-  weightKg: 74,
-  fitnessGoal: 'FAT_LOSS',
-  intensityLevel: 'MODERATE_FITNESS',
-  dietaryPreference: 'BALANCED_NON_VEG',
-  workHoursPerDay: 8,
-  riskProfile: 'BALANCED',
+  age: '',
+  gender: '',
+  heightCm: '',
+  weightKg: '',
+  fitnessGoal: '',
+  intensityLevel: '',
+  dietaryPreference: '',
+  workHoursPerDay: '',
+  riskProfile: '',
 };
 
 const INITIAL_BLUEPRINT = computeAdaptiveBlueprint(DEFAULT_USER_INPUTS);
@@ -199,8 +199,8 @@ export const useLifeOSStore = create<LifeOSState>()(
           tasks: updatedTasks,
           wellness: {
             ...state.wellness,
-            heightCm: mergedInputs.heightCm,
-            weightKg: mergedInputs.weightKg,
+            heightCm: Number(mergedInputs.heightCm) || 0,
+            weightKg: Number(mergedInputs.weightKg) || 0,
             caloriesTarget: blueprint.targetCalories,
             waterTargetLiters: blueprint.dailyWaterTargetLiters,
           },
@@ -208,8 +208,8 @@ export const useLifeOSStore = create<LifeOSState>()(
 
         api.lifeos.saveBlueprint(mergedInputs, blueprint).catch(() => {});
         api.lifeos.updateMetrics({
-          heightCm: mergedInputs.heightCm,
-          weightKg: mergedInputs.weightKg,
+          heightCm: Number(mergedInputs.heightCm) || undefined,
+          weightKg: Number(mergedInputs.weightKg) || undefined,
           caloriesTarget: blueprint.targetCalories,
           waterTargetLiters: blueprint.dailyWaterTargetLiters,
         }).catch(() => {});
@@ -258,14 +258,14 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       wellness: {
-        heightCm: 175,
-        weightKg: 70.0,
-        targetWeightKg: 70.0,
+        heightCm: 0,
+        weightKg: 0,
+        targetWeightKg: 0,
         workoutMinutesLogged: 0,
         caloriesLogged: 0,
-        caloriesTarget: 2000,
+        caloriesTarget: 0,
         waterLitersLogged: 0,
-        waterTargetLiters: 2.5,
+        waterTargetLiters: 0,
         sleepHours: 0,
       },
 
@@ -568,6 +568,7 @@ export const useLifeOSStore = create<LifeOSState>()(
 
       resetToFreshState: () => {
         set({
+          userInputs: DEFAULT_USER_INPUTS,
           tasks: [],
           workoutSessions: [],
           mealLogs: [],
@@ -579,14 +580,14 @@ export const useLifeOSStore = create<LifeOSState>()(
           emergencyInfo: null,
           adminChecklists: [],
           wellness: {
-            heightCm: 175,
-            weightKg: 70.0,
-            targetWeightKg: 70.0,
+            heightCm: 0,
+            weightKg: 0,
+            targetWeightKg: 0,
             workoutMinutesLogged: 0,
             caloriesLogged: 0,
-            caloriesTarget: 2000,
+            caloriesTarget: 0,
             waterLitersLogged: 0,
-            waterTargetLiters: 2.5,
+            waterTargetLiters: 0,
             sleepHours: 0,
           },
         });

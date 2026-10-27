@@ -5,15 +5,15 @@
  */
 
 export interface UserAdaptiveInputs {
-  age: number;
-  gender: 'MALE' | 'FEMALE';
-  heightCm: number;
-  weightKg: number;
-  fitnessGoal: 'FAT_LOSS' | 'MUSCLE_HYPERTROPHY' | 'ATHLETIC_CONDITIONING' | 'HEALTHY_LONGEVITY';
-  intensityLevel: 'BEGINNER_LIGHT' | 'MODERATE_FITNESS' | 'HIGH_INTENSITY' | 'MAX_BEAST';
-  dietaryPreference: 'BALANCED_NON_VEG' | 'VEGETARIAN' | 'VEGAN' | 'EGGETARIAN' | 'KETO';
-  workHoursPerDay: number; // 4 to 12
-  riskProfile: 'CONSERVATIVE' | 'BALANCED' | 'AGGRESSIVE';
+  age?: number | '';
+  gender?: 'MALE' | 'FEMALE' | '';
+  heightCm?: number | '';
+  weightKg?: number | '';
+  fitnessGoal?: 'FAT_LOSS' | 'MUSCLE_HYPERTROPHY' | 'ATHLETIC_CONDITIONING' | 'HEALTHY_LONGEVITY' | '';
+  intensityLevel?: 'BEGINNER_LIGHT' | 'MODERATE_FITNESS' | 'HIGH_INTENSITY' | 'MAX_BEAST' | '';
+  dietaryPreference?: 'BALANCED_NON_VEG' | 'VEGETARIAN' | 'VEGAN' | 'EGGETARIAN' | 'KETO' | '';
+  workHoursPerDay?: number | ''; // 4 to 12
+  riskProfile?: 'CONSERVATIVE' | 'BALANCED' | 'AGGRESSIVE' | '';
   monthlyInflowUSD?: number;
 }
 
@@ -97,17 +97,15 @@ export interface AdaptiveLifeBlueprint {
 }
 
 export function computeAdaptiveBlueprint(inputs: UserAdaptiveInputs): AdaptiveLifeBlueprint {
-  const {
-    age,
-    gender,
-    heightCm,
-    weightKg,
-    fitnessGoal,
-    intensityLevel,
-    dietaryPreference,
-    workHoursPerDay,
-    riskProfile,
-  } = inputs;
+  const age = Number(inputs.age) || 28;
+  const gender = inputs.gender || 'MALE';
+  const heightCm = Number(inputs.heightCm) || 170;
+  const weightKg = Number(inputs.weightKg) || 70;
+  const fitnessGoal = inputs.fitnessGoal || 'FAT_LOSS';
+  const intensityLevel = inputs.intensityLevel || 'MODERATE_FITNESS';
+  const dietaryPreference = inputs.dietaryPreference || 'BALANCED_NON_VEG';
+  const workHoursPerDay = Number(inputs.workHoursPerDay) || 8;
+  const riskProfile = inputs.riskProfile || 'BALANCED';
 
   // 1. Adult BMI Calculation
   const heightM = heightCm / 100;

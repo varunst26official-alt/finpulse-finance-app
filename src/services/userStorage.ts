@@ -79,6 +79,34 @@ export function loadUserScopedData(user: UserProfile | null): void {
 
     if (rawLife) {
       const parsedLife = JSON.parse(rawLife);
+      // Sanitize legacy mock defaults so no user starts with hardcoded biometric data
+      if (
+        parsedLife.userInputs &&
+        parsedLife.userInputs.age === 29 &&
+        parsedLife.userInputs.heightCm === 175 &&
+        parsedLife.userInputs.weightKg === 74
+      ) {
+        parsedLife.userInputs = {
+          age: '',
+          gender: '',
+          heightCm: '',
+          weightKg: '',
+          fitnessGoal: '',
+          intensityLevel: '',
+          dietaryPreference: '',
+          workHoursPerDay: '',
+          riskProfile: '',
+        };
+      }
+      if (
+        parsedLife.wellness &&
+        parsedLife.wellness.heightCm === 175 &&
+        parsedLife.wellness.weightKg === 70
+      ) {
+        parsedLife.wellness.heightCm = 0;
+        parsedLife.wellness.weightKg = 0;
+        parsedLife.wellness.targetWeightKg = 0;
+      }
       useLifeOSStore.setState(parsedLife);
     } else {
       // Clean slate for new user

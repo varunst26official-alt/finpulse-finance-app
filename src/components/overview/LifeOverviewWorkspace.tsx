@@ -72,16 +72,18 @@ export const LifeOverviewWorkspace: React.FC = () => {
   });
 
   // Adult BMI calculation: Weight (kg) / [Height (m)]^2
-  const heightM = wellness.heightCm / 100;
-  const bmi = Math.round((wellness.weightKg / (heightM * heightM)) * 10) / 10;
-  const bmiCategory =
-    bmi < 18.5
-      ? { label: 'Underweight', color: 'text-amber-700 bg-amber-50 border-amber-200' }
-      : bmi < 25
-      ? { label: 'Normal Weight', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' }
-      : bmi < 30
-      ? { label: 'Overweight', color: 'text-orange-700 bg-orange-50 border-orange-200' }
-      : { label: 'Obesity Range', color: 'text-rose-700 bg-rose-50 border-rose-200' };
+  const hasBodyMetrics = wellness.heightCm > 0 && wellness.weightKg > 0;
+  const heightM = hasBodyMetrics ? wellness.heightCm / 100 : 0;
+  const bmi = hasBodyMetrics ? Math.round((wellness.weightKg / (heightM * heightM)) * 10) / 10 : 0;
+  const bmiCategory = !hasBodyMetrics
+    ? { label: 'Not Set', color: 'text-slate-600 bg-slate-50 border-slate-200' }
+    : bmi < 18.5
+    ? { label: 'Underweight', color: 'text-amber-700 bg-amber-50 border-amber-200' }
+    : bmi < 25
+    ? { label: 'Normal Weight', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' }
+    : bmi < 30
+    ? { label: 'Overweight', color: 'text-orange-700 bg-orange-50 border-orange-200' }
+    : { label: 'Obesity Range', color: 'text-rose-700 bg-rose-50 border-rose-200' };
 
   // Quick Add Task Handler
   const handleQuickCreateTask = (e: React.FormEvent) => {
@@ -150,7 +152,7 @@ export const LifeOverviewWorkspace: React.FC = () => {
             <div className="text-xs font-extrabold text-[#243047] flex items-center gap-2">
               <span>Adaptive LifeOS Blueprint Active</span>
               <span className="px-2 py-0.5 rounded-full bg-[#f5eee3] text-[#a47b3c] text-[10px] font-bold">
-                {userInputs.fitnessGoal.replace('_', ' ')}
+                {userInputs.fitnessGoal ? userInputs.fitnessGoal.replace(/_/g, ' ') : 'Custom Protocol'}
               </span>
             </div>
             <p className="text-[11px] text-[#6f7c91] font-medium mt-0.5">
@@ -564,9 +566,11 @@ export const LifeOverviewWorkspace: React.FC = () => {
                 {bmiCategory.label}
               </span>
             </div>
-            <div className="text-2xl font-extrabold text-[#243047] mt-2">{bmi}</div>
+            <div className="text-2xl font-extrabold text-[#243047] mt-2">
+              {hasBodyMetrics ? bmi : '--'}
+            </div>
             <div className="text-[11px] text-[#6f7c91] mt-0.5 font-medium">
-              {wellness.heightCm} cm · {wellness.weightKg} kg
+              {hasBodyMetrics ? `${wellness.heightCm} cm · ${wellness.weightKg} kg` : 'Set your height & weight'}
             </div>
           </article>
 
@@ -592,7 +596,7 @@ export const LifeOverviewWorkspace: React.FC = () => {
               {wellness.caloriesLogged} kcal
             </div>
             <div className="text-[11px] text-[#6f7c91] mt-0.5 font-medium">
-              Target: {wellness.caloriesTarget} kcal
+              {wellness.caloriesTarget > 0 ? `Target: ${wellness.caloriesTarget} kcal` : 'Target: Not set'}
             </div>
           </article>
 
@@ -605,7 +609,7 @@ export const LifeOverviewWorkspace: React.FC = () => {
               {wellness.waterLitersLogged} L
             </div>
             <div className="text-[11px] text-[#6f7c91] mt-0.5 font-medium">
-              Goal: {wellness.waterTargetLiters} L / day
+              {wellness.waterTargetLiters > 0 ? `Goal: ${wellness.waterTargetLiters} L / day` : 'Goal: Not set'}
             </div>
           </article>
         </div>
