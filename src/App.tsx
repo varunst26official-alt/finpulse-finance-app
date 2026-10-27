@@ -14,6 +14,7 @@ import { LifeAdminWorkspace } from '@/components/lifeadmin/LifeAdminWorkspace';
 import { AdaptiveBlueprintModal } from '@/components/adaptive/AdaptiveBlueprintModal';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
 import { FloatingAiChatWidget } from '@/components/ai/FloatingAiChatWidget';
+import { FloatingDailyPlanWidget } from '@/components/wellness/FloatingDailyPlanWidget';
 import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -92,6 +93,7 @@ export function App() {
       {/* 5. Modals & Onboarding Tour */}
       <DemoTourGuide />
       <AdaptiveBlueprintModal />
+      <FloatingDailyPlanWidget />
       <FloatingAiChatWidget />
       <AddTransactionModal
         isOpen={isAddModalOpen}
