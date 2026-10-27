@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { MealItem, WorkoutRoutineDay } from '@/services/adaptiveLifeEngine';
+import { SUPPORTED_CUISINE_STYLES } from '@/services/locationService';
 import {
   Dumbbell,
   Apple,
@@ -16,6 +17,11 @@ import {
   Activity,
   Heart,
   Timer,
+  MapPin,
+  RefreshCw,
+  SlidersHorizontal,
+  Bot,
+  Key,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -40,10 +46,29 @@ export const FloatingDailyPlanWidget: React.FC = () => {
     logWorkoutMinutes,
     logWater,
     setIsAiModalOpen,
+    userLocation,
+    weeklyMealPlan,
+    isGeneratingMeals,
+    detectAndApplyLocation,
+    setUserLocation,
+    regenerateWeeklyMealPlan,
   } = useLifeOSStore();
 
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'ALL' | 'WORKOUT' | 'DIET'>('ALL');
+  const [isAiConfigOpen, setIsAiConfigOpen] = useState(false);
+
+  // AI Configuration State
+  const [selectedCuisine, setSelectedCuisine] = useState(
+    userLocation?.cuisineStyle || 'South Indian (Tamil Nadu / Coastal & Millets)'
+  );
+  const [selectedModel, setSelectedModel] = useState<
+    'builtin-culinary' | 'gemini-1.5-flash' | 'gemini-2.0-flash'
+  >('builtin-culinary');
+  const [geminiApiKey, setGeminiApiKey] = useState(
+    (typeof window !== 'undefined' ? localStorage.getItem('lifeos_ai_api_key') : '') || ''
+  );
+  const [customAiPrompt, setCustomAiPrompt] = useState('');
 
   // Determine current day of the week
   const todayDate = new Date();
@@ -62,6 +87,22 @@ export const FloatingDailyPlanWidget: React.FC = () => {
     setFeedbackMsg(msg);
     setTimeout(() => setFeedbackMsg(null), 3000);
   };
+
+  // Auto-detect location & generate weekly menu on initial mount if not yet populated
+  useEffect(() => {
+    if (!userLocation) {
+      detectAndApplyLocation();
+    } else if (!weeklyMealPlan || Object.keys(weeklyMealPlan).length === 0) {
+      regenerateWeeklyMealPlan({ cuisineOverride: userLocation.cuisineStyle });
+    }
+  }, [userLocation, weeklyMealPlan]);
+
+  // Keep selected cuisine synced when userLocation updates
+  useEffect(() => {
+    if (userLocation?.cuisineStyle) {
+      setSelectedCuisine(userLocation.cuisineStyle);
+    }
+  }, [userLocation]);
 
   // Rest timer tick
   useEffect(() => {
@@ -85,25 +126,24 @@ export const FloatingDailyPlanWidget: React.FC = () => {
   // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        setIsOpen(false);
+      if (e.key === 'Escape') {
+        if (isAiConfigOpen) setIsAiConfigOpen(false);
+        else if (isOpen) setIsOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, isAiConfigOpen]);
 
   // Resolve routine for selected day
   const resolveRoutineForDay = (dayName: string): WorkoutRoutineDay | null => {
     if (!activeBlueprint?.routines || activeBlueprint.routines.length === 0) return null;
 
-    // Check direct matching in day title
     const directMatch = activeBlueprint.routines.find((r) =>
       r.dayName.toLowerCase().includes(dayName.toLowerCase())
     );
     if (directMatch) return directMatch;
 
-    // Fallback split mapping
     const routineCount = activeBlueprint.routines.length;
     switch (dayName) {
       case 'Monday':
@@ -120,15 +160,18 @@ export const FloatingDailyPlanWidget: React.FC = () => {
         return routineCount >= 4 ? activeBlueprint.routines[routineCount - 1] : null;
       case 'Sunday':
       default:
-        return null; // Active Recovery Day
+        return null;
     }
   };
 
   const currentRoutine = resolveRoutineForDay(selectedDay);
   const isSelectedToday = selectedDay === todayWeekday.key;
 
-  // Active blueprint meal plan (4 meals)
-  const mealPlan: MealItem[] = activeBlueprint?.dailyMealPlan || [];
+  // Resolve day-specific meal plan (each day is completely distinct)
+  const mealPlan: MealItem[] =
+    weeklyMealPlan && weeklyMealPlan[selectedDay] && weeklyMealPlan[selectedDay].length > 0
+      ? weeklyMealPlan[selectedDay]
+      : activeBlueprint?.dailyMealPlan || [];
 
   // Check if today's workout has been completed
   const isWorkoutDoneToday =
@@ -161,7 +204,31 @@ export const FloatingDailyPlanWidget: React.FC = () => {
     showNotification(`💪 Completed ${duration} min workout session!`);
   };
 
-  // Meal type icons and colors
+  // Handle AI Weekly Menu Regeneration
+  const handleTriggerAiRegeneration = async () => {
+    if (geminiApiKey) {
+      localStorage.setItem('lifeos_ai_api_key', geminiApiKey.trim());
+    }
+
+    if (userLocation) {
+      setUserLocation({
+        ...userLocation,
+        cuisineStyle: selectedCuisine,
+      });
+    }
+
+    await regenerateWeeklyMealPlan({
+      cuisineOverride: selectedCuisine,
+      model: selectedModel,
+      apiKey: geminiApiKey.trim() || undefined,
+      customPrompt: customAiPrompt.trim() || undefined,
+    });
+
+    setIsAiConfigOpen(false);
+    showNotification(`✨ 7-Day Menu regenerated for ${userLocation?.city || 'Chennai'}!`);
+  };
+
+  // Meal type visuals
   const getMealVisual = (type: string) => {
     switch (type.toUpperCase()) {
       case 'BREAKFAST':
@@ -196,7 +263,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
     }
   };
 
-  // Progress metrics
   const targetCals = activeBlueprint?.targetCalories || 2000;
   const loggedCals = wellness.caloriesLogged;
   const caloriePercent = Math.min(100, Math.round((loggedCals / targetCals) * 100));
@@ -207,7 +273,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
       {/* 1. FLOATING LAUNCHER BUTTON (Bottom-Right, above AI Copilot)   */}
       {/* ============================================================== */}
       <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-40 flex flex-col items-end gap-2 pointer-events-auto">
-        {/* Teaser pill on desktop when closed */}
         {!isOpen && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -218,19 +283,18 @@ export const FloatingDailyPlanWidget: React.FC = () => {
           >
             <span className="flex h-2 w-2 rounded-full bg-[#a47b3c] animate-ping" />
             <span>
-              Today's Protocol: <strong>{currentRoutine ? currentRoutine.dayName.split('(')[0] : 'Rest & Fuel'}</strong>
+              {userLocation?.city || 'Local'} Protocol: <strong>{currentRoutine ? currentRoutine.dayName.split('(')[0] : 'Rest & Fuel'}</strong>
             </span>
           </motion.div>
         )}
 
-        {/* Circular Action Launcher Button */}
         {!isOpen && (
           <motion.button
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.94 }}
             onClick={() => setIsOpen(true)}
             className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-gradient-to-tr from-[#17365d] via-[#244b7a] to-[#a47b3c] text-white shadow-xl shadow-[#17365d]/30 flex items-center justify-center border-2 border-white/60 hover:shadow-2xl transition-all cursor-pointer relative group"
-            title="Today's Workout & Meal Protocol"
+            title="Today's Workout & Localized Meal Protocol"
           >
             <div className="relative">
               <Dumbbell className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:rotate-12 transition-transform duration-300" />
@@ -249,7 +313,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -258,13 +321,12 @@ export const FloatingDailyPlanWidget: React.FC = () => {
               className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs sm:bg-slate-900/20"
             />
 
-            {/* Modal Body: Slide-up Sheet on Mobile, Floating Card on Desktop */}
             <motion.div
               initial={{ opacity: 0, y: 40, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 40, scale: 0.96 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[480px] max-w-full bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e4e9f1] flex flex-col max-h-[90vh] sm:max-h-[85vh] overflow-hidden"
+              className="fixed bottom-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[490px] max-w-full bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e4e9f1] flex flex-col max-h-[92vh] sm:max-h-[86vh] overflow-hidden"
             >
               {/* Header */}
               <div className="p-4 sm:p-5 bg-gradient-to-r from-[#17365d] via-[#244b7a] to-[#17365d] text-white flex items-center justify-between shrink-0">
@@ -282,16 +344,48 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-[11px] text-white/80">
-                      Prescribed workout split & 4-meal clinical nutrition
+                      7 distinct daily menus adapted to your local market
                     </p>
                   </div>
                 </div>
 
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setIsAiConfigOpen(true)}
+                    className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                    title="Customize Regional AI Model & Cuisine"
+                  >
+                    <SlidersHorizontal className="w-4 h-4 text-amber-300" />
+                  </button>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Location Bar with One-Click AI Regenerate */}
+              <div className="px-4 py-2.5 bg-gradient-to-r from-[#faf8f5] to-amber-50/40 border-b border-[#e4e9f1] shrink-0 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 truncate">
+                  <MapPin className="w-3.5 h-3.5 text-[#a47b3c] shrink-0" />
+                  <span className="font-extrabold text-[#243047] truncate">
+                    {userLocation ? `${userLocation.city}, ${userLocation.region}` : 'Detecting Location...'}
+                  </span>
+                  <span className="text-[10px] text-slate-400">·</span>
+                  <span className="text-[10px] text-[#866632] font-semibold truncate hidden sm:inline">
+                    {userLocation?.cuisineStyle?.split('(')[0] || 'Regional'}
+                  </span>
+                </div>
+
                 <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  onClick={() => setIsAiConfigOpen(true)}
+                  disabled={isGeneratingMeals}
+                  className="px-2.5 py-1 rounded-xl bg-white border border-[#a47b3c]/40 text-[#a47b3c] hover:bg-[#f5eee3] text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer shrink-0 shadow-xs"
                 >
-                  <X className="w-5 h-5" />
+                  <Sparkles className={`w-3 h-3 ${isGeneratingMeals ? 'animate-spin' : ''}`} />
+                  <span>{isGeneratingMeals ? 'Generating...' : 'AI Menu'}</span>
                 </button>
               </div>
 
@@ -310,7 +404,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                 )}
               </AnimatePresence>
 
-              {/* Day Selector Strip */}
+              {/* Day Selector Strip (Mon - Sun) */}
               <div className="px-3 py-2 bg-[#faf8f5] border-b border-[#e4e9f1] shrink-0 overflow-x-auto scrollbar-none">
                 <div className="flex items-center gap-1.5 justify-between min-w-[340px]">
                   {WEEKDAYS.map((day) => {
@@ -330,7 +424,11 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                       >
                         <span className="text-[11px] font-extrabold">{day.short}</span>
                         {isToday && (
-                          <span className={`text-[8px] font-extrabold px-1 rounded-full ${isSelected ? 'bg-[#a47b3c] text-white' : 'bg-[#17365d] text-white'}`}>
+                          <span
+                            className={`text-[8px] font-extrabold px-1 rounded-full ${
+                              isSelected ? 'bg-[#a47b3c] text-white' : 'bg-[#17365d] text-white'
+                            }`}
+                          >
                             Today
                           </span>
                         )}
@@ -398,14 +496,13 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                   <div className="flex items-center justify-between text-xs font-extrabold text-[#243047]">
                     <span className="flex items-center gap-1.5">
                       <Flame className="w-4 h-4 text-orange-500" />
-                      <span>Today's Energy Balance</span>
+                      <span>{selectedDay} Calorie Target</span>
                     </span>
                     <span className="text-[#a47b3c]">
                       {loggedCals} / {targetCals} kcal ({caloriePercent}%)
                     </span>
                   </div>
 
-                  {/* Progress bar */}
                   <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
@@ -413,7 +510,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                     />
                   </div>
 
-                  {/* Target Macros Pill Strip */}
                   <div className="grid grid-cols-3 gap-2 pt-1 text-center">
                     <div className="p-1.5 rounded-xl bg-white border border-[#e4e9f1]">
                       <span className="text-[10px] text-rose-600 font-bold uppercase block">Protein</span>
@@ -445,7 +541,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                         <span>Workout: {selectedDay}</span>
                       </h4>
 
-                      {/* Rest timer mini pill */}
                       <div className="flex items-center gap-1">
                         <span className="text-[10px] text-slate-500 font-bold">Rest:</span>
                         <button
@@ -463,7 +558,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Rest timer banner if running */}
                     {timerRunning && (
                       <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between text-xs font-bold animate-pulse">
                         <span className="flex items-center gap-1.5">
@@ -491,7 +585,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                             </span>
                           </div>
 
-                          {/* Complete Workout Button */}
                           {isSelectedToday && (
                             <button
                               onClick={() => handleCompleteWorkout(currentRoutine.durationMin)}
@@ -508,7 +601,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Exercise Checklist */}
                         <div className="space-y-1.5 pt-1 border-t border-slate-100">
                           {currentRoutine.exercises.map((ex, idx) => (
                             <div
@@ -529,14 +621,13 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      // Active Recovery Day Card
                       <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50/70 to-teal-50/70 border border-emerald-200 text-xs space-y-2">
                         <div className="flex items-center gap-2 font-extrabold text-emerald-900">
                           <Heart className="w-4 h-4 text-emerald-600" />
                           <span>Active Recovery & Mobility Day</span>
                         </div>
                         <p className="text-[11px] text-emerald-800 leading-relaxed">
-                          No heavy compound resistance prescribed for {selectedDay}. Focus on 8,000 brisk steps, light thoracic mobility, optimal hydration, and tissue repair.
+                          No heavy compound resistance prescribed for {selectedDay}. Focus on 8,000 brisk steps, light mobility, and local hydration.
                         </p>
                         <div className="flex gap-2 pt-1">
                           <button
@@ -552,17 +643,27 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                   </div>
                 )}
 
-                {/* 3. Meal Plan Section (All 4 Meals) */}
+                {/* 3. Meal Plan Section (All 4 Distinct Meals for Selected Day) */}
                 {(activeTab === 'ALL' || activeTab === 'DIET') && (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
-                        <Apple className="w-4 h-4 text-emerald-600" />
-                        <span>Prescribed Diet: All 4 Meals</span>
-                      </h4>
-                      <span className="text-[11px] text-[#a47b3c] font-bold">
-                        {activeBlueprint?.dailyMealPlan.length || 4} Prescribed Meals
-                      </span>
+                      <div className="space-y-0.5">
+                        <h4 className="text-xs font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
+                          <Apple className="w-4 h-4 text-emerald-600" />
+                          <span>{selectedDay} Localized Meal Plan</span>
+                        </h4>
+                        <span className="text-[10px] text-[#866632] font-semibold block">
+                          📍 {userLocation?.city || 'Chennai'} Market Availability · {mealPlan.length} Meals
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={() => setIsAiConfigOpen(true)}
+                        className="text-[10px] font-bold text-[#a47b3c] hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        <span>Change Style</span>
+                      </button>
                     </div>
 
                     <div className="space-y-2.5">
@@ -595,7 +696,6 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                                 </div>
                               </div>
 
-                              {/* 1-Click Mark as Eaten Button */}
                               {isSelectedToday && (
                                 <button
                                   onClick={() => handleQuickLogMeal(meal)}
@@ -605,7 +705,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                                       ? 'bg-emerald-200/80 text-emerald-900 border border-emerald-300 cursor-default'
                                       : 'bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 shadow-xs cursor-pointer'
                                   }`}
-                                  title="Log this meal to today's nutrition diary"
+                                  title="Log this meal to today's diary"
                                 >
                                   {isLogged ? (
                                     <>
@@ -622,12 +722,10 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                               )}
                             </div>
 
-                            {/* Ingredients preview */}
                             <p className="text-[11px] text-slate-600 font-medium leading-relaxed bg-white/70 p-2 rounded-xl border border-white">
                               {meal.ingredients}
                             </p>
 
-                            {/* Macro mini tags */}
                             <div className="flex items-center gap-3 text-[10px] font-bold text-slate-600">
                               <span className="text-rose-700">P: {meal.proteinG}g</span>
                               <span className="text-slate-300">·</span>
@@ -646,7 +744,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
               {/* Footer: Calibrate Shortcut */}
               <div className="p-3 sm:p-4 bg-[#faf8f5] border-t border-[#e4e9f1] flex items-center justify-between text-xs shrink-0">
                 <span className="text-[11px] text-slate-500 font-medium">
-                  Adaptive LifeOS Engine v2.0
+                  {userLocation ? `📍 ${userLocation.city}` : 'LifeOS'} · Regional AI
                 </span>
                 <button
                   onClick={() => {
@@ -656,11 +754,167 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                   className="text-[#a47b3c] hover:text-[#866632] font-bold text-xs flex items-center gap-1 cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Calibrate Targets →</span>
+                  <span>Calibrate Biometrics →</span>
                 </button>
               </div>
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* ============================================================== */}
+      {/* 3. AI REGIONAL CUISINE & MODEL CONFIGURATION MODAL             */}
+      {/* ============================================================== */}
+      <AnimatePresence>
+        {isAiConfigOpen && (
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-[#e4e9f1] overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              {/* Header */}
+              <div className="p-4 sm:p-5 bg-gradient-to-r from-[#17365d] to-[#244b7a] text-white flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-[#a47b3c] flex items-center justify-center text-white">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold">AI Regional Meal Customizer</h3>
+                    <p className="text-[11px] text-white/80">
+                      Generate 7 unique daily plans calibrated to local market staples
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsAiConfigOpen(false)}
+                  className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Form Body */}
+              <div className="p-5 overflow-y-auto space-y-4 text-xs font-semibold text-slate-700">
+                {/* Detected Location Info */}
+                <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-[#a47b3c] shrink-0" />
+                    <div>
+                      <span className="text-[11px] text-slate-500 font-bold block">Current Location:</span>
+                      <span className="text-xs font-extrabold text-[#243047]">
+                        {userLocation ? `${userLocation.city}, ${userLocation.region}, ${userLocation.country}` : 'Detecting...'}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => detectAndApplyLocation()}
+                    className="px-2.5 py-1 rounded-xl bg-white border border-[#a47b3c]/40 text-[#a47b3c] text-[10px] font-bold hover:bg-[#f5eee3] transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    <span>Re-detect</span>
+                  </button>
+                </div>
+
+                {/* Cuisine Style Dropdown */}
+                <div>
+                  <label className="block mb-1 text-slate-700 font-bold">
+                    Regional Cuisine & Ingredient Availability
+                  </label>
+                  <select
+                    value={selectedCuisine}
+                    onChange={(e) => setSelectedCuisine(e.target.value)}
+                    className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e4e9f1] text-xs font-bold text-slate-900 focus:border-[#a47b3c] focus:bg-white focus:outline-hidden cursor-pointer"
+                  >
+                    {SUPPORTED_CUISINE_STYLES.map((c) => (
+                      <option key={c.id} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* AI Model Selector */}
+                <div>
+                  <label className="block mb-1 text-slate-700 font-bold flex items-center gap-1.5">
+                    <Bot className="w-3.5 h-3.5 text-[#17365d]" />
+                    <span>AI Model Engine</span>
+                  </label>
+                  <select
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value as any)}
+                    className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e4e9f1] text-xs font-bold text-slate-900 focus:border-[#a47b3c] focus:bg-white focus:outline-hidden cursor-pointer"
+                  >
+                    <option value="builtin-culinary">
+                      ⚡ LifeOS Neural Regional Culinary AI (Fastest, Offline-Ready)
+                    </option>
+                    <option value="gemini-1.5-flash">
+                      🤖 Google Gemini 1.5 Flash (Cloud LLM)
+                    </option>
+                    <option value="gemini-2.0-flash">
+                      🚀 Google Gemini 2.0 Flash (Advanced Cloud LLM)
+                    </option>
+                  </select>
+                </div>
+
+                {/* API Key Input (if Gemini is chosen) */}
+                {selectedModel.includes('gemini') && (
+                  <div>
+                    <label className="block mb-1 text-slate-700 font-bold flex items-center gap-1.5">
+                      <Key className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Google Gemini API Key (Optional)</span>
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="AIzaSy... (leave blank to use built-in engine if no key)"
+                      value={geminiApiKey}
+                      onChange={(e) => setGeminiApiKey(e.target.value)}
+                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e4e9f1] text-xs font-mono text-slate-900 focus:border-[#a47b3c] focus:bg-white focus:outline-hidden"
+                    />
+                    <span className="text-[10px] text-slate-500 mt-1 block">
+                      Saved safely in your local browser storage. If omitted, built-in Neural Engine runs automatically.
+                    </span>
+                  </div>
+                )}
+
+                {/* Custom AI Instructions */}
+                <div>
+                  <label className="block mb-1 text-slate-700 font-bold">
+                    Special Dietary & Taste Instructions
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="e.g. Focus on high-protein, extra millets, low oil, country chicken, and local Chennai vegetables"
+                    value={customAiPrompt}
+                    onChange={(e) => setCustomAiPrompt(e.target.value)}
+                    className="w-full p-2.5 rounded-xl bg-[#faf8f5] border border-[#e4e9f1] text-xs text-slate-900 focus:border-[#a47b3c] focus:bg-white focus:outline-hidden"
+                  />
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-4 bg-white border-t border-[#e4e9f1] flex items-center justify-between gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsAiConfigOpen(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleTriggerAiRegeneration}
+                  disabled={isGeneratingMeals}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#17365d] to-[#244b7a] text-white text-xs font-bold hover:from-[#132c4d] hover:to-[#17365d] shadow-lg shadow-[#17365d]/20 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Sparkles className={`w-4 h-4 text-amber-300 ${isGeneratingMeals ? 'animate-spin' : ''}`} />
+                  <span>{isGeneratingMeals ? 'Synthesizing Menu...' : 'Generate 7-Day AI Menu'}</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>

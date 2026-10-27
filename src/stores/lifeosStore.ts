@@ -19,7 +19,10 @@ import {
   computeAdaptiveBlueprint,
   UserAdaptiveInputs,
   AdaptiveLifeBlueprint,
+  MealItem,
 } from '@/services/adaptiveLifeEngine';
+import { detectUserLocation, UserLocationProfile } from '@/services/locationService';
+import { generateLocalizedWeeklyMealPlan, AiGenerationOptions } from '@/services/aiMealGenerator';
 import { api } from '@/services/apiClient';
 
 const DEFAULT_USER_INPUTS: UserAdaptiveInputs = {
@@ -92,6 +95,15 @@ interface LifeOSState {
   mealLogs: MealLogItem[];
   addMealLog: (meal: Omit<MealLogItem, 'id' | 'date'>) => void;
   deleteMealLog: (id: string) => void;
+
+  // Location & Localized AI Nutrition
+  userLocation: UserLocationProfile | null;
+  setUserLocation: (loc: UserLocationProfile) => void;
+  detectAndApplyLocation: () => Promise<UserLocationProfile>;
+  weeklyMealPlan: Record<string, MealItem[]>;
+  setWeeklyMealPlan: (plan: Record<string, MealItem[]>) => void;
+  regenerateWeeklyMealPlan: (options?: AiGenerationOptions) => Promise<void>;
+  isGeneratingMeals: boolean;
 
   // Habits & Focus (Phase 4)
   habits: HabitItem[];
@@ -213,6 +225,8 @@ export const useLifeOSStore = create<LifeOSState>()(
           caloriesTarget: blueprint.targetCalories,
           waterTargetLiters: blueprint.dailyWaterTargetLiters,
         }).catch(() => {});
+
+        get().regenerateWeeklyMealPlan().catch(() => {});
       },
 
       tasks: [],
@@ -412,6 +426,81 @@ export const useLifeOSStore = create<LifeOSState>()(
         api.lifeos.deleteMealLog(id).catch(() => {});
       },
 
+      // Location & Localized AI Nutrition Implementation
+      userLocation: null,
+      weeklyMealPlan: {},
+      isGeneratingMeals: false,
+
+      setUserLocation: (loc) => {
+        set({ userLocation: loc });
+        get().regenerateWeeklyMealPlan({ cuisineOverride: loc.cuisineStyle });
+      },
+
+      detectAndApplyLocation: async () => {
+        try {
+          const loc = await detectUserLocation();
+          set({ userLocation: loc });
+          await get().regenerateWeeklyMealPlan({ cuisineOverride: loc.cuisineStyle });
+          return loc;
+        } catch (e) {
+          console.warn('[LifeOS] Location detection error:', e);
+          const fallbackLoc: UserLocationProfile = {
+            city: 'Chennai',
+            region: 'Tamil Nadu',
+            country: 'India',
+            cuisineStyle: 'South Indian (Tamil Nadu / Coastal & Millets)',
+            source: 'TIMEZONE',
+            detectedAt: new Date().toISOString(),
+          };
+          set({ userLocation: fallbackLoc });
+          await get().regenerateWeeklyMealPlan({ cuisineOverride: fallbackLoc.cuisineStyle });
+          return fallbackLoc;
+        }
+      },
+
+      setWeeklyMealPlan: (plan) => set({ weeklyMealPlan: plan }),
+
+      regenerateWeeklyMealPlan: async (options) => {
+        const state = get();
+        set({ isGeneratingMeals: true });
+        try {
+          let loc = state.userLocation;
+          if (!loc) {
+            loc = await detectUserLocation();
+            set({ userLocation: loc });
+          }
+
+          const targetCalories = state.activeBlueprint?.targetCalories || 2000;
+          const macros = state.activeBlueprint?.macros || { proteinGrams: 120, carbsGrams: 180, fatGrams: 50 };
+          const pref = state.userInputs.dietaryPreference || 'BALANCED_NON_VEG';
+
+          const weeklyPlan = await generateLocalizedWeeklyMealPlan(
+            targetCalories,
+            macros,
+            pref,
+            loc,
+            options
+          );
+
+          // Find current day name
+          const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const todayName = DAYS[new Date().getDay()];
+          const todaysMeals = weeklyPlan[todayName] || weeklyPlan['Monday'] || [];
+
+          set({
+            weeklyMealPlan: weeklyPlan,
+            activeBlueprint: {
+              ...state.activeBlueprint,
+              dailyMealPlan: todaysMeals,
+            },
+          });
+        } catch (err) {
+          console.error('[LifeOS] Meal generation error:', err);
+        } finally {
+          set({ isGeneratingMeals: false });
+        }
+      },
+
       // Phase 4: Habits & Focus
       habits: [],
 
@@ -569,6 +658,8 @@ export const useLifeOSStore = create<LifeOSState>()(
       resetToFreshState: () => {
         set({
           userInputs: DEFAULT_USER_INPUTS,
+          userLocation: null,
+          weeklyMealPlan: {},
           tasks: [],
           workoutSessions: [],
           mealLogs: [],

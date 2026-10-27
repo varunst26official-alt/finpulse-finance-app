@@ -48,6 +48,8 @@ export function saveUserScopedData(user: UserProfile | null): void {
       adminChecklists: lifeState.adminChecklists,
       userInputs: lifeState.userInputs,
       activeBlueprint: lifeState.activeBlueprint,
+      userLocation: lifeState.userLocation,
+      weeklyMealPlan: lifeState.weeklyMealPlan,
     };
 
     localStorage.setItem(`${userKey}_finance`, JSON.stringify(financeData));
