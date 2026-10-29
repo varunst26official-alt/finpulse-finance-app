@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  timeout: 120000,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -23,6 +24,31 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         channel: 'chrome',
+      },
+    },
+    {
+      name: 'live',
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: 'chrome',
+        launchOptions: {
+          slowMo: 600,
+        },
+      },
+    },
+    {
+      name: 'mobile-android',
+      use: {
+        ...devices['Pixel 7'],
+      },
+    },
+    {
+      name: 'mobile-live',
+      use: {
+        ...devices['Pixel 7'],
+        launchOptions: {
+          slowMo: 700,
+        },
       },
     },
   ],
