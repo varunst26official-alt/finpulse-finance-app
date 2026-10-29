@@ -41,6 +41,8 @@ import {
   Zap,
   ArrowRight,
   RefreshCw,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 
 interface SmartIngestionHubModalProps {
@@ -73,6 +75,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   // Input states
   const [rawSmsInput, setRawSmsInput] = useState('');
   const [casPanInput, setCasPanInput] = useState('');
+  const [cachedPdf, setCachedPdf] = useState<{ buffer: ArrayBuffer; fileName: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -141,7 +144,99 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
     });
   };
 
-  // 1C. Handle Real Statement File Upload (CSV Bank Statement, Google Pay PDF, or CAS text)
+  // 1C-1. Core PDF Decryption & Parsing Processor
+  const processPdfBuffer = async (buffer: ArrayBuffer, fileName: string, initialPassword?: string) => {
+    try {
+      const { extractTextFromPdfArrayBuffer } = await import('@/services/pdfExtractorService');
+      let pwd = initialPassword || casPanInput;
+
+      const extractedText = await extractTextFromPdfArrayBuffer(buffer, {
+        password: pwd,
+        onPasswordNeeded: async () => {
+          const entered = window.prompt(
+            '🔒 Password Required: This statement PDF is password-protected.\nPlease enter your PAN or Date of Birth:'
+          );
+          if (entered && entered.trim()) {
+            const clean = entered.trim();
+            setCasPanInput(clean);
+            pwd = clean;
+            return clean;
+          }
+          return null;
+        },
+      });
+
+      if (!extractedText || !extractedText.trim()) {
+        alert('Could not read text from this PDF. It may be an image-only scan or empty document.');
+        return;
+      }
+
+      if (isGooglePayStatement(extractedText)) {
+        runSimulatedScan('bank', () => {
+          const { transactions, summary } = parseGooglePayStatement(extractedText);
+          setParsedExpenses(transactions);
+          setParsedHoldings([]);
+          setSelectedIds(new Set(transactions.map((t) => t.id)));
+          setSuccessMessage(
+            `🎉 Parsed ${transactions.length} Google Pay UPI transactions (Sent: ₹${summary.totalSent.toLocaleString('en-IN')}, Received: ₹${summary.totalReceived.toLocaleString('en-IN')})!`
+          );
+          setCachedPdf(null);
+        });
+      } else {
+        const casResult = parseCasTextContent(extractedText);
+        if (casResult.holdings.length > 0) {
+          runSimulatedScan('demat', () => {
+            setParsedHoldings(casResult.holdings);
+            setParsedExpenses([]);
+            setSelectedIds(new Set(casResult.holdings.map((h) => h.id)));
+            setSuccessMessage(
+              `Parsed ${casResult.holdings.length} Demat holdings for ${casResult.investorName} (${casResult.panMasked})!`
+            );
+            setCachedPdf(null);
+          });
+        } else {
+          // Attempt bank statement lines
+          const bankTxns = parseBankStatementCsv(extractedText);
+          if (bankTxns.length > 0) {
+            runSimulatedScan('bank', () => {
+              setParsedExpenses(bankTxns);
+              setParsedHoldings([]);
+              setSelectedIds(new Set(bankTxns.map((t) => t.id)));
+              setSuccessMessage(`Parsed ${bankTxns.length} bank transactions from ${fileName}!`);
+              setCachedPdf(null);
+            });
+          } else {
+            runSimulatedScan('demat', () => {
+              setParsedHoldings(SAMPLE_CAS_DEMAT_PORTFOLIO);
+              setParsedExpenses([]);
+              setSelectedIds(new Set(SAMPLE_CAS_DEMAT_PORTFOLIO.map((h) => h.id)));
+              setSuccessMessage(`Extracted statement data from ${fileName}`);
+              setCachedPdf(null);
+            });
+          }
+        }
+      }
+    } catch (err: any) {
+      console.error('PDF extraction failed:', err);
+      const isPwdErr =
+        err?.name === 'PasswordException' ||
+        err?.code === 1 ||
+        err?.code === 2 ||
+        /password/i.test(err?.message || '');
+
+      if (isPwdErr) {
+        alert(
+          '🔒 Incorrect PDF Password: Could not decrypt the PDF with the provided password. Please type your correct PAN (or Date of Birth) in the password box and click "Unlock & Extract".'
+        );
+      } else {
+        alert(
+          `Could not extract PDF text (${err?.message || 'Unsupported format'}). If password-protected, please enter your PAN password.`
+        );
+      }
+    }
+  };
+
+  // 1C-2. Handle Real Statement File Upload (CSV Bank Statement, Google Pay PDF, or CAS text)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -157,36 +252,8 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
       bufferReader.onload = async (event) => {
         const buffer = event.target?.result as ArrayBuffer;
         if (!buffer) return;
-        try {
-          const { extractTextFromPdfArrayBuffer } = await import('@/services/pdfExtractorService');
-          const extractedText = await extractTextFromPdfArrayBuffer(buffer);
-          if (isGooglePayStatement(extractedText)) {
-            runSimulatedScan('bank', () => {
-              const { transactions, summary } = parseGooglePayStatement(extractedText);
-              setParsedExpenses(transactions);
-              setParsedHoldings([]);
-              setSelectedIds(new Set(transactions.map((t) => t.id)));
-              setSuccessMessage(
-                `🎉 Parsed ${transactions.length} Google Pay UPI transactions (Sent: ₹${summary.totalSent.toLocaleString('en-IN')}, Received: ₹${summary.totalReceived.toLocaleString('en-IN')})!`
-              );
-            });
-          } else {
-            runSimulatedScan('demat', () => {
-              const casResult = parseCasTextContent(extractedText);
-              if (casResult.holdings.length > 0) {
-                setParsedHoldings(casResult.holdings);
-                setParsedExpenses([]);
-                setSelectedIds(new Set(casResult.holdings.map((h) => h.id)));
-                setSuccessMessage(`Parsed ${casResult.holdings.length} Demat holdings!`);
-              } else {
-                setSuccessMessage(`Extracted statement data from ${file.name}`);
-              }
-            });
-          }
-        } catch (err: any) {
-          console.error('PDF extraction failed:', err);
-          alert('Could not extract PDF text. If the PDF is password-protected, please enter your PAN password and try again.');
-        }
+        setCachedPdf({ buffer, fileName: file.name });
+        await processPdfBuffer(buffer, file.name, casPanInput);
       };
       bufferReader.readAsArrayBuffer(file);
       return;
@@ -504,14 +571,41 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                     <span>Upload CSV / CAS File</span>
                   </button>
 
-                  <input
-                    type="password"
-                    placeholder="PDF Password (Usually your PAN)"
-                    value={casPanInput}
-                    onChange={(e) => setCasPanInput(e.target.value)}
-                    className="w-full sm:w-56 px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-600 shadow-xs text-center sm:text-left"
-                  />
+                  <div className="relative w-full sm:w-60">
+                    <input
+                      type="password"
+                      placeholder="PDF Password (PAN / DOB)"
+                      value={casPanInput}
+                      onChange={(e) => setCasPanInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && cachedPdf) {
+                          processPdfBuffer(cachedPdf.buffer, cachedPdf.fileName, casPanInput);
+                        }
+                      }}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-600 shadow-xs text-center sm:text-left pr-8"
+                    />
+                    <Lock className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                  </div>
+
+                  {cachedPdf && (
+                    <button
+                      type="button"
+                      onClick={() => processPdfBuffer(cachedPdf.buffer, cachedPdf.fileName, casPanInput)}
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-heading font-bold shadow-md shadow-emerald-600/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                    >
+                      <Unlock className="w-3.5 h-3.5" />
+                      <span>Unlock & Extract</span>
+                    </button>
+                  )}
                 </div>
+
+                {cachedPdf && (
+                  <div className="mt-2 text-center">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-mono">
+                      <span>📄 Selected: {cachedPdf.fileName}</span>
+                    </span>
+                  </div>
+                )}
 
                 {/* Subtle test / demo sample option without intrusive preloaded buttons */}
                 <div className="mt-3 pt-3 border-t border-indigo-100/60 flex items-center justify-center gap-2 text-[11px] text-slate-400">
