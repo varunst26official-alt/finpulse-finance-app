@@ -28,8 +28,8 @@ test.describe('Mobile Android Live Viewport Testing (Pixel 7)', () => {
     await page.getByRole('button', { name: 'Holdings & Allocation' }).click();
     await expect(page.getByText('Asset Portfolio & Holdings')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Debts & Repayments' }).click();
-    await expect(page.getByText('Debt & Repayment Engine')).toBeVisible();
+    await page.getByRole('button', { name: /Debts, Protection & Vault/i }).click();
+    await expect(page.getByText('Unified Liability, Insurance & Resilience Suite')).toBeVisible();
 
     await page.getByRole('button', { name: 'Goals & Milestones' }).click();
     await expect(page.getByText(/Goals/i).first()).toBeVisible();

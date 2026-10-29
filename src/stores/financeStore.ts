@@ -26,6 +26,9 @@ import {
   STOCK_PREDICTIONS,
   MARKET_NEWS_ITEMS,
   TAX_REPORT_MOCK,
+  INITIAL_DEBTS,
+  INITIAL_POLICIES,
+  INITIAL_GOALS,
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
@@ -137,9 +140,9 @@ export const useFinanceStore = create<FinanceState>()(
       expenses: [],
       incomes: [],
       calendarEvents: [],
-      debts: [],
-      policies: [],
-      goals: [],
+      debts: INITIAL_DEBTS,
+      policies: INITIAL_POLICIES,
+      goals: INITIAL_GOALS,
       emergencyTargetMonths: 6,
       history: [],
 

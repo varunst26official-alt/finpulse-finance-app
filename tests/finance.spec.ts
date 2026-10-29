@@ -20,23 +20,26 @@ test.describe('Finance Workspace & Multi-Currency Controls', () => {
     await page.getByRole('button', { name: 'Holdings & Allocation' }).click();
     await expect(page.getByText('12-Month Net Worth Trajectory')).toBeVisible();
 
-    // 3. Debts & Repayments
-    await page.getByRole('button', { name: 'Debts & Repayments' }).click();
-    await expect(page.getByText('Debt & Repayment Engine')).toBeVisible();
+    // 3. Combined Commitments: Debts, Protection & Vault
+    await page.getByRole('button', { name: /Debts, Protection & Vault/i }).click();
+    await expect(page.getByText('Unified Liability, Insurance & Resilience Suite')).toBeVisible();
 
-    // 4. Protection & Insurance
-    await page.getByRole('button', { name: 'Protection & Insurance' }).click();
-    await expect(page.getByText(/Insurance/i).first()).toBeVisible();
+    // Switch between internal sub-tabs
+    await page.getByRole('button', { name: /Protection & Insurance/i }).first().click();
+    await expect(page.getByText(/Total Coverage/i).first()).toBeVisible();
 
-    // 5. Health Score & Vault
-    await page.getByRole('button', { name: 'Health Score & Vault' }).click();
-    await expect(page.getByText(/Emergency Vault/i).first()).toBeVisible();
+    await page.getByRole('button', { name: /Health Score & Vault/i }).first().click();
+    await expect(page.getByText(/Health & Vault/i).first()).toBeVisible();
 
-    // 6. Transactions Ledger
+    // 4. Financial Calendar (3rd tab in top bar)
+    await page.getByRole('button', { name: 'Financial Calendar', exact: true }).click();
+    await expect(page.getByText('Financial Calendar & Life Events Planner')).toBeVisible();
+
+    // 5. Transactions Ledger
     await page.getByRole('button', { name: 'Transactions Ledger' }).click();
-    await expect(page.getByText('Date')).toBeVisible();
+    await expect(page.getByText(/Active Financial Period/i)).toBeVisible();
 
-    // 7. Goals & Milestones
+    // 6. Goals & Milestones
     await page.getByRole('button', { name: 'Goals & Milestones' }).click();
     await expect(page.getByText(/Goals/i).first()).toBeVisible();
   });

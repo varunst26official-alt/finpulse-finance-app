@@ -60,6 +60,8 @@ interface CashFlowVisualizationCardProps {
   defaultFlow?: 'OUTFLOW' | 'INFLOW';
   defaultFormat?: 'GRAPH' | 'PIE';
   accountFilter?: string; // e.g. "ICICI RuPay Card XX03" or "ALL"
+  selectedMonth?: string; // e.g. "2026-09" or "ALL"
+  onMonthChange?: (month: string) => void;
   className?: string;
   showAccountFilter?: boolean;
 }
@@ -70,6 +72,8 @@ export const CashFlowVisualizationCard: React.FC<CashFlowVisualizationCardProps>
   defaultFlow = 'OUTFLOW',
   defaultFormat = 'GRAPH',
   accountFilter: initialAccountFilter = 'ALL',
+  selectedMonth: externalSelectedMonth,
+  onMonthChange,
   className = '',
   showAccountFilter = false,
 }) => {
@@ -80,8 +84,39 @@ export const CashFlowVisualizationCard: React.FC<CashFlowVisualizationCardProps>
   const [flowType, setFlowType] = useState<'OUTFLOW' | 'INFLOW'>(defaultFlow);
   const [chartFormat, setChartFormat] = useState<'GRAPH' | 'PIE'>(defaultFormat);
   const [timeRange, setTimeRange] = useState<'ALL' | '30D' | '6M'>('ALL');
+  const [internalSelectedMonth, setInternalSelectedMonth] = useState<string>('ALL');
   const [selectedAccount, setSelectedAccount] = useState<string>(initialAccountFilter);
   const [activeCategoryFilter, setActiveCategoryFilter] = useState<string | null>(null);
+
+  const activeMonth = externalSelectedMonth !== undefined ? externalSelectedMonth : internalSelectedMonth;
+
+  // Available months from both expenses & incomes
+  const availableMonths = useMemo(() => {
+    const set = new Set<string>();
+    expenses.forEach((e) => e.date && set.add(e.date.slice(0, 7)));
+    incomes.forEach((i) => i.date && set.add(i.date.slice(0, 7)));
+    return Array.from(set).sort((a, b) => b.localeCompare(a));
+  }, [expenses, incomes]);
+
+  // Dynamic maximum date across dataset
+  const maxDatasetDate = useMemo(() => {
+    let max = '';
+    expenses.forEach((e) => e.date && e.date > max && (max = e.date));
+    incomes.forEach((i) => i.date && i.date > max && (max = i.date));
+    return max || '2026-10-29';
+  }, [expenses, incomes]);
+
+  const thirtyDaysCutoff = useMemo(() => {
+    const d = new Date(maxDatasetDate);
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().split('T')[0];
+  }, [maxDatasetDate]);
+
+  const sixMonthsCutoff = useMemo(() => {
+    const d = new Date(maxDatasetDate);
+    d.setMonth(d.getMonth() - 6);
+    return d.toISOString().split('T')[0];
+  }, [maxDatasetDate]);
 
   // Extract all unique accounts found in notes or account field
   const availableAccounts = useMemo(() => {
@@ -101,8 +136,12 @@ export const CashFlowVisualizationCard: React.FC<CashFlowVisualizationCardProps>
   // Filtered Expense Items
   const filteredExpenses = useMemo(() => {
     return expenses.filter((e) => {
-      if (timeRange === '30D' && e.date < '2026-10-01') return false;
-      if (timeRange === '6M' && e.date < '2026-05-01') return false;
+      if (activeMonth && activeMonth !== 'ALL') {
+        if (!e.date.startsWith(activeMonth)) return false;
+      } else {
+        if (timeRange === '30D' && e.date < thirtyDaysCutoff) return false;
+        if (timeRange === '6M' && e.date < sixMonthsCutoff) return false;
+      }
 
       if (selectedAccount !== 'ALL') {
         const inNotes = e.notes && e.notes.toLowerCase().includes(selectedAccount.toLowerCase());
@@ -113,13 +152,17 @@ export const CashFlowVisualizationCard: React.FC<CashFlowVisualizationCardProps>
       }
       return true;
     });
-  }, [expenses, timeRange, selectedAccount, activeCategoryFilter]);
+  }, [expenses, activeMonth, timeRange, thirtyDaysCutoff, sixMonthsCutoff, selectedAccount, activeCategoryFilter]);
 
   // Filtered Income Items
   const filteredIncomes = useMemo(() => {
     return incomes.filter((i) => {
-      if (timeRange === '30D' && i.date < '2026-10-01') return false;
-      if (timeRange === '6M' && i.date < '2026-05-01') return false;
+      if (activeMonth && activeMonth !== 'ALL') {
+        if (!i.date.startsWith(activeMonth)) return false;
+      } else {
+        if (timeRange === '30D' && i.date < thirtyDaysCutoff) return false;
+        if (timeRange === '6M' && i.date < sixMonthsCutoff) return false;
+      }
 
       if (selectedAccount !== 'ALL') {
         const matchesAcc = i.account && i.account.toLowerCase().includes(selectedAccount.toLowerCase());
@@ -131,7 +174,7 @@ export const CashFlowVisualizationCard: React.FC<CashFlowVisualizationCardProps>
       }
       return true;
     });
-  }, [incomes, timeRange, selectedAccount, activeCategoryFilter]);
+  }, [incomes, activeMonth, timeRange, thirtyDaysCutoff, sixMonthsCutoff, selectedAccount, activeCategoryFilter]);
 
   // Metrics summary
   const totalOutflowUSD = useMemo(() => {
@@ -341,14 +384,52 @@ export const CashFlowVisualizationCard: React.FC<CashFlowVisualizationCardProps>
             </button>
           </div>
 
+          {/* Month Switcher Dropdown */}
+          {availableMonths.length > 0 && (
+            <div className="flex items-center gap-1 bg-[#faf8f5] px-2 py-1 rounded-2xl border border-[#e8e0d1] text-xs font-bold shadow-2xs">
+              <span className="text-slate-400 text-[11px] pl-1">Month:</span>
+              <select
+                value={activeMonth}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (onMonthChange) onMonthChange(val);
+                  setInternalSelectedMonth(val);
+                  if (val !== 'ALL') setTimeRange('ALL');
+                }}
+                className="bg-transparent text-slate-800 font-bold focus:outline-hidden cursor-pointer text-xs pr-1"
+              >
+                <option value="ALL">All Months</option>
+                {availableMonths.map((m) => {
+                  const [y, mon] = m.split('-');
+                  const monthNames = [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+                  ];
+                  const label = `${monthNames[parseInt(mon, 10) - 1] || mon} ${y}`;
+                  return (
+                    <option key={m} value={m}>
+                      {label}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          )}
+
           {/* Time Range Filter */}
           <div className="flex rounded-2xl bg-[#faf8f5] p-1 border border-[#e8e0d1] text-xs font-bold shadow-2xs">
             {(['ALL', '30D', '6M'] as const).map((r) => (
               <button
                 key={r}
-                onClick={() => setTimeRange(r)}
+                onClick={() => {
+                  setTimeRange(r);
+                  if (r !== 'ALL') {
+                    if (onMonthChange) onMonthChange('ALL');
+                    setInternalSelectedMonth('ALL');
+                  }
+                }}
                 className={`px-2.5 py-1 rounded-xl transition-all cursor-pointer ${
-                  timeRange === r
+                  activeMonth === 'ALL' && timeRange === r
                     ? 'bg-slate-800 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}

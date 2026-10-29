@@ -6,19 +6,16 @@ import { StatCards } from '@/components/dashboard/StatCards';
 import { PortfolioChart } from '@/components/dashboard/PortfolioChart';
 import { AllocationDonut } from '@/components/dashboard/AllocationDonut';
 import { HoldingsTable } from '@/components/dashboard/HoldingsTable';
-import { DebtRepaymentManager } from '@/components/debts/DebtRepaymentManager';
-import { InsuranceManager } from '@/components/insurance/InsuranceManager';
-import { EmergencyVaultHealthScore } from '@/components/health/EmergencyVaultHealthScore';
 import { TransactionTable } from '@/components/transactions/TransactionTable';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
 import { GoalMilestoneManager } from '@/components/goals/GoalMilestoneManager';
 import { SmartIngestionHubModal } from '@/components/finance/SmartIngestionHubModal';
 import { BankStatementManager } from '@/components/finance/BankStatementManager';
+import { CommitmentsVaultManager } from '@/components/finance/CommitmentsVaultManager';
 import {
   PieChart,
   Landmark,
-  HeartPulse,
-  Activity,
+  ShieldCheck,
   ArrowLeftRight,
   CalendarDays,
   Target,
@@ -45,12 +42,10 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
   }[] = [
     { id: 'summary', label: 'Overview', icon: LayoutDashboard },
     { id: 'bank-statements', label: 'Bank & UPI Statements', icon: Landmark },
-    { id: 'holdings', label: 'Holdings & Allocation', icon: PieChart },
-    { id: 'debts', label: 'Debts & Repayments', icon: Landmark },
-    { id: 'insurance', label: 'Protection & Insurance', icon: HeartPulse },
-    { id: 'health', label: 'Health Score & Vault', icon: Activity },
-    { id: 'ledger', label: 'Transactions Ledger', icon: ArrowLeftRight },
     { id: 'calendar', label: 'Financial Calendar', icon: CalendarDays },
+    { id: 'holdings', label: 'Holdings & Allocation', icon: PieChart },
+    { id: 'commitments', label: 'Debts, Protection & Vault', icon: ShieldCheck },
+    { id: 'ledger', label: 'Transactions Ledger', icon: ArrowLeftRight },
     { id: 'goals', label: 'Goals & Milestones', icon: Target },
   ];
 
@@ -70,7 +65,12 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
         <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none w-full sm:w-auto min-w-0 max-w-full">
           {subTabs.map((tab) => {
             const Icon = tab.icon;
-            const isActive = financeSubTab === tab.id;
+            const isActive =
+              financeSubTab === tab.id ||
+              (tab.id === 'commitments' &&
+                (financeSubTab === 'debts' ||
+                  financeSubTab === 'insurance' ||
+                  financeSubTab === 'health'));
 
             return (
               <button
@@ -139,7 +139,10 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
             <BankStatementManager onOpenIngestion={() => setIsIngestionOpen(true)} />
           )}
 
-          {/* Sub-tab 2: Holdings & Asset Allocation */}
+          {/* Sub-tab 3: Financial Calendar (3rd in section) */}
+          {financeSubTab === 'calendar' && <FinancialCalendarWidget />}
+
+          {/* Sub-tab 4: Holdings & Asset Allocation */}
           {financeSubTab === 'holdings' && (
             <>
               <StatCards />
@@ -154,22 +157,26 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
             </>
           )}
 
-          {/* Sub-tab 3: Debts & Repayments Engine */}
-          {financeSubTab === 'debts' && <DebtRepaymentManager />}
-
-          {/* Sub-tab 4: Protection & Insurance Suite */}
-          {financeSubTab === 'insurance' && <InsuranceManager />}
-
-          {/* Sub-tab 5: Financial Health Score & Vault */}
-          {financeSubTab === 'health' && <EmergencyVaultHealthScore />}
+          {/* Sub-tab 5: Combined Debts, Protection & Vault */}
+          {(financeSubTab === 'commitments' ||
+            financeSubTab === 'debts' ||
+            financeSubTab === 'insurance' ||
+            financeSubTab === 'health') && (
+            <CommitmentsVaultManager
+              initialSubTab={
+                financeSubTab === 'insurance'
+                  ? 'insurance'
+                  : financeSubTab === 'health'
+                  ? 'health'
+                  : 'debts'
+              }
+            />
+          )}
 
           {/* Sub-tab 6: Transactions Ledger */}
           {financeSubTab === 'ledger' && <TransactionTable />}
 
-          {/* Sub-tab 7: Financial Calendar */}
-          {financeSubTab === 'calendar' && <FinancialCalendarWidget />}
-
-          {/* Sub-tab 8: Goals & Milestones */}
+          {/* Sub-tab 7: Goals & Milestones */}
           {financeSubTab === 'goals' && <GoalMilestoneManager />}
         </motion.div>
       </AnimatePresence>

@@ -48,6 +48,8 @@ export const FinancialCalendarWidget: React.FC = () => {
     calendarEvents,
     expenses,
     incomes,
+    debts,
+    policies,
     currency,
     addCalendarEvent,
     deleteCalendarEvent,
@@ -56,24 +58,41 @@ export const FinancialCalendarWidget: React.FC = () => {
 
   const currentRate = CURRENCY_CONFIGS[currency].rateFromUSD;
 
-  // Active viewing date state (Defaults to November 2026 for rich mock data)
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 10, 1)); // Nov 2026
-  const [selectedDateStr, setSelectedDateStr] = useState<string>('2026-11-01');
+  // Detect the best viewing month (Defaults to September 2026 if statement data is April-Sept, or current month if active)
+  const defaultYearMonth = useMemo(() => {
+    let latest = '';
+    expenses.forEach((e) => e.date && e.date > latest && (latest = e.date));
+    incomes.forEach((i) => i.date && i.date > latest && (latest = i.date));
+    calendarEvents.forEach((c) => c.date && c.date > latest && (latest = c.date));
+    if (latest && latest.length >= 7) {
+      const [y, m] = latest.split('-');
+      return { year: parseInt(y, 10), month: parseInt(m, 10) - 1, fullDate: latest };
+    }
+    return { year: 2026, month: 8, fullDate: '2026-09-30' }; // September 2026
+  }, [expenses, incomes, calendarEvents]);
+
+  // Active viewing date state
+  const [currentDate, setCurrentDate] = useState(
+    () => new Date(defaultYearMonth.year, defaultYearMonth.month, 1)
+  );
+  const [selectedDateStr, setSelectedDateStr] = useState<string>(
+    () => defaultYearMonth.fullDate
+  );
   const [isDateInspectorOpen, setIsDateInspectorOpen] = useState(false);
 
   // Modal State for Adding New Calendar Event
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
   const [eventType, setEventType] = useState<CalendarEventType>('PLANNED_EXPENSE');
-  const [eventDate, setEventDate] = useState('2026-11-01');
+  const [eventDate, setEventDate] = useState('2026-09-30');
   const [eventAmount, setEventAmount] = useState<number>(100);
   const [eventCategoryName, setEventCategoryName] = useState('General');
   const [eventNotes, setEventNotes] = useState('');
 
   // Date Range Filtering for Report
   const [reportRange, setReportRange] = useState<'THIS_MONTH' | 'NEXT_30_DAYS' | 'NEXT_90_DAYS' | 'CUSTOM'>('THIS_MONTH');
-  const [customStartDate, setCustomStartDate] = useState('2026-10-01');
-  const [customEndDate, setCustomEndDate] = useState('2026-12-31');
+  const [customStartDate, setCustomStartDate] = useState('2026-04-01');
+  const [customEndDate, setCustomEndDate] = useState('2026-10-31');
   const [filterType, setFilterType] = useState<string>('ALL');
 
   // Calendar calculations
@@ -100,21 +119,23 @@ export const FinancialCalendarWidget: React.FC = () => {
   };
 
   const handleToday = () => {
-    const today = new Date(2026, 9, 26); // Anchor to current demo date
+    const today = new Date(2026, 8, 30); // Anchor to current active statement date
     setCurrentDate(today);
     setSelectedDateStr(today.toISOString().split('T')[0]);
   };
 
-  // Map of events keyed by YYYY-MM-DD (Unifying calendarEvents, expenses & incomes)
+  // Map of events keyed by YYYY-MM-DD (Unifying calendarEvents, expenses, incomes, debts EMIs & insurance renewals)
   const eventsByDate = useMemo(() => {
     const map: Record<string, CalendarEvent[]> = {};
 
+    // 1. Base Calendar Events
     calendarEvents.forEach((ev) => {
       const d = normalizeDateToISO(ev.date);
       if (!map[d]) map[d] = [];
       map[d].push({ ...ev, date: d });
     });
 
+    // 2. Spent Expenses
     expenses.forEach((exp) => {
       const d = normalizeDateToISO(exp.date);
       if (!d) return;
@@ -136,6 +157,7 @@ export const FinancialCalendarWidget: React.FC = () => {
       }
     });
 
+    // 3. Income Inflows
     incomes.forEach((inc) => {
       const d = normalizeDateToISO(inc.date);
       if (!d) return;
@@ -157,8 +179,45 @@ export const FinancialCalendarWidget: React.FC = () => {
       }
     });
 
+    // 4. Debts & Loan EMI Commitments (Scheduled on debt.emiDueDay for the viewed month)
+    (debts || []).forEach((debt) => {
+      const dueDay = Math.min(Math.max(1, debt.emiDueDay || 5), daysInMonth);
+      const d = `${year}-${String(month + 1).padStart(2, '0')}-${String(dueDay).padStart(2, '0')}`;
+      if (!map[d]) map[d] = [];
+      map[d].push({
+        id: `debt_emi_${debt.id}_${year}_${month}`,
+        title: `EMI: ${debt.title}`,
+        date: d,
+        type: 'PLANNED_EXPENSE',
+        amount: debt.monthlyEmi,
+        categoryName: 'Debt EMI',
+        isCompleted: false,
+        notes: `${debt.lender} • ${debt.category} monthly installment (Outstanding: $${debt.currentOutstanding.toFixed(0)})`,
+      });
+    });
+
+    // 5. Protection & Insurance Renewals
+    (policies || []).forEach((policy) => {
+      if (policy.renewalDueDate) {
+        const d = normalizeDateToISO(policy.renewalDueDate);
+        if (d) {
+          if (!map[d]) map[d] = [];
+          map[d].push({
+            id: `policy_renewal_${policy.id}`,
+            title: `Insurance: ${policy.policyName}`,
+            date: d,
+            type: 'PLANNED_EXPENSE',
+            amount: policy.annualPremium,
+            categoryName: 'Insurance Renewal',
+            isCompleted: policy.status === 'ACTIVE',
+            notes: `${policy.provider} • Policy #${policy.policyNumber} (${policy.type})`,
+          });
+        }
+      }
+    });
+
     return map;
-  }, [calendarEvents, expenses, incomes]);
+  }, [calendarEvents, expenses, incomes, debts, policies, year, month, daysInMonth]);
 
   const allUnifiedEvents = useMemo(() => {
     return Object.values(eventsByDate).flat();
@@ -174,16 +233,16 @@ export const FinancialCalendarWidget: React.FC = () => {
         const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
         inRange = ev.date.startsWith(monthPrefix);
       } else if (reportRange === 'NEXT_30_DAYS') {
-        inRange = ev.date >= '2026-10-26' && ev.date <= '2026-11-26';
+        inRange = ev.date >= '2026-09-01' && ev.date <= '2026-10-31';
       } else if (reportRange === 'NEXT_90_DAYS') {
-        inRange = ev.date >= '2026-10-26' && ev.date <= '2027-01-26';
+        inRange = ev.date >= '2026-08-01' && ev.date <= '2026-11-30';
       } else {
         inRange = ev.date >= customStartDate && ev.date <= customEndDate;
       }
 
       return matchesType && inRange;
     });
-  }, [calendarEvents, filterType, reportRange, year, month, customStartDate, customEndDate]);
+  }, [allUnifiedEvents, filterType, reportRange, year, month, customStartDate, customEndDate]);
 
   // Aggregate totals for the filtered range
   const rangeTotals = useMemo(() => {
@@ -214,35 +273,49 @@ export const FinancialCalendarWidget: React.FC = () => {
     };
   }, [filteredReportEvents]);
 
-  // Projection Chart Data: Group by week / date
+  // Projection Chart Data: Grouped day-by-day across the viewed month
   const chartData = useMemo(() => {
-    const grouped: Record<string, { date: string; inflow: number; outflow: number; net: number }> = {};
+    const grouped: Record<string, { date: string; fullDate: string; inflow: number; outflow: number; net: number }> = {};
 
     filteredReportEvents.forEach((ev) => {
-      // Format as DD MMM
       const dateParts = ev.date.split('-');
-      const shortLabel = `${dateParts[2]} ${monthNames[parseInt(dateParts[1], 10) - 1].slice(0, 3)}`;
+      if (dateParts.length < 3) return;
+      const mIdx = parseInt(dateParts[1], 10) - 1;
+      const shortLabel = `${dateParts[2]} ${(monthNames[mIdx] || '').slice(0, 3)}`;
 
-      if (!grouped[shortLabel]) {
-        grouped[shortLabel] = { date: shortLabel, inflow: 0, outflow: 0, net: 0 };
+      if (!grouped[ev.date]) {
+        grouped[ev.date] = { date: shortLabel, fullDate: ev.date, inflow: 0, outflow: 0, net: 0 };
       }
 
       const amountConverted = currency === 'INR' ? ev.amount * currentRate : ev.amount;
 
       if (ev.type === 'EXPECTED_INCOME') {
-        grouped[shortLabel].inflow += amountConverted;
+        grouped[ev.date].inflow += amountConverted;
       } else {
-        grouped[shortLabel].outflow += amountConverted;
+        grouped[ev.date].outflow += amountConverted;
       }
 
-      grouped[shortLabel].net = grouped[shortLabel].inflow - grouped[shortLabel].outflow;
+      grouped[ev.date].net = grouped[ev.date].inflow - grouped[ev.date].outflow;
     });
 
-    return Object.values(grouped).slice(0, 10);
+    return Object.values(grouped).sort((a, b) => a.fullDate.localeCompare(b.fullDate));
   }, [filteredReportEvents, currency, currentRate, monthNames]);
 
-  // Selected date events
+  // Selected date events & Day Totals
   const selectedDateEvents = eventsByDate[selectedDateStr] || [];
+  const selectedDayTotals = useMemo(() => {
+    let inflowUSD = 0;
+    let outflowUSD = 0;
+    selectedDateEvents.forEach((ev) => {
+      if (ev.type === 'EXPECTED_INCOME') inflowUSD += ev.amount;
+      else outflowUSD += ev.amount;
+    });
+    return {
+      inflowUSD,
+      outflowUSD,
+      netUSD: inflowUSD - outflowUSD,
+    };
+  }, [selectedDateEvents]);
 
   // Handle Event Creation
   const handleCreateEvent = (e: React.FormEvent) => {
@@ -717,6 +790,33 @@ export const FinancialCalendarWidget: React.FC = () => {
               <p className="text-slate-500 text-[11px]">No obligations or transactions recorded on this date.</p>
             ) : (
               <>
+                {/* Day Summary KPIs */}
+                <div className="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-white border border-[#e8e0d1] text-center text-[10px]">
+                  <div>
+                    <span className="text-slate-400 block font-medium">Inflows</span>
+                    <span className="font-mono font-bold text-emerald-700">
+                      +{formatCurrency(selectedDayTotals.inflowUSD, currency)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">Outflows</span>
+                    <span className="font-mono font-bold text-rose-700">
+                      -{formatCurrency(selectedDayTotals.outflowUSD, currency)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">Net</span>
+                    <span
+                      className={`font-mono font-bold ${
+                        selectedDayTotals.netUSD >= 0 ? 'text-emerald-700' : 'text-rose-700'
+                      }`}
+                    >
+                      {selectedDayTotals.netUSD >= 0 ? '+' : ''}
+                      {formatCurrency(selectedDayTotals.netUSD, currency)}
+                    </span>
+                  </div>
+                </div>
+
                 <div className="space-y-1.5 max-h-32 overflow-y-auto">
                   {selectedDateEvents.slice(0, 5).map((ev) => (
                     <div key={ev.id} className="flex items-center justify-between text-[11px] p-1.5 rounded-lg bg-white border border-[#e8e0d1]/60">

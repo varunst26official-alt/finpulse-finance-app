@@ -8,13 +8,14 @@ export type LifeOSSection =
 
 export type FinanceSubTab =
   | 'summary'
-  | 'holdings'
   | 'bank-statements'
+  | 'calendar'
+  | 'holdings'
+  | 'commitments'
   | 'debts'
   | 'insurance'
   | 'health'
   | 'ledger'
-  | 'calendar'
   | 'goals';
 
 export type LifeOSCategory = 'FINANCE' | 'WELLNESS' | 'PRODUCTIVITY' | 'LEARNING' | 'LIFEADMIN';
