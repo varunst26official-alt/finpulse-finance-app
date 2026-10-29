@@ -272,7 +272,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
       {/* ============================================================== */}
       {/* 1. FLOATING LAUNCHER BUTTON (Bottom-Right, above AI Copilot)   */}
       {/* ============================================================== */}
-      <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-40 flex flex-col items-end gap-2 pointer-events-auto">
+      <div className="fixed bottom-34 right-3.5 sm:bottom-24 sm:right-6 z-40 flex flex-col items-end gap-2 pointer-events-auto">
         {!isOpen && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -293,7 +293,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.94 }}
             onClick={() => setIsOpen(true)}
-            className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-gradient-to-tr from-[#17365d] via-[#244b7a] to-[#a47b3c] text-white shadow-xl shadow-[#17365d]/30 flex items-center justify-center border-2 border-white/60 hover:shadow-2xl transition-all cursor-pointer relative group"
+            className="h-11 w-11 sm:h-14 sm:w-14 rounded-full bg-gradient-to-tr from-[#17365d] via-[#244b7a] to-[#a47b3c] text-white shadow-xl shadow-[#17365d]/30 flex items-center justify-center border-2 border-white/60 hover:shadow-2xl transition-all cursor-pointer relative group"
             title="Today's Workout & Localized Meal Protocol"
           >
             <div className="relative">

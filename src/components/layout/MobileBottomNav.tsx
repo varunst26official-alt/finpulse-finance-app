@@ -24,7 +24,7 @@ export const MobileBottomNav: React.FC = () => {
   return (
     <nav
       aria-label="Mobile Bottom Navigation"
-      className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#e4e9f1] px-1 py-1.5 shadow-lg flex items-center justify-around"
+      className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#e4e9f1] px-1 py-1.5 shadow-lg flex items-center justify-around"
     >
       {TABS.map((tab) => {
         const isActive = currentSection === tab.id;

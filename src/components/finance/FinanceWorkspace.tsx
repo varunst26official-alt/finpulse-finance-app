@@ -37,18 +37,19 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
   const subTabs: {
     id: FinanceSubTab;
     label: string;
+    shortLabel: string;
     icon: React.ComponentType<{ className?: string }>;
   }[] = [
-    { id: 'summary', label: 'Overview', icon: LayoutDashboard },
-    { id: 'bank-statements', label: 'Bank & UPI Statements', icon: Landmark },
-    { id: 'calendar', label: 'Calendar & Ledger', icon: CalendarDays },
-    { id: 'holdings', label: 'Holdings & Allocation', icon: PieChart },
-    { id: 'commitments', label: 'Debts, Protection & Vault', icon: ShieldCheck },
-    { id: 'goals', label: 'Goals & Milestones', icon: Target },
+    { id: 'summary', label: 'Overview', shortLabel: 'Overview', icon: LayoutDashboard },
+    { id: 'bank-statements', label: 'Bank & UPI Statements', shortLabel: 'Statements', icon: Landmark },
+    { id: 'calendar', label: 'Calendar & Ledger', shortLabel: 'Calendar', icon: CalendarDays },
+    { id: 'holdings', label: 'Holdings & Allocation', shortLabel: 'Holdings', icon: PieChart },
+    { id: 'commitments', label: 'Debts, Protection & Vault', shortLabel: 'Vault', icon: ShieldCheck },
+    { id: 'goals', label: 'Goals & Milestones', shortLabel: 'Goals', icon: Target },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* 1. Emerald Hero Banner */}
       <SectionHero
         section="finance"
@@ -58,9 +59,10 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
         secondaryActionLabel="Open Financial Calendar"
       />
 
-      {/* 2. In-Workspace Sub-module Navigation Pills with Mobile Snap Scrolling */}
+      {/* 2. In-Workspace Sub-module Navigation Pills with Mobile 3x2 Grid */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none w-full sm:w-auto min-w-0 max-w-full scroll-smooth snap-x">
+        {/* Mobile Navigation Grid: ALL 6 Sub-Modules Visible Simultaneously */}
+        <div className="grid grid-cols-3 gap-1.5 p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs sm:hidden w-full">
           {subTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive =
@@ -75,7 +77,38 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setFinanceSubTab(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 snap-start ${
+                className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl text-center transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-[#16836b] text-white shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-[#f5f7fb] font-semibold'
+                }`}
+              >
+                <Icon className={`w-4 h-4 mb-1 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                <span className="text-[11px] leading-tight tracking-tight">
+                  {tab.shortLabel}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Desktop Navigation Pills (Full row with scroll if needed) */}
+        <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none w-full sm:w-auto min-w-0 max-w-full scroll-smooth">
+          {subTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive =
+              financeSubTab === tab.id ||
+              (tab.id === 'calendar' && financeSubTab === 'ledger') ||
+              (tab.id === 'commitments' &&
+                (financeSubTab === 'debts' ||
+                  financeSubTab === 'insurance' ||
+                  financeSubTab === 'health'));
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setFinanceSubTab(tab.id)}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
                   isActive
                     ? 'bg-[#16836b] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-[#f5f7fb]'
@@ -91,19 +124,19 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
         <div className="grid grid-cols-2 gap-2 w-full sm:flex sm:w-auto">
           <button
             onClick={() => setIsIngestionOpen(true)}
-            className="w-full sm:w-auto px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 text-white text-xs font-extrabold shadow-md shadow-indigo-600/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 text-white text-xs font-extrabold shadow-sm shadow-indigo-600/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
           >
             <Zap className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
             <span className="hidden sm:inline">⚡ Auto-Import (Demat & UPI)</span>
-            <span className="sm:hidden">⚡ Auto-Import</span>
+            <span className="sm:hidden">⚡ Statement Hub</span>
           </button>
 
           <button
             onClick={onOpenAddTradeModal}
-            className="w-full sm:w-auto px-3 sm:px-4 py-2 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-md shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2.5 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-sm shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
           >
             <Plus className="w-3.5 h-3.5 shrink-0" />
-            <span>{financeSubTab === 'holdings' ? 'Add Holding' : 'Record Trade'}</span>
+            <span>{financeSubTab === 'holdings' ? 'Add Holding' : '+ Record Trade'}</span>
           </button>
         </div>
       </div>

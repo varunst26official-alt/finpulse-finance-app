@@ -58,7 +58,7 @@ export const FloatingAiChatWidget: React.FC = () => {
       {/* ============================================================== */}
       {/* 1. FLOATING LAUNCHER BUTTON (Bottom-Right Corner) */}
       {/* ============================================================== */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2 pointer-events-auto">
+      <div className="fixed bottom-20 right-3.5 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2 pointer-events-auto">
         {/* Subtle Teaser Pill when closed */}
         {!isFloatingChatOpen && (
           <motion.div
@@ -80,13 +80,13 @@ export const FloatingAiChatWidget: React.FC = () => {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             onClick={toggleFloatingChat}
-            className="relative flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-xl shadow-[#9e783e]/35 border-2 border-white cursor-pointer group"
+            className="relative flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-xl shadow-[#9e783e]/35 border-2 border-white cursor-pointer group"
           >
-            <span className="absolute -top-1 -right-1 flex h-4 w-4">
+            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 sm:h-4 sm:w-4">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white"></span>
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 bg-emerald-500 border-2 border-white"></span>
             </span>
-            <Bot className="h-6 w-6 sm:h-7 sm:w-7 transition-transform group-hover:rotate-6" />
+            <Bot className="h-5 w-5 sm:h-7 sm:w-7 transition-transform group-hover:rotate-6" />
           </motion.button>
         )}
       </div>
@@ -101,7 +101,7 @@ export const FloatingAiChatWidget: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.88, y: 30 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`fixed bottom-3 sm:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[410px] max-h-[88vh] rounded-3xl border border-[#e8e0d1] bg-white shadow-2xl overflow-hidden flex flex-col transition-all ${
+            className={`fixed bottom-18 sm:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[410px] max-h-[82vh] sm:max-h-[88vh] rounded-3xl border border-[#e8e0d1] bg-white shadow-2xl overflow-hidden flex flex-col transition-all ${
               isMinimized ? 'h-16' : 'h-[580px]'
             }`}
           >

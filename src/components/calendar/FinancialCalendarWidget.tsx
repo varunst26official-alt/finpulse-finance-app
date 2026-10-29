@@ -504,23 +504,23 @@ export const FinancialCalendarWidget: React.FC = () => {
       {/* Top Header Strip */}
       <motion.div
         whileHover={{ y: -2, transition: { duration: 0.2 } }}
-        className="rounded-3xl border border-[#e8e0d1] bg-white p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        className="rounded-3xl border border-[#e8e0d1] bg-white p-3.5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
       >
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-md shadow-[#9e783e]/25">
-            <CalendarIcon className="h-6 w-6" />
+        <div className="flex items-center gap-2.5 sm:gap-3.5">
+          <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-[#9e783e] text-white shadow-md shadow-[#9e783e]/25 shrink-0">
+            <CalendarIcon className="h-4.5 w-4.5 sm:h-6 sm:w-6" />
           </div>
           <div>
-            <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
-              Financial Calendar & Life Events Planner
+            <h3 className="text-sm sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+              Financial Calendar & Life Events
             </h3>
-            <p className="text-xs text-slate-600 mt-0.5">
+            <p className="hidden sm:block text-xs text-slate-600 mt-0.5">
               Track planned expenses, SIP investments, birthdays, and medical checkups with cash flow projections
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -528,10 +528,10 @@ export const FinancialCalendarWidget: React.FC = () => {
               setEventDate(selectedDateStr);
               setIsAddModalOpen(true);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#9e783e] text-white text-xs font-bold shadow-md shadow-[#9e783e]/25 hover:bg-[#866632] transition-all cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-[#9e783e] text-white text-xs font-bold shadow-md shadow-[#9e783e]/25 hover:bg-[#866632] transition-all cursor-pointer"
           >
             <Plus className="h-4 w-4" />
-            <span>Add Event / Payment</span>
+            <span>+ Add Event / Payment</span>
           </motion.button>
         </div>
       </motion.div>
