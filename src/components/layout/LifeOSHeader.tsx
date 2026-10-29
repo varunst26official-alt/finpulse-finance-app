@@ -127,6 +127,8 @@ export const LifeOSHeader: React.FC = () => {
               setIsProfileOpen(!isProfileOpen);
               setIsCurrencyOpen(false);
             }}
+            data-testid="user-profile-button"
+            title="User Profile & Synchronization"
             className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-[#e4e9f1] bg-white hover:bg-[#f5f7fb] text-xs font-bold text-[#243047] transition-all cursor-pointer"
           >
             <div className="w-7 h-7 rounded-full bg-[#e9eef6] text-[#17365d] flex items-center justify-center font-extrabold text-xs">

@@ -32,3 +32,6 @@ server/data/
 *.sw?
 
 .vercel
+
+playwright-report/
+test-results/
