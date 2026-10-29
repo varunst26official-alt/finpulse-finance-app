@@ -17,7 +17,14 @@ import {
   ParsedDematHolding,
 } from '@/services/casStatementService';
 import { parseBankStatementCsv } from '@/services/bankStatementService';
-import { ExpenseItem } from '@/types/finance';
+import {
+  SAMPLE_GPAY_TRANSACTIONS,
+  SAMPLE_GPAY_SUMMARY,
+} from '@/data/sampleGpayData';
+import {
+  parseGooglePayStatement,
+  isGooglePayStatement,
+} from '@/services/gpayStatementService';
 import {
   X,
   UploadCloud,
@@ -43,7 +50,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { addExpense, addAsset } = useFinanceStore();
+  const { addExpensesBatch, addAsset } = useFinanceStore();
   const [activeTab, setActiveTab] = useState<IngestionTab>('statements');
 
   // Processing state & animations
@@ -115,17 +122,76 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
     });
   };
 
-  // 1B. Handle Real Statement File Upload (CSV Bank Statement or CAS text)
+  // 1B. Handle Google Pay Demo Ingestion
+  const handleLoadSampleGpay = () => {
+    runSimulatedScan('bank', () => {
+      setParsedExpenses(SAMPLE_GPAY_TRANSACTIONS);
+      setParsedHoldings([]);
+      setSelectedIds(new Set(SAMPLE_GPAY_TRANSACTIONS.map((t) => t.id)));
+      setSuccessMessage(
+        `🎉 Loaded Google Pay Statement: ${SAMPLE_GPAY_SUMMARY.totalTransactions} transactions across ${SAMPLE_GPAY_SUMMARY.period} (Sent: ₹${SAMPLE_GPAY_SUMMARY.totalSent.toLocaleString('en-IN')}, Received: ₹${SAMPLE_GPAY_SUMMARY.totalReceived.toLocaleString('en-IN')})!`
+      );
+    });
+  };
+
+  // 1C. Handle Real Statement File Upload (CSV Bank Statement, Google Pay PDF, or CAS text)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.name.endsWith('.pdf')) {
+      const bufferReader = new FileReader();
+      bufferReader.onload = async (event) => {
+        const buffer = event.target?.result as ArrayBuffer;
+        if (!buffer) return;
+        try {
+          const { extractTextFromPdfArrayBuffer } = await import('@/services/pdfExtractorService');
+          const extractedText = await extractTextFromPdfArrayBuffer(buffer);
+          if (isGooglePayStatement(extractedText)) {
+            runSimulatedScan('bank', () => {
+              const { transactions, summary } = parseGooglePayStatement(extractedText);
+              setParsedExpenses(transactions);
+              setParsedHoldings([]);
+              setSelectedIds(new Set(transactions.map((t) => t.id)));
+              setSuccessMessage(
+                `🎉 Parsed ${transactions.length} Google Pay UPI transactions (Sent: ₹${summary.totalSent.toLocaleString('en-IN')}, Received: ₹${summary.totalReceived.toLocaleString('en-IN')})!`
+              );
+            });
+          } else {
+            runSimulatedScan('demat', () => {
+              const casResult = parseCasTextContent(extractedText);
+              if (casResult.holdings.length > 0) {
+                setParsedHoldings(casResult.holdings);
+                setParsedExpenses([]);
+                setSelectedIds(new Set(casResult.holdings.map((h) => h.id)));
+                setSuccessMessage(`Parsed ${casResult.holdings.length} Demat holdings!`);
+              }
+            });
+          }
+        } catch (err) {
+          console.error('PDF extraction failed:', err);
+        }
+      };
+      bufferReader.readAsArrayBuffer(file);
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
       if (!content) return;
 
-      if (
+      if (isGooglePayStatement(content)) {
+        runSimulatedScan('bank', () => {
+          const { transactions, summary } = parseGooglePayStatement(content);
+          setParsedExpenses(transactions);
+          setParsedHoldings([]);
+          setSelectedIds(new Set(transactions.map((t) => t.id)));
+          setSuccessMessage(
+            `Parsed ${transactions.length} Google Pay transactions (Sent: ₹${summary.totalSent.toLocaleString('en-IN')})!`
+          );
+        });
+      } else if (
         file.name.endsWith('.csv') ||
         content.toLowerCase().includes('withdrawal') ||
         content.toLowerCase().includes('narration') ||
@@ -205,20 +271,18 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
       const toImport = parsedExpenses.filter((e) => selectedIds.has(e.id));
       const USD_INR_RATE = 84.5;
 
-      toImport.forEach((item) => {
-        const expensePayload: ExpenseItem = {
-          id: `exp-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-          title: item.merchant,
-          category: item.category,
-          amount: Number((item.amount / USD_INR_RATE).toFixed(2)),
-          paymentMethod: item.paymentMethod,
-          frequency: 'ONE_TIME',
-          date: item.date,
-          notes: `Auto-Ingested via Quantra SMS Parser (${item.accountRef || 'UPI'})`,
-        };
-        addExpense(expensePayload);
-        count++;
-      });
+      const payloads = toImport.map((item) => ({
+        title: item.merchant,
+        category: item.category,
+        amount: Number((item.amount / USD_INR_RATE).toFixed(2)),
+        paymentMethod: item.paymentMethod,
+        frequency: 'ONE_TIME' as const,
+        date: item.date,
+        notes: `Auto-Ingested via Quantra Engine (${item.accountRef || 'UPI'})`,
+      }));
+
+      addExpensesBatch(payloads);
+      count += payloads.length;
     }
 
     // B. Import Selected Demat Holdings
@@ -358,6 +422,15 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Run Demo CAS Statement</span>
+                  </button>
+
+                  <button
+                    data-testid="load-gpay-btn"
+                    onClick={handleLoadSampleGpay}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-heading font-bold shadow-sm transition-all cursor-pointer flex items-center gap-1.5 hover:scale-[1.02]"
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>⚡ Load Google Pay (726 Txns • ₹9.5L)</span>
                   </button>
                 </div>
               </div>

@@ -16,8 +16,8 @@ export const AuthScreen: React.FC = () => {
   const [mode, setMode] = useState<'login' | 'register'>('login');
 
   // Login Form State
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState('investor@quantra.io');
+  const [loginPassword, setLoginPassword] = useState('password123');
 
   // Register Form State
   const [regFullName, setRegFullName] = useState('');
@@ -166,6 +166,18 @@ export const AuthScreen: React.FC = () => {
               {errorMessage}
             </div>
           )}
+
+          {/* Quick Demo Access Button */}
+          <button
+            type="button"
+            onClick={async () => {
+              setErrorMessage('');
+              await login('investor@quantra.io', 'password123');
+            }}
+            className="w-full mb-4 py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all"
+          >
+            <span>⚡ Instant Demo Access (Preloaded Portfolio)</span>
+          </button>
 
           {/* FORM A: SIGN IN */}
           {mode === 'login' ? (

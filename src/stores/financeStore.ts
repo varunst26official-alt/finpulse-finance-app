@@ -84,6 +84,7 @@ interface FinanceState {
   addAsset: (asset: Omit<Asset, 'id' | 'lastUpdated'>) => void;
   deleteAsset: (id: string) => void;
   addExpense: (expense: Omit<ExpenseItem, 'id'>) => void;
+  addExpensesBatch: (expenses: Omit<ExpenseItem, 'id'>[]) => void;
   deleteExpense: (id: string) => void;
   addIncome: (income: Omit<IncomeItem, 'id'>) => void;
   deleteIncome: (id: string) => void;
@@ -464,6 +465,18 @@ export const useFinanceStore = create<FinanceState>()(
 
         set((state) => ({
           expenses: [newExpense, ...state.expenses],
+        }));
+      },
+
+      addExpensesBatch: (newExpensesData) => {
+        const timestamp = Date.now();
+        const mapped: ExpenseItem[] = newExpensesData.map((exp, idx) => ({
+          ...exp,
+          id: `exp_${timestamp}_${idx}`,
+        }));
+
+        set((state) => ({
+          expenses: [...mapped, ...state.expenses],
         }));
       },
 
