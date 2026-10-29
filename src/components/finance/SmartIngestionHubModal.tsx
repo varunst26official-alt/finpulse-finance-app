@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { QuantraLogo } from '@/components/ui/QuantraLogo';
 import { useFinanceStore } from '@/stores/financeStore';
@@ -10,6 +10,10 @@ import {
   ParsedTransactionResult,
   SAMPLE_INDIAN_BANK_SMS,
 } from '@/services/smsParserService';
+import {
+  nativeTransactionScanner,
+  RawDetectedAlert,
+} from '@/services/nativeTransactionScanner';
 import {
   SAMPLE_CAS_DEMAT_PORTFOLIO,
   convertHoldingsToQuantraAssets,
@@ -43,6 +47,7 @@ import {
   RefreshCw,
   Lock,
   Unlock,
+  Bell,
 } from 'lucide-react';
 
 interface SmartIngestionHubModalProps {
@@ -77,6 +82,87 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   const [casPanInput, setCasPanInput] = useState('');
   const [cachedPdf, setCachedPdf] = useState<{ buffer: ArrayBuffer; fileName: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Native Android Scanner State
+  const isNative = nativeTransactionScanner.isSupported();
+  const [notifAccessGranted, setNotifAccessGranted] = useState(false);
+  const [smsPermGranted, setSmsPermGranted] = useState(false);
+  const [pendingAlerts, setPendingAlerts] = useState<RawDetectedAlert[]>([]);
+
+  const refreshNativeScannerState = async () => {
+    if (!nativeTransactionScanner.isSupported()) return;
+    try {
+      const [notif, sms, pending] = await Promise.all([
+        nativeTransactionScanner.isNotificationAccessGranted(),
+        nativeTransactionScanner.checkSmsPermission(),
+        nativeTransactionScanner.fetchPendingTransactions(),
+      ]);
+      setNotifAccessGranted(notif);
+      setSmsPermGranted(sms);
+      setPendingAlerts(pending.raw);
+    } catch (e) {
+      console.warn('Error refreshing native scanner state', e);
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    refreshNativeScannerState();
+
+    let subHandle: any = null;
+    if (nativeTransactionScanner.isSupported()) {
+      nativeTransactionScanner
+        .listenForLiveTransactions((rawAlert, parsed) => {
+          refreshNativeScannerState();
+          if (parsed) {
+            setParsedExpenses((prev) => [
+              parsed,
+              ...prev.filter((p) => p.id !== parsed.id),
+            ]);
+            setSelectedIds((prev) => new Set([...prev, parsed.id]));
+            setSuccessMessage(
+              `⚡ Auto-captured ${rawAlert.source}: ${parsed.merchant} (₹${parsed.amount})!`
+            );
+          }
+        })
+        .then((h) => {
+          subHandle = h;
+        });
+    }
+
+    return () => {
+      if (subHandle && subHandle.remove) subHandle.remove();
+    };
+  }, [isOpen]);
+
+  const handleImportPendingAlerts = async () => {
+    const { raw, parsed } = await nativeTransactionScanner.fetchPendingTransactions();
+    if (parsed.length > 0) {
+      setParsedExpenses(parsed);
+      setParsedHoldings([]);
+      setSelectedIds(new Set(parsed.map((p) => p.id)));
+      setSuccessMessage(`Extracted ${parsed.length} transactions from background alerts!`);
+      await nativeTransactionScanner.clearPendingTransactions();
+      setPendingAlerts([]);
+    } else if (raw.length > 0) {
+      setSuccessMessage(`Checked ${raw.length} alerts; none were parseable transactions.`);
+      await nativeTransactionScanner.clearPendingTransactions();
+      setPendingAlerts([]);
+    }
+  };
+
+  const handleEnableNotificationAccess = async () => {
+    await nativeTransactionScanner.openNotificationSettings();
+    setTimeout(refreshNativeScannerState, 1500);
+  };
+
+  const handleGrantSmsPermission = async () => {
+    const granted = await nativeTransactionScanner.requestSmsPermission();
+    setSmsPermGranted(granted);
+    if (granted) {
+      refreshNativeScannerState();
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -669,11 +755,139 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
           {/* TAB 2: UPI SMS & Notifications */}
           {activeTab === 'sms' && (
             <div className="space-y-5">
-              <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200/80 flex items-start gap-3">
-                <Smartphone className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
-                <div className="text-xs text-slate-600">
-                  <strong className="text-slate-900">Native Android Auto-Detection:</strong> In the compiled Android APK, Quantra automatically detects incoming bank SMS with zero manual effort. Test the parser below by pasting any SMS or clicking a sample.
+              {/* Native Android Auto-Detection Control Center */}
+              <div className="p-4 sm:p-5 rounded-3xl bg-linear-to-br from-indigo-50/90 via-white to-purple-50/70 border border-indigo-200 shadow-xs space-y-3.5">
+                <div className="flex items-center justify-between border-b border-indigo-100 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                      <Smartphone className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-heading font-bold text-slate-900 text-xs sm:text-sm">
+                        Native On-Device Auto-Detection
+                      </h4>
+                      <p className="text-[11px] text-slate-500 font-sans">
+                        {isNative
+                          ? 'Background listener services active in Android APK'
+                          : 'Compiled Android APK feature (Simulate on Web)'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold font-mono tracking-wider">
+                    {isNative ? 'ANDROID APK' : 'WEB SIMULATION'}
+                  </span>
                 </div>
+
+                {isNative ? (
+                  <div className="space-y-3">
+                    {/* Listener 1: Notification Listener */}
+                    <div className="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
+                      <div className="flex items-start gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mt-0.5 shrink-0">
+                          <Bell className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-xs text-slate-900">
+                              UPI & Bank Notifications
+                            </span>
+                            <span
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                notifAccessGranted
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : 'bg-amber-50 text-amber-700 border border-amber-200'
+                              }`}
+                            >
+                              {notifAccessGranted ? 'Active' : 'Permission Required'}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Auto-captures alerts from Google Pay, PhonePe, Paytm, CRED & banking apps.
+                          </p>
+                        </div>
+                      </div>
+
+                      {!notifAccessGranted && (
+                        <button
+                          type="button"
+                          onClick={handleEnableNotificationAccess}
+                          className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shrink-0 transition-all cursor-pointer shadow-xs"
+                        >
+                          Enable Access
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Listener 2: SMS Receiver */}
+                    <div className="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
+                      <div className="flex items-start gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mt-0.5 shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-xs text-slate-900">
+                              Bank SMS Receiver
+                            </span>
+                            <span
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                smsPermGranted
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : 'bg-amber-50 text-amber-700 border border-amber-200'
+                              }`}
+                            >
+                              {smsPermGranted ? 'Active' : 'Permission Required'}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Intercepts incoming debited & credited SMS from Indian bank senders.
+                          </p>
+                        </div>
+                      </div>
+
+                      {!smsPermGranted && (
+                        <button
+                          type="button"
+                          onClick={handleGrantSmsPermission}
+                          className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shrink-0 transition-all cursor-pointer shadow-xs"
+                        >
+                          Grant Permission
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Pending buffer alert count */}
+                    {pendingAlerts.length > 0 && (
+                      <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+                          <span className="text-xs font-bold text-amber-900">
+                            {pendingAlerts.length} Background Transaction Alert(s) Waiting
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleImportPendingAlerts}
+                          className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shrink-0 transition-all cursor-pointer"
+                        >
+                          Auto-Parse All
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-600 space-y-1.5 font-sans leading-relaxed">
+                    <p>
+                      In the compiled Android APK, Quantra executes a background{' '}
+                      <strong className="text-slate-900 font-mono text-[11px]">NotificationListenerService</strong>{' '}
+                      and <strong className="text-slate-900 font-mono text-[11px]">SmsReceiver</strong> that detects incoming
+                      UPI & bank debit alerts automatically with zero manual effort.
+                    </p>
+                    <p className="text-[11px] text-indigo-700 font-medium">
+                      💡 Test the on-device regex parsing engine below by clicking a sample Indian bank alert or pasting any text.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Sample SMS Quick Buttons */}
