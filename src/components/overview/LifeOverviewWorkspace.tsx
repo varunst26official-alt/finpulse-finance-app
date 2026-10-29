@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { LifeOSCategory, PriorityLevel } from '@/types/lifeos';
 import { CashFlowVisualizationCard } from '@/components/finance/CashFlowVisualizationCard';
+import { useAuthStore } from '@/stores/authStore';
 
 export const LifeOverviewWorkspace: React.FC = () => {
   const {
@@ -117,6 +118,11 @@ export const LifeOverviewWorkspace: React.FC = () => {
     showToast(`Task "${taskTitle.trim()}" added to your day!`);
   };
 
+  const openQuickTask = () => {
+    if (!useAuthStore.getState().requireAuth('create a task')) return;
+    setIsQuickTaskModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       {/* Toast Notification */}
@@ -137,9 +143,12 @@ export const LifeOverviewWorkspace: React.FC = () => {
       {/* 1. Gradient Hero Banner */}
       <SectionHero
         section="overview"
-        onPrimaryAction={() => setIsAiModalOpen(true)}
+        onPrimaryAction={() => {
+          if (!useAuthStore.getState().requireAuth('customize AI Blueprint')) return;
+          setIsAiModalOpen(true);
+        }}
         primaryActionLabel="✨ AI Adaptive Blueprint"
-        onSecondaryAction={() => setIsQuickTaskModalOpen(true)}
+        onSecondaryAction={openQuickTask}
         secondaryActionLabel="+ Quick Add Task"
       />
 
@@ -163,7 +172,10 @@ export const LifeOverviewWorkspace: React.FC = () => {
         </div>
 
         <button
-          onClick={() => setIsAiModalOpen(true)}
+          onClick={() => {
+            if (!useAuthStore.getState().requireAuth('recalibrate LifeOS Blueprint')) return;
+            setIsAiModalOpen(true);
+          }}
           className="px-3.5 py-1.5 rounded-xl bg-white border border-[#a47b3c] text-[#a47b3c] text-xs font-bold hover:bg-[#f5eee3] transition-all cursor-pointer shadow-xs whitespace-nowrap"
         >
           ⚡ Recalibrate Entire LifeOS
@@ -333,7 +345,7 @@ export const LifeOverviewWorkspace: React.FC = () => {
 
           {/* Add task button */}
           <button
-            onClick={() => setIsQuickTaskModalOpen(true)}
+            onClick={openQuickTask}
             className="px-3 py-1 rounded-xl bg-[#17365d] hover:bg-[#204575] text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1 shadow-xs"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -470,7 +482,7 @@ export const LifeOverviewWorkspace: React.FC = () => {
           <div className="pt-4 border-t border-[#e4e9f1] flex items-center justify-between text-xs text-[#6f7c91]">
             <span>Click circle to toggle completion state</span>
             <button
-              onClick={() => setIsQuickTaskModalOpen(true)}
+              onClick={openQuickTask}
               className="text-[#a47b3c] font-bold hover:underline cursor-pointer flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />

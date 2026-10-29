@@ -1,6 +1,7 @@
 import React from 'react';
 import { SECTION_CONFIGS } from './SectionSwitcher';
 import { LifeOSSection } from '@/types/lifeos';
+import { useAuthStore } from '@/stores/authStore';
 
 interface SectionHeroProps {
   section: LifeOSSection;
@@ -18,6 +19,23 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
   secondaryActionLabel,
 }) => {
   const config = SECTION_CONFIGS[section];
+  const { requireAuth } = useAuthStore();
+
+  const handlePrimaryClick = () => {
+    const label = primaryActionLabel || config.action || '';
+    if (label.includes('Add') || label.includes('Upload') || label.includes('Log') || label.includes('Blueprint')) {
+      if (!requireAuth(label)) return;
+    }
+    onPrimaryAction?.();
+  };
+
+  const handleSecondaryClick = () => {
+    const label = secondaryActionLabel || config.secondary || '';
+    if (label.includes('Add') || label.includes('Log')) {
+      if (!requireAuth(label)) return;
+    }
+    onSecondaryAction?.();
+  };
 
   return (
     <section
@@ -50,7 +68,7 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
         {/* Action Buttons (2-column compact row on mobile, inline on desktop) */}
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 pt-1 sm:pt-2 w-full sm:w-auto">
           <button
-            onClick={onPrimaryAction}
+            onClick={handlePrimaryClick}
             className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white text-slate-900 text-xs font-bold shadow-md hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-center gap-1"
             style={{ color: config.heroColor1 }}
           >
@@ -59,7 +77,7 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
           </button>
 
           <button
-            onClick={onSecondaryAction}
+            onClick={handleSecondaryClick}
             className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/15 text-white border border-white/25 text-xs font-bold hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center text-center"
           >
             <span>{secondaryActionLabel || config.secondary}</span>
@@ -69,10 +87,14 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
 
       {/* Right Giant Symbol Glyph */}
       <div
-        className="relative z-10 text-6xl sm:text-7xl lg:text-8xl select-none opacity-90 hidden md:flex items-center justify-center p-4"
+        className="relative z-10 select-none opacity-80 hidden md:flex items-center justify-center p-4 pointer-events-none"
         aria-hidden="true"
       >
-        {config.icon}
+        {typeof config.icon === 'string' ? (
+          <span className="text-6xl sm:text-7xl lg:text-8xl">{config.icon}</span>
+        ) : (
+          <config.icon className="w-20 h-20 sm:w-28 sm:h-28 text-white/25 stroke-[1.2]" />
+        )}
       </div>
     </section>
   );

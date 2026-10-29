@@ -10,6 +10,7 @@ import { insuranceRoutes } from './routes/insuranceRoutes.ts';
 import { goalRoutes } from './routes/goalRoutes.ts';
 import { calendarRoutes } from './routes/calendarRoutes.ts';
 import { lifeosRoutes } from './routes/lifeosRoutes.ts';
+import { communityRoutes } from './routes/communityRoutes.ts';
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.use('/api/policies', insuranceRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/lifeos', lifeosRoutes);
+app.use('/api/community', communityRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

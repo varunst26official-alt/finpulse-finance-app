@@ -18,7 +18,14 @@ export interface UserProfile {
 interface AuthState {
   user: UserProfile | null;
   isAuthenticated: boolean;
+  isDemoMode: boolean;
+  authModalOpen: boolean;
+  authModalFeatureName: string;
   isLoading: boolean;
+  openAuthModal: (featureName?: string) => void;
+  closeAuthModal: () => void;
+  requireAuth: (featureName?: string) => boolean;
+  loginAsDemo: () => Promise<void>;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (data: {
     fullName: string;
@@ -34,7 +41,45 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false, // Default to false so first-time visitors must sign in or register
+      isDemoMode: false,
+      authModalOpen: false,
+      authModalFeatureName: 'this feature',
       isLoading: false,
+
+      openAuthModal: (featureName = 'this feature') => {
+        set({ authModalOpen: true, authModalFeatureName: featureName });
+      },
+
+      closeAuthModal: () => {
+        set({ authModalOpen: false });
+      },
+
+      requireAuth: (featureName = 'this feature') => {
+        if (get().isDemoMode) {
+          set({ authModalOpen: true, authModalFeatureName: featureName });
+          return false;
+        }
+        return true;
+      },
+
+      loginAsDemo: async () => {
+        set({ isLoading: true });
+        const demoUser: UserProfile = {
+          id: 'demo_guest_investor',
+          fullName: 'Demo Guest',
+          email: 'investor@quantra.io',
+          investorType: 'HNI',
+          joinedDate: 'Preview Mode',
+        };
+        loadUserScopedData(demoUser);
+        set({
+          user: demoUser,
+          isAuthenticated: true,
+          isDemoMode: true,
+          isLoading: false,
+          authModalOpen: false,
+        });
+      },
 
       login: async (email, password) => {
         if (!email || !password) {
@@ -49,7 +94,7 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           const res = await api.auth.login(normalizedEmail, password);
-          set({ user: res.user, isAuthenticated: true, isLoading: false });
+          set({ user: res.user, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
           loadUserScopedData(res.user);
           await useFinanceStore.getState().syncWithBackend();
           return { success: true };
@@ -73,7 +118,7 @@ export const useAuthStore = create<AuthState>()(
                 investorType: 'RETAIL',
                 joinedDate: creds.joinedDate || 'Member',
               };
-              set({ user: loggedUser, isAuthenticated: true, isLoading: false });
+              set({ user: loggedUser, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
               loadUserScopedData(loggedUser);
               return { success: true };
             } catch (e) {
@@ -95,7 +140,7 @@ export const useAuthStore = create<AuthState>()(
             JSON.stringify({ ...fallbackUser, password })
           );
 
-          set({ user: fallbackUser, isAuthenticated: true, isLoading: false });
+          set({ user: fallbackUser, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
           loadUserScopedData(fallbackUser);
           return { success: true };
         }
@@ -119,7 +164,7 @@ export const useAuthStore = create<AuthState>()(
             password,
             phoneNumber: phoneNumber?.trim(),
           });
-          set({ user: res.user, isAuthenticated: true, isLoading: false });
+          set({ user: res.user, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
 
           useFinanceStore.getState().resetToFreshPortfolio(fullName);
           useLifeOSStore.getState().resetToFreshState();
@@ -147,7 +192,7 @@ export const useAuthStore = create<AuthState>()(
             JSON.stringify({ ...newUser, password })
           );
 
-          set({ user: newUser, isAuthenticated: true, isLoading: false });
+          set({ user: newUser, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
           useFinanceStore.getState().resetToFreshPortfolio(fullName.trim());
           useLifeOSStore.getState().resetToFreshState();
           useTourStore.getState().resetTour();
@@ -163,7 +208,7 @@ export const useAuthStore = create<AuthState>()(
           saveUserScopedData(currentUser);
         }
         api.auth.logout();
-        set({ user: null, isAuthenticated: false, isLoading: false });
+        set({ user: null, isAuthenticated: false, isDemoMode: false, authModalOpen: false, isLoading: false });
       },
     }),
     {

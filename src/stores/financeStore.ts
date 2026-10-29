@@ -32,9 +32,10 @@ import {
   INITIAL_CALENDAR_EVENTS,
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
-import { parseTradeIntent } from '@/services/aiTradeParser';
+import { processQuantrixQuery } from '@/services/quantrixEngine';
 import { api, hasAuthToken } from '@/services/apiClient';
-import { useLifeOSStore } from './lifeosStore';
+import { useMasteryStore } from './masteryStore';
+import { useAuthStore } from './authStore';
 
 export type NavigationTab =
   | 'dashboard'
@@ -167,10 +168,8 @@ export const useFinanceStore = create<FinanceState>()(
           isAiTyping: true,
         }));
 
-        // AI Engine with Trade Intent Detection and Context Injection
+        // Quantrix AI Live Context Engine
         setTimeout(() => {
-          const { assets, debts, currency, getPortfolioSummary, executeChatTradeAction } = get();
-          const summary = getPortfolioSummary();
           const lower = prompt.toLowerCase();
 
           // 1. Check if user is confirming a pending trade from conversation
@@ -186,104 +185,40 @@ export const useFinanceStore = create<FinanceState>()(
               .find((m) => m.tradeAction && m.tradeAction.status === 'PENDING');
 
             if (pendingMsg && pendingMsg.tradeAction) {
-              executeChatTradeAction(pendingMsg.id, pendingMsg.tradeAction);
+              get().executeChatTradeAction(pendingMsg.id, pendingMsg.tradeAction);
               set({ isAiTyping: false });
               return;
             }
           }
 
-          // 2. Check for Natural Language Trade / Outflow Intent
-          const tradeIntent = parseTradeIntent(prompt, currency);
-
-          let aiResponse = '';
-          let suggested: string[] = [];
-          let tradeActionPayload: TradeActionPayload | undefined = undefined;
-
-          if (tradeIntent) {
-            tradeActionPayload = tradeIntent;
-
-            if (tradeIntent.actionType === 'TRADE') {
-              const formattedPrice = formatCurrency(tradeIntent.pricePerUnit, currency);
-              const formattedTotal = formatCurrency(tradeIntent.totalAmount, currency);
-
-              aiResponse = `⚡ **Trade Order Prepared for Execution:**\n\n- **Order Type:** ${tradeIntent.tradeType} ${tradeIntent.category}\n- **Instrument:** ${tradeIntent.symbol} (${tradeIntent.name})\n- **Quantity:** ${tradeIntent.quantity} shares / units\n- **Execution Price:** ${formattedPrice} / unit\n- **Total Order Value:** **${formattedTotal}**\n- **Broker Platform:** ${tradeIntent.platform || 'Zerodha Kite'}\n\nReview order specs below and click **Execute Trade Now** or reply *"Confirm trade"* to book it into your portfolio.`;
-              suggested = ['Execute Trade Now', 'Show Reliance 30-day target', 'Cancel Order'];
-            } else if (tradeIntent.actionType === 'EXPENSE') {
-              const formattedAmt = formatCurrency(tradeIntent.totalAmount, currency);
-              aiResponse = `💳 **Expense Entry Log Prepared:**\n\n- **Outflow Title:** ${tradeIntent.name}\n- **Amount:** **${formattedAmt}**\n- **Category:** General Outflows\n\nClick **Record Expense** below to update your monthly cash flow tracking.`;
-              suggested = ['Record Expense', 'View my monthly cash flow'];
-            } else if (tradeIntent.actionType === 'INCOME') {
-              const formattedAmt = formatCurrency(tradeIntent.totalAmount, currency);
-              aiResponse = `💵 **Income Inflow Prepared:**\n\n- **Source:** ${tradeIntent.name}\n- **Amount:** **+${formattedAmt}**\n\nClick **Confirm Inflow** below to credit this into your monthly savings rate.`;
-              suggested = ['Confirm Inflow', 'Audit my portfolio risk'];
-            }
-          } else if (lower.includes('cash flow') || lower.includes('expense') || lower.includes('spend') || lower.includes('savings')) {
-            aiResponse = `💰 **Cash Flow & Expense Health Analysis:**\n\n- **Monthly Inflow:** $${Math.round(summary.totalMonthlyIncome).toLocaleString()} (~₹${Math.round(summary.totalMonthlyIncome * 84.5).toLocaleString()})\n- **Monthly Outflows/Expenses:** $${Math.round(summary.totalMonthlyExpenses).toLocaleString()} (~₹${Math.round(summary.totalMonthlyExpenses * 84.5).toLocaleString()})\n- **Net Savings Rate:** **${summary.monthlySavingsRate.toFixed(1)}%** (Target: > 40%)\n- **Liquid Cash Runway:** **${summary.liquidRunwayMonths.toFixed(1)} months** of emergency survival buffer.\n\n💡 **Copilot Recommendation:** Your savings rate allows you to automate an extra SIP into diversified equity without straining liquidity.`;
-            suggested = ['Buy 10 Reliance', 'Show me Tax Harvesting tips', 'Audit my asset allocation risk'];
-          } else if (lower.includes('risk') || lower.includes('audit') || lower.includes('allocation')) {
-            aiResponse = `📊 **Portfolio Risk & Allocation Audit:**\n\n- **Comprehensive Net Worth:** $${Math.round(summary.totalNetWorth).toLocaleString()} (₹${Math.round(summary.totalNetWorth * 84.5).toLocaleString()})\n- **Equity & Growth Assets:** ~44% across Listed Stocks, Mutual Funds & Crypto.\n- **Defensive & Real Assets:** ~56% distributed in Real Estate, Bank FDs, Sovereign Gold Bonds (SGB), and PPF.\n- **Emergency Runway:** **${summary.liquidRunwayMonths.toFixed(1)} months** of cash.\n\n💡 **Copilot Recommendation:** Your allocation exhibits balanced inflation-hedging with steady physical and liquid assets.`;
-            suggested = ['Buy 10 Reliance', 'Show me Tax Harvesting tips', 'What is Reliance 30-day forecast?'];
-          } else if (lower.includes('tax') || lower.includes('ltcg') || lower.includes('capital gain')) {
-            aiResponse = `🧾 **Capital Gains Tax Optimization (FY 2026-27):**\n\n- **Unrealized Long-Term Gains (LTCG):** ~$3,490 (₹2.95 Lakhs)\n- **Standard Tax-Free Exemption:** ₹1,25,000 per financial year.\n- **Tax Harvest Opportunity:** You have **$1,480 (₹1.25 Lakhs)** in tax-free exemption that resets on March 31!\n\n💡 **Action Item:** Sell partial shares of Reliance and TCS before March 31 and re-enter immediately to step up your cost basis.`;
-            suggested = ['View full Tax Optimizer tab', 'Simulate selling 20 shares of Reliance'];
-          } else if (lower.includes('start fresh') || lower.includes('clean slate') || lower.includes('reset') || lower.includes('clear data') || lower.includes('empty portfolio')) {
+          // 2. Fresh Portfolio Reset Request
+          if (
+            lower.includes('start fresh') ||
+            lower.includes('clean slate') ||
+            lower.includes('reset') ||
+            lower.includes('clear data') ||
+            lower.includes('empty portfolio')
+          ) {
             get().resetToFreshPortfolio();
-            aiResponse = `🧹 **Portfolio Successfully Cleared!**\n\nYour portfolio is now completely reset to **₹0.00 balance** with 0 holdings and 0 transactions. You're ready to log your real investments.\n\nClick **'+ Add Trade'** or tell me what you own (e.g. *"Bought 15 shares of Apple at 180"*).`;
-            suggested = ['How do I add my first trade?', 'Search 120+ listed stocks', 'View my portfolio summary'];
-          } else if (lower.includes('predict') || lower.includes('forecast') || lower.includes('reliance') || lower.includes('btc') || lower.includes('bitcoin')) {
-            aiResponse = `🔮 **AI Asset Projections (Next 30-90 Days):**\n\n- **Reliance Industries:** Target **$38.20** (+9.8%) with an **88% Bullish Confidence Score**. Support at $32.80.\n- **Bitcoin (Cold Storage):** Target **$76,500** (+11.8%) with institutional ETF volume driving supply squeeze.\n- **Sovereign Gold (SGB):** Strong Buy rating (91% confidence) with central bank purchases acting as a geopolitical floor.\n\nCheck the **AI Forecaster** tab for Monte Carlo upper/lower prediction bands!`;
-            suggested = ['Buy 10 Reliance', 'Go to AI Stock Predictor', 'Audit my portfolio risk'];
-          } else if (lower.includes('workout') || lower.includes('gym') || lower.includes('fitness') || lower.includes('split') || lower.includes('exercise')) {
-            const life = useLifeOSStore.getState();
-            aiResponse = `💪 **LifeOS Fitness & Workout Blueprint:**\n\n- **Active Split:** **${life.activeBlueprint.workoutSplitName}**\n- **Weekly Logged:** **${life.wellness.workoutMinutesLogged} mins** (Target: 150m weekly)\n- **Body Mass Index:** **${Math.round((life.wellness.weightKg / Math.pow(life.wellness.heightCm / 100, 2)) * 10) / 10}** (${life.wellness.weightKg} kg · Target: ${life.wellness.targetWeightKg} kg)\n- **Workout Sessions Logged:** **${life.workoutSessions.length} sessions** with total tonnage tracked.\n\n💡 *Tip: Head over to the Fitness & Wellness workspace to record your set-by-set weight, reps, and RPE.*`;
-            suggested = ['What is my daily calorie target?', 'Show my today priorities', 'Audit my asset allocation risk'];
-          } else if (lower.includes('diet') || lower.includes('food') || lower.includes('calorie') || lower.includes('nutrition') || lower.includes('water') || lower.includes('hydration')) {
-            const life = useLifeOSStore.getState();
-            aiResponse = `🥗 **LifeOS Nutrition & Hydration Blueprint:**\n\n- **Energy Target:** **${life.activeBlueprint.targetCalories} kcal** (Current Logged: ${life.wellness.caloriesLogged} kcal)\n- **Macro Split:** Protein: **${life.activeBlueprint.macros.proteinGrams}g** · Carbs: **${life.activeBlueprint.macros.carbsGrams}g** · Fat: **${life.activeBlueprint.macros.fatGrams}g**\n- **Daily Water Target:** **${life.activeBlueprint.dailyWaterTargetLiters} L** (Logged: ${life.wellness.waterLitersLogged} L)\n- **Meals Logged Today:** **${life.mealLogs.length} entries**.\n\n💡 *Tip: Remember clinical guidelines recommend 35ml water per kg body weight plus workout adjustments.*`;
-            suggested = ['What workout should I do?', 'Log 250ml water', 'Analyze my monthly cash flow'];
-          } else if (lower.includes('habit') || lower.includes('streak') || lower.includes('priority') || lower.includes('task') || lower.includes('productivity')) {
-            const life = useLifeOSStore.getState();
-            const completed = life.tasks.filter((t) => t.status === 'COMPLETED').length;
-            aiResponse = `⚡ **LifeOS Productivity & Habit Command:**\n\n- **Today's Priorities:** **${completed} / ${life.tasks.length} tasks completed** (${life.tasks.length - completed} remaining).\n- **Active Daily Routines:** **${life.habits.length} habits** tracked.\n- **Top Streak:** **${Math.max(0, ...life.habits.map((h) => h.streakCount))} consecutive days** 🔥\n- **Deep Work Focus Blocks:** **${life.focusSessions.length} sessions** recorded.\n\n💡 *Tip: Use the Pomodoro stopwatch in the Productivity workspace to lock in 50-minute deep work blocks.*`;
-            suggested = ['Show my reading progress', 'What is my workout split?', 'Buy 10 Reliance'];
-          } else if (lower.includes('learning') || lower.includes('book') || lower.includes('study') || lower.includes('skill')) {
-            const life = useLifeOSStore.getState();
-            const totalHours = life.learningItems.reduce((acc, l) => acc + l.hoursSpent, 0);
-            aiResponse = `📚 **LifeOS Knowledge & Learning Track:**\n\n- **Active Skills in Progression:** **${life.learningItems.length} roadmaps**.\n- **Study Hours Compounded:** **${totalHours} verified hours** logged.\n- **Books in Vault:** **${life.learningBooks.length} titles** (Current book: *${life.learningBooks[0]?.title || 'None'}* on page ${life.learningBooks[0]?.currentPage || 0}).\n\n💡 *Tip: Compounding 1 hour of study daily yields 365 hours of competitive mastery every year.*`;
-            suggested = ['Show my vaulted documents', 'What is my net worth?', 'Audit my portfolio risk'];
-          } else if (lower.includes('vault') || lower.includes('document') || lower.includes('emergency') || lower.includes('passport')) {
-            const life = useLifeOSStore.getState();
-            const expiring = life.documents.filter((d) => d.status === 'EXPIRING_SOON').length;
-            aiResponse = `🛡️ **LifeOS Administration & Vault Readiness:**\n\n- **Encrypted Documents:** **${life.documents.length} official documents** secured.\n- **Expiring Soon Alert:** **${expiring} items** requiring renewal within 60 days.\n- **Blood Group:** **${life.emergencyInfo?.bloodGroup || 'O+'}** · Primary Contact: **${life.emergencyInfo?.primaryContactName || 'Configured'}**\n- **24x7 TPA Helpline:** **${life.emergencyInfo?.tpaHelpline || '1800-102-4477'}**\n\n💡 *Tip: You can 1-click copy your emergency medical sheet from the Life Administration workspace.*`;
-            suggested = ['Show full LifeOS summary', 'What are my priorities today?', 'Analyze my cash flow'];
-          } else if (lower.includes('lifeos') || lower.includes('summary') || lower.includes('life summary') || lower.includes('overview') || lower.includes('balance')) {
-            const life = useLifeOSStore.getState();
-            aiResponse = `🌐 **LifeOS Personal Executive Briefing:**\n\n- 💰 **Finance:** Net Worth **${formatCurrency(summary.totalNetWorth, currency)}** with ${summary.pnlPercentage.toFixed(1)}% growth and ${summary.liquidRunwayMonths.toFixed(1)} mo runway.\n- 🏋️ **Physical Vitality:** Split **${life.activeBlueprint.workoutSplitName}**, Daily **${life.activeBlueprint.targetCalories} kcal**, BMI **${Math.round((life.wellness.weightKg / Math.pow(life.wellness.heightCm / 100, 2)) * 10) / 10}**.\n- ⚡ **Daily Execution:** **${life.tasks.filter((t) => t.status === 'COMPLETED').length} / ${life.tasks.length} tasks completed**, **${life.habits.length} habits** active.\n- 📚 **Intellect:** **${life.learningItems.length} skills**, **${life.learningBooks.length} books** in vault.\n- 🛡️ **Life Admin:** **${life.documents.length} documents**, Emergency profile active.\n\nAll 6 workspaces are synchronized with persistent SQLite engine.`;
-            suggested = ['Buy 10 Reliance', 'Show my workout split', 'Check my reading progress'];
-          } else {
-            const life = useLifeOSStore.getState();
-            aiResponse = `🤖 **LifeOS AI Intelligence Copilot:**\n\nI have complete real-time awareness across your entire life platform:\n- **Wealth:** ${formatCurrency(summary.totalNetWorth, currency)} net worth across ${assets.length} assets & ${debts.length} liabilities.\n- **Vitality:** ${life.activeBlueprint.workoutSplitName} · ${life.activeBlueprint.targetCalories} kcal · ${life.wellness.weightKg} kg.\n- **Productivity:** ${life.tasks.length} tasks · ${life.habits.length} habits · ${life.workoutSessions.length} workouts logged.\n\nAsk me anything: *"What should I do today?"*, *"Buy 10 Reliance"*, *"What is my calorie target?"*, or *"Who is my emergency contact?"*`;
-            suggested = [
-              'Give me a full LifeOS summary',
-              'Buy 10 Reliance',
-              'What is my daily calorie target?',
-            ];
           }
+
+          // 3. Process with Quantrix Real-time Context Engine
+          const response = processQuantrixQuery(prompt);
 
           const assistantMsg: AiChatMessage = {
             id: `msg_ai_${Date.now()}`,
             role: 'assistant',
-            content: aiResponse,
+            content: response.content,
             timestamp: 'Just now',
-            suggestedPrompts: suggested,
-            tradeAction: tradeActionPayload,
+            suggestedPrompts: response.suggestedPrompts,
+            tradeAction: response.tradeAction,
           };
 
           set((state) => ({
             aiMessages: [...state.aiMessages, assistantMsg],
             isAiTyping: false,
           }));
-        }, 700);
+        }, 350);
       },
 
       executeChatTradeAction: (messageId, actionPayload) => {
@@ -363,6 +298,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addTransaction: (newTxData) => {
+        if (!useAuthStore.getState().requireAuth('add transactions & trades')) return;
         const id = `tx_${Date.now()}`;
         const newTransaction: Transaction = {
           ...newTxData,
@@ -428,6 +364,7 @@ export const useFinanceStore = create<FinanceState>()(
             updatedAssets = [newAsset, ...updatedAssets];
           }
 
+          useMasteryStore.getState().awardPoints('FINANCE', 25, 'Investment transaction recorded');
           return {
             transactions: updatedTransactions,
             assets: updatedAssets,
@@ -443,6 +380,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addAsset: (newAssetData) => {
+        if (!useAuthStore.getState().requireAuth('add assets to portfolio')) return;
         const newAsset: Asset = {
           ...newAssetData,
           id: `ast_${Date.now()}`,
@@ -464,10 +402,13 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addExpense: (newExpenseData) => {
+        if (!useAuthStore.getState().requireAuth('record expenses')) return;
         const newExpense: ExpenseItem = {
           ...newExpenseData,
           id: `exp_${Date.now()}`,
         };
+
+        useMasteryStore.getState().awardPoints('FINANCE', 15, 'Expense entry recorded');
 
         set((state) => ({
           expenses: [newExpense, ...state.expenses],
@@ -475,6 +416,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addExpensesBatch: (newExpensesData) => {
+        if (!useAuthStore.getState().requireAuth('batch import statement expenses')) return 0;
         let addedCount = 0;
         set((state) => {
           // Deduplication key: date + title + amount + (UPI ID if present)
@@ -644,6 +586,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addDebt: (debtData) => {
+        if (!useAuthStore.getState().requireAuth('add liability')) return;
         const newDebt: DebtItem = {
           ...debtData,
           id: `debt_${Date.now()}`,
@@ -691,6 +634,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addPolicy: (policyData) => {
+        if (!useAuthStore.getState().requireAuth('add insurance policy')) return;
         const newPolicy: InsurancePolicy = {
           ...policyData,
           id: `pol_${Date.now()}`,
@@ -720,6 +664,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addGoal: (goalData) => {
+        if (!useAuthStore.getState().requireAuth('create financial goal')) return;
         const newGoal: GoalItem = {
           ...goalData,
           id: `goal_${Date.now()}`,
@@ -740,6 +685,7 @@ export const useFinanceStore = create<FinanceState>()(
 
       contributeToGoal: (id, amount) => {
         api.goals.contribute(id, amount).catch((err) => console.warn('[SQLite Sync] Contribute goal:', err));
+        useMasteryStore.getState().awardPoints('FINANCE', 30, 'Funded life goal milestone');
         set((state) => ({
           goals: state.goals.map((g) => {
             if (g.id === id) {

@@ -483,4 +483,19 @@ export const api = {
       });
     },
   },
+
+  community: {
+    getLeaderboard: async (): Promise<{ success: boolean; leaderboard: any[] }> => {
+      return request('/community/leaderboard');
+    },
+    giveKudos: async (userId: string): Promise<{ success: boolean; kudosCount: number }> => {
+      return request(`/community/kudos/${userId}`, { method: 'POST' });
+    },
+    updateProfile: async (profile: { alias?: string; status?: string; isGhost?: boolean }): Promise<{ success: boolean; profile: any }> => {
+      return request('/community/profile', {
+        method: 'POST',
+        body: JSON.stringify(profile),
+      });
+    },
+  },
 };

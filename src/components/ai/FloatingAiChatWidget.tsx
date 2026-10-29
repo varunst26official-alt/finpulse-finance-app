@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
+import { useAuthStore } from '@/stores/authStore';
 import {
-  Bot,
-  Send,
   Sparkles,
+  Send,
   X,
   RotateCcw,
   User,
@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Minimize2,
   Maximize2,
+  Bot,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '@/utils/formatters';
@@ -25,14 +26,14 @@ export const FloatingAiChatWidget: React.FC = () => {
     sendAiMessage,
     executeChatTradeAction,
     clearAiChat,
-    getPortfolioSummary,
     currency,
   } = useFinanceStore();
+
+  const { requireAuth } = useAuthStore();
 
   const [input, setInput] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const summary = getPortfolioSummary();
 
   useEffect(() => {
     if (isFloatingChatOpen && !isMinimized) {
@@ -53,23 +54,33 @@ export const FloatingAiChatWidget: React.FC = () => {
     }
   };
 
+  const starterPrompts = [
+    '💎 What is my current net worth?',
+    '🔥 Am I on track for FIRE?',
+    '📋 What tasks are due today?',
+    '💪 How much water did I log today?',
+    '💳 Spent 500 for coffee',
+  ];
+
   return (
     <>
       {/* ============================================================== */}
-      {/* 1. FLOATING LAUNCHER BUTTON (Bottom-Right Corner) */}
+      {/* 1. FLOATING LAUNCHER TRIGGER (Bottom-Right) */}
       {/* ============================================================== */}
-      <div className="fixed bottom-20 right-3.5 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2 pointer-events-auto">
-        {/* Subtle Teaser Pill when closed */}
+      <div className="fixed bottom-20 right-3.5 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-2 pointer-events-auto">
+        {/* Subtle Minimalist Teaser Pill */}
         {!isFloatingChatOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            initial={{ opacity: 0, y: 8, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 0.5 }}
             onClick={toggleFloatingChat}
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 border border-[#e8e0d1] text-xs font-semibold text-slate-700 shadow-lg shadow-black/5 hover:border-[#9e783e] hover:text-[#9e783e] cursor-pointer backdrop-blur-md transition-all group"
+            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-[#e8dfcf] text-xs font-semibold text-slate-800 shadow-lg shadow-black/5 hover:border-[#9e783e] hover:text-[#9e783e] cursor-pointer backdrop-blur-md transition-all group"
           >
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Ask LifeOS: <strong>"Show my life summary"</strong></span>
+            <span>
+              Ask Quantrix: <strong className="font-bold text-slate-900">"What's my net worth?"</strong>
+            </span>
           </motion.div>
         )}
 
@@ -77,49 +88,49 @@ export const FloatingAiChatWidget: React.FC = () => {
         {!isFloatingChatOpen && (
           <motion.button
             id="tour-floating-copilot"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
             onClick={toggleFloatingChat}
-            className="relative flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-xl shadow-[#9e783e]/35 border-2 border-white cursor-pointer group"
+            className="relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-[#17365d] hover:bg-[#122b4a] text-white shadow-xl shadow-[#17365d]/25 border-2 border-white cursor-pointer group transition-colors"
           >
-            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 sm:h-4 sm:w-4">
+            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 bg-emerald-500 border-2 border-white"></span>
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
             </span>
-            <Bot className="h-5 w-5 sm:h-7 sm:w-7 transition-transform group-hover:rotate-6" />
+            <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-amber-300 transition-transform group-hover:rotate-12" />
           </motion.button>
         )}
       </div>
 
       {/* ============================================================== */}
-      {/* 2. FLOATING CHAT WINDOW POP-IN */}
+      {/* 2. MINIMALIST CHAT WINDOW POP-IN */}
       {/* ============================================================== */}
       <AnimatePresence>
         {isFloatingChatOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.88, y: 30 }}
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.88, y: 30 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`fixed bottom-18 sm:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[410px] max-h-[82vh] sm:max-h-[88vh] rounded-3xl border border-[#e8e0d1] bg-white shadow-2xl overflow-hidden flex flex-col transition-all ${
-              isMinimized ? 'h-16' : 'h-[580px]'
+            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+            transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+            className={`fixed bottom-18 sm:bottom-6 right-3 sm:right-6 z-[60] w-[calc(100vw-24px)] sm:w-[410px] max-h-[84vh] sm:max-h-[88vh] rounded-[24px] border border-[#e8dfcf] bg-white shadow-2xl overflow-hidden flex flex-col transition-all ${
+              isMinimized ? 'h-16' : 'h-[600px]'
             }`}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#e8e0d1] bg-gradient-to-r from-[#faf8f5] to-white px-4 py-3.5 select-none">
+            {/* Minimalist Header */}
+            <div className="flex items-center justify-between border-b border-[#e8dfcf] bg-gradient-to-r from-[#faf8f4] via-white to-[#faf8f4] px-4 py-3 select-none">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#9e783e] text-white shadow-sm shadow-[#9e783e]/30">
-                  <Bot className="h-5 w-5" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#17365d] to-[#0f233d] text-white shadow-xs">
+                  <Sparkles className="h-4 w-4 text-amber-300" />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h4 className="text-sm font-bold text-slate-900 leading-none">
-                      LifeOS Copilot
+                    <h4 className="text-sm font-heading font-extrabold text-slate-900 leading-none tracking-tight">
+                      Quantrix
                     </h4>
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   </div>
-                  <span className="text-[10px] text-slate-500 font-medium">
-                    Wealth · Fitness · Habits · Learning · Life Admin
+                  <span className="text-[10px] text-slate-500 font-semibold">
+                    Your AI Assistant • Live Synced
                   </span>
                 </div>
               </div>
@@ -154,52 +165,42 @@ export const FloatingAiChatWidget: React.FC = () => {
               </div>
             </div>
 
-            {/* If not minimized, show body */}
+            {/* Chat Body (When Not Minimized) */}
             {!isMinimized && (
               <>
-                {/* Live Context Strip */}
-                <div className="grid grid-cols-3 gap-2 px-3 py-2 bg-[#faf8f5] border-b border-[#e8e0d1] text-[10px]">
-                  <div>
-                    <span className="text-slate-400 uppercase font-bold block">Net Worth</span>
-                    <span className="font-mono font-bold text-slate-900">
-                      {formatCurrency(summary.totalNetWorth, currency)}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 uppercase font-bold block">24h Gain</span>
-                    <span className="font-mono font-bold text-emerald-700">
-                      +{summary.todaysChangePercentage}%
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-slate-400 uppercase font-bold block">Savings Rate</span>
-                    <span className="font-mono font-bold text-[#9e783e]">
-                      {summary.monthlySavingsRate.toFixed(1)}%
-                    </span>
-                  </div>
-                </div>
+                {/* Messages View Area */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-gradient-to-b from-white to-[#faf8f4]/60 text-xs">
+                  {/* Empty / Welcome State if no messages */}
+                  {aiMessages.length === 0 && (
+                    <div className="py-6 text-center space-y-3">
+                      <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#faf8f4] border border-[#e8dfcf] text-[#9e783e] shadow-xs">
+                        <Bot className="h-6 w-6" />
+                      </div>
+                      <div className="space-y-1">
+                        <h5 className="font-heading font-bold text-slate-900 text-sm">
+                          How can I help you today?
+                        </h5>
+                        <p className="text-[11px] text-slate-500 max-w-[260px] mx-auto">
+                          I can analyze your portfolio, track FIRE goals, report tasks, or log expenses.
+                        </p>
+                      </div>
 
-                {/* Quick Prompts Bar */}
-                <div className="flex items-center gap-1.5 overflow-x-auto px-3 py-2 border-b border-[#e8e0d1] scrollbar-none text-[11px] bg-white">
-                  {[
-                    'Buy 10 Reliance',
-                    'Buy 5 Apple',
-                    'Spent 25000 rent',
-                    'Audit portfolio risk',
-                  ].map((chip) => (
-                    <button
-                      key={chip}
-                      onClick={() => handleSend(chip)}
-                      className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#faf8f5] border border-[#e8e0d1] text-[#9e783e] font-semibold hover:bg-[#f4efe4] hover:text-slate-900 transition-all cursor-pointer whitespace-nowrap active:scale-95"
-                    >
-                      <Sparkles className="h-3 w-3" />
-                      <span>{chip}</span>
-                    </button>
-                  ))}
-                </div>
+                      {/* Minimalist Starter Suggestions */}
+                      <div className="pt-2 flex flex-col gap-1.5 max-w-[320px] mx-auto">
+                        {starterPrompts.map((prompt, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleSend(prompt.slice(2).trim())}
+                            className="text-left text-[11px] font-medium py-2 px-3 rounded-xl bg-white hover:bg-[#f4efe4] border border-[#e8dfcf] text-slate-700 hover:text-slate-900 transition-colors cursor-pointer shadow-xs active:scale-[0.99]"
+                          >
+                            {prompt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-                {/* Message Scroll Area */}
-                <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 bg-gradient-to-b from-white to-[#faf8f5]/40 text-xs">
+                  {/* Render Messages */}
                   {aiMessages.map((msg) => {
                     const isUser = msg.role === 'user';
                     return (
@@ -208,37 +209,42 @@ export const FloatingAiChatWidget: React.FC = () => {
                         className={`flex gap-2.5 ${isUser ? 'justify-end' : 'justify-start'}`}
                       >
                         {!isUser && (
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#faf8f5] text-[#9e783e] border border-[#e8e0d1]">
-                            <Bot className="h-4 w-4" />
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#17365d] text-white shadow-xs">
+                            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
                           </div>
                         )}
 
                         <div
-                          className={`max-w-[85%] rounded-2xl p-3 leading-relaxed space-y-2 shadow-xs ${
+                          className={`max-w-[86%] rounded-2xl p-3.5 space-y-2.5 shadow-xs ${
                             isUser
-                              ? 'bg-[#9e783e] text-white font-medium rounded-tr-none'
-                              : 'bg-white border border-[#e8e0d1] text-slate-800 rounded-tl-none font-sans'
+                              ? 'bg-[#17365d] text-white font-medium rounded-tr-sm'
+                              : 'bg-white border border-[#e8dfcf] text-slate-800 rounded-tl-sm'
                           }`}
                         >
-                          {/* Message Content */}
+                          {/* Markdown Text Splitting */}
                           <div className="whitespace-pre-wrap text-xs leading-relaxed">
-                            {msg.content.split('\n').map((paragraph, idx) => (
-                              <p key={idx} className="mb-1.5 last:mb-0">
-                                {paragraph.startsWith('- ') ? (
-                                  <span className="inline-block pl-1.5 border-l-2 border-[#9e783e] my-0.5">
-                                    {paragraph.slice(2)}
-                                  </span>
-                                ) : (
-                                  paragraph
-                                )}
-                              </p>
-                            ))}
+                            {msg.content.split('\n').map((line, idx) => {
+                              if (!line.trim()) return <div key={idx} className="h-1" />;
+                              if (line.startsWith('- ')) {
+                                return (
+                                  <div key={idx} className="flex items-start gap-1.5 my-0.5">
+                                    <span className="text-[#9e783e] font-bold">•</span>
+                                    <span>{line.slice(2)}</span>
+                                  </div>
+                                );
+                              }
+                              return (
+                                <p key={idx} className="mb-1 last:mb-0">
+                                  {line}
+                                </p>
+                              );
+                            })}
                           </div>
 
                           {/* Interactive Trade Execution Card */}
                           {msg.tradeAction && (
-                            <div className="pt-2 border-t border-[#e8e0d1] space-y-2">
-                              <div className="rounded-xl border border-[#ded3bf] bg-[#faf8f5] p-3 shadow-xs space-y-2 text-xs">
+                            <div className="pt-2 border-t border-[#e8dfcf] space-y-2">
+                              <div className="rounded-xl border border-[#ded3bf] bg-[#faf8f4] p-3 shadow-xs space-y-2 text-xs">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-1.5">
                                     <span
@@ -263,7 +269,7 @@ export const FloatingAiChatWidget: React.FC = () => {
 
                                 <div className="grid grid-cols-2 gap-2 text-xs">
                                   <div>
-                                    <span className="text-[10px] text-slate-500 uppercase block">
+                                    <span className="text-[10px] text-slate-500 uppercase block font-semibold">
                                       Units
                                     </span>
                                     <span className="font-bold font-mono text-slate-900">
@@ -271,7 +277,7 @@ export const FloatingAiChatWidget: React.FC = () => {
                                     </span>
                                   </div>
                                   <div className="text-right">
-                                    <span className="text-[10px] text-slate-500 uppercase block">
+                                    <span className="text-[10px] text-slate-500 uppercase block font-semibold">
                                       Total Order
                                     </span>
                                     <span className="font-bold font-mono text-slate-900">
@@ -284,10 +290,11 @@ export const FloatingAiChatWidget: React.FC = () => {
                                   <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    onClick={() =>
-                                      executeChatTradeAction(msg.id, msg.tradeAction!)
-                                    }
-                                    className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#9e783e] text-white font-bold text-xs shadow-xs hover:bg-[#866632] transition-all cursor-pointer"
+                                    onClick={() => {
+                                      if (!requireAuth('execute portfolio trade orders')) return;
+                                      executeChatTradeAction(msg.id, msg.tradeAction!);
+                                    }}
+                                    className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#9e783e] hover:bg-[#866632] text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
                                   >
                                     <Zap className="h-3.5 w-3.5" />
                                     <span>Confirm & Execute Trade</span>
@@ -302,14 +309,14 @@ export const FloatingAiChatWidget: React.FC = () => {
                             </div>
                           )}
 
-                          {/* Follow-up Prompts */}
+                          {/* Dynamic Follow-up Prompt Pills */}
                           {msg.suggestedPrompts && msg.suggestedPrompts.length > 0 && (
-                            <div className="pt-2 border-t border-[#e8e0d1] flex flex-wrap gap-1">
+                            <div className="pt-2 border-t border-[#e8dfcf] flex flex-wrap gap-1">
                               {msg.suggestedPrompts.map((p, i) => (
                                 <button
                                   key={i}
                                   onClick={() => handleSend(p)}
-                                  className="text-[10px] px-2 py-0.5 rounded-md bg-white border border-[#ded3bf] text-[#866632] hover:bg-[#f4efe4] font-medium transition-colors cursor-pointer text-left"
+                                  className="text-[10px] px-2.5 py-1 rounded-lg bg-[#faf8f4] hover:bg-[#f4efe4] border border-[#ded3bf] text-[#866632] hover:text-slate-900 font-semibold transition-colors cursor-pointer text-left"
                                 >
                                   {p}
                                 </button>
@@ -319,8 +326,8 @@ export const FloatingAiChatWidget: React.FC = () => {
                         </div>
 
                         {isUser && (
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#9e783e]/20 text-[#866632] border border-[#9e783e]/30">
-                            <User className="h-4 w-4" />
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 border border-slate-200">
+                            <User className="h-3.5 w-3.5" />
                           </div>
                         )}
                       </div>
@@ -329,21 +336,23 @@ export const FloatingAiChatWidget: React.FC = () => {
 
                   {/* Typing Indicator */}
                   {isAiTyping && (
-                    <div className="flex gap-2 justify-start items-center">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#faf8f5] text-[#9e783e] border border-[#e8e0d1]">
-                        <Bot className="h-4 w-4" />
+                    <div className="flex gap-2.5 justify-start items-center">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#17365d] text-white shadow-xs">
+                        <Sparkles className="h-3.5 w-3.5 text-amber-300" />
                       </div>
-                      <div className="rounded-2xl rounded-tl-none bg-white border border-[#e8e0d1] px-3 py-2 text-xs text-slate-500 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#9e783e] animate-bounce"></span>
+                      <div className="rounded-2xl rounded-tl-sm bg-white border border-[#e8dfcf] px-3.5 py-2 text-xs text-slate-500 flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#17365d] animate-bounce"></span>
                         <span
-                          className="h-1.5 w-1.5 rounded-full bg-[#9e783e] animate-bounce"
+                          className="h-1.5 w-1.5 rounded-full bg-[#17365d] animate-bounce"
                           style={{ animationDelay: '0.2s' }}
                         ></span>
                         <span
-                          className="h-1.5 w-1.5 rounded-full bg-[#9e783e] animate-bounce"
+                          className="h-1.5 w-1.5 rounded-full bg-[#17365d] animate-bounce"
                           style={{ animationDelay: '0.4s' }}
                         ></span>
-                        <span className="ml-1 text-[11px] font-medium">Copilot thinking...</span>
+                        <span className="ml-1.5 text-[11px] font-medium text-slate-600">
+                          Quantrix analyzing...
+                        </span>
                       </div>
                     </div>
                   )}
@@ -351,22 +360,22 @@ export const FloatingAiChatWidget: React.FC = () => {
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* Input Bar */}
-                <div className="p-3 border-t border-[#e8e0d1] bg-white">
+                {/* Minimalist Input Bar */}
+                <div className="p-3 border-t border-[#e8dfcf] bg-white">
                   <div className="relative flex items-center">
                     <input
                       type="text"
-                      placeholder="Ask anything or log an entry..."
+                      placeholder="Ask Quantrix about wealth, FIRE, tasks, habits..."
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
                       disabled={isAiTyping}
-                      className="w-full h-10 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] pl-3.5 pr-10 text-xs text-slate-900 placeholder-slate-400 focus:border-[#9e783e] focus:bg-white focus:outline-hidden font-medium"
+                      className="w-full h-11 rounded-xl bg-[#faf8f4] border border-[#e4d9c7] pl-3.5 pr-11 text-xs text-slate-900 placeholder-slate-400 focus:border-[#17365d] focus:bg-white focus:outline-hidden font-medium transition-all"
                     />
                     <button
                       onClick={() => handleSend()}
                       disabled={!input.trim() || isAiTyping}
-                      className="absolute right-1.5 h-7 w-7 rounded-lg bg-[#9e783e] text-white flex items-center justify-center hover:bg-[#866632] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
+                      className="absolute right-1.5 h-8 w-8 rounded-lg bg-[#17365d] hover:bg-[#122b4a] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
                     >
                       <Send className="h-3.5 w-3.5" />
                     </button>

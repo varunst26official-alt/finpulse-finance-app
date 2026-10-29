@@ -24,6 +24,8 @@ import {
 import { detectUserLocation, UserLocationProfile } from '@/services/locationService';
 import { generateLocalizedWeeklyMealPlan, AiGenerationOptions } from '@/services/aiMealGenerator';
 import { api } from '@/services/apiClient';
+import { useMasteryStore } from './masteryStore';
+import { useAuthStore } from './authStore';
 
 const DEFAULT_USER_INPUTS: UserAdaptiveInputs = {
   age: '',
@@ -232,12 +234,17 @@ export const useLifeOSStore = create<LifeOSState>()(
       tasks: [],
 
       toggleTaskComplete: (id) => {
+        if (!useAuthStore.getState().requireAuth('mark tasks complete')) return;
         const state = get();
         const target = state.tasks.find((t) => t.id === id);
         if (!target) return;
 
         const nextStatus = target.status === 'COMPLETED' ? 'TODO' : 'COMPLETED';
         const nextBadge = nextStatus === 'COMPLETED' ? 'Completed' : 'To do';
+
+        if (nextStatus === 'COMPLETED') {
+          useMasteryStore.getState().awardPoints('PRODUCTIVITY', 25, `Completed task: ${target.title}`);
+        }
 
         set({
           tasks: state.tasks.map((t) =>
@@ -249,6 +256,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       addTask: (taskData) => {
+        if (!useAuthStore.getState().requireAuth('create tasks')) return;
         const newId = `tsk_${Date.now()}`;
         const newTask: TaskItem = {
           ...taskData,
@@ -296,6 +304,8 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       logWater: (amount) => {
+        if (!useAuthStore.getState().requireAuth('log hydration')) return;
+        useMasteryStore.getState().awardPoints('WELLNESS', 15, `Logged hydration (+${amount}L water)`);
         set((state) => ({
           wellness: {
             ...state.wellness,
@@ -318,6 +328,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       logWorkoutMinutes: (minutes) => {
+        useMasteryStore.getState().awardPoints('WELLNESS', 30, `Logged workout (${minutes} mins)`);
         set((state) => ({
           wellness: {
             ...state.wellness,
@@ -343,6 +354,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       workoutSessions: [],
 
       recordWorkoutSession: (sessionData) => {
+        if (!useAuthStore.getState().requireAuth('record workout session')) return;
         const newSessionId = `wsess_${Date.now()}`;
         const todayStr = new Date().toISOString().split('T')[0];
         let totalTonnage = 0;
@@ -393,6 +405,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       mealLogs: [],
 
       addMealLog: (mealData) => {
+        if (!useAuthStore.getState().requireAuth('log meal macros')) return;
         const todayStr = new Date().toISOString().split('T')[0];
         const newMeal: MealLogItem = {
           ...mealData,
@@ -505,6 +518,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       habits: [],
 
       addHabit: (habitData) => {
+        if (!useAuthStore.getState().requireAuth('create habit')) return;
         const newHabit: HabitItem = {
           id: `hab_${Date.now()}`,
           title: habitData.title,
@@ -522,6 +536,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       },
 
       toggleHabit: (id) => {
+        if (!useAuthStore.getState().requireAuth('track habit streak')) return;
         set((state) => ({
           habits: state.habits.map((h) => {
             if (h.id === id) {
@@ -605,13 +620,15 @@ export const useLifeOSStore = create<LifeOSState>()(
       // Phase 6: Documents, Emergency & Checklists
       documents: [],
 
-      addDocument: (doc) =>
+      addDocument: (doc) => {
+        if (!useAuthStore.getState().requireAuth('vault documents')) return;
         set((state) => ({
           documents: [
             ...state.documents,
             { ...doc, id: `doc_${Date.now()}` },
           ],
-        })),
+        }));
+      },
 
       deleteDocument: (id) =>
         set((state) => ({

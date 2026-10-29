@@ -19,8 +19,10 @@ import {
   Compass,
   Calculator,
   Award,
+  Flame,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FireCalculatorWidget } from './FireCalculatorWidget';
 
 export const GoalMilestoneManager: React.FC = () => {
   const {
@@ -33,8 +35,8 @@ export const GoalMilestoneManager: React.FC = () => {
 
   const currentRate = CURRENCY_CONFIGS[currency].rateFromUSD;
 
-  // Active view toggle: 'BUCKETS' vs 'SIP_SIMULATOR'
-  const [activeView, setActiveView] = useState<'BUCKETS' | 'SIP_SIMULATOR'>('BUCKETS');
+  // Active view toggle: 'BUCKETS' vs 'FIRE_CALCULATOR' vs 'SIP_SIMULATOR'
+  const [activeView, setActiveView] = useState<'BUCKETS' | 'FIRE_CALCULATOR' | 'SIP_SIMULATOR'>('BUCKETS');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
 
   // Modals
@@ -243,154 +245,174 @@ export const GoalMilestoneManager: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
-          {/* View Toggle */}
-          <div className="flex items-center rounded-xl bg-[#faf8f5] p-1 border border-[#e8e0d1]">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 w-full md:w-auto">
+          {/* View Toggle (3 Views) */}
+          <div className="grid grid-cols-3 sm:flex items-center rounded-2xl bg-[#faf8f5] p-1 border border-[#e8e0d1] w-full sm:w-auto shadow-2xs">
             <button
               onClick={() => setActiveView('BUCKETS')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeView === 'BUCKETS'
                   ? 'bg-[#9e783e] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#f0ebe1]'
               }`}
             >
-              <Compass className="h-3.5 w-3.5" />
-              <span>Life Goal Buckets</span>
+              <Compass className="h-3.5 w-3.5 shrink-0" />
+              <span className="sm:hidden text-[11px]">Goals</span>
+              <span className="hidden sm:inline">Life Goals</span>
             </button>
+
+            <button
+              onClick={() => setActiveView('FIRE_CALCULATOR')}
+              className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeView === 'FIRE_CALCULATOR'
+                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#f0ebe1]'
+              }`}
+            >
+              <Flame className="h-3.5 w-3.5 text-amber-300 shrink-0" />
+              <span className="sm:hidden text-[11px]">FIRE Calc</span>
+              <span className="hidden sm:inline">FIRE Calculator</span>
+            </button>
+
             <button
               onClick={() => setActiveView('SIP_SIMULATOR')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeView === 'SIP_SIMULATOR'
                   ? 'bg-[#9e783e] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#f0ebe1]'
               }`}
             >
-              <Calculator className="h-3.5 w-3.5" />
-              <span>Compound SIP Planner</span>
+              <Calculator className="h-3.5 w-3.5 shrink-0" />
+              <span className="sm:hidden text-[11px]">SIP</span>
+              <span className="hidden sm:inline">SIP Simulator</span>
             </button>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              if (currency === 'INR') {
-                setNewTargetToday(5000000);
-                setNewCurrentSaved(1000000);
-                setNewMonthlySip(20000);
-              } else {
-                setNewTargetToday(60000);
-                setNewCurrentSaved(12000);
-                setNewMonthlySip(250);
-              }
-              setIsAddModalOpen(true);
-            }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] shadow-md shadow-[#9e783e]/20 transition-all cursor-pointer"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Create Goal</span>
-          </motion.button>
+          {activeView === 'BUCKETS' && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                if (currency === 'INR') {
+                  setNewTargetToday(5000000);
+                  setNewCurrentSaved(1000000);
+                  setNewMonthlySip(20000);
+                } else {
+                  setNewTargetToday(60000);
+                  setNewCurrentSaved(12000);
+                  setNewMonthlySip(250);
+                }
+                setIsAddModalOpen(true);
+              }}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] shadow-md shadow-[#9e783e]/20 transition-all cursor-pointer w-full sm:w-auto"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Create Goal</span>
+            </motion.button>
+          )}
         </div>
       </div>
 
-      {/* Top 4 KPI Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Goals Target Corpus */}
-        <motion.div
-          whileHover={{ y: -3, transition: { duration: 0.2 } }}
-          className="rounded-2xl border border-[#e8e0d1] bg-white p-5 shadow-xs"
-        >
-          <div className="flex items-center justify-between text-xs mb-2">
-            <span className="font-bold text-slate-600 uppercase text-[11px] tracking-wider">
-              Total Goals Target Value
-            </span>
-            <div className="p-2 rounded-xl bg-[#faf7f0] text-[#9e783e]">
-              <Target className="h-4 w-4" />
+      {/* Top 4 KPI Metrics (Goal Buckets Only) */}
+      {activeView === 'BUCKETS' && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Total Goals Target Corpus */}
+          <motion.div
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="rounded-2xl border border-[#e8e0d1] bg-white p-5 shadow-xs"
+          >
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="font-bold text-slate-600 uppercase text-[11px] tracking-wider">
+                Total Goals Target Value
+              </span>
+              <div className="p-2 rounded-xl bg-[#faf7f0] text-[#9e783e]">
+                <Target className="h-4 w-4" />
+              </div>
             </div>
-          </div>
-          <div className="text-2xl font-extrabold font-mono text-slate-900">
-            {formatCurrency(metrics.totalTargetUSD, currency)}
-          </div>
-          <span className="text-xs text-slate-500 font-medium mt-1.5 block">
-            Across {goals.length} tracked life milestones
-          </span>
-        </motion.div>
+            <div className="text-2xl font-extrabold font-mono text-slate-900">
+              {formatCurrency(metrics.totalTargetUSD, currency)}
+            </div>
+            <span className="text-xs text-slate-500 font-medium mt-1.5 block">
+              Across {goals.length} tracked life milestones
+            </span>
+          </motion.div>
 
-        {/* Current Accumulated Savings */}
-        <motion.div
-          whileHover={{ y: -3, transition: { duration: 0.2 } }}
-          className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50/40 via-white to-white p-5 shadow-xs"
-        >
-          <div className="flex items-center justify-between text-xs mb-2">
-            <span className="font-bold text-emerald-900 uppercase text-[11px] tracking-wider">
-              Accumulated Capital Saved
-            </span>
-            <div className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
-              <CheckCircle2 className="h-4 w-4" />
+          {/* Current Accumulated Savings */}
+          <motion.div
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50/40 via-white to-white p-5 shadow-xs"
+          >
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="font-bold text-emerald-900 uppercase text-[11px] tracking-wider">
+                Accumulated Capital Saved
+              </span>
+              <div className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
+                <CheckCircle2 className="h-4 w-4" />
+              </div>
             </div>
-          </div>
-          <div className="text-2xl font-extrabold font-mono text-emerald-950">
-            {formatCurrency(metrics.totalSavedUSD, currency)}
-          </div>
-          <div className="mt-2.5">
-            <div className="flex items-center justify-between text-[11px] text-slate-600 font-semibold mb-1">
-              <span>Funded So Far</span>
-              <span>{metrics.overallProgressPercent.toFixed(1)}%</span>
+            <div className="text-2xl font-extrabold font-mono text-emerald-950">
+              {formatCurrency(metrics.totalSavedUSD, currency)}
             </div>
-            <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
-              <div
-                className="h-full bg-emerald-600 rounded-full transition-all duration-700"
-                style={{ width: `${metrics.overallProgressPercent}%` }}
-              />
+            <div className="mt-2.5">
+              <div className="flex items-center justify-between text-[11px] text-slate-600 font-semibold mb-1">
+                <span>Funded So Far</span>
+                <span>{metrics.overallProgressPercent.toFixed(1)}%</span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                <div
+                  className="h-full bg-emerald-600 rounded-full transition-all duration-700"
+                  style={{ width: `${metrics.overallProgressPercent}%` }}
+                />
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Active Monthly SIP Allocated */}
-        <motion.div
-          whileHover={{ y: -3, transition: { duration: 0.2 } }}
-          className="rounded-2xl border border-[#e8e0d1] bg-white p-5 shadow-xs"
-        >
-          <div className="flex items-center justify-between text-xs mb-2">
-            <span className="font-bold text-slate-600 uppercase text-[11px] tracking-wider">
-              Allocated Monthly SIP
-            </span>
-            <div className="p-2 rounded-xl bg-indigo-100 text-indigo-700">
-              <TrendingUp className="h-4 w-4" />
+          {/* Active Monthly SIP Allocated */}
+          <motion.div
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="rounded-2xl border border-[#e8e0d1] bg-white p-5 shadow-xs"
+          >
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="font-bold text-slate-600 uppercase text-[11px] tracking-wider">
+                Allocated Monthly SIP
+              </span>
+              <div className="p-2 rounded-xl bg-indigo-100 text-indigo-700">
+                <TrendingUp className="h-4 w-4" />
+              </div>
             </div>
-          </div>
-          <div className="text-2xl font-extrabold font-mono text-slate-900">
-            {formatCurrency(metrics.totalMonthlySipUSD, currency)}
-            <span className="text-xs font-normal text-slate-400 ml-1">/mo</span>
-          </div>
-          <span className="text-xs text-slate-500 font-medium mt-1.5 block">
-            Systematic monthly wealth accumulation
-          </span>
-        </motion.div>
+            <div className="text-2xl font-extrabold font-mono text-slate-900">
+              {formatCurrency(metrics.totalMonthlySipUSD, currency)}
+              <span className="text-xs font-normal text-slate-400 ml-1">/mo</span>
+            </div>
+            <span className="text-xs text-slate-500 font-medium mt-1.5 block">
+              Systematic monthly wealth accumulation
+            </span>
+          </motion.div>
 
-        {/* Goals on Track */}
-        <motion.div
-          whileHover={{ y: -3, transition: { duration: 0.2 } }}
-          className="rounded-2xl border border-sky-200 bg-gradient-to-b from-sky-50/40 via-white to-white p-5 shadow-xs"
-        >
-          <div className="flex items-center justify-between text-xs mb-2">
-            <span className="font-bold text-sky-900 uppercase text-[11px] tracking-wider">
-              Milestones on Track
-            </span>
-            <div className="p-2 rounded-xl bg-sky-100 text-sky-700">
-              <Award className="h-4 w-4" />
+          {/* Goals on Track */}
+          <motion.div
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="rounded-2xl border border-sky-200 bg-gradient-to-b from-sky-50/40 via-white to-white p-5 shadow-xs"
+          >
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="font-bold text-sky-900 uppercase text-[11px] tracking-wider">
+                Milestones on Track
+              </span>
+              <div className="p-2 rounded-xl bg-sky-100 text-sky-700">
+                <Award className="h-4 w-4" />
+              </div>
             </div>
-          </div>
-          <div className="text-2xl font-extrabold font-mono text-sky-950">
-            {metrics.goalsOnTrackCount} / {goals.length}
-          </div>
-          <span className="text-xs text-sky-700 font-semibold mt-1.5 block">
-            {metrics.goalsOnTrackCount === goals.length
-              ? 'All milestones fully aligned!'
-              : `${goals.length - metrics.goalsOnTrackCount} goals need SIP adjustment`}
-          </span>
-        </motion.div>
-      </div>
+            <div className="text-2xl font-extrabold font-mono text-sky-950">
+              {metrics.goalsOnTrackCount} / {goals.length}
+            </div>
+            <span className="text-xs text-sky-700 font-semibold mt-1.5 block">
+              {metrics.goalsOnTrackCount === goals.length
+                ? 'All milestones fully aligned!'
+                : `${goals.length - metrics.goalsOnTrackCount} goals need SIP adjustment`}
+            </span>
+          </motion.div>
+        </div>
+      )}
 
       {/* VIEW 1: LIFE GOAL BUCKETS */}
       {activeView === 'BUCKETS' && (
@@ -614,7 +636,20 @@ export const GoalMilestoneManager: React.FC = () => {
         </div>
       )}
 
-      {/* VIEW 2: COMPOUND SIP & STEP-UP SIMULATOR */}
+      {/* VIEW 2: FIRE NUMBER CALCULATOR & TIMELINE VISUALIZATION */}
+      {activeView === 'FIRE_CALCULATOR' && (
+        <motion.div
+          key="fire-calculator-view"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2 }}
+        >
+          <FireCalculatorWidget />
+        </motion.div>
+      )}
+
+      {/* VIEW 3: COMPOUND SIP & STEP-UP SIMULATOR */}
       {activeView === 'SIP_SIMULATOR' && (
         <motion.div
           initial={{ opacity: 0, y: 6 }}

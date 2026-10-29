@@ -6,8 +6,8 @@ test.describe('Authentication & Branding Tests', () => {
     await page.goto('/');
 
     // Verify Auth Screen is visible
-    await expect(page.getByText('One Operating System for Your Whole Life')).toBeVisible();
-    await expect(page.getByText('Sign in to access your synchronized wealth dashboard')).toBeVisible();
+    await expect(page.getByText('Sign In (Existing)')).toBeVisible();
+    await expect(page.getByText('Instant Demo Access (Preloaded Portfolio)')).toBeVisible();
 
     // Fill login form
     const emailInput = page.getByPlaceholder('name@example.com');
@@ -59,6 +59,6 @@ test.describe('Authentication & Branding Tests', () => {
     await signOutBtn.click();
 
     // Verify redirected back to AuthScreen
-    await expect(page.getByText('One Operating System for Your Whole Life')).toBeVisible();
+    await expect(page.getByText('Sign In (Existing)')).toBeVisible();
   });
 });

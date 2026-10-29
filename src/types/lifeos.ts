@@ -4,7 +4,8 @@ export type LifeOSSection =
   | 'wellness'
   | 'productivity'
   | 'learning'
-  | 'lifeadmin';
+  | 'lifeadmin'
+  | 'community';
 
 export type FinanceSubTab =
   | 'summary'

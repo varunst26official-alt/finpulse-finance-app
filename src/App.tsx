@@ -12,12 +12,16 @@ import { WellnessWorkspace } from '@/components/wellness/WellnessWorkspace';
 import { ProductivityWorkspace } from '@/components/productivity/ProductivityWorkspace';
 import { LearningWorkspace } from '@/components/learning/LearningWorkspace';
 import { LifeAdminWorkspace } from '@/components/lifeadmin/LifeAdminWorkspace';
+import { CommunityWorkspace } from '@/components/community/CommunityWorkspace';
+import { MasteryXpToast } from '@/components/community/MasteryXpToast';
 import { AdaptiveBlueprintModal } from '@/components/adaptive/AdaptiveBlueprintModal';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
 import { FloatingAiChatWidget } from '@/components/ai/FloatingAiChatWidget';
 import { FloatingDailyPlanWidget } from '@/components/wellness/FloatingDailyPlanWidget';
 import { DemoTourGuide } from '@/components/tour/DemoTourGuide';
 import { AuthScreen } from '@/components/auth/AuthScreen';
+import { DemoAuthModal } from '@/components/auth/DemoAuthModal';
+import { DemoModeBanner } from '@/components/layout/DemoModeBanner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function App() {
@@ -42,6 +46,9 @@ export function App() {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f4f6fa] text-[#243047] flex flex-col font-sans selection:bg-[#a47b3c] selection:text-white">
+      {/* 0. Demo Mode Read-Only Banner */}
+      <DemoModeBanner />
+
       {/* 1. LifeOS Sticky Command Header (72px) */}
       <LifeOSHeader />
 
@@ -82,6 +89,9 @@ export function App() {
 
             {/* Workspace 6: Life Administration (Document Vault, Renewals, Household) */}
             {currentSection === 'lifeadmin' && <LifeAdminWorkspace />}
+
+            {/* Workspace 7: Community, Ranks & Section-Wise Points Leaderboard */}
+            {currentSection === 'community' && <CommunityWorkspace />}
           </motion.div>
         </AnimatePresence>
       </main>
@@ -96,7 +106,9 @@ export function App() {
       {/* 5. Mobile Native Bottom Navigation Bar */}
       <MobileBottomNav />
 
-      {/* 6. Modals & Onboarding Tour */}
+      {/* 6. Modals, XP Celebration Toast & Onboarding Tour */}
+      <DemoAuthModal />
+      <MasteryXpToast />
       <DemoTourGuide />
       <AdaptiveBlueprintModal />
       <FloatingDailyPlanWidget />
