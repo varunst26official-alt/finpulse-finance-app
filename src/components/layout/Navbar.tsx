@@ -2,16 +2,17 @@ import React from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { Currency } from '@/types/finance';
-import { Plus, Wallet, Globe, LogOut, Compass, Sparkles, RotateCcw } from 'lucide-react';
+import { Plus, Wallet, Globe, LogOut, Compass, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTourStore } from '@/stores/tourStore';
+import { resetAllUserData } from '@/services/userStorage';
 
 interface NavbarProps {
   onOpenAddModal: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
-  const { currency, setCurrency, assets, resetToFreshPortfolio, loadDemoSampleData } = useFinanceStore();
+  const { currency, setCurrency } = useFinanceStore();
   const { user, logout } = useAuthStore();
   const { startTour } = useTourStore();
 
@@ -82,36 +83,27 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
           <span className="hidden md:inline">Demo Tour</span>
         </motion.button>
 
-        {/* Toggle Sample Demo vs Fresh 0-Balance */}
-        {assets.length > 0 ? (
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={() => {
-              if (window.confirm('Reset your portfolio to fresh ₹0 balance? This clears prefilled demo data.')) {
-                resetToFreshPortfolio(user?.fullName);
-              }
-            }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#faf8f5] border border-rose-200 text-xs font-bold text-rose-700 hover:bg-rose-50 transition-all cursor-pointer shadow-xs"
-            title="Clear prefilled sample data and reset to fresh 0-balance portfolio"
-          >
-            <RotateCcw className="h-3.5 w-3.5 text-rose-600" />
-            <span className="hidden lg:inline">Start Fresh (₹0)</span>
-            <span className="lg:hidden sm:inline hidden">Fresh ₹0</span>
-          </motion.button>
-        ) : (
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={loadDemoSampleData}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs font-bold text-[#866632] hover:bg-[#f4efe4] hover:text-slate-900 transition-all cursor-pointer shadow-xs"
-            title="Load prefilled sample investments and trades for demonstration"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-[#9e783e]" />
-            <span className="hidden lg:inline">Load Demo Data</span>
-            <span className="lg:hidden sm:inline hidden">Demo</span>
-          </motion.button>
-        )}
+        {/* Reset to Fresh button (Always available: wipes all data for this user across Finance & LifeOS) */}
+        <motion.button
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => {
+            if (
+              window.confirm(
+                'Are you sure you want to completely clear all data for your account? This will wipe all transactions, investments, debts, calendar events, documents, and emergency profiles.'
+              )
+            ) {
+              resetAllUserData(user);
+              alert('All account data has been completely cleared to a fresh 0-balance state.');
+            }
+          }}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#faf8f5] border border-rose-200 text-xs font-bold text-rose-700 hover:bg-rose-50 transition-all cursor-pointer shadow-xs"
+          title="Completely reset all account data to a fresh 0-balance state"
+        >
+          <RotateCcw className="h-3.5 w-3.5 text-rose-600" />
+          <span className="hidden lg:inline">Reset to Fresh</span>
+          <span className="lg:hidden sm:inline hidden">Reset</span>
+        </motion.button>
 
         {/* Add Transaction Button with Tactile Animation */}
         <motion.button
@@ -143,6 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
               onClick={logout}
               className="flex items-center justify-center h-9 w-9 rounded-xl bg-[#f4efe4] border border-[#ded3bf] text-slate-600 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors cursor-pointer"
               title="Sign Out"
+              aria-label="Sign Out"
             >
               <LogOut className="h-4 w-4" />
             </motion.button>

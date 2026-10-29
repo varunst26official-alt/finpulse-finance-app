@@ -380,6 +380,7 @@ export const TransactionTable: React.FC = () => {
             }
             className="p-1.5 rounded-xl bg-white hover:bg-slate-100 disabled:opacity-40 border border-[#e8e0d1] text-slate-700 transition-all cursor-pointer"
             title="Previous Month"
+            aria-label="Previous Month"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -404,6 +405,7 @@ export const TransactionTable: React.FC = () => {
             }
             className="p-1.5 rounded-xl bg-white hover:bg-slate-100 disabled:opacity-40 border border-[#e8e0d1] text-slate-700 transition-all cursor-pointer"
             title="Next Month"
+            aria-label="Next Month"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -721,6 +723,7 @@ export const TransactionTable: React.FC = () => {
                           onClick={() => deleteTransaction(tx.id)}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                           title="Delete trade"
+                          aria-label="Delete trade"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -807,6 +810,7 @@ export const TransactionTable: React.FC = () => {
                           onClick={() => deleteExpense(exp.id)}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                           title="Delete expense"
+                          aria-label="Delete expense"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -887,6 +891,7 @@ export const TransactionTable: React.FC = () => {
                           onClick={() => deleteIncome(inc.id)}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                           title="Delete income entry"
+                          aria-label="Delete income entry"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -959,6 +964,7 @@ export const TransactionTable: React.FC = () => {
                             onClick={() => deleteAsset(asset.id)}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                             title="Delete fixed asset"
+                            aria-label="Delete fixed asset"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>

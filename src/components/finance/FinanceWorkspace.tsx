@@ -7,16 +7,15 @@ import { PortfolioChart } from '@/components/dashboard/PortfolioChart';
 import { AllocationDonut } from '@/components/dashboard/AllocationDonut';
 import { HoldingsTable } from '@/components/dashboard/HoldingsTable';
 import { TransactionTable } from '@/components/transactions/TransactionTable';
-import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
 import { GoalMilestoneManager } from '@/components/goals/GoalMilestoneManager';
 import { SmartIngestionHubModal } from '@/components/finance/SmartIngestionHubModal';
 import { BankStatementManager } from '@/components/finance/BankStatementManager';
 import { CommitmentsVaultManager } from '@/components/finance/CommitmentsVaultManager';
+import { CalendarLedgerManager } from '@/components/finance/CalendarLedgerManager';
 import {
   PieChart,
   Landmark,
   ShieldCheck,
-  ArrowLeftRight,
   CalendarDays,
   Target,
   LayoutDashboard,
@@ -42,10 +41,9 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
   }[] = [
     { id: 'summary', label: 'Overview', icon: LayoutDashboard },
     { id: 'bank-statements', label: 'Bank & UPI Statements', icon: Landmark },
-    { id: 'calendar', label: 'Financial Calendar', icon: CalendarDays },
+    { id: 'calendar', label: 'Calendar & Ledger', icon: CalendarDays },
     { id: 'holdings', label: 'Holdings & Allocation', icon: PieChart },
     { id: 'commitments', label: 'Debts, Protection & Vault', icon: ShieldCheck },
-    { id: 'ledger', label: 'Transactions Ledger', icon: ArrowLeftRight },
     { id: 'goals', label: 'Goals & Milestones', icon: Target },
   ];
 
@@ -60,13 +58,14 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
         secondaryActionLabel="Open Financial Calendar"
       />
 
-      {/* 2. In-Workspace Sub-module Navigation Pills */}
+      {/* 2. In-Workspace Sub-module Navigation Pills with Mobile Snap Scrolling */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none w-full sm:w-auto min-w-0 max-w-full">
+        <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs scrollbar-none w-full sm:w-auto min-w-0 max-w-full scroll-smooth snap-x">
           {subTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive =
               financeSubTab === tab.id ||
+              (tab.id === 'calendar' && financeSubTab === 'ledger') ||
               (tab.id === 'commitments' &&
                 (financeSubTab === 'debts' ||
                   financeSubTab === 'insurance' ||
@@ -76,7 +75,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setFinanceSubTab(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 snap-start ${
                   isActive
                     ? 'bg-[#16836b] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-[#f5f7fb]'
@@ -139,8 +138,12 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
             <BankStatementManager onOpenIngestion={() => setIsIngestionOpen(true)} />
           )}
 
-          {/* Sub-tab 3: Financial Calendar (3rd in section) */}
-          {financeSubTab === 'calendar' && <FinancialCalendarWidget />}
+          {/* Sub-tab 3: Combined Financial Calendar & Transactions Ledger */}
+          {(financeSubTab === 'calendar' || financeSubTab === 'ledger') && (
+            <CalendarLedgerManager
+              initialView={financeSubTab === 'ledger' ? 'ledger' : 'calendar'}
+            />
+          )}
 
           {/* Sub-tab 4: Holdings & Asset Allocation */}
           {financeSubTab === 'holdings' && (
@@ -173,10 +176,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
             />
           )}
 
-          {/* Sub-tab 6: Transactions Ledger */}
-          {financeSubTab === 'ledger' && <TransactionTable />}
-
-          {/* Sub-tab 7: Goals & Milestones */}
+          {/* Sub-tab 6: Goals & Milestones */}
           {financeSubTab === 'goals' && <GoalMilestoneManager />}
         </motion.div>
       </AnimatePresence>

@@ -29,10 +29,11 @@ import {
   INITIAL_DEBTS,
   INITIAL_POLICIES,
   INITIAL_GOALS,
+  INITIAL_CALENDAR_EVENTS,
 } from '@/data/mockData';
 import { CATEGORY_COLORS, formatCurrency } from '@/utils/formatters';
 import { parseTradeIntent } from '@/services/aiTradeParser';
-import { api } from '@/services/apiClient';
+import { api, hasAuthToken } from '@/services/apiClient';
 import { useLifeOSStore } from './lifeosStore';
 
 export type NavigationTab =
@@ -87,13 +88,13 @@ interface FinanceState {
   addAsset: (asset: Omit<Asset, 'id' | 'lastUpdated'>) => void;
   deleteAsset: (id: string) => void;
   addExpense: (expense: Omit<ExpenseItem, 'id'>) => void;
-  addExpensesBatch: (expenses: Omit<ExpenseItem, 'id'>[]) => void;
+  addExpensesBatch: (expenses: Omit<ExpenseItem, 'id'>[]) => number;
   deleteExpense: (id: string) => void;
   addIncome: (income: Omit<IncomeItem, 'id'>) => void;
-  addIncomesBatch: (incomes: Omit<IncomeItem, 'id'>[]) => void;
+  addIncomesBatch: (incomes: Omit<IncomeItem, 'id'>[]) => number;
   deleteIncome: (id: string) => void;
   addCalendarEvent: (event: Omit<CalendarEvent, 'id'>) => void;
-  addCalendarEventsBatch: (events: Omit<CalendarEvent, 'id'>[]) => void;
+  addCalendarEventsBatch: (events: Omit<CalendarEvent, 'id'>[]) => number;
   deleteCalendarEvent: (id: string) => void;
   toggleEventCompleted: (id: string) => void;
   addDebt: (debt: Omit<DebtItem, 'id' | 'repayments'>) => void;
@@ -140,9 +141,9 @@ export const useFinanceStore = create<FinanceState>()(
       expenses: [],
       incomes: [],
       calendarEvents: [],
-      debts: INITIAL_DEBTS,
-      policies: INITIAL_POLICIES,
-      goals: INITIAL_GOALS,
+      debts: [],
+      policies: [],
+      goals: [],
       emergencyTargetMonths: 6,
       history: [],
 
@@ -474,6 +475,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addExpensesBatch: (newExpensesData) => {
+        let addedCount = 0;
         set((state) => {
           // Deduplication key: date + title + amount + (UPI ID if present)
           const existingKeys = new Set(
@@ -503,10 +505,12 @@ export const useFinanceStore = create<FinanceState>()(
             }
           });
 
+          addedCount = uniqueItems.length;
           return {
             expenses: [...uniqueItems, ...state.expenses],
           };
         });
+        return addedCount;
       },
 
       deleteExpense: (id) => {
@@ -527,6 +531,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addIncomesBatch: (newIncomesData) => {
+        let addedCount = 0;
         set((state) => {
           const existingKeys = new Set(
             state.incomes.map((i) => {
@@ -555,10 +560,12 @@ export const useFinanceStore = create<FinanceState>()(
             }
           });
 
+          addedCount = uniqueItems.length;
           return {
             incomes: [...uniqueItems, ...state.incomes],
           };
         });
+        return addedCount;
       },
 
       deleteIncome: (id) => {
@@ -582,6 +589,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addCalendarEventsBatch: (newEventsData) => {
+        let addedCount = 0;
         set((state) => {
           const existingKeys = new Set(
             state.calendarEvents.map((ev) => {
@@ -611,10 +619,12 @@ export const useFinanceStore = create<FinanceState>()(
             }
           });
 
+          addedCount = uniqueItems.length;
           return {
             calendarEvents: [...state.calendarEvents, ...uniqueItems],
           };
         });
+        return addedCount;
       },
 
       deleteCalendarEvent: (id) => {
@@ -752,7 +762,9 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       resetToFreshPortfolio: (userName = 'User') => {
-        api.portfolio.resetToFresh().catch((err) => console.warn('[SQLite Sync] Reset portfolio:', err));
+        if (hasAuthToken()) {
+          api.portfolio.resetToFresh().catch((err) => console.debug('[SQLite Sync] Reset portfolio:', err));
+        }
         set({
           assets: [],
           transactions: [],
@@ -781,13 +793,19 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       loadDemoSampleData: () => {
-        // Demo sample data removed per production policy
+        set({
+          debts: INITIAL_DEBTS,
+          policies: INITIAL_POLICIES,
+          goals: INITIAL_GOALS,
+          calendarEvents: INITIAL_CALENDAR_EVENTS,
+        });
       },
 
       syncWithBackend: async () => {
+        if (!hasAuthToken()) return;
         try {
           const res = await api.portfolio.fetchData();
-          if (res.success && res.data) {
+          if (res && res.success && res.data) {
             set({
               assets: res.data.assets,
               transactions: res.data.transactions,
@@ -798,8 +816,8 @@ export const useFinanceStore = create<FinanceState>()(
               emergencyTargetMonths: res.data.emergencyTargetMonths || get().emergencyTargetMonths,
             });
           }
-        } catch (err) {
-          console.warn('[SQLite Sync] Backend unreachable (offline mode):', err);
+        } catch (err: any) {
+          if (import.meta.env.DEV) console.debug('[SQLite Sync] Local mode active:', err?.message);
         }
       },
 

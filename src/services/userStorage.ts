@@ -1,6 +1,7 @@
 import { useFinanceStore } from '@/stores/financeStore';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { useAuthStore, UserProfile } from '@/stores/authStore';
+import { api, hasAuthToken } from '@/services/apiClient';
 
 export function getUserStorageKey(user: { id?: string; email?: string } | null): string {
   if (!user || (!user.id && !user.email)) return 'lifeos_guest';
@@ -75,6 +76,19 @@ export function loadUserScopedData(user: UserProfile | null): void {
 
     if (rawFin) {
       const parsedFin = JSON.parse(rawFin);
+      // Sanitize legacy mock defaults so no user starts with hardcoded mock debts/policies/calendar
+      if (parsedFin.debts && parsedFin.debts.length > 0 && parsedFin.debts[0]?.id === 'debt_hdfc_home_1') {
+        parsedFin.debts = [];
+      }
+      if (parsedFin.policies && parsedFin.policies.length > 0 && parsedFin.policies[0]?.id === 'pol_hdfc_ergo_optima') {
+        parsedFin.policies = [];
+      }
+      if (parsedFin.goals && parsedFin.goals.length > 0 && parsedFin.goals[0]?.id === 'goal_emergency_fund') {
+        parsedFin.goals = [];
+      }
+      if (parsedFin.calendarEvents && parsedFin.calendarEvents.length > 0 && parsedFin.calendarEvents[0]?.id === 'cev_sip_nifty50_01') {
+        parsedFin.calendarEvents = [];
+      }
       useFinanceStore.setState(parsedFin);
     } else {
       // Clean slate for new user
@@ -83,6 +97,14 @@ export function loadUserScopedData(user: UserProfile | null): void {
 
     if (rawLife) {
       const parsedLife = JSON.parse(rawLife);
+      // Sanitize legacy mock emergency info
+      if (
+        parsedLife.emergencyInfo &&
+        (parsedLife.emergencyInfo.primaryContactName === 'Jane S T' ||
+          parsedLife.emergencyInfo.physicianName === 'Dr. Arvind Sharma (MD)')
+      ) {
+        parsedLife.emergencyInfo = null;
+      }
       // Sanitize legacy mock defaults so no user starts with hardcoded biometric data
       if (
         parsedLife.userInputs &&
@@ -124,6 +146,38 @@ export function loadUserScopedData(user: UserProfile | null): void {
 }
 
 let isClearing = false;
+
+/**
+ * Fully wipes and resets ALL data for the given user:
+ * 1. Resets in-memory Finance store (assets, txns, expenses, incomes, debts, policies, goals, calendar)
+ * 2. Resets in-memory LifeOS store (tasks, habits, documents, emergencyInfo, checklists, wellness, meals, workouts)
+ * 3. Removes stored keys from localStorage for this user and saves empty clean state
+ * 4. Calls backend API reset (/api/portfolio/reset) if authenticated
+ */
+export function resetAllUserData(user: UserProfile | null): void {
+  isClearing = true;
+  try {
+    useFinanceStore.getState().resetToFreshPortfolio(user?.fullName || 'User');
+    useLifeOSStore.getState().resetToFreshState();
+
+    if (user && user.email) {
+      const userKey = getUserStorageKey(user);
+      try {
+        localStorage.removeItem(`${userKey}_finance`);
+        localStorage.removeItem(`${userKey}_lifeos`);
+      } catch (e) {
+        console.warn('[UserStorage] Failed to clear local storage:', e);
+      }
+      saveUserScopedData(user);
+    }
+
+    if (hasAuthToken()) {
+      api.portfolio.resetToFresh().catch((err) => console.debug('[SQLite Sync] Reset portfolio backend:', err));
+    }
+  } finally {
+    isClearing = false;
+  }
+}
 
 /**
  * Clears all in-memory stores back to a clean empty state on logout.

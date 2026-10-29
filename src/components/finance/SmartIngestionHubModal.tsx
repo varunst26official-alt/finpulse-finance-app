@@ -28,6 +28,7 @@ import {
 } from '@/services/gpayStatementService';
 import { IncomeCategory, CalendarEvent } from '@/types/finance';
 import { EXPENSE_CATEGORY_LABELS } from '@/utils/formatters';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import {
   X,
   UploadCloud,
@@ -53,6 +54,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose);
   const { addExpensesBatch, addIncomesBatch, addCalendarEventsBatch, addAsset } = useFinanceStore();
   const [activeTab, setActiveTab] = useState<IngestionTab>('statements');
 
@@ -277,7 +279,10 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
       const debits = toImport.filter((item) => item.type !== 'CREDIT');
       const credits = toImport.filter((item) => item.type === 'CREDIT');
 
+      let attemptedTransactions = 0;
+
       if (debits.length > 0) {
+        attemptedTransactions += debits.length;
         const expensePayloads = debits.map((item) => ({
           title: item.merchant,
           category: item.category,
@@ -287,11 +292,12 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
           date: normalizeDateToISO(item.date),
           notes: `Auto-Ingested via Quantra Engine (${item.accountRef || 'UPI'})`,
         }));
-        addExpensesBatch(expensePayloads);
-        count += expensePayloads.length;
+        const added = addExpensesBatch(expensePayloads);
+        count += added;
       }
 
       if (credits.length > 0) {
+        attemptedTransactions += credits.length;
         const incomePayloads = credits.map((item) => {
           let incomeCat: IncomeCategory = 'OTHER_INCOME';
           const lowerName = item.merchant.toLowerCase();
@@ -311,8 +317,8 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
             notes: `Auto-Ingested Inflow (${item.accountRef || 'Bank/UPI'})`,
           };
         });
-        addIncomesBatch(incomePayloads);
-        count += incomePayloads.length;
+        const added = addIncomesBatch(incomePayloads);
+        count += added;
       }
 
       // Store in Calendar date-wise
@@ -344,7 +350,14 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
       });
     }
 
-    setSuccessMessage(`🎉 Successfully imported ${count} items into your Quantra portfolio!`);
+    const totalRequested = (parsedExpenses.length > 0 ? parsedExpenses.filter((e) => selectedIds.has(e.id)).length : 0) + (parsedHoldings.length > 0 ? parsedHoldings.filter((h) => selectedIds.has(h.id)).length : 0);
+    const skipped = totalRequested - count;
+
+    if (skipped > 0) {
+      setSuccessMessage(`🎉 Imported ${count} new items (${skipped} existing duplicates safely skipped)`);
+    } else {
+      setSuccessMessage(`🎉 Successfully imported ${count} items into your Quantra portfolio!`);
+    }
     try {
       saveUserScopedData(useAuthStore.getState().user);
     } catch (_) {}
@@ -354,8 +367,12 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-md overflow-y-auto">
+    <div
+      {...overlayProps}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-md overflow-y-auto cursor-pointer"
+    >
       <motion.div
+        {...contentProps}
         initial={{ opacity: 0, scale: 0.95, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 16 }}
@@ -450,9 +467,9 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                 <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                   <label
                     htmlFor="statement-file-input"
-                    className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-indigo-700 border border-indigo-300 text-xs font-heading font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1.5 hover:scale-[1.02]"
+                    className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-heading font-bold shadow-md shadow-indigo-600/20 transition-all cursor-pointer flex items-center gap-2 hover:scale-[1.02]"
                   >
-                    <UploadCloud className="w-3.5 h-3.5" />
+                    <UploadCloud className="w-4 h-4" />
                     <span>Upload CSV / CAS File</span>
                   </label>
 
@@ -461,24 +478,26 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                     placeholder="PDF Password (Usually your PAN)"
                     value={casPanInput}
                     onChange={(e) => setCasPanInput(e.target.value)}
-                    className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-600 w-52 shadow-xs"
+                    className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-600 w-56 shadow-xs"
                   />
+                </div>
 
-                  <button
-                    onClick={handleLoadSampleDematCas}
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-heading font-bold shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Run Demo CAS Statement</span>
-                  </button>
-
+                {/* Subtle test / demo sample option without intrusive preloaded buttons */}
+                <div className="mt-3 pt-3 border-t border-indigo-100/60 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+                  <span>Want to test with sample data?</span>
                   <button
                     data-testid="load-gpay-btn"
                     onClick={handleLoadSampleGpay}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-heading font-bold shadow-sm transition-all cursor-pointer flex items-center gap-1.5 hover:scale-[1.02]"
+                    className="text-indigo-600 hover:text-indigo-800 font-semibold hover:underline cursor-pointer"
                   >
-                    <Zap className="w-3.5 h-3.5" />
-                    <span>⚡ Load Google Pay (726 Txns • ₹9.5L)</span>
+                    Sample GPay CSV
+                  </button>
+                  <span>•</span>
+                  <button
+                    onClick={handleLoadSampleDematCas}
+                    className="text-indigo-600 hover:text-indigo-800 font-semibold hover:underline cursor-pointer"
+                  >
+                    Sample Demat CAS
                   </button>
                 </div>
               </div>

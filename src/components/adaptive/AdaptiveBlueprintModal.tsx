@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { UserAdaptiveInputs, computeAdaptiveBlueprint } from '@/services/adaptiveLifeEngine';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import {
   Sparkles,
   X,
@@ -21,6 +22,8 @@ export const AdaptiveBlueprintModal: React.FC = () => {
 
   const [formInputs, setFormInputs] = useState<UserAdaptiveInputs>(userInputs);
   const [activeTab, setActiveTab] = useState<'PARAMETERS' | 'PREVIEW'>('PARAMETERS');
+
+  const { overlayProps, contentProps } = useModalDismiss(isAiModalOpen, () => setIsAiModalOpen(false));
 
   useEffect(() => {
     if (isAiModalOpen) {
@@ -53,8 +56,12 @@ export const AdaptiveBlueprintModal: React.FC = () => {
   if (!isAiModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/50 backdrop-blur-xs select-none overflow-y-auto">
+    <div
+      {...overlayProps}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/50 backdrop-blur-xs select-none overflow-y-auto cursor-pointer"
+    >
       <motion.div
+        {...contentProps}
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
+import { useAuthStore } from '@/stores/authStore';
 import { SectionHero } from '@/components/layout/SectionHero';
 import {
   FileText,
@@ -55,19 +56,35 @@ export const LifeAdminWorkspace: React.FC = () => {
   const [chkDueDate, setChkDueDate] = useState('2027-03-31');
   const [chkCat, setChkCat] = useState('TAX');
 
-  // Emergency Form State
-  const [emBlood, setEmBlood] = useState(emergencyInfo?.bloodGroup || 'O+ Positive');
-  const [emAllergies, setEmAllergies] = useState(emergencyInfo?.allergies || 'None reported');
-  const [emConditions, setEmConditions] = useState(emergencyInfo?.medicalConditions || 'None reported');
-  const [emPrimName, setEmPrimName] = useState(emergencyInfo?.primaryContactName || 'Jane S T');
-  const [emPrimPhone, setEmPrimPhone] = useState(emergencyInfo?.primaryContactPhone || '+91 98765 11223');
-  const [emPrimRel, setEmPrimRel] = useState(emergencyInfo?.primaryContactRelation || 'Spouse');
-  const [emSecName, setEmSecName] = useState(emergencyInfo?.secondaryContactName || 'Senior Varun');
-  const [emSecPhone, setEmSecPhone] = useState(emergencyInfo?.secondaryContactPhone || '+91 98765 44332');
-  const [emPhysician, setEmPhysician] = useState(emergencyInfo?.physicianName || 'Dr. Arvind Sharma (MD)');
-  const [emPhysicianPhone, setEmPhysicianPhone] = useState(emergencyInfo?.physicianPhone || '+91 80 4123 4567');
-  const [emTpa, setEmTpa] = useState(emergencyInfo?.tpaHelpline || '1800-102-4477 (HDFC ERGO Cashless)');
-  const [emNotes, setEmNotes] = useState(emergencyInfo?.notes || 'Emergency card in wallet');
+  // Emergency Form State - Empty defaults for clean user isolation
+  const [emBlood, setEmBlood] = useState(emergencyInfo?.bloodGroup || '');
+  const [emAllergies, setEmAllergies] = useState(emergencyInfo?.allergies || '');
+  const [emConditions, setEmConditions] = useState(emergencyInfo?.medicalConditions || '');
+  const [emPrimName, setEmPrimName] = useState(emergencyInfo?.primaryContactName || '');
+  const [emPrimPhone, setEmPrimPhone] = useState(emergencyInfo?.primaryContactPhone || '');
+  const [emPrimRel, setEmPrimRel] = useState(emergencyInfo?.primaryContactRelation || '');
+  const [emSecName, setEmSecName] = useState(emergencyInfo?.secondaryContactName || '');
+  const [emSecPhone, setEmSecPhone] = useState(emergencyInfo?.secondaryContactPhone || '');
+  const [emPhysician, setEmPhysician] = useState(emergencyInfo?.physicianName || '');
+  const [emPhysicianPhone, setEmPhysicianPhone] = useState(emergencyInfo?.physicianPhone || '');
+  const [emTpa, setEmTpa] = useState(emergencyInfo?.tpaHelpline || '');
+  const [emNotes, setEmNotes] = useState(emergencyInfo?.notes || '');
+
+  // Synchronize state when store updates or resets
+  useEffect(() => {
+    setEmBlood(emergencyInfo?.bloodGroup || '');
+    setEmAllergies(emergencyInfo?.allergies || '');
+    setEmConditions(emergencyInfo?.medicalConditions || '');
+    setEmPrimName(emergencyInfo?.primaryContactName || '');
+    setEmPrimPhone(emergencyInfo?.primaryContactPhone || '');
+    setEmPrimRel(emergencyInfo?.primaryContactRelation || '');
+    setEmSecName(emergencyInfo?.secondaryContactName || '');
+    setEmSecPhone(emergencyInfo?.secondaryContactPhone || '');
+    setEmPhysician(emergencyInfo?.physicianName || '');
+    setEmPhysicianPhone(emergencyInfo?.physicianPhone || '');
+    setEmTpa(emergencyInfo?.tpaHelpline || '');
+    setEmNotes(emergencyInfo?.notes || '');
+  }, [emergencyInfo]);
 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
@@ -139,17 +156,19 @@ export const LifeAdminWorkspace: React.FC = () => {
     showToast('Emergency medical profile updated and saved to database!');
   };
 
+  const user = useAuthStore((s) => s.user);
+
   const handleCopyEmergencySummary = () => {
     const summary = `🚨 EMERGENCY MEDICAL SUMMARY 🚨
-Name: Varun S T
-Blood Group: ${emBlood}
-Allergies: ${emAllergies}
-Medical Conditions: ${emConditions}
-Primary Contact: ${emPrimName} (${emPrimRel}) - ${emPrimPhone}
-Secondary Contact: ${emSecName} - ${emSecPhone}
-Physician: ${emPhysician} - ${emPhysicianPhone}
-24x7 TPA Helpline: ${emTpa}
-Notes: ${emNotes}`;
+Name: ${user?.fullName || 'User'}
+Blood Group: ${emBlood || 'Not specified'}
+Allergies: ${emAllergies || 'None reported'}
+Medical Conditions: ${emConditions || 'None reported'}
+Primary Contact: ${emPrimName || 'None configured'} ${emPrimRel ? `(${emPrimRel})` : ''} - ${emPrimPhone || 'N/A'}
+Secondary Contact: ${emSecName || 'None configured'} - ${emSecPhone || 'N/A'}
+Physician: ${emPhysician || 'None configured'} - ${emPhysicianPhone || 'N/A'}
+24x7 TPA Helpline: ${emTpa || 'N/A'}
+Notes: ${emNotes || 'None'}`;
 
     navigator.clipboard.writeText(summary);
     showToast('Emergency summary copied to clipboard! 📋');
@@ -212,14 +231,26 @@ Notes: ${emNotes}`;
         <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#6f7c91]">Emergency Readiness</span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm ${
+              emergencyInfo && (emergencyInfo.bloodGroup || emergencyInfo.primaryContactName)
+                ? 'bg-emerald-50 text-emerald-600'
+                : 'bg-slate-100 text-slate-400'
+            }`}>
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3">
-            100%
+            {emergencyInfo && (emergencyInfo.bloodGroup || emergencyInfo.primaryContactName) ? '100%' : '0%'}
           </div>
-          <div className="text-[11px] text-emerald-600 mt-1 font-bold">Contacts & TPA Hotline active</div>
+          <div className={`text-[11px] mt-1 font-bold ${
+            emergencyInfo && (emergencyInfo.bloodGroup || emergencyInfo.primaryContactName)
+              ? 'text-emerald-600'
+              : 'text-slate-400'
+          }`}>
+            {emergencyInfo && (emergencyInfo.bloodGroup || emergencyInfo.primaryContactName)
+              ? 'Contacts & TPA Hotline active'
+              : 'Not configured yet'}
+          </div>
         </article>
 
         <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs">
@@ -368,6 +399,7 @@ Notes: ${emNotes}`;
       {/* ======================================================== */}
       {activeTab === 'EMERGENCY' && (
         <section className="bg-white border border-[#e4e9f1] rounded-3xl p-6 shadow-xs space-y-6">
+          {/* Subheader and Action buttons */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#e4e9f1] gap-3">
             <div>
               <div className="flex items-center gap-2">
@@ -382,81 +414,105 @@ Notes: ${emNotes}`;
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleCopyEmergencySummary}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
-              >
-                <Copy className="w-3.5 h-3.5" />
-                <span>Copy Summary</span>
-              </button>
+              {emergencyInfo && (emergencyInfo.bloodGroup || emergencyInfo.primaryContactName) && (
+                <button
+                  onClick={handleCopyEmergencySummary}
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copy Summary</span>
+                </button>
+              )}
               <button
                 onClick={() => setIsEmergencyEditOpen(true)}
-                className="px-3.5 py-1.5 rounded-xl bg-[#b27635] hover:bg-[#976025] text-white text-xs font-bold transition-all cursor-pointer"
+                className="px-3.5 py-1.5 rounded-xl bg-[#b27635] hover:bg-[#976025] text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
               >
-                Edit Emergency Details
+                <Plus className="w-3.5 h-3.5" />
+                <span>{emergencyInfo && (emergencyInfo.bloodGroup || emergencyInfo.primaryContactName) ? 'Edit Emergency Details' : 'Configure Profile'}</span>
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {/* Medical Vital Strip */}
-            <div className="p-5 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-3">
-              <div className="flex items-center gap-2 text-rose-700 text-xs font-extrabold uppercase">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Medical Vitals</span>
+          {!emergencyInfo || (!emergencyInfo.bloodGroup && !emergencyInfo.primaryContactName && !emergencyInfo.physicianName) ? (
+            <div className="py-12 px-6 text-center border-2 border-dashed border-[#e4e9f1] rounded-2xl bg-[#faf8f5]/60 flex flex-col items-center justify-center space-y-3">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center text-2xl shadow-xs">
+                🚨
               </div>
-              <div>
-                <span className="text-[11px] text-slate-500 font-medium">Blood Group:</span>
-                <div className="text-xl font-extrabold text-rose-900">{emBlood}</div>
-              </div>
-              <div>
-                <span className="text-[11px] text-slate-500 font-medium">Known Drug/Food Allergies:</span>
-                <div className="text-xs font-bold text-slate-800">{emAllergies}</div>
-              </div>
-              <div>
-                <span className="text-[11px] text-slate-500 font-medium">Chronic Medical Conditions:</span>
-                <div className="text-xs font-bold text-slate-800">{emConditions}</div>
-              </div>
+              <h4 className="font-extrabold text-sm sm:text-base text-[#243047]">
+                No Emergency Medical Profile Configured
+              </h4>
+              <p className="text-xs text-[#6f7c91] max-w-md mx-auto leading-relaxed">
+                Your emergency readiness profile is completely fresh. Add your blood group, emergency next-of-kin contacts, primary physician, and insurance TPA helpline for critical hospital admissions.
+              </p>
+              <button
+                onClick={() => setIsEmergencyEditOpen(true)}
+                className="mt-2 px-5 py-2.5 rounded-xl bg-[#b27635] hover:bg-[#976025] text-white text-xs font-bold transition-all shadow-md shadow-[#b27635]/20 cursor-pointer flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Configure Emergency Details</span>
+              </button>
             </div>
-
-            {/* Primary & Secondary Contacts */}
-            <div className="p-5 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
-              <div className="flex items-center gap-2 text-amber-800 text-xs font-extrabold uppercase">
-                <Phone className="w-4 h-4" />
-                <span>Emergency Contacts</span>
-              </div>
-              <div>
-                <span className="text-[11px] text-slate-500 font-medium">Primary Contact:</span>
-                <div className="text-sm font-extrabold text-slate-800">
-                  {emPrimName} ({emPrimRel})
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {/* Medical Vital Strip */}
+              <div className="p-5 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-3">
+                <div className="flex items-center gap-2 text-rose-700 text-xs font-extrabold uppercase">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Medical Vitals</span>
                 </div>
-                <div className="text-xs font-mono font-bold text-amber-900">{emPrimPhone}</div>
+                <div>
+                  <span className="text-[11px] text-slate-500 font-medium">Blood Group:</span>
+                  <div className="text-xl font-extrabold text-rose-900">{emBlood || 'Not specified'}</div>
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 font-medium">Known Drug/Food Allergies:</span>
+                  <div className="text-xs font-bold text-slate-800">{emAllergies || 'None reported'}</div>
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 font-medium">Chronic Medical Conditions:</span>
+                  <div className="text-xs font-bold text-slate-800">{emConditions || 'None reported'}</div>
+                </div>
               </div>
-              <div className="pt-2 border-t border-amber-200">
-                <span className="text-[11px] text-slate-500 font-medium">Secondary Contact:</span>
-                <div className="text-sm font-extrabold text-slate-800">{emSecName}</div>
-                <div className="text-xs font-mono font-bold text-amber-900">{emSecPhone}</div>
-              </div>
-            </div>
 
-            {/* Hospital & Insurance Hotline */}
-            <div className="p-5 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-3">
-              <div className="flex items-center gap-2 text-blue-800 text-xs font-extrabold uppercase">
-                <HeartHandshake className="w-4 h-4" />
-                <span>Physician & Cashless TPA</span>
+              {/* Primary & Secondary Contacts */}
+              <div className="p-5 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
+                <div className="flex items-center gap-2 text-amber-800 text-xs font-extrabold uppercase">
+                  <Phone className="w-4 h-4" />
+                  <span>Emergency Contacts</span>
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 font-medium">Primary Contact:</span>
+                  <div className="text-sm font-extrabold text-slate-800">
+                    {emPrimName || 'None configured'} {emPrimRel ? `(${emPrimRel})` : ''}
+                  </div>
+                  {emPrimPhone && <div className="text-xs font-mono font-bold text-amber-900">{emPrimPhone}</div>}
+                </div>
+                <div className="pt-2 border-t border-amber-200">
+                  <span className="text-[11px] text-slate-500 font-medium">Secondary Contact:</span>
+                  <div className="text-sm font-extrabold text-slate-800">{emSecName || 'None configured'}</div>
+                  {emSecPhone && <div className="text-xs font-mono font-bold text-amber-900">{emSecPhone}</div>}
+                </div>
               </div>
-              <div>
-                <span className="text-[11px] text-slate-500 font-medium">Primary Physician:</span>
-                <div className="text-sm font-extrabold text-slate-800">{emPhysician}</div>
-                <div className="text-xs font-mono font-bold text-blue-900">{emPhysicianPhone}</div>
-              </div>
-              <div className="pt-2 border-t border-blue-200">
-                <span className="text-[11px] text-slate-500 font-medium">24x7 Cashless Hospital TPA Helpline:</span>
-                <div className="text-sm font-extrabold text-blue-900 font-mono">{emTpa}</div>
-                <p className="text-[10px] text-slate-600 mt-0.5">{emNotes}</p>
+
+              {/* Hospital & Insurance Hotline */}
+              <div className="p-5 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-3">
+                <div className="flex items-center gap-2 text-blue-800 text-xs font-extrabold uppercase">
+                  <HeartHandshake className="w-4 h-4" />
+                  <span>Physician & Cashless TPA</span>
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 font-medium">Primary Physician:</span>
+                  <div className="text-sm font-extrabold text-slate-800">{emPhysician || 'Not assigned'}</div>
+                  {emPhysicianPhone && <div className="text-xs font-mono font-bold text-blue-900">{emPhysicianPhone}</div>}
+                </div>
+                <div className="pt-2 border-t border-blue-200">
+                  <span className="text-[11px] text-slate-500 font-medium">24x7 Cashless Hospital TPA Helpline:</span>
+                  <div className="text-sm font-extrabold text-blue-900 font-mono">{emTpa || 'Not configured'}</div>
+                  {emNotes && <p className="text-[10px] text-slate-600 mt-0.5">{emNotes}</p>}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </section>
       )}
 

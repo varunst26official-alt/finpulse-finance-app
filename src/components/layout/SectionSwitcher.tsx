@@ -127,7 +127,7 @@ export const SectionSwitcher: React.FC = () => {
   return (
     <nav
       id="tour-section-switcher"
-      className="bg-white border-b border-[#e4e9f1] px-3 sm:px-7 py-2.5 sm:py-3 sticky top-[68px] sm:top-[72px] z-20 select-none overflow-x-auto scrollbar-none w-full max-w-full min-w-0"
+      className="bg-white border-b border-[#e4e9f1] px-3 sm:px-7 py-2.5 sm:py-3 sticky top-[68px] sm:top-[72px] z-20 select-none overflow-x-auto scrollbar-none w-full max-w-full min-w-0 scroll-smooth snap-x snap-mandatory"
       aria-label="Application sections"
     >
       <div className="flex items-center gap-2 min-w-max">
@@ -140,7 +140,7 @@ export const SectionSwitcher: React.FC = () => {
               whileTap={{ scale: 0.97 }}
               key={key}
               onClick={() => setCurrentSection(key)}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer border whitespace-nowrap ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer border whitespace-nowrap snap-start ${
                 isActive
                   ? 'border-transparent font-extrabold shadow-xs'
                   : 'text-[#5e6b80] border-transparent hover:bg-[#f5f7fb] hover:text-[#243047]'

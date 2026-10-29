@@ -27,6 +27,7 @@ import {
   PAYMENT_METHOD_LABELS,
   CURRENCY_CONFIGS,
 } from '@/utils/formatters';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type ModalMode = 'TRADE' | 'FIXED_ASSET' | 'EXPENSE' | 'INCOME';
@@ -37,6 +38,7 @@ interface AddTransactionModalProps {
 }
 
 export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClose }) => {
+  const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose);
   const {
     currency,
     addTransaction,
@@ -216,8 +218,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/45 backdrop-blur-xs">
+    <div
+      {...overlayProps}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
+    >
       <motion.div
+        {...contentProps}
         initial={{ scale: 0.96, opacity: 0, y: 10 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.96, opacity: 0, y: 10 }}

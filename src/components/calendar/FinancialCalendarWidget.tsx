@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
 import {
   Calendar as CalendarIcon,
@@ -31,6 +31,7 @@ import {
   INCOME_CATEGORY_LABELS,
 } from '@/utils/formatters';
 import { normalizeDateToISO } from '@/services/gpayStatementService';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import {
   ResponsiveContainer,
   BarChart,
@@ -58,33 +59,59 @@ export const FinancialCalendarWidget: React.FC = () => {
 
   const currentRate = CURRENCY_CONFIGS[currency].rateFromUSD;
 
-  // Detect the best viewing month (Defaults to September 2026 if statement data is April-Sept, or current month if active)
+  // Detect the best viewing month (Defaults to October 2026 or latest active statement month)
   const defaultYearMonth = useMemo(() => {
-    let latest = '';
-    expenses.forEach((e) => e.date && e.date > latest && (latest = e.date));
-    incomes.forEach((i) => i.date && i.date > latest && (latest = i.date));
-    calendarEvents.forEach((c) => c.date && c.date > latest && (latest = c.date));
-    if (latest && latest.length >= 7) {
-      const [y, m] = latest.split('-');
-      return { year: parseInt(y, 10), month: parseInt(m, 10) - 1, fullDate: latest };
+    const validIsoDates: string[] = [];
+
+    const collectDate = (rawDate: any) => {
+      const iso = normalizeDateToISO(rawDate);
+      if (iso && /^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+        validIsoDates.push(iso);
+      }
+    };
+
+    expenses.forEach((e) => collectDate(e.date));
+    incomes.forEach((i) => collectDate(i.date));
+    calendarEvents.forEach((c) => collectDate(c.date));
+
+    if (validIsoDates.length > 0) {
+      validIsoDates.sort((a, b) => b.localeCompare(a));
+      const latest = validIsoDates[0];
+      const parts = latest.split('-');
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      if (!isNaN(y) && !isNaN(m) && y >= 2024 && y <= 2030 && m >= 0 && m <= 11) {
+        return { year: y, month: m, fullDate: latest };
+      }
     }
-    return { year: 2026, month: 8, fullDate: '2026-09-30' }; // September 2026
+
+    return { year: 2026, month: 9, fullDate: '2026-10-29' }; // October 2026
   }, [expenses, incomes, calendarEvents]);
 
-  // Active viewing date state
-  const [currentDate, setCurrentDate] = useState(
-    () => new Date(defaultYearMonth.year, defaultYearMonth.month, 1)
-  );
+  // Active viewing date state with fallback guards
+  const [currentDate, setCurrentDate] = useState(() => {
+    const y = defaultYearMonth.year || 2026;
+    const m = typeof defaultYearMonth.month === 'number' && !isNaN(defaultYearMonth.month) ? defaultYearMonth.month : 9;
+    return new Date(y, m, 1);
+  });
   const [selectedDateStr, setSelectedDateStr] = useState<string>(
-    () => defaultYearMonth.fullDate
+    () => defaultYearMonth.fullDate || '2026-10-29'
   );
   const [isDateInspectorOpen, setIsDateInspectorOpen] = useState(false);
+
+  // Auto-sync when statements or new calendar events are imported
+  useEffect(() => {
+    if (defaultYearMonth && defaultYearMonth.year && !isNaN(defaultYearMonth.month)) {
+      setCurrentDate(new Date(defaultYearMonth.year, defaultYearMonth.month, 1));
+      setSelectedDateStr(defaultYearMonth.fullDate);
+    }
+  }, [defaultYearMonth.year, defaultYearMonth.month]);
 
   // Modal State for Adding New Calendar Event
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
   const [eventType, setEventType] = useState<CalendarEventType>('PLANNED_EXPENSE');
-  const [eventDate, setEventDate] = useState('2026-09-30');
+  const [eventDate, setEventDate] = useState('2026-10-29');
   const [eventAmount, setEventAmount] = useState<number>(100);
   const [eventCategoryName, setEventCategoryName] = useState('General');
   const [eventNotes, setEventNotes] = useState('');
@@ -92,12 +119,22 @@ export const FinancialCalendarWidget: React.FC = () => {
   // Date Range Filtering for Report
   const [reportRange, setReportRange] = useState<'THIS_MONTH' | 'NEXT_30_DAYS' | 'NEXT_90_DAYS' | 'CUSTOM'>('THIS_MONTH');
   const [customStartDate, setCustomStartDate] = useState('2026-04-01');
-  const [customEndDate, setCustomEndDate] = useState('2026-10-31');
+  const [customEndDate, setCustomEndDate] = useState('2026-11-30');
   const [filterType, setFilterType] = useState<string>('ALL');
 
-  // Calendar calculations
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  // Dismissal hooks for Inspector drawer and Add Event modal
+  const { overlayProps: inspectorOverlayProps, contentProps: inspectorContentProps } = useModalDismiss(
+    isDateInspectorOpen,
+    () => setIsDateInspectorOpen(false)
+  );
+  const { overlayProps: addModalOverlayProps, contentProps: addModalContentProps } = useModalDismiss(
+    isAddModalOpen,
+    () => setIsAddModalOpen(false)
+  );
+
+  // Calendar calculations with NaN guards
+  const year = isNaN(currentDate.getTime()) ? 2026 : currentDate.getFullYear();
+  const month = isNaN(currentDate.getTime()) ? 9 : currentDate.getMonth();
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -119,9 +156,17 @@ export const FinancialCalendarWidget: React.FC = () => {
   };
 
   const handleToday = () => {
-    const today = new Date(2026, 8, 30); // Anchor to current active statement date
-    setCurrentDate(today);
-    setSelectedDateStr(today.toISOString().split('T')[0]);
+    const targetY = defaultYearMonth.year || 2026;
+    const targetM = typeof defaultYearMonth.month === 'number' ? defaultYearMonth.month : 9;
+    setCurrentDate(new Date(targetY, targetM, 1));
+    setSelectedDateStr(defaultYearMonth.fullDate || `${targetY}-${String(targetM + 1).padStart(2, '0')}-01`);
+  };
+
+  const handleJumpToActiveMonth = () => {
+    const targetY = defaultYearMonth.year || 2026;
+    const targetM = typeof defaultYearMonth.month === 'number' ? defaultYearMonth.month : 9;
+    setCurrentDate(new Date(targetY, targetM, 1));
+    setSelectedDateStr(defaultYearMonth.fullDate);
   };
 
   // Map of events keyed by YYYY-MM-DD (Unifying calendarEvents, expenses, incomes, debts EMIs & insurance renewals)
@@ -565,6 +610,24 @@ export const FinancialCalendarWidget: React.FC = () => {
           whileHover={{ y: -2, transition: { duration: 0.2 } }}
           className="lg:col-span-7 rounded-3xl border border-[#e8e0d1] bg-white p-6 shadow-xs space-y-4"
         >
+          {/* Active Month Alert if viewing an empty month */}
+          {allUnifiedEvents.length > 0 && rangeTotals.totalInflowUSD === 0 && rangeTotals.totalOutflowUSD === 0 && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200 text-xs text-amber-900 shadow-2xs">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>
+                  No entries recorded for <strong>{monthNames[month]} {year}</strong>. Active records found in <strong>{monthNames[defaultYearMonth.month]} {defaultYearMonth.year}</strong>.
+                </span>
+              </div>
+              <button
+                onClick={handleJumpToActiveMonth}
+                className="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shadow-xs transition-all cursor-pointer shrink-0 text-center"
+              >
+                Jump to {monthNames[defaultYearMonth.month]} {defaultYearMonth.year} →
+              </button>
+            </div>
+          )}
+
           {/* Month Navigation Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e8e0d1]">
             <div className="flex flex-wrap items-center gap-2">
@@ -598,7 +661,7 @@ export const FinancialCalendarWidget: React.FC = () => {
                 onClick={handleToday}
                 className="px-2.5 py-1 rounded-lg bg-[#faf8f5] border border-[#e8e0d1] text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-[#f4efe4] transition-colors cursor-pointer"
               >
-                Today
+                Active Date
               </button>
             </div>
 
@@ -607,6 +670,7 @@ export const FinancialCalendarWidget: React.FC = () => {
                 onClick={handlePrevMonth}
                 className="p-1.5 rounded-lg border border-[#e8e0d1] text-slate-600 hover:text-slate-900 hover:bg-[#faf8f5] transition-colors cursor-pointer"
                 title="Previous Month"
+                aria-label="Previous Month"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -614,6 +678,7 @@ export const FinancialCalendarWidget: React.FC = () => {
                 onClick={handleNextMonth}
                 className="p-1.5 rounded-lg border border-[#e8e0d1] text-slate-600 hover:text-slate-900 hover:bg-[#faf8f5] transition-colors cursor-pointer"
                 title="Next Month"
+                aria-label="Next Month"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -1040,8 +1105,12 @@ export const FinancialCalendarWidget: React.FC = () => {
       {/* Date Financial Details Inspector Modal */}
       <AnimatePresence>
         {isDateInspectorOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+          <div
+            {...inspectorOverlayProps}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs cursor-pointer"
+          >
             <motion.div
+              {...inspectorContentProps}
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
@@ -1197,8 +1266,12 @@ export const FinancialCalendarWidget: React.FC = () => {
       {/* Add Calendar Event Modal */}
       <AnimatePresence>
         {isAddModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs">
+          <div
+            {...addModalOverlayProps}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
+          >
             <motion.div
+              {...addModalContentProps}
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}

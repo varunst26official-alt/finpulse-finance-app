@@ -275,6 +275,66 @@ export const INITIAL_INCOMES: IncomeItem[] = [
 
 export const INITIAL_CALENDAR_EVENTS: CalendarEvent[] = [
   {
+    id: 'cal_oct_1',
+    title: 'Enterprise Tech Lead Salary Credit',
+    date: '2026-10-01',
+    type: 'EXPECTED_INCOME',
+    amount: 1950.0, // ~₹1,65,000
+    categoryName: 'Employment Salary',
+    isCompleted: true,
+    notes: 'HDFC Corporate Salary Account',
+  },
+  {
+    id: 'cal_oct_2',
+    title: 'Apartment Rent & Society Maintenance',
+    date: '2026-10-01',
+    type: 'PLANNED_EXPENSE',
+    amount: 320.0, // ~₹27,000
+    categoryName: 'Housing & Rent',
+    isCompleted: true,
+    notes: 'Auto-schedule transfer to landlord',
+  },
+  {
+    id: 'cal_oct_3',
+    title: 'Monthly SIP: Parag Parikh Flexi Cap & UTI Nifty 50',
+    date: '2026-10-05',
+    type: 'PLANNED_INVESTMENT',
+    amount: 415.0, // ~₹35,000
+    categoryName: 'Equity Mutual Funds',
+    isCompleted: true,
+    notes: 'BSE Star MF mandate auto-debit',
+  },
+  {
+    id: 'cal_oct_4',
+    title: 'Car Loan EMI (HDFC Bank Auto-Debit)',
+    date: '2026-10-05',
+    type: 'PLANNED_EXPENSE',
+    amount: 185.0, // ~₹15,600
+    categoryName: 'EMI & Loans',
+    isCompleted: true,
+    notes: 'Standing instruction active',
+  },
+  {
+    id: 'cal_oct_5',
+    title: 'Executive Quarterly Health & Diagnostic Panel',
+    date: '2026-10-12',
+    type: 'MEDICAL_CHECKUP',
+    amount: 75.0, // ~₹6,300
+    categoryName: 'Preventive Healthcare',
+    isCompleted: true,
+    notes: 'Apollo Clinic - Fasting lipid & HbA1c test',
+  },
+  {
+    id: 'cal_oct_6',
+    title: 'Electricity (BESCOM) & Fiber Broadband Bill',
+    date: '2026-10-15',
+    type: 'PLANNED_EXPENSE',
+    amount: 45.0, // ~₹3,800
+    categoryName: 'Utilities & Bills',
+    isCompleted: true,
+    notes: 'Auto-paid via BBPS UPI',
+  },
+  {
     id: 'cal_1',
     title: "Sister's 30th Birthday Dinner & Gift",
     date: '2026-10-28',
@@ -283,6 +343,16 @@ export const INITIAL_CALENDAR_EVENTS: CalendarEvent[] = [
     categoryName: 'Celebration & Gifts',
     isCompleted: false,
     notes: 'Reservation at The Leela Palace',
+  },
+  {
+    id: 'cal_oct_7',
+    title: 'Credit Card Statement Settlement (HDFC Millennia)',
+    date: '2026-10-29',
+    type: 'PLANNED_EXPENSE',
+    amount: 215.0, // ~₹18,150
+    categoryName: 'Credit Card Bill',
+    isCompleted: false,
+    notes: 'Total amount due auto-pay mandate',
   },
   {
     id: 'cal_2',

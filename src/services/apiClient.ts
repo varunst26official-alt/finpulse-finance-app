@@ -48,6 +48,11 @@ export function setStoredToken(token: string | null): void {
   }
 }
 
+/** Returns true if a valid auth token exists in storage */
+export function hasAuthToken(): boolean {
+  return !!getStoredToken();
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = getStoredToken();
   const headers: Record<string, string> = {
@@ -71,6 +76,13 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 
   return data as T;
+}
+
+async function authenticatedRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  if (!hasAuthToken()) {
+    throw new Error('[Local Mode] No auth token — skipping remote sync.');
+  }
+  return request<T>(endpoint, options);
 }
 
 export const api = {
@@ -131,24 +143,24 @@ export const api = {
         emergencyTargetMonths: number;
       };
     }> => {
-      return request('/portfolio/data');
+      return authenticatedRequest('/portfolio/data');
     },
 
     addAsset: async (asset: Partial<Asset>): Promise<{ success: boolean; assetId: string }> => {
-      return request('/portfolio/assets', {
+      return authenticatedRequest('/portfolio/assets', {
         method: 'POST',
         body: JSON.stringify(asset),
       });
     },
 
     deleteAsset: async (id: string): Promise<{ success: boolean }> => {
-      return request(`/portfolio/assets/${id}`, {
+      return authenticatedRequest(`/portfolio/assets/${id}`, {
         method: 'DELETE',
       });
     },
 
     resetToFresh: async (): Promise<{ success: boolean; message: string }> => {
-      return request('/portfolio/reset', {
+      return authenticatedRequest('/portfolio/reset', {
         method: 'POST',
       });
     },
@@ -163,14 +175,14 @@ export const api = {
   // Transactions
   transactions: {
     create: async (tx: Partial<Transaction>): Promise<{ success: boolean; transactionId: string }> => {
-      return request('/transactions', {
+      return authenticatedRequest('/transactions', {
         method: 'POST',
         body: JSON.stringify(tx),
       });
     },
 
     delete: async (id: string): Promise<{ success: boolean }> => {
-      return request(`/transactions/${id}`, {
+      return authenticatedRequest(`/transactions/${id}`, {
         method: 'DELETE',
       });
     },
@@ -179,7 +191,7 @@ export const api = {
   // Debts & Repayments
   debts: {
     create: async (debt: Partial<DebtItem>): Promise<{ success: boolean; debtId: string }> => {
-      return request('/debts', {
+      return authenticatedRequest('/debts', {
         method: 'POST',
         body: JSON.stringify(debt),
       });
@@ -189,14 +201,14 @@ export const api = {
       debtId: string,
       payload: { amount: number; date?: string; type?: string; notes?: string }
     ): Promise<{ success: boolean; repaymentId: string; newOutstandingBalance: number }> => {
-      return request(`/debts/${debtId}/repay`, {
+      return authenticatedRequest(`/debts/${debtId}/repay`, {
         method: 'POST',
         body: JSON.stringify(payload),
       });
     },
 
     delete: async (id: string): Promise<{ success: boolean }> => {
-      return request(`/debts/${id}`, {
+      return authenticatedRequest(`/debts/${id}`, {
         method: 'DELETE',
       });
     },
@@ -205,21 +217,21 @@ export const api = {
   // Insurance Policies
   policies: {
     create: async (policy: Partial<InsurancePolicy>): Promise<{ success: boolean; policyId: string }> => {
-      return request('/policies', {
+      return authenticatedRequest('/policies', {
         method: 'POST',
         body: JSON.stringify(policy),
       });
     },
 
     update: async (id: string, payload: Partial<InsurancePolicy>): Promise<{ success: boolean }> => {
-      return request(`/policies/${id}`, {
+      return authenticatedRequest(`/policies/${id}`, {
         method: 'PUT',
         body: JSON.stringify(payload),
       });
     },
 
     delete: async (id: string): Promise<{ success: boolean }> => {
-      return request(`/policies/${id}`, {
+      return authenticatedRequest(`/policies/${id}`, {
         method: 'DELETE',
       });
     },
@@ -228,21 +240,21 @@ export const api = {
   // Goals
   goals: {
     create: async (goal: Partial<GoalItem>): Promise<{ success: boolean; goalId: string }> => {
-      return request('/goals', {
+      return authenticatedRequest('/goals', {
         method: 'POST',
         body: JSON.stringify(goal),
       });
     },
 
     contribute: async (id: string, amount: number): Promise<{ success: boolean; newSaved: number; isAchieved: boolean }> => {
-      return request(`/goals/${id}/contribute`, {
+      return authenticatedRequest(`/goals/${id}/contribute`, {
         method: 'POST',
         body: JSON.stringify({ amount }),
       });
     },
 
     delete: async (id: string): Promise<{ success: boolean }> => {
-      return request(`/goals/${id}`, {
+      return authenticatedRequest(`/goals/${id}`, {
         method: 'DELETE',
       });
     },
@@ -251,20 +263,20 @@ export const api = {
   // Financial Calendar
   calendar: {
     create: async (event: Partial<CalendarEvent>): Promise<{ success: boolean; eventId: string }> => {
-      return request('/calendar', {
+      return authenticatedRequest('/calendar', {
         method: 'POST',
         body: JSON.stringify(event),
       });
     },
 
     toggle: async (id: string): Promise<{ success: boolean }> => {
-      return request(`/calendar/${id}/toggle`, {
+      return authenticatedRequest(`/calendar/${id}/toggle`, {
         method: 'PUT',
       });
     },
 
     delete: async (id: string): Promise<{ success: boolean }> => {
-      return request(`/calendar/${id}`, {
+      return authenticatedRequest(`/calendar/${id}`, {
         method: 'DELETE',
       });
     },
@@ -290,25 +302,25 @@ export const api = {
         blueprint?: AdaptiveLifeBlueprint;
       };
     }> => {
-      return request('/lifeos/data');
+      return authenticatedRequest('/lifeos/data');
     },
 
     createTask: async (task: Partial<TaskItem>): Promise<{ success: boolean; taskId: string }> => {
-      return request('/lifeos/tasks', {
+      return authenticatedRequest('/lifeos/tasks', {
         method: 'POST',
         body: JSON.stringify(task),
       });
     },
 
     updateTask: async (id: string, updates: Partial<TaskItem>): Promise<{ success: boolean }> => {
-      return request(`/lifeos/tasks/${id}`, {
+      return authenticatedRequest(`/lifeos/tasks/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(updates),
       });
     },
 
     deleteTask: async (id: string): Promise<{ success: boolean }> => {
-      return request(`/lifeos/tasks/${id}`, {
+      return authenticatedRequest(`/lifeos/tasks/${id}`, {
         method: 'DELETE',
       });
     },
@@ -326,7 +338,7 @@ export const api = {
         caloriesLogged: number;
       };
     }> => {
-      return request('/lifeos/wellness/log', {
+      return authenticatedRequest('/lifeos/wellness/log', {
         method: 'POST',
         body: JSON.stringify(payload),
       });
@@ -339,7 +351,7 @@ export const api = {
       caloriesTarget?: number;
       waterTargetLiters?: number;
     }): Promise<{ success: boolean }> => {
-      return request('/lifeos/wellness/metrics', {
+      return authenticatedRequest('/lifeos/wellness/metrics', {
         method: 'PATCH',
         body: JSON.stringify(payload),
       });

@@ -131,8 +131,8 @@ export async function detectUserLocation(): Promise<UserLocationProfile> {
       } catch (e) {
         console.warn('[LocationService] Nominatim reverse-geocode failed, falling back:', e);
       }
-    } catch (gpsError) {
-      console.warn('[LocationService] Browser GPS permission denied or timed out:', gpsError);
+    } catch (_gpsError) {
+      // GPS permission denied or timed out — silently fall back to IP/timezone profile
     }
   }
 
@@ -159,8 +159,8 @@ export async function detectUserLocation(): Promise<UserLocationProfile> {
         };
       }
     }
-  } catch (ipError) {
-    console.warn('[LocationService] IP Geolocation lookup unavailable, using timezone fallback:', ipError);
+  } catch (_ipError) {
+    // IP Geolocation unavailable — silently fall back to timezone profile
   }
 
   // 3. Timezone Fallback
