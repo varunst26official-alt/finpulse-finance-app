@@ -12,6 +12,7 @@ import { EmergencyVaultHealthScore } from '@/components/health/EmergencyVaultHea
 import { TransactionTable } from '@/components/transactions/TransactionTable';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
 import { GoalMilestoneManager } from '@/components/goals/GoalMilestoneManager';
+import { SmartIngestionHubModal } from '@/components/finance/SmartIngestionHubModal';
 import {
   PieChart,
   Landmark,
@@ -22,6 +23,7 @@ import {
   Target,
   LayoutDashboard,
   Plus,
+  Zap,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -33,6 +35,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
   onOpenAddTradeModal,
 }) => {
   const { financeSubTab, setFinanceSubTab } = useLifeOSStore();
+  const [isIngestionOpen, setIsIngestionOpen] = React.useState(false);
 
   const subTabs: {
     id: FinanceSubTab;
@@ -84,13 +87,23 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
           })}
         </div>
 
-        <button
-          onClick={onOpenAddTradeModal}
-          className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-md shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Record Trade / Inflow</span>
-        </button>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <button
+            onClick={() => setIsIngestionOpen(true)}
+            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 text-white text-xs font-extrabold shadow-md shadow-indigo-600/20 hover:scale-[1.02] transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+          >
+            <Zap className="w-3.5 h-3.5 text-cyan-300" />
+            <span>⚡ Auto-Import (Demat & UPI)</span>
+          </button>
+
+          <button
+            onClick={onOpenAddTradeModal}
+            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-md shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Record Trade</span>
+          </button>
+        </div>
       </div>
 
       {/* 3. Sub-module Active View Container with Crossfade */}
@@ -153,6 +166,12 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
           {financeSubTab === 'goals' && <GoalMilestoneManager />}
         </motion.div>
       </AnimatePresence>
+
+      {/* Quantra Smart Ingestion Hub Modal (Demat CAS, Bank Statement & SMS) */}
+      <SmartIngestionHubModal
+        isOpen={isIngestionOpen}
+        onClose={() => setIsIngestionOpen(false)}
+      />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { useLifeOSStore } from '@/stores/lifeosStore';
 import { useTourStore } from '@/stores/tourStore';
 import { Currency } from '@/types/finance';
 import { CURRENCY_CONFIGS } from '@/utils/formatters';
+import { QuantraLogo } from '@/components/ui/QuantraLogo';
 import {
   Bell,
   ChevronDown,
@@ -36,20 +37,8 @@ export const LifeOSHeader: React.FC = () => {
 
   return (
     <header className="h-[68px] sm:h-[72px] bg-white border-b border-[#e4e9f1] px-3 sm:px-7 flex items-center justify-between sticky top-0 z-30 select-none w-full max-w-full min-w-0">
-      {/* Brand Identity */}
-      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        <div className="w-8 h-8 sm:w-[38px] sm:h-[38px] rounded-xl bg-[#17365d] text-white font-extrabold flex items-center justify-center text-sm sm:text-lg shadow-sm shadow-[#17365d]/30 shrink-0">
-          L
-        </div>
-        <div>
-          <div className="text-base sm:text-xl font-extrabold text-[#243047] tracking-tight leading-tight">
-            LifeOS
-          </div>
-          <div className="text-[11px] font-semibold text-[#6f7c91] hidden sm:block">
-            Your personal command centre
-          </div>
-        </div>
-      </div>
+      {/* Brand Identity - Quantra */}
+      <QuantraLogo size="md" variant="horizontal" animated={true} />
 
       {/* Header Actions */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
