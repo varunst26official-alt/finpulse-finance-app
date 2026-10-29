@@ -27,7 +27,10 @@ import {
   CALENDAR_EVENT_LABELS,
   CALENDAR_EVENT_COLORS,
   CURRENCY_CONFIGS,
+  EXPENSE_CATEGORY_LABELS,
+  INCOME_CATEGORY_LABELS,
 } from '@/utils/formatters';
+import { normalizeDateToISO } from '@/services/gpayStatementService';
 import {
   ResponsiveContainer,
   BarChart,
@@ -43,6 +46,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 export const FinancialCalendarWidget: React.FC = () => {
   const {
     calendarEvents,
+    expenses,
+    incomes,
     currency,
     addCalendarEvent,
     deleteCalendarEvent,
@@ -54,6 +59,7 @@ export const FinancialCalendarWidget: React.FC = () => {
   // Active viewing date state (Defaults to November 2026 for rich mock data)
   const [currentDate, setCurrentDate] = useState(new Date(2026, 10, 1)); // Nov 2026
   const [selectedDateStr, setSelectedDateStr] = useState<string>('2026-11-01');
+  const [isDateInspectorOpen, setIsDateInspectorOpen] = useState(false);
 
   // Modal State for Adding New Calendar Event
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -99,19 +105,68 @@ export const FinancialCalendarWidget: React.FC = () => {
     setSelectedDateStr(today.toISOString().split('T')[0]);
   };
 
-  // Map of events keyed by YYYY-MM-DD
+  // Map of events keyed by YYYY-MM-DD (Unifying calendarEvents, expenses & incomes)
   const eventsByDate = useMemo(() => {
     const map: Record<string, CalendarEvent[]> = {};
+
     calendarEvents.forEach((ev) => {
-      if (!map[ev.date]) map[ev.date] = [];
-      map[ev.date].push(ev);
+      const d = normalizeDateToISO(ev.date);
+      if (!map[d]) map[d] = [];
+      map[d].push({ ...ev, date: d });
     });
+
+    expenses.forEach((exp) => {
+      const d = normalizeDateToISO(exp.date);
+      if (!d) return;
+      if (!map[d]) map[d] = [];
+      const already = map[d].some(
+        (e) => e.title === exp.title && Math.abs(e.amount - exp.amount) < 0.01
+      );
+      if (!already) {
+        map[d].push({
+          id: `exp_${exp.id}`,
+          title: exp.title,
+          date: d,
+          type: 'PLANNED_EXPENSE',
+          amount: exp.amount,
+          categoryName: EXPENSE_CATEGORY_LABELS[exp.category] || exp.category,
+          isCompleted: true,
+          notes: exp.notes,
+        });
+      }
+    });
+
+    incomes.forEach((inc) => {
+      const d = normalizeDateToISO(inc.date);
+      if (!d) return;
+      if (!map[d]) map[d] = [];
+      const already = map[d].some(
+        (e) => e.title === inc.source && Math.abs(e.amount - inc.amount) < 0.01
+      );
+      if (!already) {
+        map[d].push({
+          id: `inc_${inc.id}`,
+          title: inc.source,
+          date: d,
+          type: 'EXPECTED_INCOME',
+          amount: inc.amount,
+          categoryName: INCOME_CATEGORY_LABELS[inc.category] || inc.category,
+          isCompleted: true,
+          notes: inc.notes,
+        });
+      }
+    });
+
     return map;
-  }, [calendarEvents]);
+  }, [calendarEvents, expenses, incomes]);
+
+  const allUnifiedEvents = useMemo(() => {
+    return Object.values(eventsByDate).flat();
+  }, [eventsByDate]);
 
   // Filtered Events based on report range
   const filteredReportEvents = useMemo(() => {
-    return calendarEvents.filter((ev) => {
+    return allUnifiedEvents.filter((ev) => {
       const matchesType = filterType === 'ALL' || ev.type === filterType;
       let inRange = false;
 
@@ -438,11 +493,34 @@ export const FinancialCalendarWidget: React.FC = () => {
           className="lg:col-span-7 rounded-3xl border border-[#e8e0d1] bg-white p-6 shadow-xs space-y-4"
         >
           {/* Month Navigation Bar */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#e8e0d1]">
-            <div className="flex items-center gap-2">
-              <h4 className="text-base sm:text-lg font-bold text-slate-900">
-                {monthNames[month]} {year}
-              </h4>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e8e0d1]">
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Month Selector Dropdown */}
+              <select
+                value={month}
+                onChange={(e) => setCurrentDate(new Date(year, parseInt(e.target.value, 10), 1))}
+                className="rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-2.5 py-1 text-xs font-bold text-slate-800 cursor-pointer focus:outline-hidden"
+              >
+                {monthNames.map((name, idx) => (
+                  <option key={idx} value={idx}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Year Selector Dropdown */}
+              <select
+                value={year}
+                onChange={(e) => setCurrentDate(new Date(parseInt(e.target.value, 10), month, 1))}
+                className="rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-2 py-1 text-xs font-bold text-slate-800 cursor-pointer focus:outline-hidden"
+              >
+                {[2024, 2025, 2026, 2027, 2028].map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+
               <button
                 onClick={handleToday}
                 className="px-2.5 py-1 rounded-lg bg-[#faf8f5] border border-[#e8e0d1] text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-[#f4efe4] transition-colors cursor-pointer"
@@ -451,16 +529,18 @@ export const FinancialCalendarWidget: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 self-end sm:self-auto">
               <button
                 onClick={handlePrevMonth}
                 className="p-1.5 rounded-lg border border-[#e8e0d1] text-slate-600 hover:text-slate-900 hover:bg-[#faf8f5] transition-colors cursor-pointer"
+                title="Previous Month"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
               <button
                 onClick={handleNextMonth}
                 className="p-1.5 rounded-lg border border-[#e8e0d1] text-slate-600 hover:text-slate-900 hover:bg-[#faf8f5] transition-colors cursor-pointer"
+                title="Next Month"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -501,7 +581,10 @@ export const FinancialCalendarWidget: React.FC = () => {
               return (
                 <div
                   key={dayNum}
-                  onClick={() => setSelectedDateStr(dateStr)}
+                  onClick={() => {
+                    setSelectedDateStr(dateStr);
+                    if (dayEvents.length > 0) setIsDateInspectorOpen(true);
+                  }}
                   className={`h-18 rounded-2xl p-1.5 flex flex-col justify-between text-xs transition-all cursor-pointer border ${
                     isSelected
                       ? 'border-[#9e783e] bg-[#faf8f5] shadow-xs ring-2 ring-[#9e783e]/20'
@@ -620,30 +703,57 @@ export const FinancialCalendarWidget: React.FC = () => {
           )}
 
           {/* Selected Date Summary Box */}
-          <div className="p-4 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1] text-xs">
-            <div className="flex items-center justify-between mb-2">
+          <div className="p-4 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1] text-xs space-y-2.5">
+            <div className="flex items-center justify-between">
               <span className="font-bold text-slate-900">
                 Selected: {selectedDateStr}
               </span>
               <span className="text-[11px] text-slate-500 font-semibold">
-                {selectedDateEvents.length} Events Logged
+                {selectedDateEvents.length} Items Logged
               </span>
             </div>
 
             {selectedDateEvents.length === 0 ? (
-              <p className="text-slate-500 text-[11px]">No obligations or events recorded on this date.</p>
+              <p className="text-slate-500 text-[11px]">No obligations or transactions recorded on this date.</p>
             ) : (
-              <div className="space-y-1.5 max-h-28 overflow-y-auto">
-                {selectedDateEvents.map((ev) => (
-                  <div key={ev.id} className="flex items-center justify-between text-[11px]">
-                    <span className="font-medium text-slate-800 truncate max-w-[170px]">{ev.title}</span>
-                    <span className={`font-mono font-bold ${ev.type === 'EXPECTED_INCOME' ? 'text-emerald-700' : 'text-rose-700'}`}>
-                      {ev.type === 'EXPECTED_INCOME' ? '+' : '-'}{formatCurrency(ev.amount, currency)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <>
+                <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                  {selectedDateEvents.slice(0, 5).map((ev) => (
+                    <div key={ev.id} className="flex items-center justify-between text-[11px] p-1.5 rounded-lg bg-white border border-[#e8e0d1]/60">
+                      <div className="truncate max-w-[160px]">
+                        <span className="font-bold text-slate-800 block truncate">{ev.title}</span>
+                        <span className="text-[9px] text-slate-500">{ev.categoryName}</span>
+                      </div>
+                      <span className={`font-mono font-bold whitespace-nowrap ${ev.type === 'EXPECTED_INCOME' ? 'text-emerald-700' : 'text-rose-700'}`}>
+                        {ev.type === 'EXPECTED_INCOME' ? '+' : '-'}{formatCurrency(ev.amount, currency)}
+                      </span>
+                    </div>
+                  ))}
+                  {selectedDateEvents.length > 5 && (
+                    <p className="text-[10px] text-slate-500 text-center font-medium">
+                      +{selectedDateEvents.length - 5} more entries on this date
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => setIsDateInspectorOpen(true)}
+                  className="w-full py-2 rounded-xl bg-[#17365d] hover:bg-[#204575] text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span>🔍 View Full Day Details ({selectedDateEvents.length})</span>
+                </button>
+              </>
             )}
+
+            <button
+              onClick={() => {
+                setEventDate(selectedDateStr);
+                setIsAddModalOpen(true);
+              }}
+              className="w-full py-1.5 rounded-xl bg-white border border-[#e8e0d1] text-slate-700 hover:text-slate-900 hover:bg-[#f4efe4] text-xs font-bold transition-all cursor-pointer text-center"
+            >
+              + Add Transaction / Event to Date
+            </button>
           </div>
         </motion.div>
       </div>
@@ -826,6 +936,163 @@ export const FinancialCalendarWidget: React.FC = () => {
           </table>
         </div>
       </motion.div>
+
+      {/* Date Financial Details Inspector Modal */}
+      <AnimatePresence>
+        {isDateInspectorOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-[#e8e0d1] overflow-hidden flex flex-col max-h-[88vh]"
+            >
+              {/* Header */}
+              <div className="p-5 sm:p-6 border-b border-[#e8e0d1] flex items-center justify-between bg-gradient-to-r from-[#faf8f5] to-white">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-[#9e783e]">
+                      <CalendarIcon className="w-4 h-4" />
+                    </span>
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                      Transactions & Events on {selectedDateStr}
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Date-wise breakdown of all bank statement debits, credits, and scheduled events
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsDateInspectorOpen(false)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-[#faf8f5] transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Day Metrics Strip */}
+              <div className="grid grid-cols-3 gap-3 p-4 bg-[#faf8f5] border-b border-[#e8e0d1] text-xs">
+                <div>
+                  <span className="text-[10px] font-bold uppercase text-slate-500 block">Day Inflow (Credits)</span>
+                  <span className="text-sm sm:text-base font-bold font-mono text-emerald-700">
+                    +{formatCurrency(
+                      selectedDateEvents
+                        .filter((e) => e.type === 'EXPECTED_INCOME')
+                        .reduce((sum, e) => sum + e.amount, 0),
+                      currency
+                    )}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase text-slate-500 block">Day Outflow (Debits)</span>
+                  <span className="text-sm sm:text-base font-bold font-mono text-rose-700">
+                    -{formatCurrency(
+                      selectedDateEvents
+                        .filter((e) => e.type !== 'EXPECTED_INCOME')
+                        .reduce((sum, e) => sum + e.amount, 0),
+                      currency
+                    )}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase text-slate-500 block">Total Entries</span>
+                  <span className="text-sm sm:text-base font-bold font-mono text-slate-900">
+                    {selectedDateEvents.length} Recorded
+                  </span>
+                </div>
+              </div>
+
+              {/* Transactions List */}
+              <div className="p-5 sm:p-6 overflow-y-auto space-y-2.5 flex-1 max-h-[50vh]">
+                {selectedDateEvents.length === 0 ? (
+                  <div className="py-12 text-center text-slate-400 text-xs">
+                    No transactions or events recorded for this date.
+                  </div>
+                ) : (
+                  selectedDateEvents.map((ev) => {
+                    const isCredit = ev.type === 'EXPECTED_INCOME';
+                    return (
+                      <div
+                        key={ev.id}
+                        className="p-3.5 rounded-2xl border border-[#e8e0d1] bg-white hover:bg-[#faf8f5]/60 transition-colors flex items-center justify-between gap-3 shadow-2xs"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            className={`p-2 rounded-xl text-white shrink-0 ${
+                              isCredit ? 'bg-emerald-600' : 'bg-rose-600'
+                            }`}
+                          >
+                            {isCredit ? (
+                              <ArrowDownRight className="w-4 h-4" />
+                            ) : (
+                              <ArrowUpRight className="w-4 h-4" />
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-slate-900 text-xs sm:text-sm truncate">
+                              {ev.title}
+                            </div>
+                            <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                              <span
+                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${
+                                  isCredit
+                                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                    : 'bg-[#faf8f5] text-slate-700 border-[#e8e0d1]'
+                                }`}
+                              >
+                                {ev.categoryName}
+                              </span>
+                              {ev.notes && (
+                                <span className="text-[10px] text-slate-400 truncate max-w-xs">
+                                  {ev.notes}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          <div
+                            className={`font-mono font-bold text-xs sm:text-sm ${
+                              isCredit ? 'text-emerald-700' : 'text-rose-700'
+                            }`}
+                          >
+                            {isCredit ? '+' : '-'}{formatCurrency(ev.amount, currency)}
+                          </div>
+                          <span className="text-[10px] text-slate-400 block">
+                            {ev.isCompleted ? '✓ Reconciled' : 'Pending'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="p-4 border-t border-[#e8e0d1] bg-[#faf8f5] flex items-center justify-between">
+                <button
+                  onClick={() => {
+                    setEventDate(selectedDateStr);
+                    setIsDateInspectorOpen(false);
+                    setIsAddModalOpen(true);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-[#9e783e] hover:bg-[#866632] text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Entry on {selectedDateStr}</span>
+                </button>
+                <button
+                  onClick={() => setIsDateInspectorOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-white border border-[#e8e0d1] text-xs font-bold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Add Calendar Event Modal */}
       <AnimatePresence>

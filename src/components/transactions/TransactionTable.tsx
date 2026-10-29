@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { Transaction, TransactionType, ExpenseItem, IncomeItem, Asset } from '@/types/finance';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CashFlowVisualizationCard } from '@/components/finance/CashFlowVisualizationCard';
 
 type LedgerTab = 'TRADES' | 'EXPENSES' | 'INCOME' | 'FIXED_ASSETS';
 
@@ -174,6 +175,14 @@ export const TransactionTable: React.FC = () => {
           <span className="text-[10px] text-slate-500">Liquid reserve duration</span>
         </div>
       </div>
+
+      {/* Cash Flow & Category Data Visualization (Switchable Graph & Pie Chart) */}
+      <CashFlowVisualizationCard
+        title="Ledger Cash Flow Analytics"
+        subtitle="Switchable timeline graph and category pie chart for income and spend outflows"
+        defaultFlow={activeLedgerTab === 'INCOME' ? 'INFLOW' : 'OUTFLOW'}
+        defaultFormat="GRAPH"
+      />
 
       {/* Table Controls & Sub-Tab Switcher */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#e8e0d1] pb-4">

@@ -8,6 +8,52 @@
 import { ExpenseCategory, PaymentMethod } from '@/types/finance';
 import { ParsedTransactionResult } from '@/services/smsParserService';
 
+export function normalizeDateToISO(dateStr: string): string {
+  if (!dateStr) return new Date().toISOString().split('T')[0];
+  const trimmed = dateStr.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+
+  const cleaned = trimmed.replace(/,/g, '').trim();
+  const parts = cleaned.split(/[\s\/-]+/);
+
+  const monthMap: Record<string, string> = {
+    jan: '01', feb: '02', mar: '03', apr: '04', may: '05', jun: '06',
+    jul: '07', aug: '08', sep: '09', oct: '10', nov: '11', dec: '12',
+    january: '01', february: '02', march: '03', april: '04', may_long: '05', june: '06',
+    july: '07', august: '08', september: '09', october: '10', november: '11', december: '12'
+  };
+
+  if (parts.length === 3) {
+    // Case 1: DD Month YYYY (e.g. 01 Apr 2026)
+    if (isNaN(Number(parts[1]))) {
+      const day = parts[0].padStart(2, '0');
+      const monKey = parts[1].toLowerCase().slice(0, 3);
+      const mon = monthMap[monKey] || '01';
+      const year = parts[2].length === 2 ? `20${parts[2]}` : parts[2];
+      return `${year}-${mon}-${day}`;
+    }
+    // Case 2: YYYY-MM-DD
+    if (parts[0].length === 4) {
+      return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+    }
+    // Case 3: DD-MM-YYYY
+    if (parts[2].length === 4) {
+      return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+  }
+
+  // Fallback to standard JS Date parsing
+  const parsed = new Date(dateStr);
+  if (!isNaN(parsed.getTime())) {
+    const y = parsed.getFullYear();
+    const m = String(parsed.getMonth() + 1).padStart(2, '0');
+    const d = String(parsed.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  return trimmed;
+}
+
 export interface GPaySummary {
   period: string;
   totalSent: number;
@@ -133,26 +179,40 @@ export function parseGooglePayStatement(text: string): {
 
     // Categorization logic tailored to Indian UPI ecosystem
     if (
-      /briyani|biryani|restaurant|hotel|mess|dining|food|swiggy|zomato|shawarma|tiffin|bakery|cakes|sweets|juice|coffee|tea|cafe|kadai|soups|chicken|fruits|vegetables/i.test(
+      /food|dining|restaurant|hotel|mess|briyani|biryani|shawarma|tiffin|bakery|cakes|sweets|juice|coffee|tea|cafe|kadai|soups|chicken|mutton|fish|meat|kitchen|dosa|idli|snack|eats|swiggy|zomato|fb cakes|pizza|burger|vilas|kebabs|tender|crescent/i.test(
         lowerName
       )
     ) {
       category = 'FOOD_DINING';
-    } else if (/zepto|blinkit|groceries|supermarket|provision|stores|mart|fruits|angadi/i.test(lowerName)) {
-      category = 'SHOPPING_LIFESTYLE';
-    } else if (/silks|amazon|flipkart|dress|clothing|fashion|jewellery|watches|gifts|shoe/i.test(lowerName)) {
-      category = 'SHOPPING_LIFESTYLE';
-    } else if (/petrol|fuel|filling|redbus|bus|train|ticket|auto|uber|ola|fastag|motors|car/i.test(lowerName)) {
-      category = 'TRAVEL_COMMUTE';
-    } else if (/airtel|jio|tangedco|electricity|water|recharge|dth|broadband/i.test(lowerName)) {
-      category = 'UTILITIES_BILLS';
-    } else if (/hospital|pharmacy|medical|scans|doctor|clinic|apollo|lab/i.test(lowerName)) {
+    } else if (
+      /hospital|pharmacy|medical|medicals|scans|doctor|clinic|apollo|lab|health|dentist|dental|diagno|care|medicine|pharma|dr\b/i.test(
+        lowerName
+      )
+    ) {
       category = 'HEALTHCARE_INSURANCE';
-    } else if (/manappuram|finance|loan|cars24|emi/i.test(lowerName)) {
+    } else if (
+      /petrol|fuel|filling|hpcl|bpcl|iocl|shell|redbus|bus|train|irctc|ticket|auto|uber|ola|fastag|toll|parking|motors|honda|hero|yamaha|car|bike|tours|travels/i.test(
+        lowerName
+      )
+    ) {
+      category = 'TRAVEL_COMMUTE';
+    } else if (
+      /airtel|jio|\bvi\b|vodafone|bsnl|tangedco|electricity|eb bill|water|recharge|dth|broadband|wifi|act fibernet|tata play|gas|cylinder|indane|bharat gas/i.test(
+        lowerName
+      )
+    ) {
+      category = 'UTILITIES_BILLS';
+    } else if (
+      /store|stores|supermarket|mart|shop|fancy|gift|gifts|mall|silks|textiles|clothing|dress|fashion|jewel|watch|shoes|footwear|electricals|hardwares|aquarium|cubes|zepto|blinkit|amazon|flipkart|myntra|ajio|zara|croma|reliance|tata cliq|groceries|provision|angadi|retail/i.test(
+        lowerName
+      )
+    ) {
+      category = 'SHOPPING_LIFESTYLE';
+    } else if (/manappuram|muthoot|bajaj|finance|loan|cars24|emi|chits|credit card/i.test(lowerName)) {
       category = 'EMI_LOANS';
-    } else if (/theatre|movie|cinema|bookmyshow/i.test(lowerName)) {
+    } else if (/theatre|movie|cinema|bookmyshow|pvr|inox|netflix|prime|hotstar|spotify|youtube/i.test(lowerName)) {
       category = 'ENTERTAINMENT_SUBS';
-    } else if (/angel one|zerodha|groww|securities|mutual/i.test(lowerName)) {
+    } else if (/angel one|zerodha|groww|securities|mutual|investment|groww/i.test(lowerName)) {
       category = 'OTHER_EXPENSE';
     }
 
@@ -183,6 +243,8 @@ export function parseGooglePayStatement(text: string): {
       totalSelfTransfer += raw.amount;
     }
 
+    const isoDate = normalizeDateToISO(raw.date);
+
     transactions.push({
       id: `gpay-${Date.now()}-${idx}-${raw.upiId || Math.random().toString(36).substring(2, 6)}`,
       rawText: `${raw.action} ${raw.entityName} | ${raw.paymentInfo} | UPI:${raw.upiId}`,
@@ -192,7 +254,7 @@ export function parseGooglePayStatement(text: string): {
       category,
       paymentMethod,
       accountRef,
-      date: raw.date,
+      date: isoDate,
       confidence: 96,
     });
   });

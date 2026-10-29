@@ -87,8 +87,10 @@ interface FinanceState {
   addExpensesBatch: (expenses: Omit<ExpenseItem, 'id'>[]) => void;
   deleteExpense: (id: string) => void;
   addIncome: (income: Omit<IncomeItem, 'id'>) => void;
+  addIncomesBatch: (incomes: Omit<IncomeItem, 'id'>[]) => void;
   deleteIncome: (id: string) => void;
   addCalendarEvent: (event: Omit<CalendarEvent, 'id'>) => void;
+  addCalendarEventsBatch: (events: Omit<CalendarEvent, 'id'>[]) => void;
   deleteCalendarEvent: (id: string) => void;
   toggleEventCompleted: (id: string) => void;
   addDebt: (debt: Omit<DebtItem, 'id' | 'repayments'>) => void;
@@ -469,15 +471,39 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       addExpensesBatch: (newExpensesData) => {
-        const timestamp = Date.now();
-        const mapped: ExpenseItem[] = newExpensesData.map((exp, idx) => ({
-          ...exp,
-          id: `exp_${timestamp}_${idx}`,
-        }));
+        set((state) => {
+          // Deduplication key: date + title + amount + (UPI ID if present)
+          const existingKeys = new Set(
+            state.expenses.map((e) => {
+              const upiMatch = e.notes ? e.notes.match(/UPI:([0-9]+)/i) : null;
+              return upiMatch
+                ? `upi_${upiMatch[1]}`
+                : `${e.date}_${e.title.trim().toLowerCase()}_${e.amount.toFixed(2)}`;
+            })
+          );
 
-        set((state) => ({
-          expenses: [...mapped, ...state.expenses],
-        }));
+          const timestamp = Date.now();
+          const uniqueItems: ExpenseItem[] = [];
+
+          newExpensesData.forEach((exp, idx) => {
+            const upiMatch = exp.notes ? exp.notes.match(/UPI:([0-9]+)/i) : null;
+            const key = upiMatch
+              ? `upi_${upiMatch[1]}`
+              : `${exp.date}_${exp.title.trim().toLowerCase()}_${exp.amount.toFixed(2)}`;
+
+            if (!existingKeys.has(key)) {
+              existingKeys.add(key);
+              uniqueItems.push({
+                ...exp,
+                id: `exp_${timestamp}_${idx}`,
+              });
+            }
+          });
+
+          return {
+            expenses: [...uniqueItems, ...state.expenses],
+          };
+        });
       },
 
       deleteExpense: (id) => {
@@ -495,6 +521,41 @@ export const useFinanceStore = create<FinanceState>()(
         set((state) => ({
           incomes: [newIncome, ...state.incomes],
         }));
+      },
+
+      addIncomesBatch: (newIncomesData) => {
+        set((state) => {
+          const existingKeys = new Set(
+            state.incomes.map((i) => {
+              const upiMatch = i.notes ? i.notes.match(/UPI:([0-9]+)/i) : null;
+              return upiMatch
+                ? `upi_${upiMatch[1]}`
+                : `${i.date}_${i.source.trim().toLowerCase()}_${i.amount.toFixed(2)}`;
+            })
+          );
+
+          const timestamp = Date.now();
+          const uniqueItems: IncomeItem[] = [];
+
+          newIncomesData.forEach((inc, idx) => {
+            const upiMatch = inc.notes ? inc.notes.match(/UPI:([0-9]+)/i) : null;
+            const key = upiMatch
+              ? `upi_${upiMatch[1]}`
+              : `${inc.date}_${inc.source.trim().toLowerCase()}_${inc.amount.toFixed(2)}`;
+
+            if (!existingKeys.has(key)) {
+              existingKeys.add(key);
+              uniqueItems.push({
+                ...inc,
+                id: `inc_${timestamp}_${idx}`,
+              });
+            }
+          });
+
+          return {
+            incomes: [...uniqueItems, ...state.incomes],
+          };
+        });
       },
 
       deleteIncome: (id) => {
@@ -515,6 +576,42 @@ export const useFinanceStore = create<FinanceState>()(
         set((state) => ({
           calendarEvents: [...state.calendarEvents, newEvent],
         }));
+      },
+
+      addCalendarEventsBatch: (newEventsData) => {
+        set((state) => {
+          const existingKeys = new Set(
+            state.calendarEvents.map((ev) => {
+              const upiMatch = ev.notes ? ev.notes.match(/UPI:([0-9]+)/i) : null;
+              return upiMatch
+                ? `upi_${upiMatch[1]}`
+                : `${ev.date}_${ev.title.trim().toLowerCase()}_${ev.amount.toFixed(2)}`;
+            })
+          );
+
+          const timestamp = Date.now();
+          const uniqueItems: CalendarEvent[] = [];
+
+          newEventsData.forEach((ev, idx) => {
+            const upiMatch = ev.notes ? ev.notes.match(/UPI:([0-9]+)/i) : null;
+            const key = upiMatch
+              ? `upi_${upiMatch[1]}`
+              : `${ev.date}_${ev.title.trim().toLowerCase()}_${ev.amount.toFixed(2)}`;
+
+            if (!existingKeys.has(key)) {
+              existingKeys.add(key);
+              uniqueItems.push({
+                ...ev,
+                id: `cal_${timestamp}_${idx}`,
+                isCompleted: ev.isCompleted ?? false,
+              });
+            }
+          });
+
+          return {
+            calendarEvents: [...state.calendarEvents, ...uniqueItems],
+          };
+        });
       },
 
       deleteCalendarEvent: (id) => {

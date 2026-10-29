@@ -9,6 +9,7 @@ export type LifeOSSection =
 export type FinanceSubTab =
   | 'summary'
   | 'holdings'
+  | 'bank-statements'
   | 'debts'
   | 'insurance'
   | 'health'

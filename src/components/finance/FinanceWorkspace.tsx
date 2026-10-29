@@ -13,6 +13,7 @@ import { TransactionTable } from '@/components/transactions/TransactionTable';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
 import { GoalMilestoneManager } from '@/components/goals/GoalMilestoneManager';
 import { SmartIngestionHubModal } from '@/components/finance/SmartIngestionHubModal';
+import { BankStatementManager } from '@/components/finance/BankStatementManager';
 import {
   PieChart,
   Landmark,
@@ -43,6 +44,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
     icon: React.ComponentType<{ className?: string }>;
   }[] = [
     { id: 'summary', label: 'Overview', icon: LayoutDashboard },
+    { id: 'bank-statements', label: 'Bank & UPI Statements', icon: Landmark },
     { id: 'holdings', label: 'Holdings & Allocation', icon: PieChart },
     { id: 'debts', label: 'Debts & Repayments', icon: Landmark },
     { id: 'insurance', label: 'Protection & Insurance', icon: HeartPulse },
@@ -130,6 +132,11 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
               </div>
               <TransactionTable />
             </>
+          )}
+
+          {/* Sub-tab: Bank & UPI Statements */}
+          {financeSubTab === 'bank-statements' && (
+            <BankStatementManager onOpenIngestion={() => setIsIngestionOpen(true)} />
           )}
 
           {/* Sub-tab 2: Holdings & Asset Allocation */}

@@ -24,7 +24,10 @@ import {
 import {
   parseGooglePayStatement,
   isGooglePayStatement,
+  normalizeDateToISO,
 } from '@/services/gpayStatementService';
+import { IncomeCategory, CalendarEvent } from '@/types/finance';
+import { EXPENSE_CATEGORY_LABELS } from '@/utils/formatters';
 import {
   X,
   UploadCloud,
@@ -50,7 +53,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { addExpensesBatch, addAsset } = useFinanceStore();
+  const { addExpensesBatch, addIncomesBatch, addCalendarEventsBatch, addAsset } = useFinanceStore();
   const [activeTab, setActiveTab] = useState<IngestionTab>('statements');
 
   // Processing state & animations
@@ -262,27 +265,72 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
     });
   };
 
-  // 3. Confirm and Commit to Quantra SQLite Store
+  // 3. Confirm and Commit to Quantra Store & Calendar Date-wise
   const handleConfirmImport = () => {
     let count = 0;
 
-    // A. Import Selected Expenses
+    // A. Import Selected Transactions (Debits & Credits categorized & stored in Calendar date-wise)
     if (parsedExpenses.length > 0) {
       const toImport = parsedExpenses.filter((e) => selectedIds.has(e.id));
       const USD_INR_RATE = 84.5;
 
-      const payloads = toImport.map((item) => ({
-        title: item.merchant,
-        category: item.category,
-        amount: Number((item.amount / USD_INR_RATE).toFixed(2)),
-        paymentMethod: item.paymentMethod,
-        frequency: 'ONE_TIME' as const,
-        date: item.date,
-        notes: `Auto-Ingested via Quantra Engine (${item.accountRef || 'UPI'})`,
-      }));
+      const debits = toImport.filter((item) => item.type !== 'CREDIT');
+      const credits = toImport.filter((item) => item.type === 'CREDIT');
 
-      addExpensesBatch(payloads);
-      count += payloads.length;
+      if (debits.length > 0) {
+        const expensePayloads = debits.map((item) => ({
+          title: item.merchant,
+          category: item.category,
+          amount: Number((item.amount / USD_INR_RATE).toFixed(2)),
+          paymentMethod: item.paymentMethod,
+          frequency: 'ONE_TIME' as const,
+          date: normalizeDateToISO(item.date),
+          notes: `Auto-Ingested via Quantra Engine (${item.accountRef || 'UPI'})`,
+        }));
+        addExpensesBatch(expensePayloads);
+        count += expensePayloads.length;
+      }
+
+      if (credits.length > 0) {
+        const incomePayloads = credits.map((item) => {
+          let incomeCat: IncomeCategory = 'OTHER_INCOME';
+          const lowerName = item.merchant.toLowerCase();
+          if (/salary|payroll|wages/i.test(lowerName)) incomeCat = 'SALARY';
+          else if (/freelance|consult|client/i.test(lowerName)) incomeCat = 'FREELANCE';
+          else if (/rent|tenant/i.test(lowerName)) incomeCat = 'RENTAL';
+          else if (/dividend|interest/i.test(lowerName)) incomeCat = 'DIVIDEND_INTEREST';
+          else if (/razorpay|business|sales/i.test(lowerName)) incomeCat = 'BUSINESS';
+
+          return {
+            source: item.merchant,
+            category: incomeCat,
+            amount: Number((item.amount / USD_INR_RATE).toFixed(2)),
+            frequency: 'ONE_TIME' as const,
+            date: normalizeDateToISO(item.date),
+            account: item.accountRef || 'Bank Account',
+            notes: `Auto-Ingested Inflow (${item.accountRef || 'Bank/UPI'})`,
+          };
+        });
+        addIncomesBatch(incomePayloads);
+        count += incomePayloads.length;
+      }
+
+      // Store in Calendar date-wise
+      const calendarPayloads: Omit<CalendarEvent, 'id'>[] = toImport.map((item) => {
+        const isCredit = item.type === 'CREDIT';
+        return {
+          title: item.merchant,
+          date: normalizeDateToISO(item.date),
+          type: isCredit ? ('EXPECTED_INCOME' as const) : ('PLANNED_EXPENSE' as const),
+          amount: Number((item.amount / USD_INR_RATE).toFixed(2)),
+          categoryName: isCredit
+            ? 'Bank Credit / Income'
+            : (EXPENSE_CATEGORY_LABELS[item.category] || 'Expense'),
+          isCompleted: true,
+          notes: `Ingested from ${item.accountRef || 'Statement'} • UPI / Bank Ref`,
+        };
+      });
+      addCalendarEventsBatch(calendarPayloads);
     }
 
     // B. Import Selected Demat Holdings
@@ -698,9 +746,15 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                                 <span className="font-heading font-extrabold text-slate-900 text-xs">
                                   {item.merchant}
                                 </span>
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                                  {item.category}
-                                </span>
+                                {item.type === 'CREDIT' || item.rawText.startsWith('Received from') ? (
+                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    INCOME (CREDIT)
+                                  </span>
+                                ) : (
+                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                    {item.category}
+                                  </span>
+                                )}
                                 <span className="text-[10px] text-slate-400 font-mono">
                                   {item.paymentMethod} • {item.accountRef || 'UPI'}
                                 </span>
@@ -712,8 +766,15 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                           </div>
 
                           <div className="text-right shrink-0">
-                            <div className="font-mono font-extrabold text-xs text-rose-600">
-                              -₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                            <div
+                              className={`font-mono font-extrabold text-xs ${
+                                item.type === 'CREDIT' || item.rawText.startsWith('Received from')
+                                  ? 'text-emerald-700'
+                                  : 'text-rose-600'
+                              }`}
+                            >
+                              {item.type === 'CREDIT' || item.rawText.startsWith('Received from') ? '+' : '-'}₹
+                              {item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                             </div>
                             <div className="text-[10px] text-emerald-600 font-mono font-semibold">
                               {item.confidence}% Match

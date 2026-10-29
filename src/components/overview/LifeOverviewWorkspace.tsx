@@ -19,6 +19,7 @@ import {
   Check,
 } from 'lucide-react';
 import { LifeOSCategory, PriorityLevel } from '@/types/lifeos';
+import { CashFlowVisualizationCard } from '@/components/finance/CashFlowVisualizationCard';
 
 export const LifeOverviewWorkspace: React.FC = () => {
   const {
@@ -542,6 +543,14 @@ export const LifeOverviewWorkspace: React.FC = () => {
           </div>
         </section>
       </div>
+
+      {/* 5.5 Cash Flow & Spend Intelligence Visualization (Graph vs Pie Chart Switcher for Inflows & Outflows) */}
+      <CashFlowVisualizationCard
+        title="Income & Spending Intelligence"
+        subtitle="Dynamic cash flow analytics with switchable Timeline Graphs and Category Pie Charts"
+        defaultFlow="OUTFLOW"
+        defaultFormat="GRAPH"
+      />
 
       {/* 6. Fitness & Nutrition Snapshot (Reference HTML Footer Row) */}
       <div className="space-y-3 pt-2">

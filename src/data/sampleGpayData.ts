@@ -2,8 +2,8 @@ import { ParsedTransactionResult } from '@/services/smsParserService';
 
 export const SAMPLE_GPAY_SUMMARY = {
   "period": "01 April 2026 - 30 September 2026",
-  "totalSent": 950618.6499999999,
-  "totalReceived": 377889.92000000004,
+  "totalSent": 950618.65,
+  "totalReceived": 377889.92,
   "totalSelfTransfer": 58800,
   "accountPhone": "8610762557",
   "accountEmail": "mskumarst@gmail.com",
@@ -20,7 +20,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "01 Apr, 2026",
+    "date": "2026-04-01",
     "confidence": 96
   },
   {
@@ -32,7 +32,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Apr, 2026",
+    "date": "2026-04-02",
     "confidence": 96
   },
   {
@@ -41,10 +41,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 30,
     "type": "DEBIT",
     "merchant": "COLORS GIFT SHOP",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Apr, 2026",
+    "date": "2026-04-02",
     "confidence": 96
   },
   {
@@ -56,7 +56,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "02 Apr, 2026",
+    "date": "2026-04-02",
     "confidence": 96
   },
   {
@@ -65,10 +65,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 1100,
     "type": "DEBIT",
     "merchant": "S K ELECTRICALS HARDWARES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Apr, 2026",
+    "date": "2026-04-02",
     "confidence": 96
   },
   {
@@ -80,7 +80,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Apr, 2026",
+    "date": "2026-04-02",
     "confidence": 96
   },
   {
@@ -92,7 +92,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Apr, 2026",
+    "date": "2026-04-02",
     "confidence": 96
   },
   {
@@ -104,7 +104,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Apr, 2026",
+    "date": "2026-04-02",
     "confidence": 96
   },
   {
@@ -116,7 +116,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "02 Apr, 2026",
+    "date": "2026-04-02",
     "confidence": 96
   },
   {
@@ -128,7 +128,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Apr, 2026",
+    "date": "2026-04-03",
     "confidence": 96
   },
   {
@@ -140,7 +140,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Apr, 2026",
+    "date": "2026-04-03",
     "confidence": 96
   },
   {
@@ -152,7 +152,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Apr, 2026",
+    "date": "2026-04-03",
     "confidence": 96
   },
   {
@@ -164,7 +164,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "04 Apr, 2026",
+    "date": "2026-04-04",
     "confidence": 96
   },
   {
@@ -176,7 +176,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 Apr, 2026",
+    "date": "2026-04-04",
     "confidence": 96
   },
   {
@@ -188,7 +188,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -197,10 +197,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 50,
     "type": "DEBIT",
     "merchant": "SAM FANCY STORE",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -212,7 +212,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -224,7 +224,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -236,7 +236,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -245,10 +245,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 520,
     "type": "DEBIT",
     "merchant": "CHENNAI PETS AND AQUARIUM",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -260,7 +260,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -269,10 +269,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 30,
     "type": "DEBIT",
     "merchant": "S K ELECTRICALS HARDWARES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -281,10 +281,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 1510,
     "type": "DEBIT",
     "merchant": "COLOR CUBES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -296,7 +296,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -308,7 +308,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -320,7 +320,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -332,7 +332,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -344,7 +344,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -356,7 +356,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Apr, 2026",
+    "date": "2026-04-05",
     "confidence": 96
   },
   {
@@ -368,7 +368,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "06 Apr, 2026",
+    "date": "2026-04-06",
     "confidence": 96
   },
   {
@@ -380,7 +380,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "06 Apr, 2026",
+    "date": "2026-04-06",
     "confidence": 96
   },
   {
@@ -392,7 +392,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "06 Apr, 2026",
+    "date": "2026-04-06",
     "confidence": 96
   },
   {
@@ -404,7 +404,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "06 Apr, 2026",
+    "date": "2026-04-06",
     "confidence": 96
   },
   {
@@ -416,7 +416,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "06 Apr, 2026",
+    "date": "2026-04-06",
     "confidence": 96
   },
   {
@@ -428,7 +428,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "07 Apr, 2026",
+    "date": "2026-04-07",
     "confidence": 96
   },
   {
@@ -440,7 +440,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 Apr, 2026",
+    "date": "2026-04-07",
     "confidence": 96
   },
   {
@@ -452,7 +452,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Apr, 2026",
+    "date": "2026-04-07",
     "confidence": 96
   },
   {
@@ -464,7 +464,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 Apr, 2026",
+    "date": "2026-04-07",
     "confidence": 96
   },
   {
@@ -476,7 +476,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -488,7 +488,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -500,7 +500,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -512,7 +512,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -524,7 +524,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -536,7 +536,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -548,7 +548,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -560,7 +560,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -572,7 +572,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -584,7 +584,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -596,7 +596,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "08 Apr, 2026",
+    "date": "2026-04-08",
     "confidence": 96
   },
   {
@@ -608,7 +608,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Apr, 2026",
+    "date": "2026-04-09",
     "confidence": 96
   },
   {
@@ -620,7 +620,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Apr, 2026",
+    "date": "2026-04-09",
     "confidence": 96
   },
   {
@@ -632,7 +632,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Apr, 2026",
+    "date": "2026-04-09",
     "confidence": 96
   },
   {
@@ -644,7 +644,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Apr, 2026",
+    "date": "2026-04-09",
     "confidence": 96
   },
   {
@@ -656,7 +656,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "EMI_LOANS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "09 Apr, 2026",
+    "date": "2026-04-09",
     "confidence": 96
   },
   {
@@ -668,7 +668,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "EMI_LOANS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Apr, 2026",
+    "date": "2026-04-09",
     "confidence": 96
   },
   {
@@ -680,7 +680,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "09 Apr, 2026",
+    "date": "2026-04-09",
     "confidence": 96
   },
   {
@@ -692,7 +692,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Apr, 2026",
+    "date": "2026-04-09",
     "confidence": 96
   },
   {
@@ -704,7 +704,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "10 Apr, 2026",
+    "date": "2026-04-10",
     "confidence": 96
   },
   {
@@ -716,7 +716,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Apr, 2026",
+    "date": "2026-04-10",
     "confidence": 96
   },
   {
@@ -728,7 +728,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "10 Apr, 2026",
+    "date": "2026-04-10",
     "confidence": 96
   },
   {
@@ -740,7 +740,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Apr, 2026",
+    "date": "2026-04-10",
     "confidence": 96
   },
   {
@@ -752,7 +752,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Apr, 2026",
+    "date": "2026-04-10",
     "confidence": 96
   },
   {
@@ -764,7 +764,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "10 Apr, 2026",
+    "date": "2026-04-10",
     "confidence": 96
   },
   {
@@ -776,7 +776,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Apr, 2026",
+    "date": "2026-04-10",
     "confidence": 96
   },
   {
@@ -788,7 +788,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "10 Apr, 2026",
+    "date": "2026-04-10",
     "confidence": 96
   },
   {
@@ -800,7 +800,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "EMI_LOANS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "11 Apr, 2026",
+    "date": "2026-04-11",
     "confidence": 96
   },
   {
@@ -812,7 +812,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "11 Apr, 2026",
+    "date": "2026-04-11",
     "confidence": 96
   },
   {
@@ -824,7 +824,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "11 Apr, 2026",
+    "date": "2026-04-11",
     "confidence": 96
   },
   {
@@ -836,7 +836,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "11 Apr, 2026",
+    "date": "2026-04-11",
     "confidence": 96
   },
   {
@@ -848,7 +848,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "11 Apr, 2026",
+    "date": "2026-04-11",
     "confidence": 96
   },
   {
@@ -860,7 +860,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -872,7 +872,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -884,7 +884,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -896,7 +896,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -908,7 +908,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -920,7 +920,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -929,10 +929,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 480,
     "type": "DEBIT",
     "merchant": "S K ELECTRICALS HARDWARES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -941,10 +941,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 70,
     "type": "DEBIT",
     "merchant": "S K ELECTRICALS HARDWARES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -953,10 +953,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 565,
     "type": "DEBIT",
     "merchant": "CHENDUR MURUGAN VEGETABLES AND FRUITS MARKET",
-    "category": "FOOD_DINING",
+    "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -968,7 +968,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Apr, 2026",
+    "date": "2026-04-12",
     "confidence": 96
   },
   {
@@ -980,7 +980,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "13 Apr, 2026",
+    "date": "2026-04-13",
     "confidence": 96
   },
   {
@@ -992,7 +992,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 Apr, 2026",
+    "date": "2026-04-14",
     "confidence": 96
   },
   {
@@ -1004,7 +1004,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 Apr, 2026",
+    "date": "2026-04-14",
     "confidence": 96
   },
   {
@@ -1016,7 +1016,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 Apr, 2026",
+    "date": "2026-04-14",
     "confidence": 96
   },
   {
@@ -1028,7 +1028,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "15 Apr, 2026",
+    "date": "2026-04-15",
     "confidence": 96
   },
   {
@@ -1040,7 +1040,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "15 Apr, 2026",
+    "date": "2026-04-15",
     "confidence": 96
   },
   {
@@ -1052,7 +1052,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "15 Apr, 2026",
+    "date": "2026-04-15",
     "confidence": 96
   },
   {
@@ -1064,7 +1064,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 Apr, 2026",
+    "date": "2026-04-16",
     "confidence": 96
   },
   {
@@ -1076,7 +1076,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "16 Apr, 2026",
+    "date": "2026-04-16",
     "confidence": 96
   },
   {
@@ -1088,7 +1088,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Apr, 2026",
+    "date": "2026-04-17",
     "confidence": 96
   },
   {
@@ -1100,7 +1100,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Apr, 2026",
+    "date": "2026-04-17",
     "confidence": 96
   },
   {
@@ -1112,7 +1112,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Apr, 2026",
+    "date": "2026-04-17",
     "confidence": 96
   },
   {
@@ -1124,7 +1124,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 Apr, 2026",
+    "date": "2026-04-17",
     "confidence": 96
   },
   {
@@ -1136,7 +1136,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "18 Apr, 2026",
+    "date": "2026-04-18",
     "confidence": 96
   },
   {
@@ -1148,7 +1148,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "18 Apr, 2026",
+    "date": "2026-04-18",
     "confidence": 96
   },
   {
@@ -1160,7 +1160,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "18 Apr, 2026",
+    "date": "2026-04-18",
     "confidence": 96
   },
   {
@@ -1169,10 +1169,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 270,
     "type": "DEBIT",
     "merchant": "S K ELECTRICALS HARDWARES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 Apr, 2026",
+    "date": "2026-04-19",
     "confidence": 96
   },
   {
@@ -1184,7 +1184,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Apr, 2026",
+    "date": "2026-04-19",
     "confidence": 96
   },
   {
@@ -1196,7 +1196,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 Apr, 2026",
+    "date": "2026-04-19",
     "confidence": 96
   },
   {
@@ -1208,7 +1208,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 Apr, 2026",
+    "date": "2026-04-19",
     "confidence": 96
   },
   {
@@ -1220,7 +1220,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Apr, 2026",
+    "date": "2026-04-19",
     "confidence": 96
   },
   {
@@ -1232,7 +1232,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "20 Apr, 2026",
+    "date": "2026-04-20",
     "confidence": 96
   },
   {
@@ -1244,7 +1244,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "20 Apr, 2026",
+    "date": "2026-04-20",
     "confidence": 96
   },
   {
@@ -1256,7 +1256,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "20 Apr, 2026",
+    "date": "2026-04-20",
     "confidence": 96
   },
   {
@@ -1268,7 +1268,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "20 Apr, 2026",
+    "date": "2026-04-20",
     "confidence": 96
   },
   {
@@ -1280,7 +1280,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Apr, 2026",
+    "date": "2026-04-21",
     "confidence": 96
   },
   {
@@ -1292,7 +1292,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Apr, 2026",
+    "date": "2026-04-21",
     "confidence": 96
   },
   {
@@ -1304,7 +1304,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Apr, 2026",
+    "date": "2026-04-21",
     "confidence": 96
   },
   {
@@ -1316,7 +1316,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Apr, 2026",
+    "date": "2026-04-22",
     "confidence": 96
   },
   {
@@ -1328,7 +1328,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "22 Apr, 2026",
+    "date": "2026-04-22",
     "confidence": 96
   },
   {
@@ -1340,7 +1340,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "23 Apr, 2026",
+    "date": "2026-04-23",
     "confidence": 96
   },
   {
@@ -1352,7 +1352,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "23 Apr, 2026",
+    "date": "2026-04-23",
     "confidence": 96
   },
   {
@@ -1364,7 +1364,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "23 Apr, 2026",
+    "date": "2026-04-23",
     "confidence": 96
   },
   {
@@ -1376,7 +1376,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "23 Apr, 2026",
+    "date": "2026-04-23",
     "confidence": 96
   },
   {
@@ -1388,7 +1388,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "23 Apr, 2026",
+    "date": "2026-04-23",
     "confidence": 96
   },
   {
@@ -1400,7 +1400,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 Apr, 2026",
+    "date": "2026-04-24",
     "confidence": 96
   },
   {
@@ -1412,7 +1412,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 Apr, 2026",
+    "date": "2026-04-24",
     "confidence": 96
   },
   {
@@ -1421,10 +1421,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 610,
     "type": "DEBIT",
     "merchant": "CRESCENT",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "25 Apr, 2026",
+    "date": "2026-04-25",
     "confidence": 96
   },
   {
@@ -1436,7 +1436,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "25 Apr, 2026",
+    "date": "2026-04-25",
     "confidence": 96
   },
   {
@@ -1448,7 +1448,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "25 Apr, 2026",
+    "date": "2026-04-25",
     "confidence": 96
   },
   {
@@ -1460,7 +1460,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "26 Apr, 2026",
+    "date": "2026-04-26",
     "confidence": 96
   },
   {
@@ -1472,7 +1472,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "26 Apr, 2026",
+    "date": "2026-04-26",
     "confidence": 96
   },
   {
@@ -1484,7 +1484,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "26 Apr, 2026",
+    "date": "2026-04-26",
     "confidence": 96
   },
   {
@@ -1496,7 +1496,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "26 Apr, 2026",
+    "date": "2026-04-26",
     "confidence": 96
   },
   {
@@ -1508,7 +1508,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "27 Apr, 2026",
+    "date": "2026-04-27",
     "confidence": 96
   },
   {
@@ -1520,7 +1520,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Apr, 2026",
+    "date": "2026-04-27",
     "confidence": 96
   },
   {
@@ -1532,7 +1532,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Apr, 2026",
+    "date": "2026-04-27",
     "confidence": 96
   },
   {
@@ -1544,7 +1544,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Apr, 2026",
+    "date": "2026-04-27",
     "confidence": 96
   },
   {
@@ -1556,7 +1556,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 Apr, 2026",
+    "date": "2026-04-28",
     "confidence": 96
   },
   {
@@ -1568,7 +1568,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 Apr, 2026",
+    "date": "2026-04-28",
     "confidence": 96
   },
   {
@@ -1580,7 +1580,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "28 Apr, 2026",
+    "date": "2026-04-28",
     "confidence": 96
   },
   {
@@ -1592,7 +1592,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "28 Apr, 2026",
+    "date": "2026-04-28",
     "confidence": 96
   },
   {
@@ -1604,7 +1604,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 Apr, 2026",
+    "date": "2026-04-28",
     "confidence": 96
   },
   {
@@ -1616,7 +1616,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "29 Apr, 2026",
+    "date": "2026-04-29",
     "confidence": 96
   },
   {
@@ -1628,7 +1628,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "29 Apr, 2026",
+    "date": "2026-04-29",
     "confidence": 96
   },
   {
@@ -1640,7 +1640,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "29 Apr, 2026",
+    "date": "2026-04-29",
     "confidence": 96
   },
   {
@@ -1652,7 +1652,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "01 May, 2026",
+    "date": "2026-05-01",
     "confidence": 96
   },
   {
@@ -1664,7 +1664,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "01 May, 2026",
+    "date": "2026-05-01",
     "confidence": 96
   },
   {
@@ -1673,10 +1673,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 550,
     "type": "DEBIT",
     "merchant": "CRESCENT",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "01 May, 2026",
+    "date": "2026-05-01",
     "confidence": 96
   },
   {
@@ -1688,7 +1688,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "01 May, 2026",
+    "date": "2026-05-01",
     "confidence": 96
   },
   {
@@ -1700,7 +1700,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "01 May, 2026",
+    "date": "2026-05-01",
     "confidence": 96
   },
   {
@@ -1712,7 +1712,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "01 May, 2026",
+    "date": "2026-05-01",
     "confidence": 96
   },
   {
@@ -1724,7 +1724,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "02 May, 2026",
+    "date": "2026-05-02",
     "confidence": 96
   },
   {
@@ -1736,7 +1736,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "ENTERTAINMENT_SUBS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 May, 2026",
+    "date": "2026-05-02",
     "confidence": 96
   },
   {
@@ -1748,7 +1748,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 May, 2026",
+    "date": "2026-05-02",
     "confidence": 96
   },
   {
@@ -1760,7 +1760,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "03 May, 2026",
+    "date": "2026-05-03",
     "confidence": 96
   },
   {
@@ -1772,7 +1772,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1784,7 +1784,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1796,7 +1796,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1808,7 +1808,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1820,7 +1820,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1832,7 +1832,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1844,7 +1844,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1856,7 +1856,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1868,7 +1868,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1880,7 +1880,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1892,7 +1892,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1904,7 +1904,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1916,7 +1916,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 May, 2026",
+    "date": "2026-05-04",
     "confidence": 96
   },
   {
@@ -1928,7 +1928,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 May, 2026",
+    "date": "2026-05-05",
     "confidence": 96
   },
   {
@@ -1940,7 +1940,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 May, 2026",
+    "date": "2026-05-06",
     "confidence": 96
   },
   {
@@ -1952,7 +1952,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 May, 2026",
+    "date": "2026-05-06",
     "confidence": 96
   },
   {
@@ -1964,7 +1964,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 May, 2026",
+    "date": "2026-05-06",
     "confidence": 96
   },
   {
@@ -1976,7 +1976,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 May, 2026",
+    "date": "2026-05-06",
     "confidence": 96
   },
   {
@@ -1988,7 +1988,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 May, 2026",
+    "date": "2026-05-06",
     "confidence": 96
   },
   {
@@ -2000,7 +2000,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 May, 2026",
+    "date": "2026-05-06",
     "confidence": 96
   },
   {
@@ -2012,7 +2012,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 May, 2026",
+    "date": "2026-05-07",
     "confidence": 96
   },
   {
@@ -2024,7 +2024,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 May, 2026",
+    "date": "2026-05-07",
     "confidence": 96
   },
   {
@@ -2036,7 +2036,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 May, 2026",
+    "date": "2026-05-07",
     "confidence": 96
   },
   {
@@ -2048,7 +2048,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 May, 2026",
+    "date": "2026-05-07",
     "confidence": 96
   },
   {
@@ -2060,7 +2060,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 May, 2026",
+    "date": "2026-05-07",
     "confidence": 96
   },
   {
@@ -2072,7 +2072,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "08 May, 2026",
+    "date": "2026-05-08",
     "confidence": 96
   },
   {
@@ -2084,7 +2084,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "08 May, 2026",
+    "date": "2026-05-08",
     "confidence": 96
   },
   {
@@ -2096,7 +2096,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 May, 2026",
+    "date": "2026-05-09",
     "confidence": 96
   },
   {
@@ -2108,7 +2108,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "09 May, 2026",
+    "date": "2026-05-09",
     "confidence": 96
   },
   {
@@ -2120,7 +2120,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "09 May, 2026",
+    "date": "2026-05-09",
     "confidence": 96
   },
   {
@@ -2132,7 +2132,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "09 May, 2026",
+    "date": "2026-05-09",
     "confidence": 96
   },
   {
@@ -2144,7 +2144,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 May, 2026",
+    "date": "2026-05-09",
     "confidence": 96
   },
   {
@@ -2156,7 +2156,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 May, 2026",
+    "date": "2026-05-09",
     "confidence": 96
   },
   {
@@ -2168,7 +2168,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 May, 2026",
+    "date": "2026-05-09",
     "confidence": 96
   },
   {
@@ -2180,7 +2180,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 May, 2026",
+    "date": "2026-05-10",
     "confidence": 96
   },
   {
@@ -2192,7 +2192,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "11 May, 2026",
+    "date": "2026-05-11",
     "confidence": 96
   },
   {
@@ -2204,7 +2204,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "13 May, 2026",
+    "date": "2026-05-13",
     "confidence": 96
   },
   {
@@ -2216,7 +2216,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "13 May, 2026",
+    "date": "2026-05-13",
     "confidence": 96
   },
   {
@@ -2228,7 +2228,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 May, 2026",
+    "date": "2026-05-14",
     "confidence": 96
   },
   {
@@ -2240,7 +2240,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 May, 2026",
+    "date": "2026-05-14",
     "confidence": 96
   },
   {
@@ -2252,7 +2252,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 May, 2026",
+    "date": "2026-05-14",
     "confidence": 96
   },
   {
@@ -2264,7 +2264,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 May, 2026",
+    "date": "2026-05-14",
     "confidence": 96
   },
   {
@@ -2276,7 +2276,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 May, 2026",
+    "date": "2026-05-14",
     "confidence": 96
   },
   {
@@ -2288,7 +2288,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 May, 2026",
+    "date": "2026-05-15",
     "confidence": 96
   },
   {
@@ -2300,7 +2300,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 May, 2026",
+    "date": "2026-05-15",
     "confidence": 96
   },
   {
@@ -2312,7 +2312,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 May, 2026",
+    "date": "2026-05-15",
     "confidence": 96
   },
   {
@@ -2324,7 +2324,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "15 May, 2026",
+    "date": "2026-05-15",
     "confidence": 96
   },
   {
@@ -2336,7 +2336,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 May, 2026",
+    "date": "2026-05-15",
     "confidence": 96
   },
   {
@@ -2348,7 +2348,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2360,7 +2360,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2372,7 +2372,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2384,7 +2384,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2393,10 +2393,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 260,
     "type": "DEBIT",
     "merchant": "SK FRUITS",
-    "category": "FOOD_DINING",
+    "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2408,7 +2408,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2420,7 +2420,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2432,7 +2432,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2444,7 +2444,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2456,7 +2456,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 May, 2026",
+    "date": "2026-05-16",
     "confidence": 96
   },
   {
@@ -2468,7 +2468,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 May, 2026",
+    "date": "2026-05-17",
     "confidence": 96
   },
   {
@@ -2480,7 +2480,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 May, 2026",
+    "date": "2026-05-17",
     "confidence": 96
   },
   {
@@ -2492,7 +2492,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 May, 2026",
+    "date": "2026-05-17",
     "confidence": 96
   },
   {
@@ -2504,7 +2504,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "18 May, 2026",
+    "date": "2026-05-18",
     "confidence": 96
   },
   {
@@ -2516,7 +2516,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 May, 2026",
+    "date": "2026-05-18",
     "confidence": 96
   },
   {
@@ -2528,7 +2528,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 May, 2026",
+    "date": "2026-05-19",
     "confidence": 96
   },
   {
@@ -2540,7 +2540,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 May, 2026",
+    "date": "2026-05-19",
     "confidence": 96
   },
   {
@@ -2552,7 +2552,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 May, 2026",
+    "date": "2026-05-19",
     "confidence": 96
   },
   {
@@ -2564,7 +2564,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 May, 2026",
+    "date": "2026-05-19",
     "confidence": 96
   },
   {
@@ -2573,10 +2573,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 70,
     "type": "DEBIT",
     "merchant": "VENKATESANFRUITSHOP",
-    "category": "FOOD_DINING",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 May, 2026",
+    "date": "2026-05-19",
     "confidence": 96
   },
   {
@@ -2588,7 +2588,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 May, 2026",
+    "date": "2026-05-19",
     "confidence": 96
   },
   {
@@ -2600,7 +2600,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "20 May, 2026",
+    "date": "2026-05-20",
     "confidence": 96
   },
   {
@@ -2612,7 +2612,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "20 May, 2026",
+    "date": "2026-05-20",
     "confidence": 96
   },
   {
@@ -2624,7 +2624,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "21 May, 2026",
+    "date": "2026-05-21",
     "confidence": 96
   },
   {
@@ -2636,7 +2636,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "21 May, 2026",
+    "date": "2026-05-21",
     "confidence": 96
   },
   {
@@ -2648,7 +2648,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "21 May, 2026",
+    "date": "2026-05-21",
     "confidence": 96
   },
   {
@@ -2660,7 +2660,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "22 May, 2026",
+    "date": "2026-05-22",
     "confidence": 96
   },
   {
@@ -2672,7 +2672,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "23 May, 2026",
+    "date": "2026-05-23",
     "confidence": 96
   },
   {
@@ -2684,7 +2684,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "23 May, 2026",
+    "date": "2026-05-23",
     "confidence": 96
   },
   {
@@ -2696,7 +2696,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 May, 2026",
+    "date": "2026-05-23",
     "confidence": 96
   },
   {
@@ -2708,7 +2708,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "23 May, 2026",
+    "date": "2026-05-23",
     "confidence": 96
   },
   {
@@ -2720,7 +2720,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 May, 2026",
+    "date": "2026-05-23",
     "confidence": 96
   },
   {
@@ -2732,7 +2732,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2744,7 +2744,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2756,7 +2756,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2768,7 +2768,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2780,7 +2780,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2792,7 +2792,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2804,7 +2804,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2816,7 +2816,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2828,7 +2828,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2840,7 +2840,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 May, 2026",
+    "date": "2026-05-24",
     "confidence": 96
   },
   {
@@ -2852,7 +2852,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 May, 2026",
+    "date": "2026-05-25",
     "confidence": 96
   },
   {
@@ -2864,7 +2864,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "25 May, 2026",
+    "date": "2026-05-25",
     "confidence": 96
   },
   {
@@ -2876,7 +2876,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "26 May, 2026",
+    "date": "2026-05-26",
     "confidence": 96
   },
   {
@@ -2888,7 +2888,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "26 May, 2026",
+    "date": "2026-05-26",
     "confidence": 96
   },
   {
@@ -2900,7 +2900,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "26 May, 2026",
+    "date": "2026-05-26",
     "confidence": 96
   },
   {
@@ -2912,7 +2912,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "26 May, 2026",
+    "date": "2026-05-26",
     "confidence": 96
   },
   {
@@ -2924,7 +2924,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "26 May, 2026",
+    "date": "2026-05-26",
     "confidence": 96
   },
   {
@@ -2936,7 +2936,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 May, 2026",
+    "date": "2026-05-27",
     "confidence": 96
   },
   {
@@ -2948,7 +2948,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 May, 2026",
+    "date": "2026-05-27",
     "confidence": 96
   },
   {
@@ -2960,7 +2960,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 May, 2026",
+    "date": "2026-05-27",
     "confidence": 96
   },
   {
@@ -2969,10 +2969,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 280,
     "type": "DEBIT",
     "merchant": "NELLAI VEGETABLE AND FRUITS SHOP",
-    "category": "FOOD_DINING",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 May, 2026",
+    "date": "2026-05-27",
     "confidence": 96
   },
   {
@@ -2984,7 +2984,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -2996,7 +2996,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -3008,7 +3008,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -3017,10 +3017,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 5662,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -3029,10 +3029,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 273,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -3041,10 +3041,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 1944,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -3056,7 +3056,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -3068,7 +3068,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -3080,7 +3080,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 May, 2026",
+    "date": "2026-05-28",
     "confidence": 96
   },
   {
@@ -3092,7 +3092,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "29 May, 2026",
+    "date": "2026-05-29",
     "confidence": 96
   },
   {
@@ -3104,7 +3104,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "29 May, 2026",
+    "date": "2026-05-29",
     "confidence": 96
   },
   {
@@ -3116,7 +3116,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 May, 2026",
+    "date": "2026-05-29",
     "confidence": 96
   },
   {
@@ -3128,7 +3128,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "29 May, 2026",
+    "date": "2026-05-29",
     "confidence": 96
   },
   {
@@ -3140,7 +3140,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "29 May, 2026",
+    "date": "2026-05-29",
     "confidence": 96
   },
   {
@@ -3152,7 +3152,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 May, 2026",
+    "date": "2026-05-30",
     "confidence": 96
   },
   {
@@ -3164,7 +3164,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "30 May, 2026",
+    "date": "2026-05-30",
     "confidence": 96
   },
   {
@@ -3176,7 +3176,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 May, 2026",
+    "date": "2026-05-30",
     "confidence": 96
   },
   {
@@ -3188,7 +3188,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "30 May, 2026",
+    "date": "2026-05-30",
     "confidence": 96
   },
   {
@@ -3200,7 +3200,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "31 May, 2026",
+    "date": "2026-05-31",
     "confidence": 96
   },
   {
@@ -3212,7 +3212,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "31 May, 2026",
+    "date": "2026-05-31",
     "confidence": 96
   },
   {
@@ -3224,7 +3224,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "31 May, 2026",
+    "date": "2026-05-31",
     "confidence": 96
   },
   {
@@ -3236,7 +3236,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "01 Jun, 2026",
+    "date": "2026-06-01",
     "confidence": 96
   },
   {
@@ -3245,10 +3245,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 1916,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "01 Jun, 2026",
+    "date": "2026-06-01",
     "confidence": 96
   },
   {
@@ -3260,7 +3260,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "01 Jun, 2026",
+    "date": "2026-06-01",
     "confidence": 96
   },
   {
@@ -3272,7 +3272,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Jun, 2026",
+    "date": "2026-06-02",
     "confidence": 96
   },
   {
@@ -3284,7 +3284,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Jun, 2026",
+    "date": "2026-06-02",
     "confidence": 96
   },
   {
@@ -3296,7 +3296,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Jun, 2026",
+    "date": "2026-06-02",
     "confidence": 96
   },
   {
@@ -3308,7 +3308,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Jun, 2026",
+    "date": "2026-06-02",
     "confidence": 96
   },
   {
@@ -3317,10 +3317,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 296,
     "type": "DEBIT",
     "merchant": "COLOR CUBES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "02 Jun, 2026",
+    "date": "2026-06-02",
     "confidence": 96
   },
   {
@@ -3332,7 +3332,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Jun, 2026",
+    "date": "2026-06-02",
     "confidence": 96
   },
   {
@@ -3344,7 +3344,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "03 Jun, 2026",
+    "date": "2026-06-03",
     "confidence": 96
   },
   {
@@ -3356,7 +3356,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "03 Jun, 2026",
+    "date": "2026-06-03",
     "confidence": 96
   },
   {
@@ -3368,7 +3368,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 Jun, 2026",
+    "date": "2026-06-04",
     "confidence": 96
   },
   {
@@ -3380,7 +3380,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 Jun, 2026",
+    "date": "2026-06-04",
     "confidence": 96
   },
   {
@@ -3392,7 +3392,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 Jun, 2026",
+    "date": "2026-06-04",
     "confidence": 96
   },
   {
@@ -3404,7 +3404,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jun, 2026",
+    "date": "2026-06-04",
     "confidence": 96
   },
   {
@@ -3416,7 +3416,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jun, 2026",
+    "date": "2026-06-04",
     "confidence": 96
   },
   {
@@ -3428,7 +3428,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Jun, 2026",
+    "date": "2026-06-05",
     "confidence": 96
   },
   {
@@ -3440,7 +3440,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Jun, 2026",
+    "date": "2026-06-05",
     "confidence": 96
   },
   {
@@ -3452,7 +3452,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Jun, 2026",
+    "date": "2026-06-05",
     "confidence": 96
   },
   {
@@ -3464,7 +3464,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Jun, 2026",
+    "date": "2026-06-05",
     "confidence": 96
   },
   {
@@ -3476,7 +3476,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Jun, 2026",
+    "date": "2026-06-05",
     "confidence": 96
   },
   {
@@ -3488,7 +3488,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Jun, 2026",
+    "date": "2026-06-05",
     "confidence": 96
   },
   {
@@ -3500,7 +3500,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 Jun, 2026",
+    "date": "2026-06-06",
     "confidence": 96
   },
   {
@@ -3512,7 +3512,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 Jun, 2026",
+    "date": "2026-06-06",
     "confidence": 96
   },
   {
@@ -3524,7 +3524,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 Jun, 2026",
+    "date": "2026-06-06",
     "confidence": 96
   },
   {
@@ -3536,7 +3536,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 Jun, 2026",
+    "date": "2026-06-06",
     "confidence": 96
   },
   {
@@ -3548,7 +3548,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 Jun, 2026",
+    "date": "2026-06-06",
     "confidence": 96
   },
   {
@@ -3560,7 +3560,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 Jun, 2026",
+    "date": "2026-06-06",
     "confidence": 96
   },
   {
@@ -3572,7 +3572,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 Jun, 2026",
+    "date": "2026-06-07",
     "confidence": 96
   },
   {
@@ -3584,7 +3584,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 Jun, 2026",
+    "date": "2026-06-07",
     "confidence": 96
   },
   {
@@ -3596,7 +3596,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Jun, 2026",
+    "date": "2026-06-07",
     "confidence": 96
   },
   {
@@ -3608,7 +3608,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Jun, 2026",
+    "date": "2026-06-07",
     "confidence": 96
   },
   {
@@ -3620,7 +3620,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Jun, 2026",
+    "date": "2026-06-07",
     "confidence": 96
   },
   {
@@ -3632,7 +3632,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 Jun, 2026",
+    "date": "2026-06-07",
     "confidence": 96
   },
   {
@@ -3644,7 +3644,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "07 Jun, 2026",
+    "date": "2026-06-07",
     "confidence": 96
   },
   {
@@ -3656,7 +3656,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "08 Jun, 2026",
+    "date": "2026-06-08",
     "confidence": 96
   },
   {
@@ -3668,7 +3668,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3680,7 +3680,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3692,7 +3692,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3704,7 +3704,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3716,7 +3716,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3728,7 +3728,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3740,7 +3740,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3749,10 +3749,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 670,
     "type": "DEBIT",
     "merchant": "NELLAI FRUITS",
-    "category": "FOOD_DINING",
+    "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3764,7 +3764,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3776,7 +3776,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3788,7 +3788,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "09 Jun, 2026",
+    "date": "2026-06-09",
     "confidence": 96
   },
   {
@@ -3800,7 +3800,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "10 Jun, 2026",
+    "date": "2026-06-10",
     "confidence": 96
   },
   {
@@ -3812,7 +3812,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Jun, 2026",
+    "date": "2026-06-10",
     "confidence": 96
   },
   {
@@ -3824,7 +3824,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "10 Jun, 2026",
+    "date": "2026-06-10",
     "confidence": 96
   },
   {
@@ -3836,7 +3836,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "10 Jun, 2026",
+    "date": "2026-06-10",
     "confidence": 96
   },
   {
@@ -3848,7 +3848,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Jun, 2026",
+    "date": "2026-06-12",
     "confidence": 96
   },
   {
@@ -3860,7 +3860,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Jun, 2026",
+    "date": "2026-06-12",
     "confidence": 96
   },
   {
@@ -3872,7 +3872,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Jun, 2026",
+    "date": "2026-06-12",
     "confidence": 96
   },
   {
@@ -3884,7 +3884,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "12 Jun, 2026",
+    "date": "2026-06-12",
     "confidence": 96
   },
   {
@@ -3896,7 +3896,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "13 Jun, 2026",
+    "date": "2026-06-13",
     "confidence": 96
   },
   {
@@ -3905,10 +3905,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 1459,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "13 Jun, 2026",
+    "date": "2026-06-13",
     "confidence": 96
   },
   {
@@ -3920,7 +3920,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "13 Jun, 2026",
+    "date": "2026-06-13",
     "confidence": 96
   },
   {
@@ -3932,7 +3932,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 Jun, 2026",
+    "date": "2026-06-14",
     "confidence": 96
   },
   {
@@ -3944,7 +3944,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "14 Jun, 2026",
+    "date": "2026-06-14",
     "confidence": 96
   },
   {
@@ -3956,7 +3956,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "14 Jun, 2026",
+    "date": "2026-06-14",
     "confidence": 96
   },
   {
@@ -3968,7 +3968,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "15 Jun, 2026",
+    "date": "2026-06-15",
     "confidence": 96
   },
   {
@@ -3977,10 +3977,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 1551,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "15 Jun, 2026",
+    "date": "2026-06-15",
     "confidence": 96
   },
   {
@@ -3992,7 +3992,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "15 Jun, 2026",
+    "date": "2026-06-15",
     "confidence": 96
   },
   {
@@ -4004,7 +4004,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "15 Jun, 2026",
+    "date": "2026-06-15",
     "confidence": 96
   },
   {
@@ -4016,7 +4016,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "15 Jun, 2026",
+    "date": "2026-06-15",
     "confidence": 96
   },
   {
@@ -4028,7 +4028,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 Jun, 2026",
+    "date": "2026-06-17",
     "confidence": 96
   },
   {
@@ -4040,7 +4040,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 Jun, 2026",
+    "date": "2026-06-17",
     "confidence": 96
   },
   {
@@ -4052,7 +4052,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 Jun, 2026",
+    "date": "2026-06-17",
     "confidence": 96
   },
   {
@@ -4064,7 +4064,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Jun, 2026",
+    "date": "2026-06-18",
     "confidence": 96
   },
   {
@@ -4076,7 +4076,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 Jun, 2026",
+    "date": "2026-06-19",
     "confidence": 96
   },
   {
@@ -4088,7 +4088,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "IndusInd Bank 6245",
-    "date": "19 Jun, 2026",
+    "date": "2026-06-19",
     "confidence": 96
   },
   {
@@ -4100,7 +4100,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "19 Jun, 2026",
+    "date": "2026-06-19",
     "confidence": 96
   },
   {
@@ -4112,7 +4112,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "19 Jun, 2026",
+    "date": "2026-06-19",
     "confidence": 96
   },
   {
@@ -4124,7 +4124,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 Jun, 2026",
+    "date": "2026-06-19",
     "confidence": 96
   },
   {
@@ -4136,7 +4136,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "20 Jun, 2026",
+    "date": "2026-06-20",
     "confidence": 96
   },
   {
@@ -4148,7 +4148,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "20 Jun, 2026",
+    "date": "2026-06-20",
     "confidence": 96
   },
   {
@@ -4160,7 +4160,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "20 Jun, 2026",
+    "date": "2026-06-20",
     "confidence": 96
   },
   {
@@ -4172,7 +4172,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "20 Jun, 2026",
+    "date": "2026-06-20",
     "confidence": 96
   },
   {
@@ -4184,7 +4184,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "20 Jun, 2026",
+    "date": "2026-06-20",
     "confidence": 96
   },
   {
@@ -4193,10 +4193,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 120,
     "type": "DEBIT",
     "merchant": "SK FRUITS",
-    "category": "FOOD_DINING",
+    "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "IndusInd Bank 6245",
-    "date": "20 Jun, 2026",
+    "date": "2026-06-20",
     "confidence": 96
   },
   {
@@ -4205,10 +4205,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 200,
     "type": "DEBIT",
     "merchant": "SK FRUITS",
-    "category": "FOOD_DINING",
+    "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "IndusInd Bank 6245",
-    "date": "20 Jun, 2026",
+    "date": "2026-06-20",
     "confidence": 96
   },
   {
@@ -4217,10 +4217,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 192,
     "type": "DEBIT",
     "merchant": "BALAJI VEG FRUITS SHOP",
-    "category": "FOOD_DINING",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "20 Jun, 2026",
+    "date": "2026-06-20",
     "confidence": 96
   },
   {
@@ -4232,7 +4232,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Jun, 2026",
+    "date": "2026-06-21",
     "confidence": 96
   },
   {
@@ -4244,7 +4244,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Jun, 2026",
+    "date": "2026-06-21",
     "confidence": 96
   },
   {
@@ -4256,7 +4256,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Jun, 2026",
+    "date": "2026-06-21",
     "confidence": 96
   },
   {
@@ -4268,7 +4268,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "IndusInd Bank 6245",
-    "date": "21 Jun, 2026",
+    "date": "2026-06-21",
     "confidence": 96
   },
   {
@@ -4280,7 +4280,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Jun, 2026",
+    "date": "2026-06-21",
     "confidence": 96
   },
   {
@@ -4292,7 +4292,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Jun, 2026",
+    "date": "2026-06-21",
     "confidence": 96
   },
   {
@@ -4304,7 +4304,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Jun, 2026",
+    "date": "2026-06-21",
     "confidence": 96
   },
   {
@@ -4316,7 +4316,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "IndusInd Bank 6245",
-    "date": "21 Jun, 2026",
+    "date": "2026-06-21",
     "confidence": 96
   },
   {
@@ -4328,7 +4328,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Jun, 2026",
+    "date": "2026-06-22",
     "confidence": 96
   },
   {
@@ -4340,7 +4340,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "22 Jun, 2026",
+    "date": "2026-06-22",
     "confidence": 96
   },
   {
@@ -4352,7 +4352,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "22 Jun, 2026",
+    "date": "2026-06-22",
     "confidence": 96
   },
   {
@@ -4364,7 +4364,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "22 Jun, 2026",
+    "date": "2026-06-22",
     "confidence": 96
   },
   {
@@ -4376,7 +4376,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "22 Jun, 2026",
+    "date": "2026-06-22",
     "confidence": 96
   },
   {
@@ -4388,7 +4388,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "23 Jun, 2026",
+    "date": "2026-06-23",
     "confidence": 96
   },
   {
@@ -4400,7 +4400,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jun, 2026",
+    "date": "2026-06-23",
     "confidence": 96
   },
   {
@@ -4412,7 +4412,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jun, 2026",
+    "date": "2026-06-23",
     "confidence": 96
   },
   {
@@ -4424,7 +4424,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jun, 2026",
+    "date": "2026-06-23",
     "confidence": 96
   },
   {
@@ -4436,7 +4436,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "23 Jun, 2026",
+    "date": "2026-06-23",
     "confidence": 96
   },
   {
@@ -4448,7 +4448,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 Jun, 2026",
+    "date": "2026-06-24",
     "confidence": 96
   },
   {
@@ -4460,7 +4460,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 Jun, 2026",
+    "date": "2026-06-24",
     "confidence": 96
   },
   {
@@ -4472,7 +4472,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 Jun, 2026",
+    "date": "2026-06-24",
     "confidence": 96
   },
   {
@@ -4484,7 +4484,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 Jun, 2026",
+    "date": "2026-06-24",
     "confidence": 96
   },
   {
@@ -4496,7 +4496,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 Jun, 2026",
+    "date": "2026-06-24",
     "confidence": 96
   },
   {
@@ -4508,7 +4508,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 Jun, 2026",
+    "date": "2026-06-24",
     "confidence": 96
   },
   {
@@ -4520,7 +4520,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "26 Jun, 2026",
+    "date": "2026-06-26",
     "confidence": 96
   },
   {
@@ -4532,7 +4532,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "26 Jun, 2026",
+    "date": "2026-06-26",
     "confidence": 96
   },
   {
@@ -4544,7 +4544,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "26 Jun, 2026",
+    "date": "2026-06-26",
     "confidence": 96
   },
   {
@@ -4556,7 +4556,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "26 Jun, 2026",
+    "date": "2026-06-26",
     "confidence": 96
   },
   {
@@ -4568,7 +4568,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "26 Jun, 2026",
+    "date": "2026-06-26",
     "confidence": 96
   },
   {
@@ -4580,7 +4580,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "27 Jun, 2026",
+    "date": "2026-06-27",
     "confidence": 96
   },
   {
@@ -4592,7 +4592,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "27 Jun, 2026",
+    "date": "2026-06-27",
     "confidence": 96
   },
   {
@@ -4604,7 +4604,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "27 Jun, 2026",
+    "date": "2026-06-27",
     "confidence": 96
   },
   {
@@ -4616,7 +4616,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "27 Jun, 2026",
+    "date": "2026-06-27",
     "confidence": 96
   },
   {
@@ -4628,7 +4628,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Jun, 2026",
+    "date": "2026-06-27",
     "confidence": 96
   },
   {
@@ -4640,7 +4640,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Jun, 2026",
+    "date": "2026-06-27",
     "confidence": 96
   },
   {
@@ -4652,7 +4652,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Jun, 2026",
+    "date": "2026-06-27",
     "confidence": 96
   },
   {
@@ -4664,7 +4664,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 Jun, 2026",
+    "date": "2026-06-28",
     "confidence": 96
   },
   {
@@ -4676,7 +4676,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "28 Jun, 2026",
+    "date": "2026-06-28",
     "confidence": 96
   },
   {
@@ -4688,7 +4688,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 Jun, 2026",
+    "date": "2026-06-28",
     "confidence": 96
   },
   {
@@ -4700,7 +4700,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Jun, 2026",
+    "date": "2026-06-29",
     "confidence": 96
   },
   {
@@ -4712,7 +4712,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Jun, 2026",
+    "date": "2026-06-29",
     "confidence": 96
   },
   {
@@ -4724,7 +4724,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jun, 2026",
+    "date": "2026-06-30",
     "confidence": 96
   },
   {
@@ -4733,10 +4733,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 2418,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Jun, 2026",
+    "date": "2026-06-30",
     "confidence": 96
   },
   {
@@ -4745,10 +4745,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 50,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Jun, 2026",
+    "date": "2026-06-30",
     "confidence": 96
   },
   {
@@ -4760,7 +4760,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "30 Jun, 2026",
+    "date": "2026-06-30",
     "confidence": 96
   },
   {
@@ -4772,7 +4772,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jun, 2026",
+    "date": "2026-06-30",
     "confidence": 96
   },
   {
@@ -4784,7 +4784,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jun, 2026",
+    "date": "2026-06-30",
     "confidence": 96
   },
   {
@@ -4796,7 +4796,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Jun, 2026",
+    "date": "2026-06-30",
     "confidence": 96
   },
   {
@@ -4808,7 +4808,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Jul, 2026",
+    "date": "2026-07-03",
     "confidence": 96
   },
   {
@@ -4820,7 +4820,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "03 Jul, 2026",
+    "date": "2026-07-03",
     "confidence": 96
   },
   {
@@ -4832,7 +4832,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Jul, 2026",
+    "date": "2026-07-03",
     "confidence": 96
   },
   {
@@ -4844,7 +4844,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Jul, 2026",
+    "date": "2026-07-03",
     "confidence": 96
   },
   {
@@ -4856,7 +4856,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Jul, 2026",
+    "date": "2026-07-03",
     "confidence": 96
   },
   {
@@ -4868,7 +4868,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Jul, 2026",
+    "date": "2026-07-03",
     "confidence": 96
   },
   {
@@ -4880,7 +4880,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Jul, 2026",
+    "date": "2026-07-03",
     "confidence": 96
   },
   {
@@ -4892,7 +4892,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Jul, 2026",
+    "date": "2026-07-03",
     "confidence": 96
   },
   {
@@ -4904,7 +4904,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jul, 2026",
+    "date": "2026-07-04",
     "confidence": 96
   },
   {
@@ -4916,7 +4916,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jul, 2026",
+    "date": "2026-07-04",
     "confidence": 96
   },
   {
@@ -4928,7 +4928,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "04 Jul, 2026",
+    "date": "2026-07-04",
     "confidence": 96
   },
   {
@@ -4937,10 +4937,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 290,
     "type": "DEBIT",
     "merchant": "TENDER KEBABS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jul, 2026",
+    "date": "2026-07-04",
     "confidence": 96
   },
   {
@@ -4952,7 +4952,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jul, 2026",
+    "date": "2026-07-04",
     "confidence": 96
   },
   {
@@ -4961,10 +4961,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 80,
     "type": "DEBIT",
     "merchant": "TENDER KEBABS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jul, 2026",
+    "date": "2026-07-04",
     "confidence": 96
   },
   {
@@ -4973,10 +4973,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 40,
     "type": "DEBIT",
     "merchant": "TENDER KEBABS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jul, 2026",
+    "date": "2026-07-04",
     "confidence": 96
   },
   {
@@ -4988,7 +4988,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Jul, 2026",
+    "date": "2026-07-04",
     "confidence": 96
   },
   {
@@ -5000,7 +5000,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "05 Jul, 2026",
+    "date": "2026-07-05",
     "confidence": 96
   },
   {
@@ -5012,7 +5012,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Jul, 2026",
+    "date": "2026-07-05",
     "confidence": 96
   },
   {
@@ -5024,7 +5024,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "05 Jul, 2026",
+    "date": "2026-07-05",
     "confidence": 96
   },
   {
@@ -5036,7 +5036,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "06 Jul, 2026",
+    "date": "2026-07-06",
     "confidence": 96
   },
   {
@@ -5048,7 +5048,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "06 Jul, 2026",
+    "date": "2026-07-06",
     "confidence": 96
   },
   {
@@ -5060,7 +5060,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Jul, 2026",
+    "date": "2026-07-07",
     "confidence": 96
   },
   {
@@ -5072,7 +5072,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Jul, 2026",
+    "date": "2026-07-07",
     "confidence": 96
   },
   {
@@ -5084,7 +5084,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Jul, 2026",
+    "date": "2026-07-07",
     "confidence": 96
   },
   {
@@ -5096,7 +5096,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Jul, 2026",
+    "date": "2026-07-07",
     "confidence": 96
   },
   {
@@ -5108,7 +5108,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Jul, 2026",
+    "date": "2026-07-07",
     "confidence": 96
   },
   {
@@ -5120,7 +5120,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "08 Jul, 2026",
+    "date": "2026-07-08",
     "confidence": 96
   },
   {
@@ -5132,7 +5132,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Jul, 2026",
+    "date": "2026-07-08",
     "confidence": 96
   },
   {
@@ -5144,7 +5144,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Jul, 2026",
+    "date": "2026-07-08",
     "confidence": 96
   },
   {
@@ -5156,7 +5156,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Jul, 2026",
+    "date": "2026-07-09",
     "confidence": 96
   },
   {
@@ -5168,7 +5168,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Jul, 2026",
+    "date": "2026-07-09",
     "confidence": 96
   },
   {
@@ -5180,7 +5180,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Jul, 2026",
+    "date": "2026-07-10",
     "confidence": 96
   },
   {
@@ -5192,7 +5192,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Jul, 2026",
+    "date": "2026-07-10",
     "confidence": 96
   },
   {
@@ -5204,7 +5204,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Jul, 2026",
+    "date": "2026-07-10",
     "confidence": 96
   },
   {
@@ -5216,7 +5216,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5228,7 +5228,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5240,7 +5240,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5252,7 +5252,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5264,7 +5264,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5276,7 +5276,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5288,7 +5288,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5300,7 +5300,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5312,7 +5312,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5324,7 +5324,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5336,7 +5336,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5348,7 +5348,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "11 Jul, 2026",
+    "date": "2026-07-11",
     "confidence": 96
   },
   {
@@ -5360,7 +5360,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Jul, 2026",
+    "date": "2026-07-12",
     "confidence": 96
   },
   {
@@ -5372,7 +5372,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Jul, 2026",
+    "date": "2026-07-12",
     "confidence": 96
   },
   {
@@ -5384,7 +5384,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "13 Jul, 2026",
+    "date": "2026-07-13",
     "confidence": 96
   },
   {
@@ -5396,7 +5396,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 Jul, 2026",
+    "date": "2026-07-14",
     "confidence": 96
   },
   {
@@ -5408,7 +5408,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "14 Jul, 2026",
+    "date": "2026-07-14",
     "confidence": 96
   },
   {
@@ -5420,7 +5420,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Jul, 2026",
+    "date": "2026-07-15",
     "confidence": 96
   },
   {
@@ -5429,10 +5429,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 50,
     "type": "DEBIT",
     "merchant": "S K ELECTRICALS HARDWARES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Jul, 2026",
+    "date": "2026-07-15",
     "confidence": 96
   },
   {
@@ -5444,7 +5444,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 Jul, 2026",
+    "date": "2026-07-17",
     "confidence": 96
   },
   {
@@ -5456,7 +5456,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 Jul, 2026",
+    "date": "2026-07-17",
     "confidence": 96
   },
   {
@@ -5465,10 +5465,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 330,
     "type": "DEBIT",
     "merchant": "TENDER KEBABS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "17 Jul, 2026",
+    "date": "2026-07-17",
     "confidence": 96
   },
   {
@@ -5480,7 +5480,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "17 Jul, 2026",
+    "date": "2026-07-17",
     "confidence": 96
   },
   {
@@ -5489,10 +5489,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 20,
     "type": "DEBIT",
     "merchant": "TENDER KEBABS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Jul, 2026",
+    "date": "2026-07-17",
     "confidence": 96
   },
   {
@@ -5504,7 +5504,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5516,7 +5516,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5525,10 +5525,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 176.4,
     "type": "DEBIT",
     "merchant": "BURGER KING",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5540,7 +5540,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5552,7 +5552,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5564,7 +5564,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5576,7 +5576,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5588,7 +5588,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5600,7 +5600,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Jul, 2026",
+    "date": "2026-07-18",
     "confidence": 96
   },
   {
@@ -5612,7 +5612,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Jul, 2026",
+    "date": "2026-07-19",
     "confidence": 96
   },
   {
@@ -5624,7 +5624,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 Jul, 2026",
+    "date": "2026-07-19",
     "confidence": 96
   },
   {
@@ -5636,7 +5636,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Jul, 2026",
+    "date": "2026-07-19",
     "confidence": 96
   },
   {
@@ -5648,7 +5648,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 Jul, 2026",
+    "date": "2026-07-19",
     "confidence": 96
   },
   {
@@ -5660,7 +5660,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Jul, 2026",
+    "date": "2026-07-19",
     "confidence": 96
   },
   {
@@ -5672,7 +5672,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "19 Jul, 2026",
+    "date": "2026-07-19",
     "confidence": 96
   },
   {
@@ -5684,7 +5684,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "19 Jul, 2026",
+    "date": "2026-07-19",
     "confidence": 96
   },
   {
@@ -5696,7 +5696,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "20 Jul, 2026",
+    "date": "2026-07-20",
     "confidence": 96
   },
   {
@@ -5705,10 +5705,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 50,
     "type": "DEBIT",
     "merchant": "MD BIKE SERVICE CENTER",
-    "category": "OTHER_EXPENSE",
+    "category": "TRAVEL_COMMUTE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "20 Jul, 2026",
+    "date": "2026-07-20",
     "confidence": 96
   },
   {
@@ -5720,7 +5720,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "20 Jul, 2026",
+    "date": "2026-07-20",
     "confidence": 96
   },
   {
@@ -5732,7 +5732,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "21 Jul, 2026",
+    "date": "2026-07-21",
     "confidence": 96
   },
   {
@@ -5744,7 +5744,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "21 Jul, 2026",
+    "date": "2026-07-21",
     "confidence": 96
   },
   {
@@ -5756,7 +5756,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Jul, 2026",
+    "date": "2026-07-21",
     "confidence": 96
   },
   {
@@ -5768,7 +5768,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "21 Jul, 2026",
+    "date": "2026-07-21",
     "confidence": 96
   },
   {
@@ -5780,7 +5780,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "22 Jul, 2026",
+    "date": "2026-07-22",
     "confidence": 96
   },
   {
@@ -5792,7 +5792,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Jul, 2026",
+    "date": "2026-07-22",
     "confidence": 96
   },
   {
@@ -5804,7 +5804,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5813,10 +5813,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 3893,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5828,7 +5828,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5840,7 +5840,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5852,7 +5852,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5864,7 +5864,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5876,7 +5876,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5888,7 +5888,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5900,7 +5900,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5912,7 +5912,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Jul, 2026",
+    "date": "2026-07-23",
     "confidence": 96
   },
   {
@@ -5924,7 +5924,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 Jul, 2026",
+    "date": "2026-07-24",
     "confidence": 96
   },
   {
@@ -5936,7 +5936,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 Jul, 2026",
+    "date": "2026-07-24",
     "confidence": 96
   },
   {
@@ -5948,7 +5948,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 Jul, 2026",
+    "date": "2026-07-24",
     "confidence": 96
   },
   {
@@ -5960,7 +5960,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "24 Jul, 2026",
+    "date": "2026-07-24",
     "confidence": 96
   },
   {
@@ -5972,7 +5972,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "24 Jul, 2026",
+    "date": "2026-07-24",
     "confidence": 96
   },
   {
@@ -5984,7 +5984,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "25 Jul, 2026",
+    "date": "2026-07-25",
     "confidence": 96
   },
   {
@@ -5996,7 +5996,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "25 Jul, 2026",
+    "date": "2026-07-25",
     "confidence": 96
   },
   {
@@ -6008,7 +6008,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "25 Jul, 2026",
+    "date": "2026-07-25",
     "confidence": 96
   },
   {
@@ -6020,7 +6020,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "25 Jul, 2026",
+    "date": "2026-07-25",
     "confidence": 96
   },
   {
@@ -6032,7 +6032,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "26 Jul, 2026",
+    "date": "2026-07-26",
     "confidence": 96
   },
   {
@@ -6044,7 +6044,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "26 Jul, 2026",
+    "date": "2026-07-26",
     "confidence": 96
   },
   {
@@ -6056,7 +6056,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "26 Jul, 2026",
+    "date": "2026-07-26",
     "confidence": 96
   },
   {
@@ -6068,7 +6068,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "26 Jul, 2026",
+    "date": "2026-07-26",
     "confidence": 96
   },
   {
@@ -6080,7 +6080,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Jul, 2026",
+    "date": "2026-07-27",
     "confidence": 96
   },
   {
@@ -6092,7 +6092,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Jul, 2026",
+    "date": "2026-07-27",
     "confidence": 96
   },
   {
@@ -6104,7 +6104,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "27 Jul, 2026",
+    "date": "2026-07-27",
     "confidence": 96
   },
   {
@@ -6116,7 +6116,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "27 Jul, 2026",
+    "date": "2026-07-27",
     "confidence": 96
   },
   {
@@ -6128,7 +6128,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "27 Jul, 2026",
+    "date": "2026-07-27",
     "confidence": 96
   },
   {
@@ -6140,7 +6140,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 Jul, 2026",
+    "date": "2026-07-28",
     "confidence": 96
   },
   {
@@ -6152,7 +6152,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 Jul, 2026",
+    "date": "2026-07-28",
     "confidence": 96
   },
   {
@@ -6161,10 +6161,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 50,
     "type": "DEBIT",
     "merchant": "VIJI PUNCHER SHOP",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "28 Jul, 2026",
+    "date": "2026-07-28",
     "confidence": 96
   },
   {
@@ -6176,7 +6176,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 Jul, 2026",
+    "date": "2026-07-28",
     "confidence": 96
   },
   {
@@ -6188,7 +6188,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "28 Jul, 2026",
+    "date": "2026-07-28",
     "confidence": 96
   },
   {
@@ -6200,7 +6200,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "29 Jul, 2026",
+    "date": "2026-07-29",
     "confidence": 96
   },
   {
@@ -6212,7 +6212,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6224,7 +6224,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6236,7 +6236,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6248,7 +6248,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6260,7 +6260,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6272,7 +6272,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6284,7 +6284,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6296,7 +6296,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6308,7 +6308,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6320,7 +6320,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "30 Jul, 2026",
+    "date": "2026-07-30",
     "confidence": 96
   },
   {
@@ -6332,7 +6332,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "31 Jul, 2026",
+    "date": "2026-07-31",
     "confidence": 96
   },
   {
@@ -6344,7 +6344,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "31 Jul, 2026",
+    "date": "2026-07-31",
     "confidence": 96
   },
   {
@@ -6356,7 +6356,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "01 Aug, 2026",
+    "date": "2026-08-01",
     "confidence": 96
   },
   {
@@ -6368,7 +6368,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "01 Aug, 2026",
+    "date": "2026-08-01",
     "confidence": 96
   },
   {
@@ -6380,7 +6380,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "ENTERTAINMENT_SUBS",
     "paymentMethod": "CREDIT_CARD",
     "accountRef": "ICICI RuPay Card XX03",
-    "date": "01 Aug, 2026",
+    "date": "2026-08-01",
     "confidence": 96
   },
   {
@@ -6392,7 +6392,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "01 Aug, 2026",
+    "date": "2026-08-01",
     "confidence": 96
   },
   {
@@ -6404,7 +6404,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "02 Aug, 2026",
+    "date": "2026-08-02",
     "confidence": 96
   },
   {
@@ -6416,7 +6416,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "02 Aug, 2026",
+    "date": "2026-08-02",
     "confidence": 96
   },
   {
@@ -6428,7 +6428,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "02 Aug, 2026",
+    "date": "2026-08-02",
     "confidence": 96
   },
   {
@@ -6440,7 +6440,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Aug, 2026",
+    "date": "2026-08-02",
     "confidence": 96
   },
   {
@@ -6449,10 +6449,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 130,
     "type": "DEBIT",
     "merchant": "SRI RAM ELECTRICALS AND HARDWARES",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Aug, 2026",
+    "date": "2026-08-02",
     "confidence": 96
   },
   {
@@ -6464,7 +6464,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Aug, 2026",
+    "date": "2026-08-02",
     "confidence": 96
   },
   {
@@ -6476,7 +6476,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Aug, 2026",
+    "date": "2026-08-02",
     "confidence": 96
   },
   {
@@ -6488,7 +6488,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Aug, 2026",
+    "date": "2026-08-03",
     "confidence": 96
   },
   {
@@ -6500,7 +6500,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Aug, 2026",
+    "date": "2026-08-03",
     "confidence": 96
   },
   {
@@ -6512,7 +6512,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Aug, 2026",
+    "date": "2026-08-03",
     "confidence": 96
   },
   {
@@ -6524,7 +6524,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Aug, 2026",
+    "date": "2026-08-03",
     "confidence": 96
   },
   {
@@ -6536,7 +6536,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Aug, 2026",
+    "date": "2026-08-04",
     "confidence": 96
   },
   {
@@ -6548,7 +6548,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Aug, 2026",
+    "date": "2026-08-04",
     "confidence": 96
   },
   {
@@ -6560,7 +6560,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Aug, 2026",
+    "date": "2026-08-04",
     "confidence": 96
   },
   {
@@ -6572,7 +6572,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "04 Aug, 2026",
+    "date": "2026-08-04",
     "confidence": 96
   },
   {
@@ -6584,7 +6584,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "05 Aug, 2026",
+    "date": "2026-08-05",
     "confidence": 96
   },
   {
@@ -6596,7 +6596,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "06 Aug, 2026",
+    "date": "2026-08-06",
     "confidence": 96
   },
   {
@@ -6608,7 +6608,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "06 Aug, 2026",
+    "date": "2026-08-06",
     "confidence": 96
   },
   {
@@ -6617,10 +6617,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 300,
     "type": "DEBIT",
     "merchant": "MADURAI AMAMCHI VILAS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Aug, 2026",
+    "date": "2026-08-07",
     "confidence": 96
   },
   {
@@ -6632,7 +6632,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Aug, 2026",
+    "date": "2026-08-07",
     "confidence": 96
   },
   {
@@ -6644,7 +6644,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "07 Aug, 2026",
+    "date": "2026-08-07",
     "confidence": 96
   },
   {
@@ -6656,7 +6656,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Aug, 2026",
+    "date": "2026-08-08",
     "confidence": 96
   },
   {
@@ -6668,7 +6668,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "08 Aug, 2026",
+    "date": "2026-08-08",
     "confidence": 96
   },
   {
@@ -6680,7 +6680,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Aug, 2026",
+    "date": "2026-08-09",
     "confidence": 96
   },
   {
@@ -6692,7 +6692,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Aug, 2026",
+    "date": "2026-08-09",
     "confidence": 96
   },
   {
@@ -6704,7 +6704,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Aug, 2026",
+    "date": "2026-08-09",
     "confidence": 96
   },
   {
@@ -6716,7 +6716,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Aug, 2026",
+    "date": "2026-08-09",
     "confidence": 96
   },
   {
@@ -6728,7 +6728,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "10 Aug, 2026",
+    "date": "2026-08-10",
     "confidence": 96
   },
   {
@@ -6740,7 +6740,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Aug, 2026",
+    "date": "2026-08-11",
     "confidence": 96
   },
   {
@@ -6752,7 +6752,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Aug, 2026",
+    "date": "2026-08-11",
     "confidence": 96
   },
   {
@@ -6764,7 +6764,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Aug, 2026",
+    "date": "2026-08-11",
     "confidence": 96
   },
   {
@@ -6776,7 +6776,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Aug, 2026",
+    "date": "2026-08-11",
     "confidence": 96
   },
   {
@@ -6788,7 +6788,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Aug, 2026",
+    "date": "2026-08-12",
     "confidence": 96
   },
   {
@@ -6800,7 +6800,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Aug, 2026",
+    "date": "2026-08-12",
     "confidence": 96
   },
   {
@@ -6812,7 +6812,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Aug, 2026",
+    "date": "2026-08-12",
     "confidence": 96
   },
   {
@@ -6824,7 +6824,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "13 Aug, 2026",
+    "date": "2026-08-13",
     "confidence": 96
   },
   {
@@ -6836,7 +6836,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "13 Aug, 2026",
+    "date": "2026-08-13",
     "confidence": 96
   },
   {
@@ -6848,7 +6848,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 Aug, 2026",
+    "date": "2026-08-14",
     "confidence": 96
   },
   {
@@ -6860,7 +6860,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Aug, 2026",
+    "date": "2026-08-15",
     "confidence": 96
   },
   {
@@ -6872,7 +6872,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Aug, 2026",
+    "date": "2026-08-15",
     "confidence": 96
   },
   {
@@ -6884,7 +6884,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Aug, 2026",
+    "date": "2026-08-15",
     "confidence": 96
   },
   {
@@ -6896,7 +6896,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Aug, 2026",
+    "date": "2026-08-15",
     "confidence": 96
   },
   {
@@ -6908,7 +6908,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Aug, 2026",
+    "date": "2026-08-15",
     "confidence": 96
   },
   {
@@ -6920,7 +6920,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Aug, 2026",
+    "date": "2026-08-15",
     "confidence": 96
   },
   {
@@ -6932,7 +6932,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 Aug, 2026",
+    "date": "2026-08-16",
     "confidence": 96
   },
   {
@@ -6944,7 +6944,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 Aug, 2026",
+    "date": "2026-08-16",
     "confidence": 96
   },
   {
@@ -6956,7 +6956,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 Aug, 2026",
+    "date": "2026-08-16",
     "confidence": 96
   },
   {
@@ -6968,7 +6968,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 Aug, 2026",
+    "date": "2026-08-16",
     "confidence": 96
   },
   {
@@ -6980,7 +6980,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Aug, 2026",
+    "date": "2026-08-17",
     "confidence": 96
   },
   {
@@ -6992,7 +6992,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Aug, 2026",
+    "date": "2026-08-17",
     "confidence": 96
   },
   {
@@ -7004,7 +7004,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Aug, 2026",
+    "date": "2026-08-17",
     "confidence": 96
   },
   {
@@ -7016,7 +7016,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Aug, 2026",
+    "date": "2026-08-17",
     "confidence": 96
   },
   {
@@ -7028,7 +7028,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Aug, 2026",
+    "date": "2026-08-17",
     "confidence": 96
   },
   {
@@ -7040,7 +7040,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Aug, 2026",
+    "date": "2026-08-17",
     "confidence": 96
   },
   {
@@ -7052,7 +7052,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Aug, 2026",
+    "date": "2026-08-18",
     "confidence": 96
   },
   {
@@ -7064,7 +7064,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Aug, 2026",
+    "date": "2026-08-18",
     "confidence": 96
   },
   {
@@ -7076,7 +7076,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "18 Aug, 2026",
+    "date": "2026-08-18",
     "confidence": 96
   },
   {
@@ -7088,7 +7088,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Aug, 2026",
+    "date": "2026-08-19",
     "confidence": 96
   },
   {
@@ -7100,7 +7100,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Aug, 2026",
+    "date": "2026-08-19",
     "confidence": 96
   },
   {
@@ -7112,7 +7112,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Aug, 2026",
+    "date": "2026-08-19",
     "confidence": 96
   },
   {
@@ -7124,7 +7124,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "21 Aug, 2026",
+    "date": "2026-08-21",
     "confidence": 96
   },
   {
@@ -7136,7 +7136,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "21 Aug, 2026",
+    "date": "2026-08-21",
     "confidence": 96
   },
   {
@@ -7148,7 +7148,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Aug, 2026",
+    "date": "2026-08-22",
     "confidence": 96
   },
   {
@@ -7160,7 +7160,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Aug, 2026",
+    "date": "2026-08-22",
     "confidence": 96
   },
   {
@@ -7172,7 +7172,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Aug, 2026",
+    "date": "2026-08-22",
     "confidence": 96
   },
   {
@@ -7184,7 +7184,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Aug, 2026",
+    "date": "2026-08-22",
     "confidence": 96
   },
   {
@@ -7196,7 +7196,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Aug, 2026",
+    "date": "2026-08-23",
     "confidence": 96
   },
   {
@@ -7208,7 +7208,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Aug, 2026",
+    "date": "2026-08-23",
     "confidence": 96
   },
   {
@@ -7220,7 +7220,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Aug, 2026",
+    "date": "2026-08-23",
     "confidence": 96
   },
   {
@@ -7232,7 +7232,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Aug, 2026",
+    "date": "2026-08-23",
     "confidence": 96
   },
   {
@@ -7244,7 +7244,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Aug, 2026",
+    "date": "2026-08-23",
     "confidence": 96
   },
   {
@@ -7256,7 +7256,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Aug, 2026",
+    "date": "2026-08-23",
     "confidence": 96
   },
   {
@@ -7268,7 +7268,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Aug, 2026",
+    "date": "2026-08-23",
     "confidence": 96
   },
   {
@@ -7280,7 +7280,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 Aug, 2026",
+    "date": "2026-08-24",
     "confidence": 96
   },
   {
@@ -7292,7 +7292,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 Aug, 2026",
+    "date": "2026-08-24",
     "confidence": 96
   },
   {
@@ -7304,7 +7304,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 Aug, 2026",
+    "date": "2026-08-24",
     "confidence": 96
   },
   {
@@ -7316,7 +7316,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 Aug, 2026",
+    "date": "2026-08-24",
     "confidence": 96
   },
   {
@@ -7328,7 +7328,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 Aug, 2026",
+    "date": "2026-08-24",
     "confidence": 96
   },
   {
@@ -7340,7 +7340,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Aug, 2026",
+    "date": "2026-08-25",
     "confidence": 96
   },
   {
@@ -7352,7 +7352,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Aug, 2026",
+    "date": "2026-08-25",
     "confidence": 96
   },
   {
@@ -7364,7 +7364,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Aug, 2026",
+    "date": "2026-08-25",
     "confidence": 96
   },
   {
@@ -7376,7 +7376,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Aug, 2026",
+    "date": "2026-08-25",
     "confidence": 96
   },
   {
@@ -7388,7 +7388,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Aug, 2026",
+    "date": "2026-08-25",
     "confidence": 96
   },
   {
@@ -7400,7 +7400,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "26 Aug, 2026",
+    "date": "2026-08-26",
     "confidence": 96
   },
   {
@@ -7409,10 +7409,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 180,
     "type": "DEBIT",
     "merchant": "CRESCENT",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 Aug, 2026",
+    "date": "2026-08-27",
     "confidence": 96
   },
   {
@@ -7424,7 +7424,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 Aug, 2026",
+    "date": "2026-08-27",
     "confidence": 96
   },
   {
@@ -7436,7 +7436,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 Aug, 2026",
+    "date": "2026-08-27",
     "confidence": 96
   },
   {
@@ -7448,7 +7448,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 Aug, 2026",
+    "date": "2026-08-27",
     "confidence": 96
   },
   {
@@ -7460,7 +7460,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 Aug, 2026",
+    "date": "2026-08-27",
     "confidence": 96
   },
   {
@@ -7472,7 +7472,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 Aug, 2026",
+    "date": "2026-08-28",
     "confidence": 96
   },
   {
@@ -7484,7 +7484,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 Aug, 2026",
+    "date": "2026-08-28",
     "confidence": 96
   },
   {
@@ -7496,7 +7496,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 Aug, 2026",
+    "date": "2026-08-28",
     "confidence": 96
   },
   {
@@ -7505,10 +7505,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 857,
     "type": "DEBIT",
     "merchant": "ANBU VEGETABLES",
-    "category": "FOOD_DINING",
+    "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 Aug, 2026",
+    "date": "2026-08-28",
     "confidence": 96
   },
   {
@@ -7520,7 +7520,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7532,7 +7532,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7544,7 +7544,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7556,7 +7556,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7568,7 +7568,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7580,7 +7580,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7592,7 +7592,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7604,7 +7604,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7616,7 +7616,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7628,7 +7628,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "HEALTHCARE_INSURANCE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7640,7 +7640,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Aug, 2026",
+    "date": "2026-08-29",
     "confidence": 96
   },
   {
@@ -7652,7 +7652,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Aug, 2026",
+    "date": "2026-08-30",
     "confidence": 96
   },
   {
@@ -7664,7 +7664,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Aug, 2026",
+    "date": "2026-08-30",
     "confidence": 96
   },
   {
@@ -7676,7 +7676,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Aug, 2026",
+    "date": "2026-08-30",
     "confidence": 96
   },
   {
@@ -7688,7 +7688,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "01 Sep, 2026",
+    "date": "2026-09-01",
     "confidence": 96
   },
   {
@@ -7697,10 +7697,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 420,
     "type": "DEBIT",
     "merchant": "MADURAI AMAMCHI VILAS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "01 Sep, 2026",
+    "date": "2026-09-01",
     "confidence": 96
   },
   {
@@ -7712,7 +7712,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "01 Sep, 2026",
+    "date": "2026-09-01",
     "confidence": 96
   },
   {
@@ -7724,7 +7724,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "01 Sep, 2026",
+    "date": "2026-09-01",
     "confidence": 96
   },
   {
@@ -7736,7 +7736,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "01 Sep, 2026",
+    "date": "2026-09-01",
     "confidence": 96
   },
   {
@@ -7748,7 +7748,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "01 Sep, 2026",
+    "date": "2026-09-01",
     "confidence": 96
   },
   {
@@ -7760,7 +7760,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Sep, 2026",
+    "date": "2026-09-02",
     "confidence": 96
   },
   {
@@ -7772,7 +7772,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Sep, 2026",
+    "date": "2026-09-02",
     "confidence": 96
   },
   {
@@ -7784,7 +7784,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "TRAVEL_COMMUTE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "02 Sep, 2026",
+    "date": "2026-09-02",
     "confidence": 96
   },
   {
@@ -7796,7 +7796,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Sep, 2026",
+    "date": "2026-09-03",
     "confidence": 96
   },
   {
@@ -7808,7 +7808,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "03 Sep, 2026",
+    "date": "2026-09-03",
     "confidence": 96
   },
   {
@@ -7820,7 +7820,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "03 Sep, 2026",
+    "date": "2026-09-03",
     "confidence": 96
   },
   {
@@ -7832,7 +7832,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "03 Sep, 2026",
+    "date": "2026-09-03",
     "confidence": 96
   },
   {
@@ -7844,7 +7844,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "03 Sep, 2026",
+    "date": "2026-09-03",
     "confidence": 96
   },
   {
@@ -7856,7 +7856,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "04 Sep, 2026",
+    "date": "2026-09-04",
     "confidence": 96
   },
   {
@@ -7868,7 +7868,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "ICICI Bank 0781",
-    "date": "05 Sep, 2026",
+    "date": "2026-09-05",
     "confidence": 96
   },
   {
@@ -7880,7 +7880,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "05 Sep, 2026",
+    "date": "2026-09-05",
     "confidence": 96
   },
   {
@@ -7892,7 +7892,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "05 Sep, 2026",
+    "date": "2026-09-05",
     "confidence": 96
   },
   {
@@ -7901,10 +7901,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 170,
     "type": "DEBIT",
     "merchant": "MADURAI AMAMCHI VILAS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "05 Sep, 2026",
+    "date": "2026-09-05",
     "confidence": 96
   },
   {
@@ -7916,7 +7916,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "06 Sep, 2026",
+    "date": "2026-09-06",
     "confidence": 96
   },
   {
@@ -7928,7 +7928,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "06 Sep, 2026",
+    "date": "2026-09-06",
     "confidence": 96
   },
   {
@@ -7940,7 +7940,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "09 Sep, 2026",
+    "date": "2026-09-09",
     "confidence": 96
   },
   {
@@ -7952,7 +7952,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Sep, 2026",
+    "date": "2026-09-11",
     "confidence": 96
   },
   {
@@ -7964,7 +7964,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "11 Sep, 2026",
+    "date": "2026-09-11",
     "confidence": 96
   },
   {
@@ -7976,7 +7976,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Sep, 2026",
+    "date": "2026-09-12",
     "confidence": 96
   },
   {
@@ -7988,7 +7988,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Sep, 2026",
+    "date": "2026-09-12",
     "confidence": 96
   },
   {
@@ -8000,7 +8000,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Sep, 2026",
+    "date": "2026-09-12",
     "confidence": 96
   },
   {
@@ -8012,7 +8012,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "12 Sep, 2026",
+    "date": "2026-09-12",
     "confidence": 96
   },
   {
@@ -8024,7 +8024,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "13 Sep, 2026",
+    "date": "2026-09-13",
     "confidence": 96
   },
   {
@@ -8036,7 +8036,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "13 Sep, 2026",
+    "date": "2026-09-13",
     "confidence": 96
   },
   {
@@ -8048,7 +8048,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "13 Sep, 2026",
+    "date": "2026-09-13",
     "confidence": 96
   },
   {
@@ -8060,7 +8060,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 Sep, 2026",
+    "date": "2026-09-14",
     "confidence": 96
   },
   {
@@ -8069,10 +8069,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 180,
     "type": "DEBIT",
     "merchant": "KARTHIK JACKFRUIT SHOP",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 Sep, 2026",
+    "date": "2026-09-14",
     "confidence": 96
   },
   {
@@ -8084,7 +8084,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 Sep, 2026",
+    "date": "2026-09-14",
     "confidence": 96
   },
   {
@@ -8096,7 +8096,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 Sep, 2026",
+    "date": "2026-09-14",
     "confidence": 96
   },
   {
@@ -8108,7 +8108,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 Sep, 2026",
+    "date": "2026-09-14",
     "confidence": 96
   },
   {
@@ -8120,7 +8120,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "14 Sep, 2026",
+    "date": "2026-09-14",
     "confidence": 96
   },
   {
@@ -8132,7 +8132,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Sep, 2026",
+    "date": "2026-09-15",
     "confidence": 96
   },
   {
@@ -8144,7 +8144,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Sep, 2026",
+    "date": "2026-09-15",
     "confidence": 96
   },
   {
@@ -8153,10 +8153,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 455,
     "type": "DEBIT",
     "merchant": "ANBU VEGETABLES",
-    "category": "FOOD_DINING",
+    "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "15 Sep, 2026",
+    "date": "2026-09-15",
     "confidence": 96
   },
   {
@@ -8165,10 +8165,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 480,
     "type": "DEBIT",
     "merchant": "MADURAI AMAMCHI VILAS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "16 Sep, 2026",
+    "date": "2026-09-16",
     "confidence": 96
   },
   {
@@ -8180,7 +8180,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Sep, 2026",
+    "date": "2026-09-17",
     "confidence": 96
   },
   {
@@ -8192,7 +8192,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Sep, 2026",
+    "date": "2026-09-17",
     "confidence": 96
   },
   {
@@ -8204,7 +8204,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "17 Sep, 2026",
+    "date": "2026-09-17",
     "confidence": 96
   },
   {
@@ -8213,10 +8213,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 300,
     "type": "DEBIT",
     "merchant": "MAHESHWARI FISH STALL",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Sep, 2026",
+    "date": "2026-09-19",
     "confidence": 96
   },
   {
@@ -8228,7 +8228,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Sep, 2026",
+    "date": "2026-09-19",
     "confidence": 96
   },
   {
@@ -8240,7 +8240,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Sep, 2026",
+    "date": "2026-09-19",
     "confidence": 96
   },
   {
@@ -8249,10 +8249,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 180,
     "type": "DEBIT",
     "merchant": "SRI MURUGAN STORE",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Sep, 2026",
+    "date": "2026-09-19",
     "confidence": 96
   },
   {
@@ -8264,7 +8264,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "19 Sep, 2026",
+    "date": "2026-09-19",
     "confidence": 96
   },
   {
@@ -8276,7 +8276,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "20 Sep, 2026",
+    "date": "2026-09-20",
     "confidence": 96
   },
   {
@@ -8288,7 +8288,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "20 Sep, 2026",
+    "date": "2026-09-20",
     "confidence": 96
   },
   {
@@ -8300,7 +8300,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "21 Sep, 2026",
+    "date": "2026-09-21",
     "confidence": 96
   },
   {
@@ -8312,7 +8312,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "21 Sep, 2026",
+    "date": "2026-09-21",
     "confidence": 96
   },
   {
@@ -8324,7 +8324,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8336,7 +8336,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8348,7 +8348,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8360,7 +8360,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8372,7 +8372,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8384,7 +8384,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8396,7 +8396,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8408,7 +8408,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8420,7 +8420,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "22 Sep, 2026",
+    "date": "2026-09-22",
     "confidence": 96
   },
   {
@@ -8432,7 +8432,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Sep, 2026",
+    "date": "2026-09-23",
     "confidence": 96
   },
   {
@@ -8444,7 +8444,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "23 Sep, 2026",
+    "date": "2026-09-23",
     "confidence": 96
   },
   {
@@ -8453,10 +8453,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 2136,
     "type": "DEBIT",
     "merchant": "JEYACHANDRAN RETAIL PRIVATE LIMITED PALLIKARNAI",
-    "category": "OTHER_EXPENSE",
+    "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "24 Sep, 2026",
+    "date": "2026-09-24",
     "confidence": 96
   },
   {
@@ -8465,10 +8465,10 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "amount": 510,
     "type": "DEBIT",
     "merchant": "MADURAI AMAMCHI VILAS",
-    "category": "OTHER_EXPENSE",
+    "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Sep, 2026",
+    "date": "2026-09-25",
     "confidence": 96
   },
   {
@@ -8480,7 +8480,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Sep, 2026",
+    "date": "2026-09-25",
     "confidence": 96
   },
   {
@@ -8492,7 +8492,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Sep, 2026",
+    "date": "2026-09-25",
     "confidence": 96
   },
   {
@@ -8504,7 +8504,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "25 Sep, 2026",
+    "date": "2026-09-25",
     "confidence": 96
   },
   {
@@ -8516,7 +8516,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "26 Sep, 2026",
+    "date": "2026-09-26",
     "confidence": 96
   },
   {
@@ -8528,7 +8528,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "26 Sep, 2026",
+    "date": "2026-09-26",
     "confidence": 96
   },
   {
@@ -8540,7 +8540,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "26 Sep, 2026",
+    "date": "2026-09-26",
     "confidence": 96
   },
   {
@@ -8552,7 +8552,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 Sep, 2026",
+    "date": "2026-09-27",
     "confidence": 96
   },
   {
@@ -8564,7 +8564,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 Sep, 2026",
+    "date": "2026-09-27",
     "confidence": 96
   },
   {
@@ -8576,7 +8576,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "27 Sep, 2026",
+    "date": "2026-09-27",
     "confidence": 96
   },
   {
@@ -8588,7 +8588,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 Sep, 2026",
+    "date": "2026-09-28",
     "confidence": 96
   },
   {
@@ -8600,7 +8600,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "28 Sep, 2026",
+    "date": "2026-09-28",
     "confidence": 96
   },
   {
@@ -8612,7 +8612,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Sep, 2026",
+    "date": "2026-09-29",
     "confidence": 96
   },
   {
@@ -8624,7 +8624,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Sep, 2026",
+    "date": "2026-09-29",
     "confidence": 96
   },
   {
@@ -8636,7 +8636,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Sep, 2026",
+    "date": "2026-09-29",
     "confidence": 96
   },
   {
@@ -8648,7 +8648,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Sep, 2026",
+    "date": "2026-09-29",
     "confidence": 96
   },
   {
@@ -8660,7 +8660,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "FOOD_DINING",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "29 Sep, 2026",
+    "date": "2026-09-29",
     "confidence": 96
   },
   {
@@ -8672,7 +8672,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "UTILITIES_BILLS",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Sep, 2026",
+    "date": "2026-09-30",
     "confidence": 96
   },
   {
@@ -8684,7 +8684,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "SHOPPING_LIFESTYLE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Sep, 2026",
+    "date": "2026-09-30",
     "confidence": 96
   },
   {
@@ -8696,7 +8696,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Sep, 2026",
+    "date": "2026-09-30",
     "confidence": 96
   },
   {
@@ -8708,7 +8708,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Sep, 2026",
+    "date": "2026-09-30",
     "confidence": 96
   },
   {
@@ -8720,7 +8720,7 @@ export const SAMPLE_GPAY_TRANSACTIONS: ParsedTransactionResult[] = [
     "category": "OTHER_EXPENSE",
     "paymentMethod": "NET_BANKING",
     "accountRef": "Union Bank 6504",
-    "date": "30 Sep, 2026",
+    "date": "2026-09-30",
     "confidence": 96
   }
 ];
