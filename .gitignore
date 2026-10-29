@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 *.apk
+!Quantra-*.apk
 
 
 # SQLite database files
