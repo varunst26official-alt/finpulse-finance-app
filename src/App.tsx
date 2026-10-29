@@ -5,6 +5,7 @@ import { useLifeOSStore } from '@/stores/lifeosStore';
 import { initUserStorageAutoSave, loadUserScopedData } from '@/services/userStorage';
 import { LifeOSHeader } from '@/components/layout/LifeOSHeader';
 import { SectionSwitcher } from '@/components/layout/SectionSwitcher';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { LifeOverviewWorkspace } from '@/components/overview/LifeOverviewWorkspace';
 import { FinanceWorkspace } from '@/components/finance/FinanceWorkspace';
 import { WellnessWorkspace } from '@/components/wellness/WellnessWorkspace';
@@ -44,11 +45,13 @@ export function App() {
       {/* 1. LifeOS Sticky Command Header (72px) */}
       <LifeOSHeader />
 
-      {/* 2. Sticky Section Switcher (6 Focused Workspaces) */}
-      <SectionSwitcher />
+      {/* 2. Sticky Section Switcher (Desktop: Top Sticky Tab Bar; Mobile: Fixed Bottom Bar) */}
+      <div className="hidden sm:block">
+        <SectionSwitcher />
+      </div>
 
       {/* 3. Main Workspace Container */}
-      <main className="flex-1 w-full max-w-[1500px] min-w-0 mx-auto p-3.5 sm:p-7 space-y-5 sm:space-y-6 pb-24 sm:pb-10">
+      <main className="flex-1 w-full max-w-[1500px] min-w-0 mx-auto p-3.5 sm:p-7 space-y-5 sm:space-y-6 pb-28 sm:pb-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSection}
@@ -90,7 +93,10 @@ export function App() {
         </p>
       </footer>
 
-      {/* 5. Modals & Onboarding Tour */}
+      {/* 5. Mobile Native Bottom Navigation Bar */}
+      <MobileBottomNav />
+
+      {/* 6. Modals & Onboarding Tour */}
       <DemoTourGuide />
       <AdaptiveBlueprintModal />
       <FloatingDailyPlanWidget />

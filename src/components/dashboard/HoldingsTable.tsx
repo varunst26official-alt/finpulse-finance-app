@@ -45,7 +45,88 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({ onAddHolding }) =>
         )}
       </div>
 
-      <div className="overflow-x-auto scrollbar-none">
+      {/* Mobile Card List (Thumb-friendly & No Horizontal Scrolling) */}
+      <div className="sm:hidden space-y-3 pt-1">
+        {assets.length === 0 ? (
+          <div className="py-8 text-center bg-[#faf8f5]/50 rounded-2xl border border-dashed border-[#ded3bf] p-6 space-y-3">
+            <div className="p-3.5 rounded-2xl bg-[#faf7f0] border border-[#e8e0d1] text-[#9e783e] shadow-xs mx-auto w-12 h-12 flex items-center justify-center">
+              <Layers className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-800">Your Portfolio is Fresh & Clean</p>
+              <p className="text-xs text-slate-500 max-w-xs mx-auto mt-0.5">
+                No active asset holdings recorded yet. Add your first stock, mutual fund, gold, or property.
+              </p>
+            </div>
+            {onAddHolding && (
+              <button
+                onClick={onAddHolding}
+                className="w-full py-2.5 rounded-xl bg-[#9e783e] hover:bg-[#866632] text-white font-bold text-xs shadow-md shadow-[#9e783e]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <Plus className="h-4 w-4" />
+                <span>+ Add Holding</span>
+              </button>
+            )}
+          </div>
+        ) : (
+          assets.map((asset: Asset) => {
+            const currentValue = asset.quantity * asset.currentMarketPrice;
+            const investedValue = asset.quantity * asset.averageBuyPrice;
+            const pnl = currentValue - investedValue;
+            const pnlPercent = investedValue > 0 ? (pnl / investedValue) * 100 : 0;
+            const isProfit = pnl >= 0;
+
+            return (
+              <div
+                key={asset.id}
+                className="p-3.5 rounded-2xl border border-[#e8e0d1] bg-[#faf8f5]/60 space-y-2.5 shadow-2xs"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="font-extrabold text-slate-900 text-sm leading-tight">{asset.symbol}</div>
+                    <div className="text-[11px] text-slate-500 font-medium">{asset.name}</div>
+                  </div>
+                  <span
+                    className="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold shrink-0"
+                    style={{
+                      backgroundColor: `${CATEGORY_COLORS[asset.category]}18`,
+                      color: CATEGORY_COLORS[asset.category],
+                    }}
+                  >
+                    {CATEGORY_LABELS[asset.category]}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#f0e8db] text-xs">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-medium">Holdings / Qty</span>
+                    <span className="font-bold text-slate-800">{asset.quantity} units</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-400 block font-medium">Current Valuation</span>
+                    <span className="font-extrabold text-slate-900">{formatCurrency(currentValue, currency)}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-medium">Avg → Current</span>
+                    <span className="text-[11px] text-slate-600 font-medium">
+                      {formatCurrency(asset.averageBuyPrice, currency)} → {formatCurrency(asset.currentMarketPrice, currency)}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-400 block font-medium">P&L Returns</span>
+                    <span className={`font-extrabold text-xs ${isProfit ? 'text-emerald-700' : 'text-rose-700'}`}>
+                      {isProfit ? '+' : ''}{formatPercentage(pnlPercent)} ({formatCurrency(pnl, currency)})
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Responsive Table */}
+      <div className="hidden sm:block overflow-x-auto scrollbar-none">
         <table className="w-full min-w-[620px] text-left text-xs">
           <thead className="border-b border-[#e8e0d1] text-slate-600 uppercase text-[11px] font-bold tracking-wider">
             <tr>

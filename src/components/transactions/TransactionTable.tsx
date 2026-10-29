@@ -677,62 +677,103 @@ export const TransactionTable: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="overflow-x-auto scrollbar-none"
+            className="space-y-3"
           >
-            <table className="w-full min-w-[620px] text-left text-xs">
-              <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
-                <tr>
-                  <th className="pb-3 pt-1">Date</th>
-                  <th className="pb-3 pt-1">Type</th>
-                  <th className="pb-3 pt-1">Instrument</th>
-                  <th className="pb-3 pt-1 text-right">Quantity</th>
-                  <th className="pb-3 pt-1 text-right">Price/Unit</th>
-                  <th className="pb-3 pt-1 text-right">Total Amount</th>
-                  <th className="pb-3 pt-1 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#f2ece1] text-slate-700">
-                {filteredTransactions.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-8 text-center text-slate-500 font-medium">
-                      No matching trade transactions found.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredTransactions.map((tx: Transaction) => (
-                    <tr key={tx.id} className="hover:bg-[#faf8f5] transition-colors">
-                      <td className="py-3 text-slate-600 font-mono font-medium">{tx.date}</td>
-                      <td className="py-3">{typePill(tx.type)}</td>
-                      <td className="py-3">
-                        <div className="font-bold text-slate-900">{tx.assetName}</div>
-                        <div className="text-[11px] text-slate-500 font-mono">
-                          {tx.assetSymbol}
-                        </div>
-                      </td>
-                      <td className="py-3 text-right text-slate-900 font-mono font-bold">
-                        {tx.quantity}
-                      </td>
-                      <td className="py-3 text-right text-slate-600 font-mono font-medium">
-                        {formatCurrency(tx.pricePerUnit, currency)}
-                      </td>
-                      <td className="py-3 text-right font-extrabold font-mono text-slate-900">
+            {/* Mobile Card List (Thumb friendly) */}
+            <div className="sm:hidden space-y-2.5">
+              {filteredTransactions.length === 0 ? (
+                <div className="py-8 text-center text-slate-500 font-medium">
+                  No matching trade transactions found.
+                </div>
+              ) : (
+                filteredTransactions.map((tx: Transaction) => (
+                  <div
+                    key={tx.id}
+                    className="p-3.5 rounded-2xl border border-[#e8e0d1] bg-[#faf8f5]/60 flex items-center justify-between gap-3 shadow-2xs"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        {typePill(tx.type)}
+                        <span className="font-extrabold text-slate-900 text-xs truncate">{tx.assetName}</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 font-mono mt-1">
+                        {tx.date} • {tx.quantity} units @ {formatCurrency(tx.pricePerUnit, currency)}
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-mono font-extrabold text-slate-900 text-sm">
                         {formatCurrency(tx.totalAmount, currency)}
-                      </td>
-                      <td className="py-3 text-center">
-                        <button
-                          onClick={() => deleteTransaction(tx.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                          title="Delete trade"
-                          aria-label="Delete trade"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                      </div>
+                      <button
+                        onClick={() => deleteTransaction(tx.id)}
+                        className="text-slate-400 hover:text-rose-600 p-1 transition-colors cursor-pointer"
+                        title="Delete trade"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 inline" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto scrollbar-none">
+              <table className="w-full min-w-[620px] text-left text-xs">
+                <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
+                  <tr>
+                    <th className="pb-3 pt-1">Date</th>
+                    <th className="pb-3 pt-1">Type</th>
+                    <th className="pb-3 pt-1">Instrument</th>
+                    <th className="pb-3 pt-1 text-right">Quantity</th>
+                    <th className="pb-3 pt-1 text-right">Price/Unit</th>
+                    <th className="pb-3 pt-1 text-right">Total Amount</th>
+                    <th className="pb-3 pt-1 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#f2ece1] text-slate-700">
+                  {filteredTransactions.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-slate-500 font-medium">
+                        No matching trade transactions found.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredTransactions.map((tx: Transaction) => (
+                      <tr key={tx.id} className="hover:bg-[#faf8f5] transition-colors">
+                        <td className="py-3 text-slate-600 font-mono font-medium">{tx.date}</td>
+                        <td className="py-3">{typePill(tx.type)}</td>
+                        <td className="py-3">
+                          <div className="font-bold text-slate-900">{tx.assetName}</div>
+                          <div className="text-[11px] text-slate-500 font-mono">
+                            {tx.assetSymbol}
+                          </div>
+                        </td>
+                        <td className="py-3 text-right text-slate-900 font-mono font-bold">
+                          {tx.quantity}
+                        </td>
+                        <td className="py-3 text-right text-slate-600 font-mono font-medium">
+                          {formatCurrency(tx.pricePerUnit, currency)}
+                        </td>
+                        <td className="py-3 text-right font-extrabold font-mono text-slate-900">
+                          {formatCurrency(tx.totalAmount, currency)}
+                        </td>
+                        <td className="py-3 text-center">
+                          <button
+                            onClick={() => deleteTransaction(tx.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Delete trade"
+                            aria-label="Delete trade"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </motion.div>
         )}
 
@@ -745,81 +786,127 @@ export const TransactionTable: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="overflow-x-auto scrollbar-none"
+            className="space-y-3"
           >
-            <table className="w-full min-w-[620px] text-left text-xs">
-              <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
-                <tr>
-                  <th className="pb-3 pt-1">Date</th>
-                  <th className="pb-3 pt-1">Expense Title / Payee</th>
-                  <th className="pb-3 pt-1">Category</th>
-                  <th className="pb-3 pt-1">Payment Mode / Account</th>
-                  <th className="pb-3 pt-1 text-center">Frequency</th>
-                  <th className="pb-3 pt-1 text-right">Amount</th>
-                  <th className="pb-3 pt-1 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#f2ece1] text-slate-700">
-                {filteredExpenses.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-8 text-center text-slate-500 font-medium">
-                      No expenses matching the filters for {formatMonthLabel(selectedMonth)}.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredExpenses.map((exp: ExpenseItem) => (
-                    <tr key={exp.id} className="hover:bg-[#faf8f5] transition-colors">
-                      <td className="py-3 text-slate-600 font-mono font-medium whitespace-nowrap">
-                        {exp.date}
-                      </td>
-                      <td className="py-3">
-                        <div className="font-bold text-slate-900">{exp.title}</div>
-                        {exp.notes && (
-                          <div className="text-[11px] text-slate-500 truncate max-w-xs">
-                            {exp.notes}
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-3">
-                        <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold whitespace-nowrap">
+            {/* Mobile Card List (Thumb friendly) */}
+            <div className="sm:hidden space-y-2.5">
+              {filteredExpenses.length === 0 ? (
+                <div className="py-8 text-center text-slate-500 font-medium">
+                  No expenses matching the filters for {formatMonthLabel(selectedMonth)}.
+                </div>
+              ) : (
+                filteredExpenses.map((exp: ExpenseItem) => (
+                  <div
+                    key={exp.id}
+                    className="p-3.5 rounded-2xl border border-[#e8e0d1] bg-[#faf8f5]/60 flex items-center justify-between gap-3 shadow-2xs"
+                  >
+                    <div className="min-w-0">
+                      <div className="font-extrabold text-slate-900 text-xs truncate">{exp.title}</div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1 flex-wrap">
+                        <span className="font-mono">{exp.date}</span>
+                        <span>•</span>
+                        <span className="px-1.5 py-0.5 rounded bg-white text-[10px] font-bold border border-[#e8e0d1]">
                           {EXPENSE_CATEGORY_LABELS[exp.category] || exp.category}
                         </span>
-                      </td>
-                      <td className="py-3">
-                        <span className="inline-flex items-center gap-1 text-slate-600 font-medium whitespace-nowrap">
-                          <CreditCard className="h-3 w-3 text-slate-400" />
+                        <span>•</span>
+                        <span className="text-[10px] text-slate-400">
                           {PAYMENT_METHOD_LABELS[exp.paymentMethod] || exp.paymentMethod}
                         </span>
-                      </td>
-                      <td className="py-3 text-center">
-                        <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            exp.frequency === 'MONTHLY_RECURRING'
-                              ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                              : 'bg-slate-100 text-slate-700'
-                          }`}
-                        >
-                          {exp.frequency === 'MONTHLY_RECURRING' ? 'Monthly' : 'One-time'}
-                        </span>
-                      </td>
-                      <td className="py-3 text-right font-extrabold font-mono text-rose-700 whitespace-nowrap">
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-mono font-extrabold text-rose-600 text-sm">
                         -{formatCurrency(exp.amount, currency)}
-                      </td>
-                      <td className="py-3 text-center">
-                        <button
-                          onClick={() => deleteExpense(exp.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                          title="Delete expense"
-                          aria-label="Delete expense"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                      </div>
+                      <button
+                        onClick={() => deleteExpense(exp.id)}
+                        className="text-slate-400 hover:text-rose-600 p-1 transition-colors cursor-pointer"
+                        title="Delete expense"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 inline" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto scrollbar-none">
+              <table className="w-full min-w-[620px] text-left text-xs">
+                <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
+                  <tr>
+                    <th className="pb-3 pt-1">Date</th>
+                    <th className="pb-3 pt-1">Expense Title / Payee</th>
+                    <th className="pb-3 pt-1">Category</th>
+                    <th className="pb-3 pt-1">Payment Mode / Account</th>
+                    <th className="pb-3 pt-1 text-center">Frequency</th>
+                    <th className="pb-3 pt-1 text-right">Amount</th>
+                    <th className="pb-3 pt-1 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#f2ece1] text-slate-700">
+                  {filteredExpenses.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-slate-500 font-medium">
+                        No expenses matching the filters for {formatMonthLabel(selectedMonth)}.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredExpenses.map((exp: ExpenseItem) => (
+                      <tr key={exp.id} className="hover:bg-[#faf8f5] transition-colors">
+                        <td className="py-3 text-slate-600 font-mono font-medium whitespace-nowrap">
+                          {exp.date}
+                        </td>
+                        <td className="py-3">
+                          <div className="font-bold text-slate-900">{exp.title}</div>
+                          {exp.notes && (
+                            <div className="text-[11px] text-slate-500 truncate max-w-xs">
+                              {exp.notes}
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3">
+                          <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold whitespace-nowrap">
+                            {EXPENSE_CATEGORY_LABELS[exp.category] || exp.category}
+                          </span>
+                        </td>
+                        <td className="py-3">
+                          <span className="inline-flex items-center gap-1 text-slate-600 font-medium whitespace-nowrap">
+                            <CreditCard className="h-3 w-3 text-slate-400" />
+                            {PAYMENT_METHOD_LABELS[exp.paymentMethod] || exp.paymentMethod}
+                          </span>
+                        </td>
+                        <td className="py-3 text-center">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              exp.frequency === 'MONTHLY_RECURRING'
+                                ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                                : 'bg-slate-100 text-slate-700'
+                            }`}
+                          >
+                            {exp.frequency === 'MONTHLY_RECURRING' ? 'Monthly' : 'One-time'}
+                          </span>
+                        </td>
+                        <td className="py-3 text-right font-extrabold font-mono text-rose-700 whitespace-nowrap">
+                          -{formatCurrency(exp.amount, currency)}
+                        </td>
+                        <td className="py-3 text-center">
+                          <button
+                            onClick={() => deleteExpense(exp.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Delete expense"
+                            aria-label="Delete expense"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </motion.div>
         )}
 
@@ -832,75 +919,119 @@ export const TransactionTable: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="overflow-x-auto scrollbar-none"
+            className="space-y-3"
           >
-            <table className="w-full min-w-[620px] text-left text-xs">
-              <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
-                <tr>
-                  <th className="pb-3 pt-1">Date</th>
-                  <th className="pb-3 pt-1">Income Stream / Received From</th>
-                  <th className="pb-3 pt-1">Category</th>
-                  <th className="pb-3 pt-1">Credited Account</th>
-                  <th className="pb-3 pt-1 text-center">Frequency</th>
-                  <th className="pb-3 pt-1 text-right">Inflow Amount</th>
-                  <th className="pb-3 pt-1 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#f2ece1] text-slate-700">
-                {filteredIncomes.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-8 text-center text-slate-500 font-medium">
-                      No income streams matching the filters for {formatMonthLabel(selectedMonth)}.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredIncomes.map((inc: IncomeItem) => (
-                    <tr key={inc.id} className="hover:bg-[#faf8f5] transition-colors">
-                      <td className="py-3 text-slate-600 font-mono font-medium whitespace-nowrap">
-                        {inc.date}
-                      </td>
-                      <td className="py-3">
-                        <div className="font-bold text-slate-900">{inc.source}</div>
-                        {inc.notes && (
-                          <div className="text-[11px] text-slate-500 truncate max-w-xs">
-                            {inc.notes}
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-3">
-                        <span className="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-semibold border border-emerald-200 whitespace-nowrap">
+            {/* Mobile Card List (Thumb friendly) */}
+            <div className="sm:hidden space-y-2.5">
+              {filteredIncomes.length === 0 ? (
+                <div className="py-8 text-center text-slate-500 font-medium">
+                  No income streams matching the filters for {formatMonthLabel(selectedMonth)}.
+                </div>
+              ) : (
+                filteredIncomes.map((inc: IncomeItem) => (
+                  <div
+                    key={inc.id}
+                    className="p-3.5 rounded-2xl border border-[#e8e0d1] bg-[#faf8f5]/60 flex items-center justify-between gap-3 shadow-2xs"
+                  >
+                    <div className="min-w-0">
+                      <div className="font-extrabold text-slate-900 text-xs truncate">{inc.source}</div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1 flex-wrap">
+                        <span className="font-mono">{inc.date}</span>
+                        <span>•</span>
+                        <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
                           {INCOME_CATEGORY_LABELS[inc.category] || inc.category}
                         </span>
-                      </td>
-                      <td className="py-3">
-                        <span className="inline-flex items-center gap-1 text-slate-600 font-medium whitespace-nowrap">
-                          <Wallet className="h-3 w-3 text-slate-400" />
-                          {inc.account || 'Primary Bank'}
-                        </span>
-                      </td>
-                      <td className="py-3 text-center">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
-                          {inc.frequency}
-                        </span>
-                      </td>
-                      <td className="py-3 text-right font-extrabold font-mono text-emerald-700 whitespace-nowrap">
+                        <span>•</span>
+                        <span className="text-[10px] text-slate-400">{inc.account || 'Primary Bank'}</span>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-mono font-extrabold text-emerald-600 text-sm">
                         +{formatCurrency(inc.amount, currency)}
-                      </td>
-                      <td className="py-3 text-center">
-                        <button
-                          onClick={() => deleteIncome(inc.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                          title="Delete income entry"
-                          aria-label="Delete income entry"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                      </div>
+                      <button
+                        onClick={() => deleteIncome(inc.id)}
+                        className="text-slate-400 hover:text-rose-600 p-1 transition-colors cursor-pointer"
+                        title="Delete income entry"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 inline" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto scrollbar-none">
+              <table className="w-full min-w-[620px] text-left text-xs">
+                <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
+                  <tr>
+                    <th className="pb-3 pt-1">Date</th>
+                    <th className="pb-3 pt-1">Income Stream / Received From</th>
+                    <th className="pb-3 pt-1">Category</th>
+                    <th className="pb-3 pt-1">Credited Account</th>
+                    <th className="pb-3 pt-1 text-center">Frequency</th>
+                    <th className="pb-3 pt-1 text-right">Inflow Amount</th>
+                    <th className="pb-3 pt-1 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#f2ece1] text-slate-700">
+                  {filteredIncomes.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-slate-500 font-medium">
+                        No income streams matching the filters for {formatMonthLabel(selectedMonth)}.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredIncomes.map((inc: IncomeItem) => (
+                      <tr key={inc.id} className="hover:bg-[#faf8f5] transition-colors">
+                        <td className="py-3 text-slate-600 font-mono font-medium whitespace-nowrap">
+                          {inc.date}
+                        </td>
+                        <td className="py-3">
+                          <div className="font-bold text-slate-900">{inc.source}</div>
+                          {inc.notes && (
+                            <div className="text-[11px] text-slate-500 truncate max-w-xs">
+                              {inc.notes}
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3">
+                          <span className="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-semibold border border-emerald-200 whitespace-nowrap">
+                            {INCOME_CATEGORY_LABELS[inc.category] || inc.category}
+                          </span>
+                        </td>
+                        <td className="py-3">
+                          <span className="inline-flex items-center gap-1 text-slate-600 font-medium whitespace-nowrap">
+                            <Wallet className="h-3 w-3 text-slate-400" />
+                            {inc.account || 'Primary Bank'}
+                          </span>
+                        </td>
+                        <td className="py-3 text-center">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
+                            {inc.frequency}
+                          </span>
+                        </td>
+                        <td className="py-3 text-right font-extrabold font-mono text-emerald-700 whitespace-nowrap">
+                          +{formatCurrency(inc.amount, currency)}
+                        </td>
+                        <td className="py-3 text-center">
+                          <button
+                            onClick={() => deleteIncome(inc.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Delete income entry"
+                            aria-label="Delete income entry"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </motion.div>
         )}
 
@@ -913,68 +1044,117 @@ export const TransactionTable: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="overflow-x-auto scrollbar-none"
+            className="space-y-3"
           >
-            <table className="w-full min-w-[620px] text-left text-xs">
-              <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
-                <tr>
-                  <th className="pb-3 pt-1">Asset Name</th>
-                  <th className="pb-3 pt-1">Category</th>
-                  <th className="pb-3 pt-1">Institution</th>
-                  <th className="pb-3 pt-1 text-right">Acquisition Cost</th>
-                  <th className="pb-3 pt-1 text-right">Current Valuation</th>
-                  <th className="pb-3 pt-1 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#f2ece1] text-slate-700">
-                {filteredAssets.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-8 text-center text-slate-500 font-medium">
-                      No real estate, fixed deposits, or gold recorded yet.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredAssets.map((asset: Asset) => {
-                    const cost = asset.quantity * asset.averageBuyPrice;
-                    const valuation = asset.quantity * asset.currentMarketPrice;
-                    return (
-                      <tr key={asset.id} className="hover:bg-[#faf8f5] transition-colors">
-                        <td className="py-3">
-                          <div className="font-bold text-slate-900">{asset.name}</div>
-                          <div className="text-[11px] text-slate-500 font-mono">
-                            {asset.symbol}
-                          </div>
-                        </td>
-                        <td className="py-3">
-                          <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold">
+            {/* Mobile Card List (Thumb friendly) */}
+            <div className="sm:hidden space-y-2.5">
+              {filteredAssets.length === 0 ? (
+                <div className="py-8 text-center text-slate-500 font-medium">
+                  No real estate, fixed deposits, or gold recorded yet.
+                </div>
+              ) : (
+                filteredAssets.map((asset: Asset) => {
+                  const cost = asset.quantity * asset.averageBuyPrice;
+                  const valuation = asset.quantity * asset.currentMarketPrice;
+                  return (
+                    <div
+                      key={asset.id}
+                      className="p-3.5 rounded-2xl border border-[#e8e0d1] bg-[#faf8f5]/60 flex items-center justify-between gap-3 shadow-2xs"
+                    >
+                      <div className="min-w-0">
+                        <div className="font-extrabold text-slate-900 text-xs truncate">{asset.name}</div>
+                        <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1 flex-wrap">
+                          <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold">
                             {CATEGORY_LABELS[asset.category] || asset.category}
                           </span>
-                        </td>
-                        <td className="py-3 text-slate-600 font-medium">
-                          {asset.institution || 'Direct Holding'}
-                        </td>
-                        <td className="py-3 text-right text-slate-600 font-mono font-medium">
-                          {formatCurrency(cost, currency)}
-                        </td>
-                        <td className="py-3 text-right font-extrabold font-mono text-slate-900">
+                          <span>•</span>
+                          <span className="text-[10px] text-slate-400">{asset.institution || 'Direct Holding'}</span>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="font-mono font-extrabold text-slate-900 text-sm">
                           {formatCurrency(valuation, currency)}
-                        </td>
-                        <td className="py-3 text-center">
-                          <button
-                            onClick={() => deleteAsset(asset.id)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                            title="Delete fixed asset"
-                            aria-label="Delete fixed asset"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono">
+                          Cost: {formatCurrency(cost, currency)}
+                        </div>
+                        <button
+                          onClick={() => deleteAsset(asset.id)}
+                          className="text-slate-400 hover:text-rose-600 p-1 transition-colors cursor-pointer mt-0.5"
+                          title="Delete fixed asset"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 inline" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto scrollbar-none">
+              <table className="w-full min-w-[620px] text-left text-xs">
+                <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
+                  <tr>
+                    <th className="pb-3 pt-1">Asset Name</th>
+                    <th className="pb-3 pt-1">Category</th>
+                    <th className="pb-3 pt-1">Institution</th>
+                    <th className="pb-3 pt-1 text-right">Acquisition Cost</th>
+                    <th className="pb-3 pt-1 text-right">Current Valuation</th>
+                    <th className="pb-3 pt-1 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#f2ece1] text-slate-700">
+                  {filteredAssets.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-slate-500 font-medium">
+                        No real estate, fixed deposits, or gold recorded yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredAssets.map((asset: Asset) => {
+                      const cost = asset.quantity * asset.averageBuyPrice;
+                      const valuation = asset.quantity * asset.currentMarketPrice;
+                      return (
+                        <tr key={asset.id} className="hover:bg-[#faf8f5] transition-colors">
+                          <td className="py-3">
+                            <div className="font-bold text-slate-900">{asset.name}</div>
+                            <div className="text-[11px] text-slate-500 font-mono">
+                              {asset.symbol}
+                            </div>
+                          </td>
+                          <td className="py-3">
+                            <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold">
+                              {CATEGORY_LABELS[asset.category] || asset.category}
+                            </span>
+                          </td>
+                          <td className="py-3 text-slate-600 font-medium">
+                            {asset.institution || 'Direct Holding'}
+                          </td>
+                          <td className="py-3 text-right text-slate-600 font-mono font-medium">
+                            {formatCurrency(cost, currency)}
+                          </td>
+                          <td className="py-3 text-right font-extrabold font-mono text-slate-900">
+                            {formatCurrency(valuation, currency)}
+                          </td>
+                          <td className="py-3 text-center">
+                            <button
+                              onClick={() => deleteAsset(asset.id)}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                              title="Delete fixed asset"
+                              aria-label="Delete fixed asset"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

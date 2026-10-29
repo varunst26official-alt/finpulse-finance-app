@@ -1027,8 +1027,72 @@ export const FinancialCalendarWidget: React.FC = () => {
           </div>
         </div>
 
+        {/* Mobile Events Schedule Card List (Thumb-friendly) */}
+        <div className="sm:hidden space-y-2.5">
+          {filteredReportEvents.length === 0 ? (
+            <div className="py-8 text-center text-slate-500 font-medium text-xs">
+              No scheduled obligations or events match the chosen date range.
+            </div>
+          ) : (
+            filteredReportEvents.map((ev) => {
+              const color = CALENDAR_EVENT_COLORS[ev.type];
+              const isInflow = ev.type === 'EXPECTED_INCOME';
+
+              return (
+                <div
+                  key={ev.id}
+                  className="p-3.5 rounded-2xl border border-[#e8e0d1] bg-[#faf8f5]/60 flex items-center justify-between gap-3 shadow-2xs"
+                >
+                  <div className="flex items-start gap-2.5 min-w-0">
+                    <button
+                      onClick={() => toggleEventCompleted(ev.id)}
+                      className="cursor-pointer text-slate-400 hover:text-[#9e783e] transition-colors mt-0.5 shrink-0"
+                      title={ev.isCompleted ? 'Mark as Pending' : 'Mark as Completed'}
+                    >
+                      {ev.isCompleted ? (
+                        <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                      ) : (
+                        <Circle className="h-5 w-5" />
+                      )}
+                    </button>
+                    <div className="min-w-0">
+                      <div className="font-bold text-slate-900 text-xs truncate">{ev.title}</div>
+                      <div className="flex items-center gap-1.5 text-[10px] text-slate-500 mt-1 flex-wrap">
+                        <span className="font-mono">{ev.date}</span>
+                        <span>•</span>
+                        <span className={`px-1.5 py-0.5 rounded border text-[9px] font-bold ${color.badge}`}>
+                          {CALENDAR_EVENT_LABELS[ev.type]}
+                        </span>
+                        <span>•</span>
+                        <span className="text-slate-400">{ev.categoryName}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div
+                      className={`font-mono font-extrabold text-sm ${
+                        isInflow ? 'text-emerald-700' : 'text-rose-700'
+                      }`}
+                    >
+                      {isInflow ? '+' : '-'}
+                      {formatCurrency(ev.amount, currency)}
+                    </div>
+                    <button
+                      onClick={() => deleteCalendarEvent(ev.id)}
+                      className="text-slate-400 hover:text-rose-600 p-1 transition-colors cursor-pointer mt-0.5"
+                      title="Delete entry"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 inline" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
         {/* Detailed Events Schedule Table */}
-        <div className="overflow-x-auto scrollbar-none">
+        <div className="hidden sm:block overflow-x-auto scrollbar-none">
           <table className="w-full min-w-[650px] text-left text-xs">
             <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
               <tr>

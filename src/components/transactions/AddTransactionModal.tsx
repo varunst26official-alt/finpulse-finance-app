@@ -220,18 +220,21 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   return (
     <div
       {...overlayProps}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
     >
       <motion.div
         {...contentProps}
-        initial={{ scale: 0.96, opacity: 0, y: 10 }}
+        initial={{ scale: 0.96, opacity: 0, y: 24 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.96, opacity: 0, y: 10 }}
+        exit={{ scale: 0.96, opacity: 0, y: 24 }}
         transition={{ duration: 0.2 }}
-        className="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl border border-[#e8e0d1] bg-white p-5 sm:p-7 shadow-2xl space-y-5"
+        className="w-full max-w-2xl max-h-[90vh] sm:max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[#e8e0d1] bg-white p-4 sm:p-7 shadow-2xl space-y-4 sm:space-y-5"
       >
+        {/* Mobile Drag Indicator */}
+        <div className="w-10 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden shrink-0" />
+
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#e8e0d1] pb-4">
+        <div className="flex items-center justify-between border-b border-[#e8e0d1] pb-3 sm:pb-4">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-md shadow-[#9e783e]/25">
               <Sparkles className="h-5 w-5" />
@@ -247,6 +250,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
           </div>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="rounded-xl p-2 text-slate-400 hover:text-slate-900 hover:bg-[#faf8f5] transition-colors cursor-pointer"
           >
             <X className="h-5 w-5" />

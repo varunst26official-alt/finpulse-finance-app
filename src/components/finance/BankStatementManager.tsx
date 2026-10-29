@@ -420,72 +420,118 @@ export const BankStatementManager: React.FC<BankStatementManagerProps> = ({
             No statement transactions found matching your search.
           </div>
         ) : (
-          <div className="overflow-x-auto scrollbar-none">
-            <table className="w-full min-w-[620px] text-left text-xs">
-              <thead>
-                <tr className="border-b border-[#e8e0d1] text-slate-400 uppercase tracking-wider font-bold text-[10px]">
-                  <th className="py-3 px-3">Date</th>
-                  <th className="py-3 px-3">Payee / Description</th>
-                  <th className="py-3 px-3">Category</th>
-                  <th className="py-3 px-3">Account / Card</th>
-                  <th className="py-3 px-3 text-right">Amount</th>
-                  <th className="py-3 px-3 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#f4efe4]">
-                {filteredTransactions.slice(0, 100).map((txn) => (
-                  <tr key={txn.id} className="hover:bg-[#faf8f5]/60 transition-colors">
-                    <td className="py-3 px-3 font-mono text-slate-600 whitespace-nowrap">
-                      {txn.date}
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="font-bold text-slate-900">{txn.title}</div>
-                      {txn.notes && (
-                        <div className="text-[10px] text-slate-400 truncate max-w-xs">
-                          {txn.notes}
-                        </div>
-                      )}
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#faf8f5] text-slate-700 border border-[#e8e0d1]">
+          <div>
+            {/* Mobile Card List (Thumb-friendly, no horizontal scrolling) */}
+            <div className="sm:hidden space-y-2.5">
+              {filteredTransactions.slice(0, 100).map((txn) => (
+                <div
+                  key={txn.id}
+                  className="p-3.5 rounded-2xl border border-[#e8e0d1] bg-[#faf8f5]/60 flex items-center justify-between gap-3 shadow-2xs"
+                >
+                  <div className="min-w-0">
+                    <div className="font-bold text-slate-900 text-xs truncate">{txn.title}</div>
+                    <div className="flex items-center gap-1.5 text-[10px] text-slate-500 mt-1 flex-wrap">
+                      <span className="font-mono">{txn.date}</span>
+                      <span>•</span>
+                      <span className="px-1.5 py-0.5 rounded bg-white text-[9px] font-bold border border-[#e8e0d1]">
                         {txn.categoryLabel}
                       </span>
-                    </td>
-                    <td className="py-3 px-3 text-slate-600 whitespace-nowrap font-medium">
-                      <CreditCard className="w-3 h-3 inline mr-1 text-slate-400" />
-                      {txn.accountRef}
-                    </td>
-                    <td className="py-3 px-3 text-right font-mono font-bold whitespace-nowrap">
-                      <span
-                        className={
-                          txn.type === 'CREDIT' ? 'text-emerald-700' : 'text-rose-700'
-                        }
-                      >
-                        {txn.type === 'CREDIT' ? '+' : '-'}
-                        {formatCurrency(txn.amountUSD, currency)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3 text-center">
-                      <button
-                        onClick={() => {
-                          if (txn.type === 'DEBIT') deleteExpense(txn.originalId);
-                          else deleteIncome(txn.originalId);
-                        }}
-                        className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                        title="Delete entry"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
+                      <span>•</span>
+                      <span className="text-slate-400">{txn.accountRef}</span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div
+                      className={`font-mono font-extrabold text-sm ${
+                        txn.type === 'CREDIT' ? 'text-emerald-700' : 'text-rose-700'
+                      }`}
+                    >
+                      {txn.type === 'CREDIT' ? '+' : '-'}
+                      {formatCurrency(txn.amountUSD, currency)}
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (txn.type === 'DEBIT') deleteExpense(txn.originalId);
+                        else deleteIncome(txn.originalId);
+                      }}
+                      className="text-slate-400 hover:text-rose-600 p-1 transition-colors cursor-pointer mt-0.5"
+                      title="Delete entry"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 inline" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto scrollbar-none">
+              <table className="w-full min-w-[620px] text-left text-xs">
+                <thead>
+                  <tr className="border-b border-[#e8e0d1] text-slate-400 uppercase tracking-wider font-bold text-[10px]">
+                    <th className="py-3 px-3">Date</th>
+                    <th className="py-3 px-3">Payee / Description</th>
+                    <th className="py-3 px-3">Category</th>
+                    <th className="py-3 px-3">Account / Card</th>
+                    <th className="py-3 px-3 text-right">Amount</th>
+                    <th className="py-3 px-3 text-center">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            {filteredTransactions.length > 100 && (
-              <div className="py-3 text-center text-xs text-slate-500 font-medium border-t border-[#e8e0d1]">
-                Showing first 100 of {filteredTransactions.length} transactions. Filter to narrow down.
-              </div>
-            )}
+                </thead>
+                <tbody className="divide-y divide-[#f4efe4]">
+                  {filteredTransactions.slice(0, 100).map((txn) => (
+                    <tr key={txn.id} className="hover:bg-[#faf8f5]/60 transition-colors">
+                      <td className="py-3 px-3 font-mono text-slate-600 whitespace-nowrap">
+                        {txn.date}
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="font-bold text-slate-900">{txn.title}</div>
+                        {txn.notes && (
+                          <div className="text-[10px] text-slate-400 truncate max-w-xs">
+                            {txn.notes}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3 px-3">
+                        <span className="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#faf8f5] text-slate-700 border border-[#e8e0d1]">
+                          {txn.categoryLabel}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-slate-600 whitespace-nowrap font-medium">
+                        <CreditCard className="w-3 h-3 inline mr-1 text-slate-400" />
+                        {txn.accountRef}
+                      </td>
+                      <td className="py-3 px-3 text-right font-mono font-bold whitespace-nowrap">
+                        <span
+                          className={
+                            txn.type === 'CREDIT' ? 'text-emerald-700' : 'text-rose-700'
+                          }
+                        >
+                          {txn.type === 'CREDIT' ? '+' : '-'}
+                          {formatCurrency(txn.amountUSD, currency)}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <button
+                          onClick={() => {
+                            if (txn.type === 'DEBIT') deleteExpense(txn.originalId);
+                            else deleteIncome(txn.originalId);
+                          }}
+                          className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                          title="Delete entry"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {filteredTransactions.length > 100 && (
+                <div className="py-3 text-center text-xs text-slate-500 font-medium border-t border-[#e8e0d1]">
+                  Showing first 100 of {filteredTransactions.length} transactions. Filter to narrow down.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </motion.div>

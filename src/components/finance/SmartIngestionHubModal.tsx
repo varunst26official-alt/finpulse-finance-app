@@ -465,18 +465,21 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   return (
     <div
       {...overlayProps}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-md overflow-y-auto cursor-pointer"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-900/60 backdrop-blur-md overflow-y-auto cursor-pointer"
     >
       <motion.div
         {...contentProps}
-        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        initial={{ opacity: 0, scale: 0.95, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 16 }}
+        exit={{ opacity: 0, scale: 0.95, y: 24 }}
         transition={{ type: 'spring', damping: 25, stiffness: 320 }}
-        className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]"
+        className="w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[92vh]"
       >
+        {/* Mobile Drag Indicator */}
+        <div className="w-10 h-1.5 bg-slate-300 rounded-full mx-auto mt-2 sm:hidden shrink-0" />
+
         {/* Top Header */}
-        <div className="px-6 py-5 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-5 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <QuantraLogo size="md" variant="horizontal" animated={false} />
             <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
@@ -488,6 +491,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
 
           <button
             onClick={onClose}
+            aria-label="Close"
             className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-all cursor-pointer"
           >
             <X className="w-5 h-5" />
