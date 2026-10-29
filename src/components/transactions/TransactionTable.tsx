@@ -677,9 +677,9 @@ export const TransactionTable: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="overflow-x-auto"
+            className="overflow-x-auto scrollbar-none"
           >
-            <table className="w-full text-left text-xs">
+            <table className="w-full min-w-[620px] text-left text-xs">
               <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
                 <tr>
                   <th className="pb-3 pt-1">Date</th>
@@ -745,9 +745,9 @@ export const TransactionTable: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="overflow-x-auto"
+            className="overflow-x-auto scrollbar-none"
           >
-            <table className="w-full text-left text-xs">
+            <table className="w-full min-w-[620px] text-left text-xs">
               <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
                 <tr>
                   <th className="pb-3 pt-1">Date</th>
@@ -832,9 +832,9 @@ export const TransactionTable: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="overflow-x-auto"
+            className="overflow-x-auto scrollbar-none"
           >
-            <table className="w-full text-left text-xs">
+            <table className="w-full min-w-[620px] text-left text-xs">
               <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
                 <tr>
                   <th className="pb-3 pt-1">Date</th>
@@ -913,9 +913,9 @@ export const TransactionTable: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="overflow-x-auto"
+            className="overflow-x-auto scrollbar-none"
           >
-            <table className="w-full text-left text-xs">
+            <table className="w-full min-w-[620px] text-left text-xs">
               <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
                 <tr>
                   <th className="pb-3 pt-1">Asset Name</th>

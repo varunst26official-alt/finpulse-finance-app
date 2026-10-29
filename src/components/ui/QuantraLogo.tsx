@@ -16,10 +16,10 @@ export const QuantraLogo: React.FC<QuantraLogoProps> = ({
 }) => {
   // Dimensions
   const dim = {
-    sm: { icon: 28, text: 'text-base', sub: 'text-[9px]' },
-    md: { icon: 38, text: 'text-xl', sub: 'text-[11px]' },
-    lg: { icon: 48, text: 'text-2xl', sub: 'text-xs' },
-    xl: { icon: 64, text: 'text-3xl', sub: 'text-sm' },
+    sm: { icon: 26, text: 'text-sm sm:text-base', sub: 'text-[9px]' },
+    md: { icon: 32, text: 'text-base sm:text-xl', sub: 'text-[11px]' },
+    lg: { icon: 44, text: 'text-xl sm:text-2xl', sub: 'text-xs' },
+    xl: { icon: 60, text: 'text-2xl sm:text-3xl', sub: 'text-sm' },
   }[size];
 
   const IconSvg = (
@@ -151,7 +151,7 @@ export const QuantraLogo: React.FC<QuantraLogoProps> = ({
             PRO
           </span>
         </div>
-        <span className={`font-semibold text-slate-500 tracking-tight mt-0.5 ${dim.sub}`}>
+        <span className={`hidden sm:block font-semibold text-slate-500 tracking-tight mt-0.5 ${dim.sub}`}>
           Quantitative Wealth & Life Engine
         </span>
       </div>

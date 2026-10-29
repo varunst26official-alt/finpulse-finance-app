@@ -207,30 +207,33 @@ export const BankStatementManager: React.FC<BankStatementManagerProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <button
             onClick={onOpenIngestion}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 text-white text-xs font-extrabold shadow-md shadow-indigo-600/20 hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-1.5"
+            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 text-white text-xs font-extrabold shadow-md shadow-indigo-600/20 hover:scale-[1.02] transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
             <Zap className="w-3.5 h-3.5 text-cyan-300" />
-            <span>⚡ Import Statement (PDF / CSV / GPay)</span>
+            <span className="hidden sm:inline">⚡ Import Statement (PDF / CSV / GPay)</span>
+            <span className="sm:hidden">⚡ Import Statement</span>
           </button>
 
-          <button
-            onClick={() => setFinanceSubTab('calendar')}
-            className="px-3.5 py-2 rounded-xl bg-white border border-[#e8e0d1] text-slate-700 hover:text-slate-900 hover:bg-[#faf8f5] text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
-          >
-            <Calendar className="w-3.5 h-3.5 text-[#9e783e]" />
-            <span>View in Calendar</span>
-          </button>
+          <div className="grid grid-cols-2 gap-2 w-full sm:flex sm:w-auto">
+            <button
+              onClick={() => setFinanceSubTab('calendar')}
+              className="px-3.5 py-2 rounded-xl bg-white border border-[#e8e0d1] text-slate-700 hover:text-slate-900 hover:bg-[#faf8f5] text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <Calendar className="w-3.5 h-3.5 text-[#9e783e]" />
+              <span>View in Calendar</span>
+            </button>
 
-          <button
-            onClick={handleExportCSV}
-            className="px-3.5 py-2 rounded-xl bg-white border border-[#e8e0d1] text-slate-700 hover:text-slate-900 hover:bg-[#faf8f5] text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Export CSV</span>
-          </button>
+            <button
+              onClick={handleExportCSV}
+              className="px-3.5 py-2 rounded-xl bg-white border border-[#e8e0d1] text-slate-700 hover:text-slate-900 hover:bg-[#faf8f5] text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Export CSV</span>
+            </button>
+          </div>
         </div>
       </motion.div>
 
@@ -417,8 +420,8 @@ export const BankStatementManager: React.FC<BankStatementManagerProps> = ({
             No statement transactions found matching your search.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto scrollbar-none">
+            <table className="w-full min-w-[620px] text-left text-xs">
               <thead>
                 <tr className="border-b border-[#e8e0d1] text-slate-400 uppercase tracking-wider font-bold text-[10px]">
                   <th className="py-3 px-3">Date</th>

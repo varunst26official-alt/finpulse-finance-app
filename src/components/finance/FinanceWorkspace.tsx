@@ -88,20 +88,21 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
           })}
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="grid grid-cols-2 gap-2 w-full sm:flex sm:w-auto">
           <button
             onClick={() => setIsIngestionOpen(true)}
-            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 text-white text-xs font-extrabold shadow-md shadow-indigo-600/20 hover:scale-[1.02] transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 text-white text-xs font-extrabold shadow-md shadow-indigo-600/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
           >
-            <Zap className="w-3.5 h-3.5 text-cyan-300" />
-            <span>⚡ Auto-Import (Demat & UPI)</span>
+            <Zap className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+            <span className="hidden sm:inline">⚡ Auto-Import (Demat & UPI)</span>
+            <span className="sm:hidden">⚡ Auto-Import</span>
           </button>
 
           <button
             onClick={onOpenAddTradeModal}
-            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-md shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-md shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5 shrink-0" />
             <span>{financeSubTab === 'holdings' ? 'Add Holding' : 'Record Trade'}</span>
           </button>
         </div>

@@ -20,7 +20,7 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({ onAddHolding }) =>
   return (
     <motion.div
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
-      className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs hover:shadow-md transition-all space-y-4"
+      className="rounded-2xl border border-[#e8e0d1] bg-white p-4 sm:p-6 shadow-xs hover:shadow-md transition-all space-y-4"
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -45,8 +45,8 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({ onAddHolding }) =>
         )}
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
+      <div className="overflow-x-auto scrollbar-none">
+        <table className="w-full min-w-[620px] text-left text-xs">
           <thead className="border-b border-[#e8e0d1] text-slate-600 uppercase text-[11px] font-bold tracking-wider">
             <tr>
               <th className="pb-3 pt-1">Instrument</th>

@@ -1028,8 +1028,8 @@ export const FinancialCalendarWidget: React.FC = () => {
         </div>
 
         {/* Detailed Events Schedule Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto scrollbar-none">
+          <table className="w-full min-w-[650px] text-left text-xs">
             <thead className="border-b border-[#e8e0d1] text-slate-500 uppercase text-[11px] font-bold tracking-wider">
               <tr>
                 <th className="pb-3 pt-1">Status</th>
