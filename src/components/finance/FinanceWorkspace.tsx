@@ -102,7 +102,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
             className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-md shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Record Trade</span>
+            <span>{financeSubTab === 'holdings' ? 'Add Holding' : 'Record Trade'}</span>
           </button>
         </div>
       </div>
@@ -151,7 +151,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
               <StatCards />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
-                  <HoldingsTable />
+                  <HoldingsTable onAddHolding={onOpenAddTradeModal} />
                 </div>
                 <div>
                   <AllocationDonut />

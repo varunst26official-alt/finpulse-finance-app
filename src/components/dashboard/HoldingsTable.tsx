@@ -7,10 +7,14 @@ import {
   CATEGORY_COLORS,
   CATEGORY_LABELS,
 } from '@/utils/formatters';
-import { Layers, Sparkles } from 'lucide-react';
+import { Layers, Sparkles, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export const HoldingsTable: React.FC = () => {
+interface HoldingsTableProps {
+  onAddHolding?: () => void;
+}
+
+export const HoldingsTable: React.FC<HoldingsTableProps> = ({ onAddHolding }) => {
   const { assets, currency } = useFinanceStore();
 
   return (
@@ -18,7 +22,7 @@ export const HoldingsTable: React.FC = () => {
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
       className="rounded-2xl border border-[#e8e0d1] bg-white p-6 shadow-xs hover:shadow-md transition-all space-y-4"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
             <Layers className="h-5 w-5 text-[#9e783e]" />
@@ -28,6 +32,17 @@ export const HoldingsTable: React.FC = () => {
             Real-time positions, entry price, and unrealized profit & loss
           </p>
         </div>
+
+        {onAddHolding && (
+          <button
+            onClick={onAddHolding}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#9e783e] hover:bg-[#866632] text-white text-xs font-bold transition-all shadow-md shadow-[#9e783e]/20 cursor-pointer hover:scale-[1.02] self-start sm:self-auto shrink-0"
+            title="Add a new stock, mutual fund, gold, or investment holding"
+          >
+            <Plus className="h-4 w-4" />
+            <span>+ Add Holding</span>
+          </button>
+        )}
       </div>
 
       <div className="overflow-x-auto">
@@ -53,10 +68,19 @@ export const HoldingsTable: React.FC = () => {
                     </div>
                     <p className="text-sm font-bold text-slate-900">Your Portfolio is Fresh & Clean</p>
                     <p className="text-xs text-slate-500 leading-relaxed font-medium">
-                      You do not have any recorded assets yet. Add your first stock, mutual fund, gold, or property using the "+ Add Trade" button in the top navbar.
+                      You do not have any recorded assets yet. Add your first stock, mutual fund, gold, or property to start tracking your net worth and portfolio performance.
                     </p>
-                    <div className="pt-2 flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#f4efe4] border border-[#ded3bf] text-[11px] font-bold text-[#866632]">
+                    <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
+                      {onAddHolding && (
+                        <button
+                          onClick={onAddHolding}
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#9e783e] hover:bg-[#866632] text-white text-xs font-bold transition-all shadow-md shadow-[#9e783e]/20 cursor-pointer hover:scale-[1.02]"
+                        >
+                          <Plus className="h-4 w-4" />
+                          <span>+ Add Holding</span>
+                        </button>
+                      )}
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#f4efe4] border border-[#ded3bf] text-[11px] font-bold text-[#866632]">
                         <Sparkles className="h-3 w-3" /> 0 Risk Active
                       </span>
                     </div>
