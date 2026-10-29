@@ -1070,7 +1070,7 @@ export const FinancialCalendarWidget: React.FC = () => {
                       </td>
                       <td className="py-3.5 font-mono text-slate-600 font-medium">{ev.date}</td>
                       <td className="py-3.5">
-                        <div className={`font-bold ${ev.isCompleted ? 'line-through text-slate-400' : 'text-slate-900'}`}>
+                        <div className="font-bold text-slate-900">
                           {ev.title}
                         </div>
                         {ev.notes && <div className="text-[11px] text-slate-500 truncate max-w-xs">{ev.notes}</div>}
