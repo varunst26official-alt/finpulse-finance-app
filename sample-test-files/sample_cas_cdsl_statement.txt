@@ -1,0 +1,19 @@
+CENTRAL DEPOSITORY SERVICES (INDIA) LIMITED
+Consolidated Account Statement (CAS)
+Investor Name: Rajesh Verma
+PAN: ABCPV1982K
+Statement Period: 01-Apr-2024 to 28-Oct-2024
+Demat Account Number (BO ID): 1208160019283741
+DP Name: Zerodha Broking Limited
+
+=== EQUITIES & CORPORATE SECURITIES ===
+RELIANCE | Reliance Industries Limited | INE002A01018 | 40 | 2420.00 | 2960.50
+TCS | Tata Consultancy Services Limited | INE467B01029 | 25 | 3450.00 | 4080.00
+INFY | Infosys Limited | INE009A01021 | 65 | 1410.00 | 1875.00
+HDFCBANK | HDFC Bank Limited | INE040A01034 | 80 | 1485.00 | 1695.00
+TATAMOTORS | Tata Motors Limited | INE155A01022 | 120 | 650.00 | 975.00
+
+=== MUTUAL FUNDS (CAMS & KFINTECH REGISTERED) ===
+PARAG_PARIKH_FLEXI | Parag Parikh Flexi Cap Fund Direct Growth | INF879O01015 | 1850 | 48.20 | 79.40
+MIRAE_ASSET_LARGE | Mirae Asset Large Cap Fund Direct Growth | INF769K01023 | 920 | 85.50 | 124.60
+NIPPON_INDIA_SMALL | Nippon India Small Cap Fund Direct Growth | INF204K01016 | 650 | 98.40 | 162.80

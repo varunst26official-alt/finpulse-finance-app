@@ -4,7 +4,7 @@ import { useFinanceStore } from './financeStore';
 import { useLifeOSStore } from './lifeosStore';
 import { useTourStore } from './tourStore';
 import { api } from '@/services/apiClient';
-import { loadUserScopedData, clearActiveUserStores, saveUserScopedData } from '@/services/userStorage';
+import { loadUserScopedData, saveUserScopedData } from '@/services/userStorage';
 
 export interface UserProfile {
   id: string;
@@ -163,7 +163,6 @@ export const useAuthStore = create<AuthState>()(
           saveUserScopedData(currentUser);
         }
         api.auth.logout();
-        clearActiveUserStores();
         set({ user: null, isAuthenticated: false, isLoading: false });
       },
     }),

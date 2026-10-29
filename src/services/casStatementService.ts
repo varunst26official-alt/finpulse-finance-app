@@ -59,21 +59,28 @@ export function parseCasTextContent(textContent: string): CasParseResult {
     // Detect Equity Line: e.g. "RELIANCE | Reliance Industries Ltd | INE002A01018 | 25 | 2450.00 | 2920.00"
     if (line.includes('|') || line.includes(',')) {
       const parts = line.split(/[|,]/).map((p) => p.trim());
-      if (parts.length >= 4) {
+      if (parts.length >= 3) {
         const symbolOrName = parts[0];
-        const isinOrDesc = parts[1] || '';
-        const qty = parseFloat(parts[2]);
-        const buyPrice = parseFloat(parts[3]);
-        const currentPrice = parts[4] ? parseFloat(parts[4]) : buyPrice * 1.12;
+        const isinOrDesc = parts.find((p) => /^IN[A-Z0-9]{10}$/i.test(p)) || parts[1] || '';
+        
+        // Find all numeric columns for qty and prices
+        const numericParts = parts
+          .slice(1)
+          .map((p) => parseFloat(p))
+          .filter((n) => !isNaN(n) && n > 0);
 
-        if (!isNaN(qty) && !isNaN(buyPrice) && qty > 0) {
+        if (numericParts.length >= 2) {
+          const qty = numericParts[0];
+          const buyPrice = numericParts[1];
+          const currentPrice = numericParts[2] || Number((buyPrice * 1.15).toFixed(2));
+
           const isMf = /fund|direct|growth|elss/i.test(symbolOrName) || /fund|direct|growth/i.test(isinOrDesc);
           const category: AssetCategory = isMf ? 'MUTUAL_FUNDS' : 'EQUITY';
 
           holdings.push({
-            id: `demat-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+            id: `demat-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 7)}`,
             symbol: symbolOrName.replace(/\s+/g, '_').toUpperCase().substring(0, 15),
-            name: isinOrDesc || symbolOrName,
+            name: parts[1] || isinOrDesc || symbolOrName,
             category,
             quantity: qty,
             averageBuyPrice: buyPrice,

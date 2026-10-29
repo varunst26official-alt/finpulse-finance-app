@@ -19,6 +19,8 @@ export function saveUserScopedData(user: UserProfile | null): void {
     const finState = useFinanceStore.getState();
     const lifeState = useLifeOSStore.getState();
 
+    console.log('[saveUserScopedData]', user.email, 'Assets:', finState.assets.length, 'isClearing:', isClearing);
+
     const financeData = {
       assets: finState.assets,
       transactions: finState.transactions,
@@ -121,12 +123,19 @@ export function loadUserScopedData(user: UserProfile | null): void {
   }
 }
 
+let isClearing = false;
+
 /**
  * Clears all in-memory stores back to a clean empty state on logout.
  */
 export function clearActiveUserStores(): void {
-  useFinanceStore.getState().resetToFreshPortfolio('');
-  useLifeOSStore.getState().resetToFreshState();
+  isClearing = true;
+  try {
+    useFinanceStore.getState().resetToFreshPortfolio('');
+    useLifeOSStore.getState().resetToFreshState();
+  } finally {
+    isClearing = false;
+  }
 }
 
 let autoSaveInitialized = false;
@@ -139,6 +148,7 @@ export function initUserStorageAutoSave(): void {
   autoSaveInitialized = true;
 
   useFinanceStore.subscribe(() => {
+    if (isClearing) return;
     const auth = useAuthStore.getState();
     if (auth.isAuthenticated && auth.user) {
       saveUserScopedData(auth.user);
@@ -146,6 +156,7 @@ export function initUserStorageAutoSave(): void {
   });
 
   useLifeOSStore.subscribe(() => {
+    if (isClearing) return;
     const auth = useAuthStore.getState();
     if (auth.isAuthenticated && auth.user) {
       saveUserScopedData(auth.user);

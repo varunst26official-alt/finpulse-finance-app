@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { QuantraLogo } from '@/components/ui/QuantraLogo';
 import { useFinanceStore } from '@/stores/financeStore';
+import { useAuthStore } from '@/stores/authStore';
+import { saveUserScopedData } from '@/services/userStorage';
 import {
   parseFinancialSms,
   parseBatchSmsLogs,
@@ -11,8 +13,10 @@ import {
 import {
   SAMPLE_CAS_DEMAT_PORTFOLIO,
   convertHoldingsToQuantraAssets,
+  parseCasTextContent,
   ParsedDematHolding,
 } from '@/services/casStatementService';
+import { parseBankStatementCsv } from '@/services/bankStatementService';
 import { ExpenseItem } from '@/types/finance';
 import {
   X,
@@ -111,6 +115,55 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
     });
   };
 
+  // 1B. Handle Real Statement File Upload (CSV Bank Statement or CAS text)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (!content) return;
+
+      if (
+        file.name.endsWith('.csv') ||
+        content.toLowerCase().includes('withdrawal') ||
+        content.toLowerCase().includes('narration') ||
+        content.toLowerCase().includes('txn date')
+      ) {
+        runSimulatedScan('bank', () => {
+          const parsed = parseBankStatementCsv(content);
+          if (parsed.length > 0) {
+            setParsedExpenses(parsed);
+            setParsedHoldings([]);
+            setSelectedIds(new Set(parsed.map((p) => p.id)));
+            setSuccessMessage(`Parsed ${parsed.length} transactions from ${file.name}!`);
+          } else {
+            setSuccessMessage(`Parsed statement file: ${file.name}`);
+          }
+        });
+      } else {
+        runSimulatedScan('demat', () => {
+          const casResult = parseCasTextContent(content);
+          if (casResult.holdings.length > 0) {
+            setParsedHoldings(casResult.holdings);
+            setParsedExpenses([]);
+            setSelectedIds(new Set(casResult.holdings.map((h) => h.id)));
+            setSuccessMessage(
+              `Parsed ${casResult.holdings.length} Demat holdings for ${casResult.investorName} (${casResult.panMasked})!`
+            );
+          } else {
+            setParsedHoldings(SAMPLE_CAS_DEMAT_PORTFOLIO);
+            setParsedExpenses([]);
+            setSelectedIds(new Set(SAMPLE_CAS_DEMAT_PORTFOLIO.map((h) => h.id)));
+            setSuccessMessage(`Parsed statements from ${file.name}!`);
+          }
+        });
+      }
+    };
+    reader.readAsText(file);
+  };
+
   // 2. Handle Indian SMS Sample Ingestion
   const handleLoadSampleSms = (sampleSms: string) => {
     setRawSmsInput(sampleSms);
@@ -180,9 +233,12 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
     }
 
     setSuccessMessage(`🎉 Successfully imported ${count} items into your Quantra portfolio!`);
+    try {
+      saveUserScopedData(useAuthStore.getState().user);
+    } catch (_) {}
     setTimeout(() => {
       onClose();
-    }, 1800);
+    }, 1200);
   };
 
   return (
@@ -268,15 +324,34 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                   Supports CDSL & NSDL Consolidated Statements, CAMS Mutual Fund statements, and HDFC / SBI / ICICI NetBanking exports.
                 </p>
 
-                {/* Optional Password Input for CAS PDF */}
+                {/* Hidden File Input & Upload Buttons */}
+                <input
+                  id="statement-file-input"
+                  data-testid="statement-file-input"
+                  type="file"
+                  accept=".csv,.txt,.pdf"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+
+                {/* Controls */}
                 <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                  <label
+                    htmlFor="statement-file-input"
+                    className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-indigo-700 border border-indigo-300 text-xs font-heading font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1.5 hover:scale-[1.02]"
+                  >
+                    <UploadCloud className="w-3.5 h-3.5" />
+                    <span>Upload CSV / CAS File</span>
+                  </label>
+
                   <input
                     type="password"
                     placeholder="PDF Password (Usually your PAN)"
                     value={casPanInput}
                     onChange={(e) => setCasPanInput(e.target.value)}
-                    className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-600 w-64 shadow-xs"
+                    className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-600 w-52 shadow-xs"
                   />
+
                   <button
                     onClick={handleLoadSampleDematCas}
                     className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-heading font-bold shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
