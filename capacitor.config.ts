@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.lifeos.commandcentre',
-  appName: 'LifeOS',
+  appName: 'Quantra',
   webDir: 'dist',
   server: {
     url: 'https://lifeos-command-centre.vercel.app/',
