@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { useFinanceStore } from './financeStore';
 import { useLifeOSStore } from './lifeosStore';
 import { useTourStore } from './tourStore';
+import { useMasteryStore } from './masteryStore';
 import { api } from '@/services/apiClient';
 import { loadUserScopedData, saveUserScopedData } from '@/services/userStorage';
 
@@ -209,6 +210,9 @@ export const useAuthStore = create<AuthState>()(
           saveUserScopedData(currentUser);
         }
         api.auth.logout();
+        useFinanceStore.getState().resetToFreshPortfolio('User');
+        useLifeOSStore.getState().resetToFreshState();
+        useMasteryStore.getState().resetToFreshState();
         set({ user: null, isAuthenticated: false, isDemoMode: false, authModalOpen: false, isLoading: false });
       },
     }),

@@ -88,7 +88,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
     user.id === 'demo_guest_investor' ||
     user.email === 'varun@quantra.io' ||
     user.email === 'investor@quantra.io' ||
-    user.fullName.toLowerCase().includes('varun');
+    useAuthStore.getState().isDemoMode;
 
   if (isDemo) {
     useFinanceStore.setState({
@@ -311,6 +311,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
       // Clean slate for new user
       useLifeOSStore.getState().resetToFreshState();
     }
+    useMasteryStore.getState().syncWithActualUserData();
   } catch (err) {
     console.error('[UserStorage] Failed to load user-scoped data:', err);
     useFinanceStore.getState().resetToFreshPortfolio(user.fullName);

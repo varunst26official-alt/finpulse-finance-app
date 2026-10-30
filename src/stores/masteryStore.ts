@@ -126,6 +126,7 @@ interface MasteryState {
   syncWithActualUserData: () => void;
   getUserRank: () => { rank: number; totalMembers: number; league: MasteryLeague };
   getComputedLevel: () => { level: number; currentXp: number; nextLevelXp: number; progressPercent: number };
+  resetToFreshState: () => void;
 }
 
 export const DEFAULT_LEADERBOARD: LeaderboardMember[] = [
@@ -255,29 +256,51 @@ export const useMasteryStore = create<MasteryState>()(
   persist(
     (set, get) => ({
       sectionPoints: {
-        FINANCE: 580,
-        WELLNESS: 340,
-        PRODUCTIVITY: 260,
-        LEARNING: 140,
-        LIFEADMIN: 100,
+        FINANCE: 0,
+        WELLNESS: 0,
+        PRODUCTIVITY: 0,
+        LEARNING: 0,
+        LIFEADMIN: 0,
       },
-      weeklyPoints: 426,
-      streakDays: 21,
+      weeklyPoints: 0,
+      streakDays: 1,
       lastActiveDate: new Date().toISOString().split('T')[0],
-      league: 'DIAMOND',
+      league: 'BRONZE',
       displayNameMode: 'REAL_NAME',
-      customAlias: '@varun_sk',
+      customAlias: '',
       isGhostMode: false,
       badges: BASE_BADGE_DEFINITIONS.map((b) => ({
         ...b,
-        isUnlocked: ['badge-fire-starter', 'badge-budget-boss', 'badge-hydration-hero', 'badge-iron-discipline'].includes(b.id),
-        progressPercent: ['badge-fire-starter', 'badge-budget-boss', 'badge-hydration-hero', 'badge-iron-discipline'].includes(b.id) ? 100 : 40,
+        isUnlocked: false,
+        progressPercent: 0,
       })),
-      pinnedBadgeIds: ['badge-fire-starter', 'badge-hydration-hero'],
+      pinnedBadgeIds: [],
       leaderboard: DEFAULT_LEADERBOARD,
       pointHistory: [],
       activeNotification: null,
       isLoadingLeaderboard: false,
+
+      resetToFreshState: () => {
+        set({
+          sectionPoints: {
+            FINANCE: 0,
+            WELLNESS: 0,
+            PRODUCTIVITY: 0,
+            LEARNING: 0,
+            LIFEADMIN: 0,
+          },
+          weeklyPoints: 0,
+          streakDays: 1,
+          league: 'BRONZE',
+          customAlias: '',
+          badges: BASE_BADGE_DEFINITIONS.map((b) => ({
+            ...b,
+            isUnlocked: false,
+            progressPercent: 0,
+          })),
+          pinnedBadgeIds: [],
+        });
+      },
 
       // Synchronize exact real-time points from user's current live stores
       syncWithActualUserData: () => {

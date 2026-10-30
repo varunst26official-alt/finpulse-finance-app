@@ -158,7 +158,7 @@ communityRoutes.get('/leaderboard', (req: Request, res: Response) => {
       const checklistDone = queryOne<{ count: number }>('SELECT COUNT(*) as count FROM admin_checklists WHERE user_id = ? AND is_completed = 1', [user.id])?.count || 0;
       let lifeAdminPoints = docCount * 30 + checklistDone * 20;
 
-      const isVarun = user.id === 'usr_demo' || user.full_name?.toLowerCase().includes('varun');
+      const isVarun = user.id === 'usr_demo';
       const fullName = isVarun ? 'Varun Senthil kumar' : user.full_name;
 
       let totalPoints = financePoints + wellnessPoints + productivityPoints + learningPoints + lifeAdminPoints;
