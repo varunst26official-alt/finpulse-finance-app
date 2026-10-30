@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { QuantraLogo } from '@/components/ui/QuantraLogo';
 import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
+import { usePreferencesStore } from '@/stores/preferencesStore';
 import { saveUserScopedData } from '@/services/userStorage';
 import {
   parseFinancialSms,
@@ -85,6 +86,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
 
   // Native Android Scanner State
   const isNative = nativeTransactionScanner.isSupported();
+  const { autoDetectionEnabled, setAutoDetectionEnabled } = usePreferencesStore();
   const [notifAccessGranted, setNotifAccessGranted] = useState(false);
   const [smsPermGranted, setSmsPermGranted] = useState(false);
   const [pendingAlerts, setPendingAlerts] = useState<RawDetectedAlert[]>([]);
@@ -559,7 +561,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 24 }}
         transition={{ type: 'spring', damping: 25, stiffness: 320 }}
-        className="w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[92vh]"
+        className="w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[90vh] sm:max-h-[92vh] [overflow-y:auto] pb-4 sm:pb-6"
       >
         {/* Mobile Drag Indicator */}
         <div className="w-10 h-1.5 bg-slate-300 rounded-full mx-auto mt-2 sm:hidden shrink-0" />
@@ -768,7 +770,9 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                       </h4>
                       <p className="text-[11px] text-slate-500 font-sans">
                         {isNative
-                          ? 'Background listener services active in Android APK'
+                          ? autoDetectionEnabled
+                            ? 'Auto-detection is enabled — incoming UPI & bank SMS will be parsed automatically'
+                            : 'Auto-detection is disabled — enable it below to parse incoming UPI & bank SMS automatically'
                           : 'Compiled Android APK feature (Simulate on Web)'}
                       </p>
                     </div>
@@ -856,8 +860,49 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                       )}
                     </div>
 
-                    {/* Pending buffer alert count */}
-                    {pendingAlerts.length > 0 && (
+                    {/* Auto-Detection Toggle (APK only) */}
+                    {isNative && (
+                      <div className="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                            <Zap className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-xs text-slate-900">
+                                Auto-Detect Transactions
+                              </span>
+                              <span
+                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                  autoDetectionEnabled
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                    : 'bg-slate-100 text-slate-600 border border-slate-200'
+                                }`}
+                              >
+                                {autoDetectionEnabled ? 'Enabled' : 'Disabled'}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-500 mt-0.5">
+                              Automatically parse incoming UPI & bank SMS alerts.
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setAutoDetectionEnabled(!autoDetectionEnabled)}
+                          className={`relative w-10 h-5 shrink-0 rounded-full border border-slate-300 transition-colors duration-200 cursor-pointer ${autoDetectionEnabled ? 'bg-emerald-500 border-emerald-500' : 'bg-slate-200 border-slate-300'}`}
+                        >
+                          <span
+                            className={`block w-3 h-3 rounded-full bg-white shadow-sm transform transition-transform duration-200 ${
+                              autoDetectionEnabled ? 'translate-x-5' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Pending buffer alert count — only shown when auto-detection is enabled */}
+                    {isNative && autoDetectionEnabled && pendingAlerts.length > 0 && (
                       <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                           <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />

@@ -62,7 +62,7 @@ export const LifeOSHeader: React.FC = () => {
         <button
           onClick={startTour}
           className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-[#a47b3c]/35 bg-[#faf6ef] text-[#866632] hover:bg-[#f5eee3] hover:border-[#a47b3c] text-xs font-bold transition-all shadow-xs cursor-pointer group shrink-0"
-          title="Take an Interactive Guided Tour of LifeOS"
+          title="Take an Interactive Guided Tour of Quantra Life OS"
         >
           <Compass className="w-3.5 h-3.5 text-[#a47b3c] group-hover:rotate-45 transition-transform duration-300 shrink-0" />
           <span className="hidden sm:inline font-extrabold text-[11px] sm:text-xs">Tour</span>

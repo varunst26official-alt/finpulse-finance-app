@@ -36,3 +36,8 @@ server/data/
 
 playwright-report/
 test-results/
+
+dev_err.txt
+dev_out.txt
+*.webm
+

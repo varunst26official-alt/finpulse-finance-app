@@ -152,7 +152,7 @@ export const QuantraLogo: React.FC<QuantraLogoProps> = ({
           </span>
         </div>
         <span className={`hidden sm:block font-semibold text-slate-500 tracking-tight mt-0.5 ${dim.sub}`}>
-          Quantitative Wealth & Life Engine
+          Quantra Life OS
         </span>
       </div>
     </div>

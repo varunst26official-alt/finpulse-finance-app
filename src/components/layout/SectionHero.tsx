@@ -39,7 +39,7 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
 
   return (
     <section
-      className="relative text-white rounded-3xl p-4 sm:p-8 lg:p-9 shadow-xl overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-6 w-full max-w-full min-w-0"
+      className="relative text-white rounded-3xl p-3 sm:p-6 lg:p-8 shadow-xl overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-2 sm:gap-4 w-full max-w-full min-w-0"
       style={{
         background: config.heroGradient,
       }}
@@ -58,7 +58,7 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
         <div className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-white/75">
           {config.eyebrow}
         </div>
-        <h1 className="text-lg sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+        <h1 className="text-base sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white leading-tight">
           {config.title}
         </h1>
         <p className="hidden sm:block text-xs sm:text-sm text-white/80 leading-relaxed max-w-xl">

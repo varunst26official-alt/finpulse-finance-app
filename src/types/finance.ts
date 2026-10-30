@@ -396,3 +396,71 @@ export interface TaxReport {
   holdings: TaxHoldingAnalysis[];
   harvestingRecommendation: string;
 }
+
+// ============================================================================
+// Subscription & Recurring Transaction Types
+// ============================================================================
+
+export type BillingCycle = 'MONTHLY' | 'QUARTERLY' | 'YEARLY' | 'WEEKLY';
+
+export type SubscriptionStatus = 'ACTIVE' | 'CANCELLED' | 'PAUSED' | 'EXPIRED';
+
+export interface Subscription {
+  id: string;
+  name: string; // e.g. "Netflix", "Spotify", "Gym Membership"
+  category: ExpenseCategory;
+  amount: number; // in USD base
+  currency: Currency;
+  billingCycle: BillingCycle;
+  nextDueDate: string; // YYYY-MM-DD
+  lastPaidDate?: string; // YYYY-MM-DD
+  paymentMethod: PaymentMethod;
+  status: SubscriptionStatus;
+  platform?: string; // e.g. "Netflix", "Apple App Store", "Google Play"
+  notes?: string;
+  autoDetected: boolean; // detected from SMS/bank statement vs manually added
+  createdAt: string;
+}
+
+export interface SubscriptionDetectionResult {
+  potentialSubscriptions: {
+    name: string;
+    category: ExpenseCategory;
+    estimatedAmount: number;
+    confidence: 'LOW' | 'MEDIUM' | 'HIGH';
+    evidence: string[]; // matched merchant names, similar amounts
+  }[];
+  alreadyTracked: string[]; // subscription names already in the list
+}
+
+// ============================================================================
+// Bill & Recurring Expense Tracker Types
+// ============================================================================
+
+export type BillStatus = 'UPCOMING' | 'OVERDUE' | 'PAID' | 'CANCELLED';
+
+export interface Bill {
+  id: string;
+  name: string; // e.g. "Electricity Bill", "Internet", "Gym Membership"
+  category: ExpenseCategory;
+  amount: number; // in USD base
+  currency: Currency;
+  billingCycle: BillingCycle;
+  nextDueDate: string; // YYYY-MM-DD
+  lastPaidDate?: string; // YYYY-MM-DD
+  paymentMethod: PaymentMethod;
+  status: BillStatus;
+  platform?: string; // e.g. "BSES Delhi", "Netflix", "Local Gym"
+  notes?: string;
+  autoDetected: boolean; // detected from SMS/bank statement vs manually added
+  createdAt: string;
+}
+
+export interface BillRecurringInfo {
+  name: string;
+  category: ExpenseCategory;
+  estimatedAmount: number;
+  confidence: 'LOW' | 'MEDIUM' | 'HIGH';
+  evidence: string[]; // matched merchant names, similar amounts
+  nextDueDate: string;
+}

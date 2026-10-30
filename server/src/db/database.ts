@@ -862,40 +862,9 @@ export async function initDatabase(): Promise<Database> {
   // Execute schema tables
   db.run(SCHEMA_SQL);
 
-  // Check if demo user exists, if not create and seed
-  const demoUser = queryOne('SELECT id FROM users WHERE id = ?', ['usr_demo']);
-  if (!demoUser) {
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync('demo1234', salt);
-
-    run(
-      `INSERT INTO users (id, full_name, email, password_hash, phone_number, investor_type, joined_date)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        'usr_demo',
-        'Varun Senthil kumar',
-        'varun@quantra.io',
-        hash,
-        '+91 98765 43210',
-        'HNI',
-        'March 2024',
-      ]
-    );
-
-    // Seed demo data
-    seedUserData('usr_demo');
-    console.log('[Database] Seeded initial demo user and wealth portfolio.');
-  } else {
-    // Ensure demo user has Varun Senthil kumar name and email
-    run("UPDATE users SET full_name = 'Varun Senthil kumar', email = 'varun@quantra.io' WHERE id = 'usr_demo' OR full_name LIKE '%Varun%'");
-
-    // If demo user exists but tasks or workout tables are empty, seed defaults
-    const workoutCount = queryOne<{ count: number }>('SELECT COUNT(*) as count FROM workout_sessions WHERE user_id = ?', ['usr_demo']);
-    if (!workoutCount || workoutCount.count === 0) {
-      seedUserData('usr_demo');
-      console.log('[Database] Seeded full LifeOS Phase 2-6 items for demo user.');
-    }
-  }
+  // Demo user seeding is intentionally disabled — no auto-seeded accounts.
+// Users must register or sign in explicitly.
+  console.log('[Database] Demo user seeding disabled. Users must register/sign in explicitly.');
 
   persistDatabase();
   return db;

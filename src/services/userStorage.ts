@@ -9,7 +9,6 @@ import {
   INITIAL_EXPENSES,
   INITIAL_INCOMES,
   INITIAL_CALENDAR_EVENTS,
-  INITIAL_DEBTS,
   INITIAL_POLICIES,
   INITIAL_GOALS,
   INITIAL_HISTORY,
@@ -49,6 +48,7 @@ export function saveUserScopedData(user: UserProfile | null): void {
       history: finState.history,
       currency: finState.currency,
       aiMessages: finState.aiMessages,
+      bills: finState.bills,
     };
 
     const lifeosData = {

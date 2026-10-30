@@ -58,3 +58,12 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #c7b599;
 }
+
+/* Mobile bottom nav clearance */
+:root {
+  --tab-bar-height: 56px;
+}
+
+.pb-safe-area {
+  padding-bottom: calc(var(--tab-bar-height) + env(safe-area-inset-bottom));
+}

@@ -21,6 +21,8 @@ import {
   FinancialHealthScore,
   GoalItem,
   HistoricalDataPoint,
+  Subscription,
+  Bill,
 } from '@/types/finance';
 import {
   STOCK_PREDICTIONS,
@@ -70,6 +72,8 @@ interface FinanceState {
   goals: GoalItem[];
   emergencyTargetMonths: number;
   history: HistoricalDataPoint[];
+  subscriptions: Subscription[];
+  bills: Bill[];
 
   // AI Wealth Copilot State
   aiMessages: AiChatMessage[];
@@ -114,6 +118,18 @@ interface FinanceState {
   deleteGoal: (id: string) => void;
   contributeToGoal: (id: string, amount: number) => void;
   updateGoal: (id: string, updates: Partial<GoalItem>) => void;
+  // Subscription Management
+  addSubscription: (sub: Omit<Subscription, 'id'>) => void;
+  deleteSubscription: (id: string) => void;
+  updateSubscription: (id: string, updates: Partial<Subscription>) => void;
+  markSubscriptionPaid: (id: string, paidDate?: string) => void;
+  detectRecurringExpenses: () => void;
+  // Bill Management
+  addBill: (bill: Omit<Bill, 'id'>) => void;
+  deleteBill: (id: string) => void;
+  updateBill: (id: string, updates: Partial<Bill>) => void;
+  markBillPaid: (id: string, paidDate?: string) => void;
+  getUpcomingBills: (days?: number) => Bill[];
   setEmergencyTargetMonths: (months: number) => void;
   resetToFreshPortfolio: (userName?: string) => void;
   loadDemoSampleData: () => void;
@@ -147,6 +163,8 @@ export const useFinanceStore = create<FinanceState>()(
       goals: [],
       emergencyTargetMonths: 6,
       history: [],
+      subscriptions: [],
+      bills: [],
 
       aiMessages: [],
       isAiTyping: false,
@@ -279,7 +297,7 @@ export const useFinanceStore = create<FinanceState>()(
         const confirmationMsg: AiChatMessage = {
           id: `msg_exec_${Date.now()}`,
           role: 'assistant',
-          content: `✅ **Trade Order Successfully Executed & Recorded!**\n\n- **Order:** ${actionPayload.tradeType} ${actionPayload.quantity} ${actionPayload.symbol || actionPayload.name}\n- **Total Booked:** **${formatCurrency(actionPayload.totalAmount, currency)}**\n- **Platform:** ${actionPayload.platform || 'Zerodha Kite'}\n\nYour Portfolio Net Worth, Holdings Table, and Transaction Ledger have been updated in real-time.`,
+          content: `✅ **Trade Order Successfully Executed & Recorded!**- **Order:** ${actionPayload.tradeType} ${actionPayload.quantity} ${actionPayload.symbol || actionPayload.name}- **Total Booked:** **${formatCurrency(actionPayload.totalAmount, currency)}**- **Platform:** ${actionPayload.platform || 'Zerodha Kite'}Your Portfolio Net Worth, Holdings Table, and Transaction Ledger have been updated in real-time.`,
           timestamp: 'Just now',
           suggestedPrompts: [
             'Audit updated asset allocation',
@@ -663,6 +681,199 @@ export const useFinanceStore = create<FinanceState>()(
         set({ emergencyTargetMonths });
       },
 
+      // Subscription Management
+      addSubscription: (subData) => {
+        if (!useAuthStore.getState().requireAuth('add subscription')) return;
+        const newSub: Subscription = {
+          ...subData,
+          id: `sub_${Date.now()}`,
+          createdAt: new Date().toISOString(),
+        };
+        set((state) => ({
+          subscriptions: [newSub, ...state.subscriptions],
+        }));
+      },
+
+      deleteSubscription: (id) => {
+        set((state) => ({
+          subscriptions: state.subscriptions.filter((s) => s.id !== id),
+        }));
+      },
+
+      updateSubscription: (id, updates) => {
+        set((state) => ({
+          subscriptions: state.subscriptions.map((s) =>
+            s.id === id ? { ...s, ...updates } : s
+          ),
+        }));
+      },
+
+      markSubscriptionPaid: (id, paidDate) => {
+        const sub = get().subscriptions.find((s) => s.id === id);
+        if (!sub) return;
+        const today = paidDate || new Date().toISOString().split('T')[0];
+        let nextDue = today;
+        if (sub.billingCycle === 'MONTHLY') {
+          const d = new Date(today);
+          d.setMonth(d.getMonth() + 1);
+          nextDue = d.toISOString().split('T')[0];
+        } else if (sub.billingCycle === 'QUARTERLY') {
+          const d = new Date(today);
+          d.setMonth(d.getMonth() + 3);
+          nextDue = d.toISOString().split('T')[0];
+        } else if (sub.billingCycle === 'YEARLY') {
+          const d = new Date(today);
+          d.setFullYear(d.getFullYear() + 1);
+          nextDue = d.toISOString().split('T')[0];
+        } else if (sub.billingCycle === 'WEEKLY') {
+          const d = new Date(today);
+          d.setDate(d.getDate() + 7);
+          nextDue = d.toISOString().split('T')[0];
+        }
+        set((state) => ({
+          subscriptions: state.subscriptions.map((s) =>
+            s.id === id
+              ? { ...s, lastPaidDate: today, nextDueDate: nextDue }
+              : s
+          ),
+        }));
+      },
+      // Bill Management
+      addBill: (billData) => {
+        if (!useAuthStore.getState().requireAuth('add bill')) return;
+        const newBill: Bill = {
+          ...billData,
+          id: `bill_${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          status: billData.status || 'UPCOMING',
+        };
+        set((state) => ({
+          bills: [newBill, ...state.bills],
+        }));
+      },
+
+      deleteBill: (id) => {
+        set((state) => ({
+          bills: state.bills.filter((b) => b.id !== id),
+        }));
+      },
+
+      updateBill: (id, updates) => {
+        set((state) => ({
+          bills: state.bills.map((b) =>
+            b.id === id ? { ...b, ...updates } : b
+          ),
+        }));
+      },
+
+      markBillPaid: (id, paidDate) => {
+        set((state) => {
+          const today = paidDate || new Date().toISOString().split('T')[0];
+          const updatedBills = state.bills.map((b) => {
+            if (b.id === id) {
+              // Advance nextDueDate based on billingCycle
+              const currentDue = new Date(b.nextDueDate);
+              let nextDue = new Date(currentDue);
+              switch (b.billingCycle) {
+                case 'WEEKLY':
+                  nextDue.setDate(nextDue.getDate() + 7);
+                  break;
+                case 'MONTHLY':
+                  nextDue.setMonth(nextDue.getMonth() + 1);
+                  break;
+                case 'QUARTERLY':
+                  nextDue.setMonth(nextDue.getMonth() + 3);
+                  break;
+                case 'YEARLY':
+                  nextDue.setFullYear(nextDue.getFullYear() + 1);
+                  break;
+              }
+              return {
+                ...b,
+                status: 'PAID' as const,
+                lastPaidDate: today,
+                nextDueDate: nextDue.toISOString().split('T')[0],
+              };
+            }
+            return b;
+          });
+          return { bills: updatedBills };
+        });
+      },
+
+      getUpcomingBills: (days = 7) => {
+        const { bills } = get();
+        const now = new Date();
+        const future = new Date(now);
+        future.setDate(future.getDate() + days);
+        return bills.filter((b) => {
+          if (b.status === 'PAID' || b.status === 'CANCELLED') return false;
+          const dueDate = new Date(b.nextDueDate);
+          return dueDate >= now && dueDate <= future;
+        });
+      },
+      detectRecurringExpenses: () => {
+        const state = get();
+        const existingNames = new Set(
+          state.subscriptions.map((s) => s.name.toLowerCase())
+        );
+
+        const recurringMerchants = [
+          { name: 'NETFLIX', category: 'ENTERTAINMENT_SUBS', cycle: 'MONTHLY', amount: 6.99 },
+          { name: 'SPOTIFY', category: 'ENTERTAINMENT_SUBS', cycle: 'MONTHLY', amount: 3.99 },
+          { name: 'AMAZON PRIME', category: 'ENTERTAINMENT_SUBS', cycle: 'MONTHLY', amount: 4.99 },
+          { name: 'GOOGLE ONE', category: 'ENTERTAINMENT_SUBS', cycle: 'MONTHLY', amount: 2.99 },
+          { name: 'APPLE', category: 'ENTERTAINMENT_SUBS', cycle: 'MONTHLY', amount: 9.99 },
+          { name: 'GYM', category: 'HEALTHCARE_INSURANCE', cycle: 'MONTHLY', amount: 25.00 },
+          { name: 'ZOMATO', category: 'FOOD_DINING', cycle: 'MONTHLY', amount: 15.00 },
+          { name: 'SWIGGY', category: 'FOOD_DINING', cycle: 'MONTHLY', amount: 15.00 },
+          { name: 'UBER', category: 'TRAVEL_COMMUTE', cycle: 'MONTHLY', amount: 20.00 },
+          { name: 'OLA', category: 'TRAVEL_COMMUTE', cycle: 'MONTHLY', amount: 20.00 },
+          { name: 'AWS', category: 'OTHER_EXPENSE', cycle: 'MONTHLY', amount: 10.00 },
+          { name: 'MICROSOFT', category: 'OTHER_EXPENSE', cycle: 'MONTHLY', amount: 7.99 },
+          { name: 'ADOBE', category: 'OTHER_EXPENSE', cycle: 'MONTHLY', amount: 20.99 },
+        ];
+
+        state.expenses.forEach((exp) => {
+          const upperNotes = (exp.notes || '').toUpperCase();
+          const upperTitle = exp.title.toUpperCase();
+
+          recurringMerchants.forEach((m) => {
+            if (
+              upperNotes.includes(m.name) ||
+              upperTitle.includes(m.name) ||
+              exp.title.toLowerCase().includes(m.name.toLowerCase())
+            ) {
+              if (!existingNames.has(m.name.toLowerCase())) {
+                const nextDue = new Date();
+                nextDue.setDate(nextDue.getDate() + 7);
+                const newSub = {
+                  id: `sub_auto_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+                  name: m.name,
+                  category: m.category as any,
+                  amount: m.amount > 0 ? m.amount : exp.amount,
+                  currency: state.currency,
+                  billingCycle: 'MONTHLY' as any,
+                  nextDueDate: nextDue.toISOString().split('T')[0],
+                  paymentMethod: 'UPI' as any,
+                  status: 'ACTIVE' as any,
+                  platform: m.name,
+                  notes: 'Auto-detected from expense history',
+                  autoDetected: true,
+                  createdAt: new Date().toISOString(),
+                };
+                set((state) => ({
+                  subscriptions: [newSub, ...state.subscriptions],
+                }));
+                existingNames.add(m.name.toLowerCase());
+              }
+            }
+          });
+        });
+
+        console.log('[Subscription Detection] Scanned expenses for recurring patterns');
+      },
+
       addGoal: (goalData) => {
         if (!useAuthStore.getState().requireAuth('create financial goal')) return;
         const newGoal: GoalItem = {
@@ -722,11 +933,13 @@ export const useFinanceStore = create<FinanceState>()(
           goals: [],
           emergencyTargetMonths: 6,
           history: [],
+           subscriptions: [],
+           bills: [],
           aiMessages: [
             {
               id: `msg_welcome_${Date.now()}`,
               role: 'assistant',
-              content: `👋 **Welcome to LifeOS, ${userName || 'User'}!**\n\nYour personal command centre is initialized and ready. Your records are securely isolated to your account.\n\n💡 **Quick Ways to Start:**\n- Log an asset or trade via **'+ Add Trade'** in the top navigation.\n- Schedule upcoming expenses or routines in **Productivity & Agenda**.\n- Ask me any questions or track expenses directly via this AI Copilot!`,
+              content: `👋 **Welcome to LifeOS, ${userName || 'User'}!**Your personal command centre is initialized and ready. Your records are securely isolated to your account.💡 **Quick Ways to Start:**- Log an asset or trade via **'+ Add Trade'** in the top navigation.- Schedule upcoming expenses or routines in **Productivity & Agenda**.- Ask me any questions or track expenses directly via this AI Copilot!`,
               timestamp: 'Just now',
               suggestedPrompts: [
                 'How do I add my first asset?',
@@ -1017,8 +1230,13 @@ export const useFinanceStore = create<FinanceState>()(
         policies: state.policies,
         goals: state.goals,
         emergencyTargetMonths: state.emergencyTargetMonths,
+        subscriptions: state.subscriptions,
+        bills: state.bills,
         aiMessages: state.aiMessages,
       }),
     }
   )
 );
+
+
+

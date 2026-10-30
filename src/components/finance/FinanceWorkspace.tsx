@@ -12,6 +12,7 @@ import { SmartIngestionHubModal } from '@/components/finance/SmartIngestionHubMo
 import { BankStatementManager } from '@/components/finance/BankStatementManager';
 import { CommitmentsVaultManager } from '@/components/finance/CommitmentsVaultManager';
 import { CalendarLedgerManager } from '@/components/finance/CalendarLedgerManager';
+import { BillReminder } from '@/components/finance/BillReminder';
 import {
   PieChart,
   Landmark,
@@ -21,6 +22,7 @@ import {
   LayoutDashboard,
   Plus,
   Zap,
+  Bell,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -33,6 +35,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
 }) => {
   const { financeSubTab, setFinanceSubTab } = useLifeOSStore();
   const [isIngestionOpen, setIsIngestionOpen] = React.useState(false);
+  const [isBillReminderOpen, setIsBillReminderOpen] = React.useState(false);
 
   const subTabs: {
     id: FinanceSubTab;
@@ -49,7 +52,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
   ];
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-6 pb-6 sm:pb-8 [padding-bottom:calc(var(--tab-bar-height,56px)+env(safe-area-inset-bottom))]">
       {/* 1. Emerald Hero Banner */}
       <SectionHero
         section="finance"
@@ -129,6 +132,14 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
             <Zap className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
             <span className="hidden sm:inline">⚡ Auto-Import (Demat & UPI)</span>
             <span className="sm:hidden">⚡ Statement Hub</span>
+          </button>
+
+          <button
+            onClick={() => setIsBillReminderOpen(true)}
+            className="w-full sm:w-auto px-3 sm:px-4 py-2.5 rounded-xl bg-amber-600 text-white text-xs font-bold hover:bg-amber-700 shadow-sm shadow-amber-600/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+          >
+            <Bell className="w-3.5 h-3.5 shrink-0" />
+            <span>Bills</span>
           </button>
 
           <button
@@ -214,6 +225,12 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
           {financeSubTab === 'goals' && <GoalMilestoneManager />}
         </motion.div>
       </AnimatePresence>
+
+      {/* Bill Reminder Modal */}
+      <BillReminder
+        isOpen={isBillReminderOpen}
+        onClose={() => setIsBillReminderOpen(false)}
+      />
 
       {/* Quantra Smart Ingestion Hub Modal (Demat CAS, Bank Statement & SMS) */}
       <SmartIngestionHubModal

@@ -16,13 +16,13 @@ export const DemoModeBanner: React.FC = () => {
           <span>Demo Preview</span>
         </span>
         <span className="hidden sm:inline text-amber-100/90 text-xs truncate">
-          You are exploring with preloaded sample data. Everything is read-only.
+          You are exploring Quantra Life OS with preloaded sample data. Everything is read-only.
         </span>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
         <button
-          onClick={() => openAuthModal('unlock full LifeOS account')}
+          onClick={() => openAuthModal('unlock full Quantra Life OS account')}
           className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-slate-900 hover:bg-amber-50 font-bold text-[11px] shadow-xs transition-all cursor-pointer active:scale-95"
         >
           <Sparkles className="h-3 w-3 text-[#9e783e]" />
