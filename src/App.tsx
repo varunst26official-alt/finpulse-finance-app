@@ -34,8 +34,11 @@ export function App() {
     initUserStorageAutoSave();
     if (isAuthenticated && user) {
       loadUserScopedData(user);
-      syncWithBackend();
-      fetchLifeOSData();
+      // Only sync with remote SQLite database for non-demo authenticated accounts
+      if (!useAuthStore.getState().isDemoMode) {
+        syncWithBackend();
+        fetchLifeOSData();
+      }
     }
   }, [isAuthenticated, user, syncWithBackend, fetchLifeOSData]);
 

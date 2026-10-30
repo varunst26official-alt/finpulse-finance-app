@@ -873,8 +873,8 @@ export async function initDatabase(): Promise<Database> {
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         'usr_demo',
-        'Varun S T',
-        'varunst26official@gmail.com',
+        'Varun Senthil kumar',
+        'varun@quantra.io',
         hash,
         '+91 98765 43210',
         'HNI',
@@ -886,6 +886,9 @@ export async function initDatabase(): Promise<Database> {
     seedUserData('usr_demo');
     console.log('[Database] Seeded initial demo user and wealth portfolio.');
   } else {
+    // Ensure demo user has Varun Senthil kumar name and email
+    run("UPDATE users SET full_name = 'Varun Senthil kumar', email = 'varun@quantra.io' WHERE id = 'usr_demo' OR full_name LIKE '%Varun%'");
+
     // If demo user exists but tasks or workout tables are empty, seed defaults
     const workoutCount = queryOne<{ count: number }>('SELECT COUNT(*) as count FROM workout_sessions WHERE user_id = ?', ['usr_demo']);
     if (!workoutCount || workoutCount.count === 0) {

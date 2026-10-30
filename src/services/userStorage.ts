@@ -2,6 +2,20 @@ import { useFinanceStore } from '@/stores/financeStore';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { useAuthStore, UserProfile } from '@/stores/authStore';
 import { api, hasAuthToken } from '@/services/apiClient';
+import { useMasteryStore } from '@/stores/masteryStore';
+import {
+  INITIAL_ASSETS,
+  INITIAL_TRANSACTIONS,
+  INITIAL_EXPENSES,
+  INITIAL_INCOMES,
+  INITIAL_CALENDAR_EVENTS,
+  INITIAL_DEBTS,
+  INITIAL_POLICIES,
+  INITIAL_GOALS,
+  INITIAL_HISTORY,
+  INITIAL_AI_MESSAGES,
+} from '@/data/mockData';
+import { computeAdaptiveBlueprint, UserAdaptiveInputs } from '@/services/adaptiveLifeEngine';
 
 export function getUserStorageKey(user: { id?: string; email?: string } | null): string {
   if (!user || (!user.id && !user.email)) return 'lifeos_guest';
@@ -69,6 +83,165 @@ export function saveUserScopedData(user: UserProfile | null): void {
 export function loadUserScopedData(user: UserProfile | null): void {
   if (!user || !user.email) return;
   const userKey = getUserStorageKey(user);
+  const isDemo =
+    user.id === 'demo_varun_senthil_kumar' ||
+    user.id === 'demo_guest_investor' ||
+    user.email === 'varun@quantra.io' ||
+    user.email === 'investor@quantra.io' ||
+    user.fullName.toLowerCase().includes('varun');
+
+  if (isDemo) {
+    useFinanceStore.setState({
+      assets: INITIAL_ASSETS,
+      transactions: INITIAL_TRANSACTIONS,
+      expenses: INITIAL_EXPENSES,
+      incomes: INITIAL_INCOMES,
+      calendarEvents: INITIAL_CALENDAR_EVENTS,
+      debts: [
+        {
+          id: 'debt_demo_1',
+          title: 'HDFC Priority Home Loan',
+          category: 'HOME_LOAN',
+          lender: 'HDFC Bank',
+          originalPrincipal: 15000,
+          currentOutstanding: 4500,
+          interestRate: 8.55,
+          monthlyEmi: 320,
+          emiDueDay: 5,
+          startDate: '2023-01-10',
+          tenureMonths: 120,
+          repayments: [],
+        },
+      ],
+      policies: INITIAL_POLICIES,
+      goals: INITIAL_GOALS,
+      emergencyTargetMonths: 6,
+      history: INITIAL_HISTORY,
+      currency: 'INR',
+      aiMessages: INITIAL_AI_MESSAGES,
+    });
+
+    const demoInputs: UserAdaptiveInputs = {
+      age: 28,
+      gender: 'MALE',
+      heightCm: 178,
+      weightKg: 73.5,
+      fitnessGoal: 'FAT_LOSS',
+      intensityLevel: 'MODERATE_FITNESS',
+      dietaryPreference: 'BALANCED_NON_VEG',
+      workHoursPerDay: 8,
+      riskProfile: 'AGGRESSIVE',
+    };
+
+    const demoBlueprint = computeAdaptiveBlueprint(demoInputs);
+
+    useLifeOSStore.setState({
+      userInputs: demoInputs,
+      activeBlueprint: demoBlueprint,
+      wellness: {
+        heightCm: 178,
+        weightKg: 73.5,
+        targetWeightKg: 70,
+        workoutMinutesLogged: 45,
+        caloriesLogged: 1680,
+        caloriesTarget: 2200,
+        waterLitersLogged: 2.25,
+        waterTargetLiters: 3.0,
+        sleepHours: 7.5,
+      },
+      tasks: [
+        {
+          id: 'task_demo_1',
+          title: 'Rebalance Q4 Equity & Index Fund Allocations',
+          category: 'FINANCE',
+          priority: 'HIGH',
+          status: 'TODO',
+          badgeLabel: 'High Priority',
+          time: '11:00 AM',
+          iconSymbol: '₹',
+        },
+        {
+          id: 'task_demo_2',
+          title: 'Morning Push Day: 45m Chest & Triceps Protocol',
+          category: 'WELLNESS',
+          priority: 'MEDIUM',
+          status: 'COMPLETED',
+          badgeLabel: 'Done',
+          time: '07:30 AM',
+          iconSymbol: '♡',
+        },
+        {
+          id: 'task_demo_3',
+          title: 'Log Daily Macro Protein & 3L Water Target',
+          category: 'WELLNESS',
+          priority: 'HIGH',
+          status: 'TODO',
+          badgeLabel: '2.25L / 3L',
+          time: '02:00 PM',
+          iconSymbol: '♡',
+        },
+        {
+          id: 'task_demo_4',
+          title: 'Review System Design Chapter 5: Distributed Caching',
+          category: 'LEARNING',
+          priority: 'MEDIUM',
+          status: 'TODO',
+          badgeLabel: 'In Progress',
+          time: '05:30 PM',
+          iconSymbol: '▧',
+        },
+        {
+          id: 'task_demo_5',
+          title: 'File Q3 Medical Insurance Claim Receipts into Vault',
+          category: 'LIFEADMIN',
+          priority: 'LOW',
+          status: 'COMPLETED',
+          badgeLabel: 'Archived',
+          time: 'Yesterday',
+          iconSymbol: '◇',
+        },
+      ],
+      habits: [
+        {
+          id: 'hbt_1',
+          title: 'Drink 3L Hydration Target',
+          category: 'ANYTIME',
+          streakCount: 14,
+          isCompletedToday: false,
+          icon: '💧',
+        },
+        {
+          id: 'hbt_2',
+          title: 'Morning 45-Min Workout',
+          category: 'MORNING',
+          streakCount: 8,
+          isCompletedToday: true,
+          icon: '⚡',
+        },
+        {
+          id: 'hbt_3',
+          title: 'Zero Unplanned Expense Day',
+          category: 'EVENING',
+          streakCount: 6,
+          isCompletedToday: true,
+          icon: '₹',
+        },
+        {
+          id: 'hbt_4',
+          title: 'Read 20 Pages Non-Fiction',
+          category: 'AFTERNOON',
+          streakCount: 21,
+          isCompletedToday: false,
+          icon: '📚',
+        },
+      ],
+    });
+
+    const mastery = useMasteryStore.getState();
+    mastery.syncWithActualUserData();
+
+    return;
+  }
 
   try {
     const rawFin = localStorage.getItem(`${userKey}_finance`);

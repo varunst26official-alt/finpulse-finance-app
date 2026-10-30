@@ -64,14 +64,14 @@ export const useAuthStore = create<AuthState>()(
 
       loginAsDemo: async () => {
         set({ isLoading: true });
+        api.auth.logout();
         const demoUser: UserProfile = {
-          id: 'demo_guest_investor',
-          fullName: 'Demo Guest',
-          email: 'investor@quantra.io',
+          id: 'demo_varun_senthil_kumar',
+          fullName: 'Varun Senthil kumar',
+          email: 'varun@quantra.io',
           investorType: 'HNI',
-          joinedDate: 'Preview Mode',
+          joinedDate: 'Verified Pro Member',
         };
-        loadUserScopedData(demoUser);
         set({
           user: demoUser,
           isAuthenticated: true,
@@ -79,6 +79,7 @@ export const useAuthStore = create<AuthState>()(
           isLoading: false,
           authModalOpen: false,
         });
+        loadUserScopedData(demoUser);
       },
 
       login: async (email, password) => {

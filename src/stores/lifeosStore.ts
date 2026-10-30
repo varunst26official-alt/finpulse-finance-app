@@ -155,6 +155,7 @@ export const useLifeOSStore = create<LifeOSState>()(
       isLoading: false,
 
       fetchLifeOSData: async () => {
+        if (useAuthStore.getState().isDemoMode) return;
         try {
           set({ isLoading: true });
           const res = await api.lifeos.fetchData();

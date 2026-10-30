@@ -748,7 +748,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       syncWithBackend: async () => {
-        if (!hasAuthToken()) return;
+        if (!hasAuthToken() || useAuthStore.getState().isDemoMode) return;
         try {
           const res = await api.portfolio.fetchData();
           if (res && res.success && res.data) {
