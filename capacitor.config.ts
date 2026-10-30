@@ -4,16 +4,10 @@ const config: CapacitorConfig = {
   appId: 'app.lifeos.commandcentre',
   appName: 'Quantra',
   webDir: 'dist',
-  // Commented out to serve local legacy-polyfilled bundle on Android WebView 53
-  // server: {
-  //   url: 'https://lifeos-command-centre.vercel.app/',
-  //   cleartext: true,
-  //   androidScheme: 'https',
-  // },
   android: {
-    allowMixedContent: true,
+    allowMixedContent: false,
     captureInput: true,
-    webContentsDebuggingEnabled: true,
+    webContentsDebuggingEnabled: false,
   },
 };
 
