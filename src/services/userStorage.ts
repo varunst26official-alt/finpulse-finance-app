@@ -33,7 +33,7 @@ export function saveUserScopedData(user: UserProfile | null): void {
     const finState = useFinanceStore.getState();
     const lifeState = useLifeOSStore.getState();
 
-    console.log('[saveUserScopedData]', user.email, 'Assets:', finState.assets.length, 'isClearing:', isClearing);
+    console.log('[saveUserScopedData]', user.email, 'Assets:', finState.assets.length, 'Goals:', finState.goals.length, 'isClearing:', isClearing);
 
     const financeData = {
       assets: finState.assets,
@@ -78,7 +78,7 @@ export function saveUserScopedData(user: UserProfile | null): void {
 
 /**
  * Loads the user's isolated storage into active in-memory stores.
- * If user has no previous data, initializes a clean, empty ₹0 slate.
+ * If user has no previous data, initializes a clean, empty â‚¹0 slate.
  */
 export function loadUserScopedData(user: UserProfile | null): void {
   if (!user || !user.email) return;
@@ -158,7 +158,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           status: 'TODO',
           badgeLabel: 'High Priority',
           time: '11:00 AM',
-          iconSymbol: '₹',
+          iconSymbol: 'â‚¹',
         },
         {
           id: 'task_demo_2',
@@ -168,7 +168,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           status: 'COMPLETED',
           badgeLabel: 'Done',
           time: '07:30 AM',
-          iconSymbol: '♡',
+          iconSymbol: 'â™¡',
         },
         {
           id: 'task_demo_3',
@@ -178,7 +178,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           status: 'TODO',
           badgeLabel: '2.25L / 3L',
           time: '02:00 PM',
-          iconSymbol: '♡',
+          iconSymbol: 'â™¡',
         },
         {
           id: 'task_demo_4',
@@ -188,7 +188,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           status: 'TODO',
           badgeLabel: 'In Progress',
           time: '05:30 PM',
-          iconSymbol: '▧',
+          iconSymbol: 'â–§',
         },
         {
           id: 'task_demo_5',
@@ -198,7 +198,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           status: 'COMPLETED',
           badgeLabel: 'Archived',
           time: 'Yesterday',
-          iconSymbol: '◇',
+          iconSymbol: 'â—‡',
         },
       ],
       habits: [
@@ -208,7 +208,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           category: 'ANYTIME',
           streakCount: 14,
           isCompletedToday: false,
-          icon: '💧',
+          icon: 'ðŸ’§',
         },
         {
           id: 'hbt_2',
@@ -216,7 +216,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           category: 'MORNING',
           streakCount: 8,
           isCompletedToday: true,
-          icon: '⚡',
+          icon: 'âš¡',
         },
         {
           id: 'hbt_3',
@@ -224,7 +224,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           category: 'EVENING',
           streakCount: 6,
           isCompletedToday: true,
-          icon: '₹',
+          icon: 'â‚¹',
         },
         {
           id: 'hbt_4',
@@ -232,7 +232,7 @@ export function loadUserScopedData(user: UserProfile | null): void {
           category: 'AFTERNOON',
           streakCount: 21,
           isCompletedToday: false,
-          icon: '📚',
+          icon: 'ðŸ“š',
         },
       ],
     });
@@ -250,17 +250,17 @@ export function loadUserScopedData(user: UserProfile | null): void {
     if (rawFin) {
       const parsedFin = JSON.parse(rawFin);
       // Sanitize legacy mock defaults so no user starts with hardcoded mock debts/policies/calendar
-      if (parsedFin.debts && parsedFin.debts.length > 0 && parsedFin.debts[0]?.id === 'debt_hdfc_home_1') {
-        parsedFin.debts = [];
+      if (parsedFin.debts && Array.isArray(parsedFin.debts)) {
+        parsedFin.debts = parsedFin.debts.filter((d: any) => d.id !== 'debt_hdfc_home_1');
       }
-      if (parsedFin.policies && parsedFin.policies.length > 0 && parsedFin.policies[0]?.id === 'pol_hdfc_ergo_optima') {
-        parsedFin.policies = [];
+      if (parsedFin.policies && Array.isArray(parsedFin.policies)) {
+        parsedFin.policies = parsedFin.policies.filter((p: any) => p.id !== 'pol_hdfc_ergo_optima' && p.id !== 'pol_tata_aia_term');
       }
-      if (parsedFin.goals && parsedFin.goals.length > 0 && parsedFin.goals[0]?.id === 'goal_emergency_fund') {
-        parsedFin.goals = [];
+      if (parsedFin.goals && Array.isArray(parsedFin.goals)) {
+        parsedFin.goals = parsedFin.goals.filter((g: any) => g.id !== 'goal_emergency_fund' && g.id !== 'goal_dream_home' && g.id !== 'goal_child_edu');
       }
-      if (parsedFin.calendarEvents && parsedFin.calendarEvents.length > 0 && parsedFin.calendarEvents[0]?.id === 'cev_sip_nifty50_01') {
-        parsedFin.calendarEvents = [];
+      if (parsedFin.calendarEvents && Array.isArray(parsedFin.calendarEvents)) {
+        parsedFin.calendarEvents = parsedFin.calendarEvents.filter((e: any) => e.id !== 'cev_sip_nifty50_01');
       }
       useFinanceStore.setState(parsedFin);
     } else {
@@ -361,6 +361,7 @@ export function clearActiveUserStores(): void {
   try {
     useFinanceStore.getState().resetToFreshPortfolio('');
     useLifeOSStore.getState().resetToFreshState();
+    useMasteryStore.getState().resetToFreshState();
   } finally {
     isClearing = false;
   }

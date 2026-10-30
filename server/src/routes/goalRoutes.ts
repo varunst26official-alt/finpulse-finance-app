@@ -30,7 +30,7 @@ goalRoutes.post('/', (req: Request, res: Response) => {
     return;
   }
 
-  const goalId = `goal_${Date.now()}`;
+  const goalId = req.body.id || `goal_${Date.now()}`;
 
   run(
     `INSERT INTO goals

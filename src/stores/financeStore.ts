@@ -297,7 +297,7 @@ export const useFinanceStore = create<FinanceState>()(
         const confirmationMsg: AiChatMessage = {
           id: `msg_exec_${Date.now()}`,
           role: 'assistant',
-          content: `✅ **Trade Order Successfully Executed & Recorded!**- **Order:** ${actionPayload.tradeType} ${actionPayload.quantity} ${actionPayload.symbol || actionPayload.name}- **Total Booked:** **${formatCurrency(actionPayload.totalAmount, currency)}**- **Platform:** ${actionPayload.platform || 'Zerodha Kite'}Your Portfolio Net Worth, Holdings Table, and Transaction Ledger have been updated in real-time.`,
+          content: `âœ… **Trade Order Successfully Executed & Recorded!**- **Order:** ${actionPayload.tradeType} ${actionPayload.quantity} ${actionPayload.symbol || actionPayload.name}- **Total Booked:** **${formatCurrency(actionPayload.totalAmount, currency)}**- **Platform:** ${actionPayload.platform || 'Zerodha Kite'}Your Portfolio Net Worth, Holdings Table, and Transaction Ledger have been updated in real-time.`,
           timestamp: 'Just now',
           suggestedPrompts: [
             'Audit updated asset allocation',
@@ -939,7 +939,7 @@ export const useFinanceStore = create<FinanceState>()(
             {
               id: `msg_welcome_${Date.now()}`,
               role: 'assistant',
-              content: `👋 **Welcome to LifeOS, ${userName || 'User'}!**Your personal command centre is initialized and ready. Your records are securely isolated to your account.💡 **Quick Ways to Start:**- Log an asset or trade via **'+ Add Trade'** in the top navigation.- Schedule upcoming expenses or routines in **Productivity & Agenda**.- Ask me any questions or track expenses directly via this AI Copilot!`,
+              content: `ðŸ‘‹ **Welcome to LifeOS, ${userName || 'User'}!**Your personal command centre is initialized and ready. Your records are securely isolated to your account.ðŸ’¡ **Quick Ways to Start:**- Log an asset or trade via **'+ Add Trade'** in the top navigation.- Schedule upcoming expenses or routines in **Productivity & Agenda**.- Ask me any questions or track expenses directly via this AI Copilot!`,
               timestamp: 'Just now',
               suggestedPrompts: [
                 'How do I add my first asset?',
@@ -965,14 +965,53 @@ export const useFinanceStore = create<FinanceState>()(
         try {
           const res = await api.portfolio.fetchData();
           if (res && res.success && res.data) {
+            const current = get();
+
+            const mergedAssets =
+              res.data.assets && res.data.assets.length > 0
+                ? res.data.assets
+                : current.assets;
+
+            const mergedTxns =
+              res.data.transactions && res.data.transactions.length > 0
+                ? res.data.transactions
+                : current.transactions;
+
+            const mergedDebts =
+              res.data.debts && res.data.debts.length > 0
+                ? res.data.debts
+                : current.debts;
+
+            const mergedPolicies =
+              res.data.policies && res.data.policies.length > 0
+                ? res.data.policies
+                : current.policies;
+
+            let mergedGoals = current.goals;
+            if (res.data.goals && res.data.goals.length > 0) {
+              const remoteIds = new Set(res.data.goals.map((g: GoalItem) => g.id));
+              const remoteTitles = new Set(res.data.goals.map((g: GoalItem) => g.title.toLowerCase().trim()));
+              const localUnique = current.goals.filter(
+                (g) => !remoteIds.has(g.id) && !remoteTitles.has(g.title.toLowerCase().trim())
+              );
+              mergedGoals = [...res.data.goals, ...localUnique];
+            }
+
+            let mergedCalendar = current.calendarEvents;
+            if (res.data.calendarEvents && res.data.calendarEvents.length > 0) {
+              const remoteIds = new Set(res.data.calendarEvents.map((e: CalendarEvent) => e.id));
+              const localUnique = current.calendarEvents.filter((e) => !remoteIds.has(e.id));
+              mergedCalendar = [...res.data.calendarEvents, ...localUnique];
+            }
+
             set({
-              assets: res.data.assets,
-              transactions: res.data.transactions,
-              debts: res.data.debts,
-              policies: res.data.policies,
-              goals: res.data.goals,
-              calendarEvents: res.data.calendarEvents,
-              emergencyTargetMonths: res.data.emergencyTargetMonths || get().emergencyTargetMonths,
+              assets: mergedAssets,
+              transactions: mergedTxns,
+              debts: mergedDebts,
+              policies: mergedPolicies,
+              goals: mergedGoals,
+              calendarEvents: mergedCalendar,
+              emergencyTargetMonths: res.data.emergencyTargetMonths || current.emergencyTargetMonths,
             });
           }
         } catch (err: any) {
@@ -1178,7 +1217,7 @@ export const useFinanceStore = create<FinanceState>()(
         }
         if (!hasHealth) {
           recommendations.push(
-            'Secure a comprehensive family health insurance floater (minimum ₹15-25 Lakhs) to shield your portfolio against hospital bills.'
+            'Secure a comprehensive family health insurance floater (minimum â‚¹15-25 Lakhs) to shield your portfolio against hospital bills.'
           );
         }
         if (!hasLife && summary.totalMonthlyIncome > 0) {
