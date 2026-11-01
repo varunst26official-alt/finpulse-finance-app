@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '@/utils/formatters';
+import { FormattedMessageContent } from '@/components/ai/FormattedMessageContent';
 
 export const AiWealthCopilot: React.FC = () => {
   const {
@@ -143,20 +144,8 @@ export const AiWealthCopilot: React.FC = () => {
                       : 'bg-[#faf8f5] border border-[#e8e0d1] text-slate-800 rounded-tl-none font-sans'
                   }`}
                 >
-                  {/* Message Body */}
-                  <div className="whitespace-pre-wrap font-sans text-xs leading-relaxed">
-                    {msg.content.split('\n').map((paragraph, idx) => (
-                      <p key={idx} className="mb-2 last:mb-0">
-                        {paragraph.startsWith('- ') ? (
-                          <span className="inline-block pl-2 border-l-2 border-[#9e783e] my-0.5 font-medium">
-                            {paragraph.slice(2)}
-                          </span>
-                        ) : (
-                          paragraph
-                        )}
-                      </p>
-                    ))}
-                  </div>
+                  {/* Formatted Message Body */}
+                  <FormattedMessageContent content={msg.content} isUser={isUser} />
 
                   {/* Interactive Trade Execution Card */}
                   {msg.tradeAction && (

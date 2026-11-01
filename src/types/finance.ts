@@ -321,6 +321,53 @@ export interface TradeActionPayload {
   status: 'PENDING' | 'EXECUTED' | 'DISMISSED';
 }
 
+export type QuantrixActionType =
+  | 'TRADE'
+  | 'EXPENSE'
+  | 'INCOME'
+  | 'CREATE_TASK'
+  | 'TOGGLE_TASK'
+  | 'LOG_WATER'
+  | 'LOG_WORKOUT'
+  | 'LOG_MEAL'
+  | 'CONTRIBUTE_GOAL'
+  | 'DAILY_BRIEF';
+
+export interface QuantrixActionPayload {
+  id: string;
+  actionType: QuantrixActionType;
+  title: string;
+  status: 'PENDING' | 'EXECUTED' | 'DISMISSED';
+  data: {
+    symbol?: string;
+    tradeType?: 'BUY' | 'SELL' | 'DIVIDEND' | 'SIP';
+    quantity?: number;
+    pricePerUnit?: number;
+    totalAmount?: number;
+    category?: string;
+    platform?: string;
+    date?: string;
+    notes?: string;
+
+    taskId?: string;
+    taskTitle?: string;
+    taskPriority?: 'HIGH' | 'MEDIUM' | 'LOW';
+    taskCategory?: 'FINANCE' | 'WELLNESS' | 'PRODUCTIVITY' | 'LEARNING' | 'LIFEADMIN';
+    taskTime?: string;
+
+    waterLiters?: number;
+    workoutMinutes?: number;
+    workoutTitle?: string;
+    mealName?: string;
+    calories?: number;
+    proteinGrams?: number;
+
+    goalId?: string;
+    goalTitle?: string;
+    goalAmount?: number;
+  };
+}
+
 export interface AiChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -333,6 +380,9 @@ export interface AiChatMessage {
     type?: 'neutral' | 'positive' | 'warning';
   }[];
   tradeAction?: TradeActionPayload;
+  systemAction?: QuantrixActionPayload;
+  cardType?: 'BRIEFING' | 'TASK_LIST' | 'FIRE_GAUGE' | 'ACTION_SLIP' | 'NET_WORTH';
+  cardData?: any;
 }
 
 export interface PredictionPoint {

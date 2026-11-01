@@ -220,7 +220,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   return (
     <div
       {...overlayProps}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
+      className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
     >
       <motion.div
         {...contentProps}
@@ -228,7 +228,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.96, opacity: 0, y: 24 }}
         transition={{ duration: 0.2 }}
-        className="w-full max-w-2xl max-h-[90vh] sm:max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[#e8e0d1] bg-white p-4 sm:p-7 shadow-2xl space-y-4 sm:space-y-5"
+        className="w-full max-w-2xl max-h-[90vh] sm:max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[#e8e0d1] bg-white p-4 sm:p-7 pb-8 sm:pb-7 shadow-2xl space-y-4 sm:space-y-5"
       >
         {/* Mobile Drag Indicator */}
         <div className="w-10 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden shrink-0" />

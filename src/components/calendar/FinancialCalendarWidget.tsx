@@ -17,6 +17,8 @@ import {
   Sparkles,
   X,
   Filter,
+  PieChart as PieChartIcon,
+  BarChart3,
 } from 'lucide-react';
 import {
   CalendarEvent,
@@ -41,8 +43,46 @@ import {
   Tooltip,
   Legend,
   CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
+  LabelList,
 } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const PIE_COLORS = [
+  '#9e783e', // Warm gold
+  '#17365d', // Deep navy
+  '#059669', // Emerald
+  '#dc2626', // Crimson
+  '#7c3aed', // Purple
+  '#d97706', // Amber
+  '#2563eb', // Royal blue
+  '#0891b2', // Teal
+  '#db2777', // Pink
+  '#475569', // Slate
+];
+
+const renderBarYAxisTick = ({ x, y, payload }: any) => {
+  const full = String(payload?.value || '').trim();
+  const truncated = full.length > 15 ? `${full.slice(0, 13)}…` : full;
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <title>{full}</title>
+      <text
+        x={-6}
+        y={3.5}
+        textAnchor="end"
+        fill="#334155"
+        fontSize={10}
+        fontWeight={600}
+        fontFamily="sans-serif"
+      >
+        {truncated}
+      </text>
+    </g>
+  );
+};
 
 export const FinancialCalendarWidget: React.FC = () => {
   const {
@@ -121,6 +161,8 @@ export const FinancialCalendarWidget: React.FC = () => {
   const [customStartDate, setCustomStartDate] = useState('2026-04-01');
   const [customEndDate, setCustomEndDate] = useState('2026-11-30');
   const [filterType, setFilterType] = useState<string>('ALL');
+  const [selectedEntity, setSelectedEntity] = useState<string>('ALL');
+  const [chartMode, setChartMode] = useState<'PIE' | 'BAR'>('PIE');
 
   // Dismissal hooks for Inspector drawer and Add Event modal
   const { overlayProps: inspectorOverlayProps, contentProps: inspectorContentProps } = useModalDismiss(
@@ -268,12 +310,11 @@ export const FinancialCalendarWidget: React.FC = () => {
     return Object.values(eventsByDate).flat();
   }, [eventsByDate]);
 
-  // Filtered Events based on report range
-  const filteredReportEvents = useMemo(() => {
-    return allUnifiedEvents.filter((ev) => {
-      const matchesType = filterType === 'ALL' || ev.type === filterType;
+  // 1. Available Categories in current range
+  const availableCategories = useMemo(() => {
+    const catMap: Record<string, number> = {};
+    allUnifiedEvents.forEach((ev) => {
       let inRange = false;
-
       if (reportRange === 'THIS_MONTH') {
         const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
         inRange = ev.date.startsWith(monthPrefix);
@@ -284,10 +325,98 @@ export const FinancialCalendarWidget: React.FC = () => {
       } else {
         inRange = ev.date >= customStartDate && ev.date <= customEndDate;
       }
+      if (inRange && ev.categoryName) {
+        catMap[ev.categoryName] = (catMap[ev.categoryName] || 0) + 1;
+      }
+    });
 
-      return matchesType && inRange;
+    return Object.entries(catMap)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  }, [allUnifiedEvents, reportRange, year, month, customStartDate, customEndDate]);
+
+  // 2. Events matching primary filter (Event Type or Category)
+  const eventsMatchingPrimaryFilter = useMemo(() => {
+    return allUnifiedEvents.filter((ev) => {
+      let inRange = false;
+      if (reportRange === 'THIS_MONTH') {
+        const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+        inRange = ev.date.startsWith(monthPrefix);
+      } else if (reportRange === 'NEXT_30_DAYS') {
+        inRange = ev.date >= '2026-09-01' && ev.date <= '2026-10-31';
+      } else if (reportRange === 'NEXT_90_DAYS') {
+        inRange = ev.date >= '2026-08-01' && ev.date <= '2026-11-30';
+      } else {
+        inRange = ev.date >= customStartDate && ev.date <= customEndDate;
+      }
+      if (!inRange) return false;
+
+      if (filterType === 'ALL') return true;
+      if (filterType.startsWith('CAT:')) {
+        return ev.categoryName === filterType.slice(4);
+      }
+      return ev.type === filterType;
     });
   }, [allUnifiedEvents, filterType, reportRange, year, month, customStartDate, customEndDate]);
+
+  // 3. Dynamic Secondary Filter: entities/merchants calculated from transactions matching primary filter
+  const availableEntities = useMemo(() => {
+    const entMap: Record<string, { name: string; count: number; amount: number }> = {};
+    eventsMatchingPrimaryFilter.forEach((ev) => {
+      const rawName = (ev.title || '').trim();
+      if (!rawName) return;
+      if (!entMap[rawName]) {
+        entMap[rawName] = { name: rawName, count: 0, amount: 0 };
+      }
+      entMap[rawName].count += 1;
+      entMap[rawName].amount += ev.amount;
+    });
+
+    return Object.values(entMap).sort((a, b) => b.amount - a.amount || a.name.localeCompare(b.name));
+  }, [eventsMatchingPrimaryFilter]);
+
+  // 4. Digital Breakdown Data for Pie/Bar Chart: Outflow distribution across merchants for selected event
+  const merchantBreakdownData = useMemo(() => {
+    const outflowEvents = eventsMatchingPrimaryFilter.filter(
+      (ev) => ev.type !== 'EXPECTED_INCOME'
+    );
+
+    const map: Record<string, { name: string; amount: number; count: number }> = {};
+    let totalOutflow = 0;
+
+    outflowEvents.forEach((ev) => {
+      const name = (ev.title || 'Other').trim();
+      if (!map[name]) {
+        map[name] = { name, amount: 0, count: 0 };
+      }
+      map[name].amount += ev.amount;
+      map[name].count += 1;
+      totalOutflow += ev.amount;
+    });
+
+    const items = Object.values(map)
+      .sort((a, b) => b.amount - a.amount)
+      .map((item) => ({
+        ...item,
+        value: item.amount,
+        percentage: totalOutflow > 0 ? (item.amount / totalOutflow) * 100 : 0,
+      }));
+
+    return {
+      items,
+      totalOutflow,
+      totalCount: outflowEvents.length,
+      topMerchant: items[0] || null,
+    };
+  }, [eventsMatchingPrimaryFilter]);
+
+  // 5. Final Filtered Report Events: accounts for secondary merchant filter
+  const filteredReportEvents = useMemo(() => {
+    if (selectedEntity === 'ALL') return eventsMatchingPrimaryFilter;
+    return eventsMatchingPrimaryFilter.filter(
+      (ev) => (ev.title || '').trim().toLowerCase() === selectedEntity.toLowerCase()
+    );
+  }, [eventsMatchingPrimaryFilter, selectedEntity]);
 
   // Aggregate totals for the filtered range
   const rangeTotals = useMemo(() => {
@@ -984,22 +1113,66 @@ export const FinancialCalendarWidget: React.FC = () => {
 
         {/* Download & Filter Buttons Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             <span className="text-xs text-slate-500 font-medium">
-              Showing <strong>{filteredReportEvents.length}</strong> events scheduled
+              Showing <strong>{filteredReportEvents.length}</strong> events
             </span>
+
+            {/* Primary Filter: Event Classification or Category */}
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-2.5 py-1 text-xs text-slate-700 font-semibold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
+              onChange={(e) => {
+                setFilterType(e.target.value);
+                setSelectedEntity('ALL');
+              }}
+              className="rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-2.5 py-1 text-xs text-slate-800 font-semibold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
+              title="Filter by Event Category or Classification"
             >
-              <option value="ALL">All Event Types</option>
-              <option value="EXPECTED_INCOME">Expected Income</option>
-              <option value="PLANNED_EXPENSE">Planned Expenses & Bills</option>
-              <option value="PLANNED_INVESTMENT">Planned Investments / SIP</option>
-              <option value="LIFE_EVENT">Life Events & Birthdays</option>
-              <option value="MEDICAL_CHECKUP">Medical Checkups</option>
+              <optgroup label="Event Classifications">
+                <option value="ALL">All Event Types</option>
+                <option value="EXPECTED_INCOME">Expected Income</option>
+                <option value="PLANNED_EXPENSE">Planned Expenses & Bills</option>
+                <option value="PLANNED_INVESTMENT">Planned Investments / SIP</option>
+                <option value="LIFE_EVENT">Life Events & Birthdays</option>
+                <option value="MEDICAL_CHECKUP">Medical Checkups</option>
+              </optgroup>
+              {availableCategories.length > 0 && (
+                <optgroup label="Event Categories">
+                  {availableCategories.map((cat) => (
+                    <option key={`CAT:${cat.name}`} value={`CAT:${cat.name}`}>
+                      {cat.name} ({cat.count})
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
+
+            {/* Secondary Filter: Calculated dynamically from transaction data */}
+            <select
+              value={selectedEntity}
+              onChange={(e) => setSelectedEntity(e.target.value)}
+              className="rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-2.5 py-1 text-xs text-slate-800 font-semibold focus:border-[#9e783e] focus:bg-white focus:outline-hidden max-w-[220px] truncate"
+              title="Secondary Filter: Filter by Payee or Merchant"
+            >
+              <option value="ALL">All Payees / Merchants ({availableEntities.length})</option>
+              {availableEntities.map((ent) => (
+                <option key={ent.name} value={ent.name}>
+                  {ent.name} ({ent.count}) - {formatCurrency(ent.amount, currency)}
+                </option>
+              ))}
+            </select>
+
+            {/* Quick Reset Merchant Tag */}
+            {selectedEntity !== 'ALL' && (
+              <button
+                onClick={() => setSelectedEntity('ALL')}
+                className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold hover:bg-emerald-100 transition-colors cursor-pointer"
+                title="Clear Payee filter"
+              >
+                <span>Merchant: {selectedEntity}</span>
+                <span className="text-xs font-extrabold">×</span>
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-2.5">
@@ -1026,6 +1199,300 @@ export const FinancialCalendarWidget: React.FC = () => {
             </motion.button>
           </div>
         </div>
+
+        {/* ============================================================== */}
+        {/* DIGITAL EXPENSE VISUALIZATION CARD (Donut / Pie & Bar Breakdown) */}
+        {/* ============================================================== */}
+        {merchantBreakdownData.items.length > 0 && (
+          <div
+            id="digital-expense-breakdown-card"
+            data-testid="digital-expense-breakdown-card"
+            className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#faf8f5] via-white to-[#faf8f5] border border-[#e8e0d1] shadow-2xs space-y-4"
+          >
+            {/* Card Header */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#f0eae1]">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#9e783e]/10 text-[#9e783e]">
+                  <PieChartIcon className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-xs font-bold text-slate-900 font-heading">
+                      Digital Expense Breakdown
+                    </h4>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#17365d]/10 text-[#17365d]">
+                      {filterType.startsWith('CAT:')
+                        ? filterType.slice(4)
+                        : filterType === 'ALL'
+                        ? 'All Events'
+                        : CALENDAR_EVENT_LABELS[filterType as CalendarEventType] || filterType}
+                    </span>
+                    {selectedEntity !== 'ALL' && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                        Filtered: {selectedEntity}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    Calculated in real-time from your transactions · Click any slice or merchant to isolate
+                  </p>
+                </div>
+              </div>
+
+              {/* Toggle: Donut Pie vs Bar Breakdown */}
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-white border border-[#e8e0d1]">
+                <button
+                  type="button"
+                  onClick={() => setChartMode('PIE')}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                    chartMode === 'PIE'
+                      ? 'bg-[#17365d] text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <PieChartIcon className="h-3.5 w-3.5" />
+                  <span>Donut Pie</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChartMode('BAR')}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                    chartMode === 'BAR'
+                      ? 'bg-[#17365d] text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <BarChart3 className="h-3.5 w-3.5" />
+                  <span>Bar Breakdown</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Metric KPI Chips */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+              <div className="p-2.5 rounded-xl bg-white border border-[#e8e0d1]">
+                <span className="text-[10px] text-slate-500 font-semibold block">Total Event Outflow</span>
+                <span className="font-extrabold text-sm text-rose-700 font-mono">
+                  {formatCurrency(merchantBreakdownData.totalOutflow, currency)}
+                </span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-white border border-[#e8e0d1]">
+                <span className="text-[10px] text-slate-500 font-semibold block">Transactions In Event</span>
+                <span className="font-extrabold text-sm text-slate-800">
+                  {merchantBreakdownData.totalCount} entries
+                </span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-white border border-[#e8e0d1]">
+                <span className="text-[10px] text-slate-500 font-semibold block">Unique Entities</span>
+                <span className="font-extrabold text-sm text-slate-800">
+                  {merchantBreakdownData.items.length} merchants
+                </span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-white border border-[#e8e0d1]">
+                <span className="text-[10px] text-slate-500 font-semibold block">Top Outflow Entity</span>
+                <span className="font-extrabold text-xs text-[#9e783e] truncate block" title={merchantBreakdownData.topMerchant?.name}>
+                  {merchantBreakdownData.topMerchant?.name || 'N/A'} (
+                  {merchantBreakdownData.topMerchant?.percentage.toFixed(0)}%)
+                </span>
+              </div>
+            </div>
+
+            {/* Visual Canvas & Interactive Merchant Legend */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center pt-1">
+              {/* Graphic Representation */}
+              <div className="md:col-span-5 h-[220px] w-full min-w-0 relative">
+                {chartMode === 'PIE' ? (
+                  <div className="h-[220px] w-full min-w-0 relative">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Tooltip
+                          formatter={(val: any, name: any, item: any) => [
+                            `${formatCurrency(Number(val), currency)} (${item.payload.percentage.toFixed(1)}%)`,
+                            name,
+                          ]}
+                          contentStyle={{
+                            backgroundColor: '#ffffff',
+                            borderRadius: '12px',
+                            border: '1px solid #e8e0d1',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                          }}
+                        />
+                        <Pie
+                          data={merchantBreakdownData.items}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={75}
+                          paddingAngle={3}
+                          isAnimationActive={false}
+                          onClick={(data) => {
+                            if (data && data.name) {
+                              setSelectedEntity(selectedEntity === data.name ? 'ALL' : data.name);
+                            }
+                          }}
+                          cursor="pointer"
+                        >
+                          {merchantBreakdownData.items.map((entry, index) => {
+                            const isSelected = selectedEntity.toLowerCase() === entry.name.toLowerCase();
+                            const isDimmed = selectedEntity !== 'ALL' && !isSelected;
+                            return (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                opacity={isDimmed ? 0.35 : 1}
+                                stroke={isSelected ? '#17365d' : '#ffffff'}
+                                strokeWidth={isSelected ? 3 : 1.5}
+                              />
+                            );
+                          })}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 text-center">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Outflow</span>
+                      <span className="text-xs font-mono font-extrabold text-slate-900">
+                        {formatCurrency(merchantBreakdownData.totalOutflow, currency)}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full min-w-0" style={{ height: Math.max(160, Math.min(merchantBreakdownData.items.length, 7) * 36 + 24) }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={merchantBreakdownData.items.slice(0, 7)}
+                        layout="vertical"
+                        margin={{ top: 6, right: 60, left: 4, bottom: 6 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0eae1" />
+                        <XAxis
+                          type="number"
+                          hide
+                          domain={[0, (dataMax: number) => Math.max(dataMax * 1.35, 10)]}
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="name"
+                          tick={renderBarYAxisTick}
+                          width={102}
+                          interval={0}
+                          axisLine={{ stroke: '#e8e0d1' }}
+                          tickLine={false}
+                        />
+                        <Tooltip
+                          formatter={(val: any, _name: any, item: any) => [
+                            `${formatCurrency(Number(val), currency)} (${item.payload.percentage?.toFixed(1)}%)`,
+                            item.payload.name || 'Outflow',
+                          ]}
+                          contentStyle={{
+                            backgroundColor: '#ffffff',
+                            borderRadius: '12px',
+                            border: '1px solid #e8e0d1',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                          }}
+                        />
+                        <Bar
+                          dataKey="amount"
+                          radius={[0, 6, 6, 0]}
+                          barSize={18}
+                          isAnimationActive={false}
+                        >
+                          <LabelList
+                            dataKey="amount"
+                            position="right"
+                            offset={8}
+                            formatter={(val: any) => formatCurrency(Number(val), currency)}
+                            style={{
+                              fontSize: '10px',
+                              fontWeight: 700,
+                              fill: '#17365d',
+                              fontFamily: 'monospace',
+                            }}
+                          />
+                          {merchantBreakdownData.items.slice(0, 7).map((entry, index) => {
+                            const isSelected = selectedEntity.toLowerCase() === entry.name.toLowerCase();
+                            const isDimmed = selectedEntity !== 'ALL' && !isSelected;
+                            return (
+                              <Cell
+                                key={`bar-${index}`}
+                                fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                opacity={isDimmed ? 0.35 : 1}
+                                stroke={isSelected ? '#17365d' : undefined}
+                                strokeWidth={isSelected ? 2 : 0}
+                                onClick={() => {
+                                  setSelectedEntity(selectedEntity === entry.name ? 'ALL' : entry.name);
+                                }}
+                                cursor="pointer"
+                              />
+                            );
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
+
+              {/* Interactive Legend & Merchant Slices List */}
+              <div className="md:col-span-7 space-y-1.5 max-h-60 overflow-y-auto pr-1 text-xs">
+                <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-wider pb-1">
+                  <span>Payee / Merchant</span>
+                  <span>Share • Expense Outflow</span>
+                </div>
+                {merchantBreakdownData.items.map((ent, idx) => {
+                  const color = PIE_COLORS[idx % PIE_COLORS.length];
+                  const isSelected = selectedEntity.toLowerCase() === ent.name.toLowerCase();
+                  return (
+                    <div
+                      key={ent.name}
+                      onClick={() => setSelectedEntity(isSelected ? 'ALL' : ent.name)}
+                      className={`p-2 rounded-xl flex items-center justify-between gap-3 cursor-pointer transition-all border ${
+                        isSelected
+                          ? 'bg-white border-[#17365d] shadow-xs ring-1 ring-[#17365d]'
+                          : 'bg-white/60 hover:bg-white border-[#e8e0d1]'
+                      }`}
+                      title={`Click to filter table by ${ent.name}`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          className="h-3 w-3 rounded-full shrink-0"
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className={`font-semibold truncate text-[11px] ${isSelected ? 'text-[#17365d]' : 'text-slate-800'}`}>
+                          {ent.name}
+                        </span>
+                        <span className="text-[10px] text-slate-400">({ent.count})</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="w-16 h-1.5 rounded-full bg-slate-100 overflow-hidden hidden sm:block">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${Math.min(100, ent.percentage)}%`,
+                              backgroundColor: color,
+                            }}
+                          />
+                        </div>
+                        <span className="text-[11px] font-bold text-slate-500 w-10 text-right">
+                          {ent.percentage.toFixed(1)}%
+                        </span>
+                        <span className="font-mono font-extrabold text-[11px] text-slate-900 w-20 text-right">
+                          {formatCurrency(ent.amount, currency)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Mobile Events Schedule Card List (Thumb-friendly) */}
         <div className="sm:hidden space-y-2.5">

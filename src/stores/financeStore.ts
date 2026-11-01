@@ -13,6 +13,7 @@ import {
   IncomeItem,
   AssetCategory,
   TradeActionPayload,
+  QuantrixActionPayload,
   CalendarEvent,
   DebtItem,
   DebtRepayment,
@@ -38,6 +39,7 @@ import { processQuantrixQuery } from '@/services/quantrixEngine';
 import { api, hasAuthToken } from '@/services/apiClient';
 import { useMasteryStore } from './masteryStore';
 import { useAuthStore } from './authStore';
+import { useLifeOSStore } from './lifeosStore';
 
 export type NavigationTab =
   | 'dashboard'
@@ -80,6 +82,7 @@ interface FinanceState {
   isAiTyping: boolean;
   sendAiMessage: (prompt: string) => void;
   executeChatTradeAction: (messageId: string, actionPayload: TradeActionPayload) => void;
+  executeSystemAction: (messageId: string, actionPayload: QuantrixActionPayload) => void;
   clearAiChat: () => void;
 
   // Intelligence & Analytics Data
@@ -190,14 +193,25 @@ export const useFinanceStore = create<FinanceState>()(
         setTimeout(() => {
           const lower = prompt.toLowerCase();
 
-          // 1. Check if user is confirming a pending trade from conversation
+          // 1. Check if user is confirming a pending trade or system action from conversation
           if (
             lower.includes('confirm') ||
             lower.includes('execute') ||
             lower.includes('yes proceed') ||
             lower.includes('yes buy') ||
-            lower.includes('yes sell')
+            lower.includes('yes sell') ||
+            lower.includes('record')
           ) {
+            const pendingSysMsg = [...get().aiMessages]
+              .reverse()
+              .find((m) => m.systemAction && m.systemAction.status === 'PENDING');
+
+            if (pendingSysMsg && pendingSysMsg.systemAction) {
+              get().executeSystemAction(pendingSysMsg.id, pendingSysMsg.systemAction);
+              set({ isAiTyping: false });
+              return;
+            }
+
             const pendingMsg = [...get().aiMessages]
               .reverse()
               .find((m) => m.tradeAction && m.tradeAction.status === 'PENDING');
@@ -230,6 +244,9 @@ export const useFinanceStore = create<FinanceState>()(
             timestamp: 'Just now',
             suggestedPrompts: response.suggestedPrompts,
             tradeAction: response.tradeAction,
+            systemAction: response.systemAction,
+            cardType: response.cardType,
+            cardData: response.cardData,
           };
 
           set((state) => ({
@@ -309,6 +326,103 @@ export const useFinanceStore = create<FinanceState>()(
         set((state) => ({
           aiMessages: [...state.aiMessages, confirmationMsg],
         }));
+      },
+
+      executeSystemAction: (messageId, actionPayload) => {
+        const lifeos = useLifeOSStore.getState();
+        let confirmText = '';
+
+        if (actionPayload.actionType === 'CREATE_TASK') {
+          const { taskTitle, taskPriority, taskCategory, taskTime } = actionPayload.data;
+          lifeos.addTask({
+            title: taskTitle || 'New Task',
+            category: (taskCategory as any) || 'PRODUCTIVITY',
+            priority: (taskPriority as any) || 'MEDIUM',
+            status: 'TODO',
+            badgeLabel: 'Quantrix AI',
+            time: taskTime || 'Today',
+          });
+          useMasteryStore.getState().awardPoints('PRODUCTIVITY', 20, 'Task created via AI Copilot');
+          confirmText = `✅ **Task Created and Added to Live Agenda!**\n\n- **Title:** "${taskTitle}"\n- **Category:** ${taskCategory}\n- **Priority:** ${taskPriority}\n- **Schedule:** ${taskTime}\n\nVisible on your LifeOS Agenda board.`;
+        } else if (actionPayload.actionType === 'TOGGLE_TASK') {
+          if (actionPayload.data.taskId) {
+            lifeos.toggleTaskComplete(actionPayload.data.taskId);
+            useMasteryStore.getState().awardPoints('PRODUCTIVITY', 25, 'Task completed via AI Copilot');
+            confirmText = `🎉 **Task Completed!**\n\n- **Task:** "${actionPayload.data.taskTitle}"\n- **Earned:** **+25 Productivity XP**\n\nStreak updated in real-time.`;
+          }
+        } else if (actionPayload.actionType === 'LOG_WATER') {
+          const liters = actionPayload.data.waterLiters || 0.25;
+          lifeos.logWater(liters);
+          useMasteryStore.getState().awardPoints('WELLNESS', 15, 'Hydration logged via AI Copilot');
+          const updated = (lifeos.wellness?.waterLitersLogged || 0) + liters;
+          confirmText = `💧 **Hydration Recorded!**\n\n- **Logged:** **+${liters}L** (${Math.round(liters * 1000)}ml)\n- **Daily Intake:** **${updated.toFixed(2)}L / ${lifeos.wellness?.waterTargetLiters || 3.0}L**\n- **Earned:** **+15 Wellness XP**\n\nStaying hydrated maintains cognitive focus.`;
+        } else if (actionPayload.actionType === 'LOG_WORKOUT') {
+          const mins = actionPayload.data.workoutMinutes || 30;
+          const title = actionPayload.data.workoutTitle || 'Workout Session';
+          lifeos.logWorkoutMinutes(mins);
+          lifeos.recordWorkoutSession({
+            splitName: title,
+            durationMinutes: mins,
+            notes: 'Logged via Quantrix AI Copilot',
+            sets: [
+              {
+                exerciseId: 'ex_quantrix',
+                exerciseName: title,
+                muscleGroup: 'Full Body',
+                setNumber: 1,
+                weightKg: 20,
+                reps: 10,
+              },
+            ],
+          });
+          useMasteryStore.getState().awardPoints('WELLNESS', 30, 'Workout logged via AI Copilot');
+          confirmText = `🏋️ **Workout Session Recorded!**\n\n- **Session:** "${title}"\n- **Duration:** **${mins} minutes**\n- **Earned:** **+30 Wellness XP**\n\nMetabolic metrics updated in your LifeOS profile.`;
+        } else if (actionPayload.actionType === 'LOG_MEAL') {
+          const cals = actionPayload.data.calories || 450;
+          const name = actionPayload.data.mealName || 'Meal';
+          lifeos.addMealLog({
+            mealType: 'LUNCH',
+            name,
+            calories: cals,
+            proteinGrams: actionPayload.data.proteinGrams || 25,
+            carbsGrams: Math.round(cals * 0.1),
+            fatGrams: Math.round(cals * 0.03),
+          });
+          useMasteryStore.getState().awardPoints('WELLNESS', 15, 'Meal logged via AI Copilot');
+          confirmText = `🥗 **Nutrition Logged!**\n\n- **Meal:** "${name}"\n- **Energy:** **${cals} kcal**\n- **Protein:** ~${actionPayload.data.proteinGrams || 25}g\n- **Earned:** **+15 Wellness XP**`;
+        }
+
+        // Mark executed
+        set((state) => ({
+          aiMessages: state.aiMessages.map((m) =>
+            m.id === messageId && m.systemAction
+              ? {
+                  ...m,
+                  systemAction: {
+                    ...m.systemAction,
+                    status: 'EXECUTED',
+                  },
+                }
+              : m
+          ),
+        }));
+
+        if (confirmText) {
+          const confirmationMsg: AiChatMessage = {
+            id: `msg_sys_exec_${Date.now()}`,
+            role: 'assistant',
+            content: confirmText,
+            timestamp: 'Just now',
+            suggestedPrompts: [
+              'What tasks are due today?',
+              'Show my net worth',
+              'Generate morning brief',
+            ],
+          };
+          set((state) => ({
+            aiMessages: [...state.aiMessages, confirmationMsg],
+          }));
+        }
       },
 
       clearAiChat: () => {
