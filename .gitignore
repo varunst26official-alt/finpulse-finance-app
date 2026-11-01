@@ -13,6 +13,7 @@ dist-ssr
 *.local
 *.apk
 !Quantra-*.apk
+!Quantra.apk
 
 
 # SQLite database files
