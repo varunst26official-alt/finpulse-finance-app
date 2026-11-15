@@ -11,6 +11,7 @@ import { goalRoutes } from './routes/goalRoutes.ts';
 import { calendarRoutes } from './routes/calendarRoutes.ts';
 import { lifeosRoutes } from './routes/lifeosRoutes.ts';
 import { communityRoutes } from './routes/communityRoutes.ts';
+import { userSyncRoutes } from './routes/userSyncRoutes.ts';
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.use('/api/goals', goalRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/lifeos', lifeosRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/user', userSyncRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

@@ -498,4 +498,24 @@ export const api = {
       });
     },
   },
+
+  // Cross-Device User Cloud State Synchronization
+  userSync: {
+    fetchRemoteState: async (): Promise<{
+      success: boolean;
+      data: { financeState: any; lifeosState: any; updatedAt: string } | null;
+      message?: string;
+    }> => {
+      return authenticatedRequest('/user/sync-state', { method: 'GET' });
+    },
+    pushRemoteState: async (payload: {
+      financeState: any;
+      lifeosState: any;
+    }): Promise<{ success: boolean; message: string; updatedAt?: string }> => {
+      return authenticatedRequest('/user/sync-state', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+  },
 };

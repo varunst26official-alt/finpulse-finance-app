@@ -20,9 +20,11 @@ import {
   Calculator,
   Award,
   Flame,
+  Zap,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FireCalculatorWidget } from './FireCalculatorWidget';
+import { calculateTimeToGoal } from '@/utils/goalMath';
 
 export const GoalMilestoneManager: React.FC = () => {
   const {
@@ -54,7 +56,22 @@ export const GoalMilestoneManager: React.FC = () => {
   const [newPriority, setNewPriority] = useState<GoalPriority>('HIGH');
   const [newInflation, setNewInflation] = useState<number>(7.0);
   const [newReturns, setNewReturns] = useState<number>(12.0);
+  const [newStepUp, setNewStepUp] = useState<number>(10); // 10% annual step-up contribution
+  const [isAutoTimeCalculation, setIsAutoTimeCalculation] = useState<boolean>(true);
   const [newNotes, setNewNotes] = useState('');
+
+  // Live Reverse Compounding & Step-Up Forecast for New Goal Creation
+  const newGoalProjection = useMemo(() => {
+    return calculateTimeToGoal(
+      newTargetToday,
+      newCurrentSaved,
+      newMonthlySip,
+      newReturns,
+      newStepUp,
+      true,
+      newInflation
+    );
+  }, [newTargetToday, newCurrentSaved, newMonthlySip, newReturns, newStepUp, newInflation]);
 
   // Standalone SIP Simulator State
   const [simMonthly, setSimMonthly] = useState<number>(25000);
@@ -127,11 +144,16 @@ export const GoalMilestoneManager: React.FC = () => {
     const savedUSD = currency === 'INR' ? newCurrentSaved / currentRate : newCurrentSaved;
     const sipUSD = currency === 'INR' ? newMonthlySip / currentRate : newMonthlySip;
 
+    const effectiveTargetDate =
+      isAutoTimeCalculation && newGoalProjection.achievementDate
+        ? newGoalProjection.achievementDate
+        : newTargetDate;
+
     addGoal({
       title: newTitle || 'Personal Financial Goal',
       category: newCategory,
       targetAmount: targetUSD,
-      targetDate: newTargetDate,
+      targetDate: effectiveTargetDate,
       currentSaved: savedUSD,
       monthlyContribution: sipUSD,
       priority: newPriority,
@@ -876,18 +898,21 @@ export const GoalMilestoneManager: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block mb-1 text-slate-600">Target Completion Date *</label>
+                    <label className="block mb-1 text-slate-600">
+                      Monthly Contribution (SIP) ({currency}) *
+                    </label>
                     <input
-                      type="date"
+                      type="number"
                       required
-                      value={newTargetDate}
-                      onChange={(e) => setNewTargetDate(e.target.value)}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
+                      min="100"
+                      value={newMonthlySip}
+                      onChange={(e) => setNewMonthlySip(Number(e.target.value))}
+                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block mb-1 text-slate-600">
                       Current Saved ({currency})
@@ -897,19 +922,6 @@ export const GoalMilestoneManager: React.FC = () => {
                       min="0"
                       value={newCurrentSaved}
                       onChange={(e) => setNewCurrentSaved(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block mb-1 text-slate-600">
-                      Monthly SIP ({currency})
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={newMonthlySip}
-                      onChange={(e) => setNewMonthlySip(Number(e.target.value))}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
                     />
                   </div>
@@ -930,20 +942,6 @@ export const GoalMilestoneManager: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block mb-1 text-slate-600">Inflation Rate (% p.a.)</label>
-                    <input
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      max="20"
-                      value={newInflation}
-                      onChange={(e) => setNewInflation(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                    <span className="text-[10px] text-slate-400">Standard 6-7% | Education 9-10%</span>
-                  </div>
-
-                  <div>
                     <label className="block mb-1 text-slate-600">Expected Return Rate (% p.a.)</label>
                     <input
                       type="number"
@@ -956,6 +954,116 @@ export const GoalMilestoneManager: React.FC = () => {
                     />
                     <span className="text-[10px] text-slate-400">Equity 12% | Balanced 10% | Debt 7%</span>
                   </div>
+
+                  <div>
+                    <label className="block mb-1 text-slate-600">Inflation Rate (% p.a.)</label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      min="0"
+                      max="20"
+                      value={newInflation}
+                      onChange={(e) => setNewInflation(Number(e.target.value))}
+                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
+                    />
+                    <span className="text-[10px] text-slate-400">Standard 6-7% | Education 9-10%</span>
+                  </div>
+                </div>
+
+                {/* Annual Step-Up Slider */}
+                <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-200/80 space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-indigo-950 flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5 text-indigo-600" />
+                      Annual Step-Up Contribution (+% per year)
+                    </span>
+                    <span className="font-mono font-extrabold text-indigo-700 bg-white px-2 py-0.5 rounded-md border border-indigo-200">
+                      +{newStepUp}% / yr
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="25"
+                    step="1"
+                    value={newStepUp}
+                    onChange={(e) => setNewStepUp(Number(e.target.value))}
+                    className="w-full accent-indigo-600 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] text-indigo-700/70 font-mono">
+                    <span>0% (Flat SIP)</span>
+                    <span>Salary Hike Compounding</span>
+                    <span>+25% / yr</span>
+                  </div>
+                </div>
+
+                {/* ⚡ Live Expected Time of Achievement Card */}
+                <div className="p-4 rounded-2xl bg-linear-to-br from-[#faf8f5] to-[#f4ede2] border-2 border-[#9e783e]/40 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] uppercase tracking-wider font-extrabold text-[#9e783e] flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Expected Time of Achievement
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setIsAutoTimeCalculation(!isAutoTimeCalculation)}
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                          isAutoTimeCalculation
+                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                            : 'bg-slate-100 text-slate-600 border-slate-300'
+                        }`}
+                      >
+                        {isAutoTimeCalculation ? '✓ Auto-Calculated Date' : 'Manual Date'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <div className="text-xl sm:text-2xl font-extrabold font-mono text-slate-900">
+                        {newGoalProjection.formattedDuration}
+                      </div>
+                      <span className="text-xs text-slate-600 font-medium">
+                        Target Date: <strong>{newGoalProjection.achievementMonthYear}</strong>
+                      </span>
+                    </div>
+
+                    <div className="text-left sm:text-right">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Capital Invested</span>
+                      <span className="text-xs sm:text-sm font-extrabold font-mono text-slate-800">
+                        {currency === 'INR' ? `₹${newGoalProjection.totalInvested.toLocaleString('en-IN')}` : `$${newGoalProjection.totalInvested.toLocaleString('en-US')}`}
+                      </span>
+                    </div>
+                  </div>
+
+                  {newGoalProjection.monthsSavedByStepUp > 0 && (
+                    <div className="pt-2 border-t border-[#e8e0d1] text-[11px] text-emerald-800 font-semibold flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>
+                        Your +{newStepUp}% annual step-up achieves this goal{' '}
+                        <strong>
+                          {Math.floor(newGoalProjection.monthsSavedByStepUp / 12) > 0
+                            ? `${Math.floor(newGoalProjection.monthsSavedByStepUp / 12)}y ${newGoalProjection.monthsSavedByStepUp % 12}m`
+                            : `${newGoalProjection.monthsSavedByStepUp} months`}{' '}
+                          earlier!
+                        </strong>
+                      </span>
+                    </div>
+                  )}
+
+                  {!isAutoTimeCalculation && (
+                    <div className="pt-2 border-t border-[#e8e0d1]">
+                      <label className="block mb-1 text-[11px] text-slate-600">Manual Target Completion Date:</label>
+                      <input
+                        type="date"
+                        required
+                        value={newTargetDate}
+                        onChange={(e) => setNewTargetDate(e.target.value)}
+                        className="w-full h-9 px-3 rounded-xl bg-white border border-[#e8e0d1] text-xs text-slate-900 font-mono focus:border-[#9e783e] focus:outline-hidden"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div>

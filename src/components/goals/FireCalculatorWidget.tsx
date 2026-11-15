@@ -73,7 +73,8 @@ export const FireCalculatorWidget: React.FC = () => {
   const [expectedReturnRate, setExpectedReturnRate] = useState<number>(12.0); // 12% CAGR equity
   const [inflationRate, setInflationRate] = useState<number>(6.0); // 6% annual inflation
   const [safeWithdrawalRate, setSafeWithdrawalRate] = useState<number>(4.0); // 4% SWR (25x)
-  const [selectedFireType, setSelectedFireType] = useState<'LEAN' | 'STANDARD' | 'FAT'>('STANDARD');
+  const [selectedFireType, setSelectedFireType] = useState<'LEAN' | 'STANDARD' | 'FAT' | 'CUSTOM'>('STANDARD');
+  const [customFireAmount, setCustomFireAmount] = useState<number>(() => isINR ? 50000000 : 1500000); // Default ₹5 Cr or $1.5M
 
   // Format local currency helper
   const formatVal = (val: number): string => {
@@ -104,7 +105,9 @@ export const FireCalculatorWidget: React.FC = () => {
     const coastFire = Math.round(standardFire / Math.pow(1 + realReturnRate, yearsTo60));
 
     const activeTarget =
-      selectedFireType === 'LEAN'
+      selectedFireType === 'CUSTOM'
+        ? Math.max(1000, customFireAmount)
+        : selectedFireType === 'LEAN'
         ? leanFire
         : selectedFireType === 'FAT'
         ? fatFire
@@ -130,6 +133,7 @@ export const FireCalculatorWidget: React.FC = () => {
     expectedReturnRate,
     inflationRate,
     selectedFireType,
+    customFireAmount,
     currentCorpus,
   ]);
 
@@ -507,8 +511,92 @@ export const FireCalculatorWidget: React.FC = () => {
             >
               Fat FIRE ({formatVal(fireTargets.fatFire)})
             </button>
+            <button
+              onClick={() => setSelectedFireType('CUSTOM')}
+              className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+                selectedFireType === 'CUSTOM'
+                  ? 'bg-[#9e783e] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#f0ebe1]'
+              }`}
+            >
+              Custom FIRE ({formatVal(customFireAmount)})
+            </button>
           </div>
         </div>
+
+        {/* Custom FIRE Target Amount Configurator (Visible when CUSTOM selected) */}
+        {selectedFireType === 'CUSTOM' && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-3"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-xs font-bold text-amber-900 block">
+                  🎯 Customize Your Personal FIRE Corpus
+                </span>
+                <span className="text-[11px] text-amber-700">
+                  Set any exact goal corpus. The forecast timeline, required SIP, and milestones adjust dynamically.
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+                    {isINR ? '₹' : '$'}
+                  </span>
+                  <input
+                    type="number"
+                    min="100000"
+                    step={isINR ? 500000 : 50000}
+                    value={customFireAmount}
+                    onChange={(e) => setCustomFireAmount(Math.max(1000, Number(e.target.value)))}
+                    className="w-40 sm:w-48 h-10 pl-7 pr-3 rounded-xl bg-white border-2 border-[#9e783e] text-xs font-mono font-bold text-slate-900 focus:outline-hidden"
+                  />
+                </div>
+                <span className="text-xs font-extrabold font-mono text-[#9e783e]">
+                  ({formatVal(customFireAmount)})
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Presets */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] font-semibold text-slate-600">
+              <span className="text-slate-400">Quick Targets:</span>
+              {(isINR
+                ? [
+                    { label: '₹1 Cr', val: 10000000 },
+                    { label: '₹2.5 Cr', val: 25000000 },
+                    { label: '₹5 Cr', val: 50000000 },
+                    { label: '₹10 Cr', val: 100000000 },
+                    { label: '₹15 Cr', val: 150000000 },
+                  ]
+                : [
+                    { label: '$500k', val: 500000 },
+                    { label: '$1.0M', val: 1000000 },
+                    { label: '$2.0M', val: 2000000 },
+                    { label: '$3.5M', val: 3500000 },
+                    { label: '$5.0M', val: 5000000 },
+                  ]
+              ).map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => setCustomFireAmount(preset.val)}
+                  className={`px-2.5 py-1 rounded-lg border text-xs font-mono transition-all cursor-pointer ${
+                    customFireAmount === preset.val
+                      ? 'bg-[#9e783e] text-white border-[#9e783e] font-bold shadow-2xs'
+                      : 'bg-white hover:bg-amber-100/60 border-amber-200 text-amber-900'
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Recharts Area Chart */}
         <div className="w-full h-72 sm:h-80 pt-2">

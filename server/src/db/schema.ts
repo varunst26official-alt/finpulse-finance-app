@@ -351,6 +351,14 @@ CREATE TABLE IF NOT EXISTS admin_checklists (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 15. Cross-Device Cloud Sync State (Multi-device persistence)
+CREATE TABLE IF NOT EXISTS user_sync_states (
+  user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  finance_state TEXT NOT NULL,
+  lifeos_state TEXT NOT NULL,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_assets_user ON assets(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
@@ -372,4 +380,5 @@ CREATE INDEX IF NOT EXISTS idx_habits_user ON habits(user_id);
 CREATE INDEX IF NOT EXISTS idx_focus_user ON focus_sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_books_user ON learning_books(user_id);
 CREATE INDEX IF NOT EXISTS idx_checklists_user ON admin_checklists(user_id);
+CREATE INDEX IF NOT EXISTS idx_sync_state_user ON user_sync_states(user_id);
 `;

@@ -13,6 +13,7 @@ import { BankStatementManager } from '@/components/finance/BankStatementManager'
 import { CommitmentsVaultManager } from '@/components/finance/CommitmentsVaultManager';
 import { CalendarLedgerManager } from '@/components/finance/CalendarLedgerManager';
 import { BillReminder } from '@/components/finance/BillReminder';
+import { MonthlyIncomeAllocationCard } from '@/components/finance/MonthlyIncomeAllocationCard';
 import {
   PieChart,
   Landmark,
@@ -165,6 +166,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
           {/* Sub-tab 1: Summary Overview */}
           {financeSubTab === 'summary' && (
             <>
+              <MonthlyIncomeAllocationCard />
               <StatCards />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">

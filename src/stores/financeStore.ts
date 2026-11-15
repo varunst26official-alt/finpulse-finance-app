@@ -138,9 +138,23 @@ interface FinanceState {
   loadDemoSampleData: () => void;
   syncWithBackend: () => Promise<void>;
 
+  monthlyNetIncome: number;
+  setMonthlyNetIncome: (incomeUSD: number) => void;
+
   // Computed Selectors
   getPortfolioSummary: () => PortfolioSummary;
   getFinancialHealthScore: () => FinancialHealthScore;
+  getIncomeAllocation: () => {
+    monthlyIncomeUSD: number;
+    goalsMonthlySipUSD: number;
+    debtsMonthlyEmiUSD: number;
+    livingExpensesMonthlyUSD: number;
+    totalAllocatedUSD: number;
+    shortfallAmountUSD: number;
+    surplusAmountUSD: number;
+    allocationPercent: number;
+    isShortfall: boolean;
+  };
 }
 
 export const useFinanceStore = create<FinanceState>()(
@@ -165,6 +179,8 @@ export const useFinanceStore = create<FinanceState>()(
       policies: [],
       goals: [],
       emergencyTargetMonths: 6,
+      monthlyNetIncome: 1800, // ~$1,800 USD base (~₹1,52,000)
+      setMonthlyNetIncome: (amount: number) => set({ monthlyNetIncome: amount }),
       history: [],
       subscriptions: [],
       bills: [],
@@ -1368,6 +1384,45 @@ export const useFinanceStore = create<FinanceState>()(
           keyRecommendations: recommendations,
         };
       },
+
+      getIncomeAllocation: () => {
+        const { monthlyNetIncome, goals, debts, bills, expenses } = get();
+        const goalsMonthlySipUSD = (goals || [])
+          .filter((g) => !g.isAchieved)
+          .reduce((sum, g) => sum + (g.monthlyContribution || 0), 0);
+
+        const debtsMonthlyEmiUSD = (debts || [])
+          .filter((d) => d.currentOutstanding > 0)
+          .reduce((sum, d) => sum + (d.monthlyEmi || 0), 0);
+
+        const monthlyBills = (bills || []).reduce(
+          (sum, b) => sum + (b.billingCycle === 'MONTHLY' ? b.amount : b.amount / 12),
+          0
+        );
+        const avgExpenses =
+          (expenses || []).length > 0
+            ? expenses.reduce((sum, e) => sum + e.amount, 0) / Math.max(1, Math.min(6, expenses.length / 10))
+            : 600;
+        const livingExpensesMonthlyUSD = Math.round(Math.max(monthlyBills, avgExpenses));
+
+        const totalAllocatedUSD = goalsMonthlySipUSD + debtsMonthlyEmiUSD + livingExpensesMonthlyUSD;
+        const shortfallAmountUSD = Math.max(0, totalAllocatedUSD - (monthlyNetIncome || 0));
+        const surplusAmountUSD = Math.max(0, (monthlyNetIncome || 0) - totalAllocatedUSD);
+        const allocationPercent = monthlyNetIncome > 0 ? (totalAllocatedUSD / monthlyNetIncome) * 100 : 0;
+        const isShortfall = totalAllocatedUSD > (monthlyNetIncome || 0);
+
+        return {
+          monthlyIncomeUSD: monthlyNetIncome || 0,
+          goalsMonthlySipUSD,
+          debtsMonthlyEmiUSD,
+          livingExpensesMonthlyUSD,
+          totalAllocatedUSD,
+          shortfallAmountUSD,
+          surplusAmountUSD,
+          allocationPercent,
+          isShortfall,
+        };
+      },
     }),
     {
       name: 'finpulse-storage',
@@ -1383,6 +1438,7 @@ export const useFinanceStore = create<FinanceState>()(
         policies: state.policies,
         goals: state.goals,
         emergencyTargetMonths: state.emergencyTargetMonths,
+        monthlyNetIncome: state.monthlyNetIncome,
         subscriptions: state.subscriptions,
         bills: state.bills,
         aiMessages: state.aiMessages,

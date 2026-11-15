@@ -22,18 +22,25 @@ export function getUserStorageKey(user: { id?: string; email?: string } | null):
   return `lifeos_usr_${identifier.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
 }
 
+let isClearing = false;
+let cloudSyncTimeout: any = null;
+
 /**
- * Saves current in-memory state of Finance and LifeOS stores to the user's isolated storage
+ * Pushes the complete in-memory state of Finance & LifeOS stores to the user's remote cloud database.
  */
-export function saveUserScopedData(user: UserProfile | null): void {
-  if (!user || !user.email) return;
-  const userKey = getUserStorageKey(user);
+export async function syncUserDataToCloud(user: UserProfile | null): Promise<void> {
+  if (!user || !user.email || !hasAuthToken()) return;
+  const isDemo =
+    user.id === 'demo_varun_senthil_kumar' ||
+    user.id === 'demo_guest_investor' ||
+    user.email === 'varun@quantra.io' ||
+    user.email === 'investor@quantra.io' ||
+    useAuthStore.getState().isDemoMode;
+  if (isDemo || isClearing) return;
 
   try {
     const finState = useFinanceStore.getState();
     const lifeState = useLifeOSStore.getState();
-
-    console.log('[saveUserScopedData]', user.email, 'Assets:', finState.assets.length, 'Goals:', finState.goals.length, 'isClearing:', isClearing);
 
     const financeData = {
       assets: finState.assets,
@@ -45,6 +52,107 @@ export function saveUserScopedData(user: UserProfile | null): void {
       policies: finState.policies,
       goals: finState.goals,
       emergencyTargetMonths: finState.emergencyTargetMonths,
+      monthlyNetIncome: (finState as any).monthlyNetIncome || 0,
+      history: finState.history,
+      currency: finState.currency,
+      aiMessages: finState.aiMessages,
+      bills: finState.bills,
+    };
+
+    const lifeosData = {
+      tasks: lifeState.tasks,
+      wellness: lifeState.wellness,
+      workoutSessions: lifeState.workoutSessions,
+      mealLogs: lifeState.mealLogs,
+      habits: lifeState.habits,
+      focusSessions: lifeState.focusSessions,
+      learningItems: lifeState.learningItems,
+      learningBooks: lifeState.learningBooks,
+      documents: lifeState.documents,
+      emergencyInfo: lifeState.emergencyInfo,
+      adminChecklists: lifeState.adminChecklists,
+      userInputs: lifeState.userInputs,
+      activeBlueprint: lifeState.activeBlueprint,
+      userLocation: lifeState.userLocation,
+      weeklyMealPlan: lifeState.weeklyMealPlan,
+    };
+
+    await api.userSync.pushRemoteState({
+      financeState: financeData,
+      lifeosState: lifeosData,
+    });
+    console.log('[UserStorage] Successfully synced state to cloud for user:', user.email);
+  } catch (err) {
+    console.warn('[UserStorage] Cloud sync deferred or failed:', err);
+  }
+}
+
+/**
+ * Pulls the latest cloud state for the authenticated user and hydrates in-memory stores.
+ * Guarantees cross-device persistence (e.g. Mobile App to Desktop Laptop).
+ */
+export async function pullUserDataFromCloud(user: UserProfile | null): Promise<boolean> {
+  if (!user || !user.email || !hasAuthToken()) return false;
+  const isDemo =
+    user.id === 'demo_varun_senthil_kumar' ||
+    user.id === 'demo_guest_investor' ||
+    user.email === 'varun@quantra.io' ||
+    user.email === 'investor@quantra.io' ||
+    useAuthStore.getState().isDemoMode;
+  if (isDemo || isClearing) return false;
+
+  try {
+    const res = await api.userSync.fetchRemoteState();
+    if (res?.success && res.data) {
+      const { financeState, lifeosState } = res.data;
+      const userKey = getUserStorageKey(user);
+
+      if (financeState && typeof financeState === 'object') {
+        useFinanceStore.setState(financeState);
+        localStorage.setItem(`${userKey}_finance`, JSON.stringify(financeState));
+      }
+      if (lifeosState && typeof lifeosState === 'object') {
+        useLifeOSStore.setState(lifeosState);
+        localStorage.setItem(`${userKey}_lifeos`, JSON.stringify(lifeosState));
+      }
+      useMasteryStore.getState().syncWithActualUserData();
+      console.log('[UserStorage] Successfully restored remote cloud state for user:', user.email);
+      return true;
+    }
+  } catch (err) {
+    console.warn('[UserStorage] Failed to pull remote cloud state:', err);
+  }
+  return false;
+}
+
+/**
+ * Saves current in-memory state of Finance and LifeOS stores to the user's isolated storage
+ */
+export function saveUserScopedData(user: UserProfile | null): void {
+  if (!user || !user.email) return;
+  const userKey = getUserStorageKey(user);
+  const isDemo =
+    user.id === 'demo_varun_senthil_kumar' ||
+    user.id === 'demo_guest_investor' ||
+    user.email === 'varun@quantra.io' ||
+    user.email === 'investor@quantra.io' ||
+    useAuthStore.getState().isDemoMode;
+
+  try {
+    const finState = useFinanceStore.getState();
+    const lifeState = useLifeOSStore.getState();
+
+    const financeData = {
+      assets: finState.assets,
+      transactions: finState.transactions,
+      expenses: finState.expenses,
+      incomes: finState.incomes,
+      calendarEvents: finState.calendarEvents,
+      debts: finState.debts,
+      policies: finState.policies,
+      goals: finState.goals,
+      emergencyTargetMonths: finState.emergencyTargetMonths,
+      monthlyNetIncome: (finState as any).monthlyNetIncome || 0,
       history: finState.history,
       currency: finState.currency,
       aiMessages: finState.aiMessages,
@@ -71,6 +179,14 @@ export function saveUserScopedData(user: UserProfile | null): void {
 
     localStorage.setItem(`${userKey}_finance`, JSON.stringify(financeData));
     localStorage.setItem(`${userKey}_lifeos`, JSON.stringify(lifeosData));
+
+    // Debounced asynchronous push to remote cloud for cross-device synchronization
+    if (hasAuthToken() && !isDemo && !isClearing) {
+      if (cloudSyncTimeout) clearTimeout(cloudSyncTimeout);
+      cloudSyncTimeout = setTimeout(() => {
+        syncUserDataToCloud(user);
+      }, 1200);
+    }
   } catch (err) {
     console.error('[UserStorage] Failed to save user-scoped data:', err);
   }
@@ -312,14 +428,17 @@ export function loadUserScopedData(user: UserProfile | null): void {
       useLifeOSStore.getState().resetToFreshState();
     }
     useMasteryStore.getState().syncWithActualUserData();
+
+    // Cross-device synchronization: asynchronously pull latest remote cloud state
+    if (hasAuthToken() && !isDemo && !isClearing) {
+      pullUserDataFromCloud(user);
+    }
   } catch (err) {
     console.error('[UserStorage] Failed to load user-scoped data:', err);
     useFinanceStore.getState().resetToFreshPortfolio(user.fullName);
     useLifeOSStore.getState().resetToFreshState();
   }
 }
-
-let isClearing = false;
 
 /**
  * Fully wipes and resets ALL data for the given user:
