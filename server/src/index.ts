@@ -12,6 +12,7 @@ import { calendarRoutes } from './routes/calendarRoutes.ts';
 import { lifeosRoutes } from './routes/lifeosRoutes.ts';
 import { communityRoutes } from './routes/communityRoutes.ts';
 import { userSyncRoutes } from './routes/userSyncRoutes.ts';
+import { adminRoutes } from './routes/adminRoutes.ts';
 
 dotenv.config();
 
@@ -53,6 +54,7 @@ app.use('/api/calendar', calendarRoutes);
 app.use('/api/lifeos', lifeosRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/user', userSyncRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

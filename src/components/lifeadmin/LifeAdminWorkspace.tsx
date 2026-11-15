@@ -17,8 +17,10 @@ import {
   Circle,
   X,
   FileCheck,
+  ShieldAlert,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SuperAdminDashboard } from '@/components/admin/SuperAdminDashboard';
 
 export const LifeAdminWorkspace: React.FC = () => {
   const {
@@ -33,8 +35,8 @@ export const LifeAdminWorkspace: React.FC = () => {
     deleteChecklist,
   } = useLifeOSStore();
 
-  // Active Sub-Tab: 'VAULT' | 'EMERGENCY' | 'CHECKLISTS'
-  const [activeTab, setActiveTab] = useState<'VAULT' | 'EMERGENCY' | 'CHECKLISTS'>('VAULT');
+  // Active Sub-Tab: 'VAULT' | 'EMERGENCY' | 'CHECKLISTS' | 'SUPER_ADMIN'
+  const [activeTab, setActiveTab] = useState<'VAULT' | 'EMERGENCY' | 'CHECKLISTS' | 'SUPER_ADMIN'>('VAULT');
 
   // Modals & Forms
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
@@ -301,6 +303,17 @@ Notes: ${emNotes || 'None'}`;
         >
           <Calendar className="w-3.5 h-3.5" />
           <span>Annual Recurring Checklists ({adminChecklists.length})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('SUPER_ADMIN')}
+          className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+            activeTab === 'SUPER_ADMIN'
+              ? 'bg-[#17365d] text-white shadow-xs'
+              : 'text-[#6f7c91] hover:text-[#243047] hover:bg-white'
+          }`}
+        >
+          <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+          <span>Super Admin Command Hub</span>
         </button>
       </div>
 
@@ -591,6 +604,13 @@ Notes: ${emNotes || 'None'}`;
             ))}
           </div>
         </section>
+      )}
+
+      {/* ======================================================== */}
+      {/* SUBTAB 4: SUPER ADMIN COMMAND HUB                        */}
+      {/* ======================================================== */}
+      {activeTab === 'SUPER_ADMIN' && (
+        <SuperAdminDashboard />
       )}
 
       {/* Vault Document Modal */}

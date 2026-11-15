@@ -359,6 +359,26 @@ CREATE TABLE IF NOT EXISTS user_sync_states (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 16. Super Admin Audit Trail (Immutable Governance)
+CREATE TABLE IF NOT EXISTS admin_audit_logs (
+  id TEXT PRIMARY KEY,
+  admin_id TEXT NOT NULL,
+  action TEXT NOT NULL,
+  target_id TEXT,
+  details TEXT,
+  ip_address TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 17. System Health & Ingestion Telemetry Snapshots
+CREATE TABLE IF NOT EXISTS system_telemetry (
+  id TEXT PRIMARY KEY,
+  metric_name TEXT NOT NULL,
+  metric_value REAL NOT NULL,
+  metadata TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_assets_user ON assets(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);

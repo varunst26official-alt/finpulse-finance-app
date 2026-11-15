@@ -1360,80 +1360,149 @@ export const FinancialCalendarWidget: React.FC = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full min-w-0" style={{ height: Math.max(160, Math.min(merchantBreakdownData.items.length, 7) * 36 + 24) }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={merchantBreakdownData.items.slice(0, 7)}
-                        layout="vertical"
-                        margin={{ top: 6, right: 60, left: 4, bottom: 6 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0eae1" />
-                        <XAxis
-                          type="number"
-                          hide
-                          domain={[0, (dataMax: number) => Math.max(dataMax * 1.35, 10)]}
-                        />
-                        <YAxis
-                          type="category"
-                          dataKey="name"
-                          tick={renderBarYAxisTick}
-                          width={102}
-                          interval={0}
-                          axisLine={{ stroke: '#e8e0d1' }}
-                          tickLine={false}
-                        />
-                        <Tooltip
-                          formatter={(val: any, _name: any, item: any) => [
-                            `${formatCurrency(Number(val), currency)} (${item.payload.percentage?.toFixed(1)}%)`,
-                            item.payload.name || 'Outflow',
-                          ]}
-                          contentStyle={{
-                            backgroundColor: '#ffffff',
-                            borderRadius: '12px',
-                            border: '1px solid #e8e0d1',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                            fontSize: '11px',
-                            fontWeight: 600,
-                          }}
-                        />
-                        <Bar
-                          dataKey="amount"
-                          radius={[0, 6, 6, 0]}
-                          barSize={18}
-                          isAnimationActive={false}
+                  <div className="w-full min-w-0">
+                    {/* Mobile-Friendly Full-Width Bar Breakdown */}
+                    <div className="sm:hidden space-y-2 py-1">
+                      {merchantBreakdownData.items.slice(0, 7).map((entry, index) => {
+                        const color = PIE_COLORS[index % PIE_COLORS.length];
+                        const isSelected = selectedEntity.toLowerCase() === entry.name.toLowerCase();
+                        const isDimmed = selectedEntity !== 'ALL' && !isSelected;
+                        const maxAmount = merchantBreakdownData.topMerchant?.amount || 1;
+                        const fillPercent = Math.min(100, Math.max(6, (entry.amount / maxAmount) * 100));
+
+                        return (
+                          <div
+                            key={`mobile-bar-${index}`}
+                            data-testid="breakdown-bar-item"
+                            onClick={() => {
+                              setSelectedEntity(selectedEntity === entry.name ? 'ALL' : entry.name);
+                            }}
+                            className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-amber-50/60 border-[#9e783e] shadow-xs ring-1 ring-[#9e783e]'
+                                : isDimmed
+                                ? 'opacity-40 border-slate-200 bg-white'
+                                : 'bg-white border-[#e8e0d1] hover:border-[#9e783e]/60'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span
+                                  className="w-2.5 h-2.5 rounded-full shrink-0"
+                                  style={{ backgroundColor: color }}
+                                />
+                                <span className="font-bold text-xs text-slate-900 truncate" title={entry.name}>
+                                  {entry.name}
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-medium shrink-0">
+                                  ({entry.count})
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className="font-mono font-extrabold text-xs text-slate-900">
+                                  {formatCurrency(entry.amount, currency)}
+                                </span>
+                                <span
+                                  className="px-1.5 py-0.5 rounded text-[10px] font-bold"
+                                  style={{ backgroundColor: `${color}18`, color: color }}
+                                >
+                                  {entry.percentage.toFixed(1)}%
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Clean, Full-Width Progress Track */}
+                            <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                              <div
+                                className="h-full rounded-full transition-all duration-300"
+                                style={{
+                                  width: `${fillPercent}%`,
+                                  backgroundColor: color,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Tablet/Desktop Horizontal SVG Bar Chart */}
+                    <div className="hidden sm:block w-full min-w-0" style={{ height: Math.max(160, Math.min(merchantBreakdownData.items.length, 7) * 36 + 24) }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={merchantBreakdownData.items.slice(0, 7)}
+                          layout="vertical"
+                          margin={{ top: 6, right: 65, left: 6, bottom: 6 }}
                         >
-                          <LabelList
-                            dataKey="amount"
-                            position="right"
-                            offset={8}
-                            formatter={(val: any) => formatCurrency(Number(val), currency)}
-                            style={{
-                              fontSize: '10px',
-                              fontWeight: 700,
-                              fill: '#17365d',
-                              fontFamily: 'monospace',
+                          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0eae1" />
+                          <XAxis
+                            type="number"
+                            hide
+                            domain={[0, (dataMax: number) => Math.max(dataMax * 1.35, 10)]}
+                          />
+                          <YAxis
+                            type="category"
+                            dataKey="name"
+                            tick={renderBarYAxisTick}
+                            width={110}
+                            interval={0}
+                            axisLine={{ stroke: '#e8e0d1' }}
+                            tickLine={false}
+                          />
+                          <Tooltip
+                            formatter={(val: any, _name: any, item: any) => [
+                              `${formatCurrency(Number(val), currency)} (${item.payload.percentage?.toFixed(1)}%)`,
+                              item.payload.name || 'Outflow',
+                            ]}
+                            contentStyle={{
+                              backgroundColor: '#ffffff',
+                              borderRadius: '12px',
+                              border: '1px solid #e8e0d1',
+                              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                              fontSize: '11px',
+                              fontWeight: 600,
                             }}
                           />
-                          {merchantBreakdownData.items.slice(0, 7).map((entry, index) => {
-                            const isSelected = selectedEntity.toLowerCase() === entry.name.toLowerCase();
-                            const isDimmed = selectedEntity !== 'ALL' && !isSelected;
-                            return (
-                              <Cell
-                                key={`bar-${index}`}
-                                fill={PIE_COLORS[index % PIE_COLORS.length]}
-                                opacity={isDimmed ? 0.35 : 1}
-                                stroke={isSelected ? '#17365d' : undefined}
-                                strokeWidth={isSelected ? 2 : 0}
-                                onClick={() => {
-                                  setSelectedEntity(selectedEntity === entry.name ? 'ALL' : entry.name);
-                                }}
-                                cursor="pointer"
-                              />
-                            );
-                          })}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
+                          <Bar
+                            dataKey="amount"
+                            radius={[0, 6, 6, 0]}
+                            barSize={18}
+                            isAnimationActive={false}
+                          >
+                            <LabelList
+                              dataKey="amount"
+                              position="right"
+                              offset={8}
+                              formatter={(val: any) => formatCurrency(Number(val), currency)}
+                              style={{
+                                fontSize: '10px',
+                                fontWeight: 700,
+                                fill: '#17365d',
+                                fontFamily: 'monospace',
+                              }}
+                            />
+                            {merchantBreakdownData.items.slice(0, 7).map((entry, index) => {
+                              const isSelected = selectedEntity.toLowerCase() === entry.name.toLowerCase();
+                              const isDimmed = selectedEntity !== 'ALL' && !isSelected;
+                              return (
+                                <Cell
+                                  key={`bar-${index}`}
+                                  fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                  opacity={isDimmed ? 0.35 : 1}
+                                  stroke={isSelected ? '#17365d' : undefined}
+                                  strokeWidth={isSelected ? 2 : 0}
+                                  onClick={() => {
+                                    setSelectedEntity(selectedEntity === entry.name ? 'ALL' : entry.name);
+                                  }}
+                                  cursor="pointer"
+                                />
+                              );
+                            })}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 )}
               </div>

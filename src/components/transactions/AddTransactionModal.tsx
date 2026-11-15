@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useFinanceStore } from '@/stores/financeStore';
 import {
   X,
@@ -217,10 +218,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
     onClose();
   };
 
-  return (
+  if (!isOpen) return null;
+
+  return createPortal(
     <div
       {...overlayProps}
-      className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
     >
       <motion.div
         {...contentProps}
@@ -922,6 +925,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
           </div>
         </form>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { QuantraLogo } from '@/components/ui/QuantraLogo';
 import { useFinanceStore } from '@/stores/financeStore';
@@ -550,10 +551,12 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
     }, 1200);
   };
 
-  return (
+  if (!isOpen) return null;
+
+  return createPortal(
     <div
       {...overlayProps}
-      className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-900/60 backdrop-blur-md overflow-hidden cursor-pointer"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-900/60 backdrop-blur-md overflow-hidden cursor-pointer"
     >
       <motion.div
         {...contentProps}
@@ -561,7 +564,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 24 }}
         transition={{ type: 'spring', damping: 25, stiffness: 320 }}
-        className="w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] sm:max-h-[92vh] overflow-hidden"
+        className="w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[88vh] sm:max-h-[92vh] overflow-hidden"
       >
         {/* Mobile Drag Indicator */}
         <div className="w-10 h-1.5 bg-slate-300 rounded-full mx-auto mt-2 sm:hidden shrink-0" />
@@ -1220,10 +1223,10 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-t border-slate-200 bg-slate-50/95 backdrop-blur-xs flex items-center justify-between shrink-0 pb-[max(0.875rem,env(safe-area-inset-bottom))]">
+        <div className="px-4 sm:px-6 py-4 border-t border-slate-200 bg-slate-50/98 backdrop-blur-md flex items-center justify-between shrink-0 pb-[max(1.5rem,env(safe-area-inset-bottom,24px))] shadow-lg">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-all cursor-pointer"
+            className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-all cursor-pointer"
           >
             Cancel
           </button>
@@ -1242,6 +1245,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
           </button>
         </div>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 };

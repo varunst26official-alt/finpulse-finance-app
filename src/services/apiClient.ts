@@ -518,4 +518,29 @@ export const api = {
       });
     },
   },
+
+  // Super Admin Platform Intelligence Endpoints
+  admin: {
+    getOverview: async (): Promise<{ success: boolean; data: any }> => {
+      return request('/admin/overview');
+    },
+    getUsers: async (): Promise<{ success: boolean; data: any[] }> => {
+      return request('/admin/users');
+    },
+    updateUserTier: async (userId: string, tier: string): Promise<{ success: boolean; message: string }> => {
+      return request(`/admin/users/${userId}/tier`, {
+        method: 'PATCH',
+        body: JSON.stringify({ tier }),
+      });
+    },
+    deleteUser: async (userId: string): Promise<{ success: boolean; message: string }> => {
+      return request(`/admin/users/${userId}`, { method: 'DELETE' });
+    },
+    getAuditLogs: async (): Promise<{ success: boolean; data: any[] }> => {
+      return request('/admin/audit-logs');
+    },
+    triggerVacuum: async (): Promise<{ success: boolean; message: string }> => {
+      return request('/admin/vacuum', { method: 'POST' });
+    },
+  },
 };
