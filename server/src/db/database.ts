@@ -930,6 +930,23 @@ export async function initDatabase(): Promise<Database> {
     );
   }
 
+  // Ensure varun123@gmail.com exists with 112233
+  const existingVarun123 = queryOne('SELECT id FROM users WHERE email = ?', ['varun123@gmail.com']);
+  if (!existingVarun123) {
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync('112233', salt);
+    run(
+      `INSERT INTO users (id, full_name, email, password_hash, phone_number, investor_type, joined_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      ['usr_varun123', 'Varun', 'varun123@gmail.com', hash, null, 'RETAIL', 'Nov 2026']
+    );
+    run(
+      `INSERT OR IGNORE INTO user_settings (user_id, currency, emergency_target_months)
+       VALUES (?, 'INR', 6)`,
+      ['usr_varun123']
+    );
+  }
+
   persistDatabase();
   return db;
 }

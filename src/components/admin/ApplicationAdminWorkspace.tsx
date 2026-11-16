@@ -47,6 +47,14 @@ function getLocalUsersList(): any[] {
       joinedDate: 'Jan 2026',
       phoneNumber: '+91 98765 00000',
     },
+    'varun123@gmail.com': {
+      id: 'usr_varun123',
+      fullName: 'Varun',
+      email: 'varun123@gmail.com',
+      investorType: 'RETAIL',
+      joinedDate: 'Nov 2026',
+      phoneNumber: null,
+    },
     'varunst26official@gmail.com': {
       id: 'usr_varun',
       fullName: 'Varun',

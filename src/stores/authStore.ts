@@ -151,6 +151,13 @@ export const useAuthStore = create<AuthState>()(
               investorType: 'HNI',
               joinedDate: 'Jan 2026',
             },
+            'varun123@gmail.com': {
+              id: 'usr_varun123',
+              fullName: 'Varun',
+              password: '112233',
+              investorType: 'RETAIL',
+              joinedDate: 'Nov 2026',
+            },
             'varunst26official@gmail.com': {
               id: 'usr_varun',
               fullName: 'Varun',

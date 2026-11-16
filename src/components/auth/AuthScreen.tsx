@@ -262,9 +262,14 @@ export const AuthScreen: React.FC = () => {
                 Q
               </div>
               <div>
-                <span className="font-heading text-lg font-bold tracking-tight text-white block leading-tight">
-                  Quantra LifeOS
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="font-heading text-lg font-bold tracking-tight text-white block leading-tight">
+                    Quantra LifeOS
+                  </span>
+                  <span className="text-[10px] bg-white/20 text-white font-mono px-1.5 py-0.5 rounded-sm font-semibold">
+                    v1.7
+                  </span>
+                </div>
                 <span className="text-[11px] text-white/70 font-medium">
                   Autonomous Life Intelligence
                 </span>
@@ -668,6 +673,17 @@ export const AuthScreen: React.FC = () => {
               </div>
             </form>
           )}
+
+          {/* Build / Version Verification Footer */}
+          <div className="mt-5 pt-3 border-t border-[#f0e8dc] flex items-center justify-between text-[11px] text-slate-400 font-mono">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Quantra Engine Active
+            </span>
+            <span className="bg-[#f4efe4] text-[#84632c] px-2 py-0.5 rounded-md font-bold text-[10px] border border-[#e2d5c0]">
+              v1.7 (Build 7)
+            </span>
+          </div>
         </div>
       </motion.div>
     </div>
