@@ -313,4 +313,31 @@ test.describe('Production-Grade Auth Security & Strict User Isolation Suite', ()
 
     await expect(page.locator('[data-testid="user-profile-button"]')).toBeVisible({ timeout: 10000 });
   });
+
+  test('VERIFICATION: Logs in with Varun account (varunst26official@gmail.com / 123456) and verifies profile and isolation', async ({ page }) => {
+    await page.goto('/');
+
+    const emailInput = page.getByPlaceholder('name@example.com');
+    const passwordInput = page.getByPlaceholder('••••••••');
+
+    // 1. Wrong password rejected
+    await emailInput.fill('varunst26official@gmail.com');
+    await passwordInput.fill('wrong_pwd');
+    await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
+    await expect(page.getByText(/Incorrect password|Invalid email or password/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="user-profile-button"]')).not.toBeVisible();
+
+    // 2. Correct password (123456) logs in
+    await emailInput.fill('varunst26official@gmail.com');
+    await passwordInput.fill('123456');
+    await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
+
+    const profileBtn = page.locator('[data-testid="user-profile-button"]');
+    await expect(profileBtn).toBeVisible({ timeout: 10000 });
+
+    // Open profile menu and verify name and email
+    await profileBtn.click();
+    await expect(page.getByText('varunst26official@gmail.com').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/RETAIL Tier/i)).toBeVisible({ timeout: 5000 });
+  });
 });

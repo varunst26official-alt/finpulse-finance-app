@@ -151,6 +151,13 @@ export const useAuthStore = create<AuthState>()(
               investorType: 'HNI',
               joinedDate: 'Jan 2026',
             },
+            'varunst26official@gmail.com': {
+              id: 'usr_varun',
+              fullName: 'Varun',
+              password: '123456',
+              investorType: 'RETAIL',
+              joinedDate: 'Nov 2026',
+            },
           };
 
           const storedCredsRaw = localStorage.getItem(`lifeos_creds_${normalizedEmail}`);
