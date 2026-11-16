@@ -7,6 +7,7 @@ import {
   AlertTriangle,
   Plus,
   Trash2,
+  Pencil,
   ShieldCheck,
   Calendar,
   HeartHandshake,
@@ -26,11 +27,13 @@ export const LifeAdminWorkspace: React.FC = () => {
   const {
     documents,
     addDocument,
+    updateDocument,
     deleteDocument,
     emergencyInfo,
     saveEmergencyInfo,
     adminChecklists,
     addChecklist,
+    updateChecklist,
     toggleChecklist,
     deleteChecklist,
   } = useLifeOSStore();
@@ -40,7 +43,9 @@ export const LifeAdminWorkspace: React.FC = () => {
 
   // Modals & Forms
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+  const [editingDocId, setEditingDocId] = useState<string | null>(null);
   const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
+  const [editingChkId, setEditingChkId] = useState<string | null>(null);
   const [isEmergencyEditOpen, setIsEmergencyEditOpen] = useState(false);
   const [filterDocCategory, setFilterDocCategory] = useState<string>('ALL');
 
@@ -101,25 +106,44 @@ export const LifeAdminWorkspace: React.FC = () => {
     (d) => filterDocCategory === 'ALL' || d.category === filterDocCategory
   );
 
+  const handleOpenEditDocument = (doc: any) => {
+    setEditingDocId(doc.id);
+    setDocTitle(doc.title);
+    setDocCategory(doc.category);
+    setDocNumber(doc.documentNumber);
+    setDocExpiry(doc.expiryDate || '');
+    setDocAuthority(doc.authority || '');
+    setDocNotes(doc.notes || '');
+    setIsDocModalOpen(true);
+  };
+
   const handleCreateDocument = (e: React.FormEvent) => {
     e.preventDefault();
     if (!docTitle.trim() || !docNumber.trim()) return;
 
-    addDocument({
+    const docPayload = {
       title: docTitle.trim(),
       category: docCategory,
       documentNumber: docNumber.trim(),
       expiryDate: docExpiry || undefined,
-      status: 'ACTIVE',
+      status: 'ACTIVE' as const,
       authority: docAuthority.trim() || 'Official Issuing Authority',
       notes: docNotes.trim() || undefined,
-    });
+    };
+
+    if (editingDocId) {
+      updateDocument(editingDocId, docPayload);
+      showToast(`Document "${docTitle.trim()}" updated successfully!`);
+    } else {
+      addDocument(docPayload);
+      showToast(`Document "${docTitle.trim()}" vaulted securely!`);
+    }
 
     setDocTitle('');
     setDocNumber('');
     setDocNotes('');
+    setEditingDocId(null);
     setIsDocModalOpen(false);
-    showToast(`Document "${docTitle.trim()}" vaulted securely!`);
   };
 
   const handleQuickAddDocTemplate = (template: {
@@ -146,20 +170,37 @@ export const LifeAdminWorkspace: React.FC = () => {
     showToast(`Template added: ${template.title}`);
   };
 
+  const handleOpenEditChecklist = (chk: any) => {
+    setEditingChkId(chk.id);
+    setChkTitle(chk.title);
+    setChkFreq(chk.frequency);
+    setChkDueDate(chk.dueDate);
+    setChkCat(chk.category);
+    setIsChecklistModalOpen(true);
+  };
+
   const handleCreateChecklist = (e: React.FormEvent) => {
     e.preventDefault();
     if (!chkTitle.trim() || !chkDueDate) return;
 
-    addChecklist({
+    const chkPayload = {
       title: chkTitle.trim(),
       frequency: chkFreq,
       dueDate: chkDueDate,
       category: chkCat,
-    });
+    };
+
+    if (editingChkId) {
+      updateChecklist(editingChkId, chkPayload);
+      showToast(`Checklist item "${chkTitle.trim()}" updated!`);
+    } else {
+      addChecklist(chkPayload);
+      showToast(`Recurring item "${chkTitle.trim()}" added to administrative tracker!`);
+    }
 
     setChkTitle('');
+    setEditingChkId(null);
     setIsChecklistModalOpen(false);
-    showToast(`Recurring item "${chkTitle.trim()}" added to administrative tracker!`);
   };
 
   const handleSaveEmergency = (e: React.FormEvent) => {
@@ -220,7 +261,13 @@ Notes: ${emNotes || 'None'}`;
       {/* 1. Amber Hero Banner */}
       <SectionHero
         section="lifeadmin"
-        onPrimaryAction={() => setIsDocModalOpen(true)}
+        onPrimaryAction={() => {
+          setEditingDocId(null);
+          setDocTitle('');
+          setDocNumber('');
+          setDocNotes('');
+          setIsDocModalOpen(true);
+        }}
         primaryActionLabel="+ Add a Document"
         onSecondaryAction={() => setActiveTab('EMERGENCY')}
         secondaryActionLabel="View Emergency Card"
@@ -356,7 +403,13 @@ Notes: ${emNotes || 'None'}`;
               </p>
             </div>
             <button
-              onClick={() => setIsDocModalOpen(true)}
+              onClick={() => {
+                setEditingDocId(null);
+                setDocTitle('');
+                setDocNumber('');
+                setDocNotes('');
+                setIsDocModalOpen(true);
+              }}
               className="px-4 py-2 rounded-xl bg-[#b27635] hover:bg-[#976025] text-white text-xs font-bold transition-all shadow-md shadow-[#b27635]/20 cursor-pointer flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
@@ -396,7 +449,13 @@ Notes: ${emNotes || 'None'}`;
 
                 <div className="flex items-center justify-center gap-3">
                   <button
-                    onClick={() => setIsDocModalOpen(true)}
+                    onClick={() => {
+                      setEditingDocId(null);
+                      setDocTitle('');
+                      setDocNumber('');
+                      setDocNotes('');
+                      setIsDocModalOpen(true);
+                    }}
                     className="px-5 py-2.5 rounded-xl bg-[#b27635] hover:bg-[#976025] text-white text-xs font-bold transition-all shadow-md shadow-[#b27635]/20 cursor-pointer flex items-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
@@ -498,13 +557,22 @@ Notes: ${emNotes || 'None'}`;
                       <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#fff0df] text-[#b27635] uppercase">
                         {doc.category.replace('_', ' ')}
                       </span>
-                      <button
-                        onClick={() => deleteDocument(doc.id)}
-                        className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer"
-                        title="Delete document"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleOpenEditDocument(doc)}
+                          className="text-slate-300 hover:text-[#b27635] transition-colors cursor-pointer p-0.5"
+                          title="Edit document"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => deleteDocument(doc.id)}
+                          className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer p-0.5"
+                          title="Delete document"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
 
                     <h4 className="text-sm font-extrabold text-slate-800 mt-2">{doc.title}</h4>
@@ -676,7 +744,11 @@ Notes: ${emNotes || 'None'}`;
               </p>
             </div>
             <button
-              onClick={() => setIsChecklistModalOpen(true)}
+              onClick={() => {
+                setEditingChkId(null);
+                setChkTitle('');
+                setIsChecklistModalOpen(true);
+              }}
               className="px-4 py-2 rounded-xl bg-[#b27635] hover:bg-[#976025] text-white text-xs font-bold transition-all shadow-md shadow-[#b27635]/20 cursor-pointer flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
@@ -719,13 +791,20 @@ Notes: ${emNotes || 'None'}`;
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-extrabold uppercase">
+                <div className="flex items-center gap-1.5">
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-extrabold uppercase mr-1">
                     {chk.frequency}
                   </span>
                   <button
+                    onClick={() => handleOpenEditChecklist(chk)}
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-[#b27635] transition-colors cursor-pointer p-1"
+                    title="Edit item"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button
                     onClick={() => deleteChecklist(chk.id)}
-                    className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-600 transition-colors cursor-pointer p-1"
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer p-1"
                     title="Delete item"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -755,7 +834,9 @@ Notes: ${emNotes || 'None'}`;
               className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#e4e9f1] space-y-4"
             >
               <div className="flex items-center justify-between pb-3 border-b border-[#e4e9f1]">
-                <h3 className="font-extrabold text-base text-[#243047]">Vault Official Document</h3>
+                <h3 className="font-extrabold text-base text-[#243047]">
+                  {editingDocId ? 'Edit Vaulted Document' : 'Vault Official Document'}
+                </h3>
                 <button
                   onClick={() => setIsDocModalOpen(false)}
                   className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
@@ -850,7 +931,7 @@ Notes: ${emNotes || 'None'}`;
                     type="submit"
                     className="px-5 py-2 rounded-xl bg-[#b27635] text-white font-bold"
                   >
-                    Save to Vault
+                    {editingDocId ? 'Update Document' : 'Save to Vault'}
                   </button>
                 </div>
               </form>
@@ -1038,7 +1119,7 @@ Notes: ${emNotes || 'None'}`;
             >
               <div className="flex items-center justify-between pb-3 border-b border-[#e4e9f1]">
                 <h3 className="font-extrabold text-base text-[#243047]">
-                  Add Recurring Administrative Item
+                  {editingChkId ? 'Edit Administrative Item' : 'Add Recurring Administrative Item'}
                 </h3>
                 <button
                   onClick={() => setIsChecklistModalOpen(false)}
@@ -1113,7 +1194,7 @@ Notes: ${emNotes || 'None'}`;
                     type="submit"
                     className="px-5 py-2 rounded-xl bg-[#b27635] text-white font-bold"
                   >
-                    Add Checklist
+                    {editingChkId ? 'Update Item' : 'Add Checklist'}
                   </button>
                 </div>
               </form>

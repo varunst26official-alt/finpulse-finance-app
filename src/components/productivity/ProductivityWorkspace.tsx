@@ -7,6 +7,7 @@ import {
   Circle,
   Plus,
   Trash2,
+  Pencil,
   Clock,
   CheckSquare,
   Play,
@@ -27,9 +28,11 @@ export const ProductivityWorkspace: React.FC = () => {
     tasks,
     toggleTaskComplete,
     addTask,
+    updateTask,
     deleteTask,
     habits,
     addHabit,
+    updateHabit,
     toggleHabit,
     deleteHabit,
     focusSessions,
@@ -50,6 +53,7 @@ export const ProductivityWorkspace: React.FC = () => {
 
   // New Task Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState('');
   const [newTime, setNewTime] = useState('09:00 AM');
   const [newCategory, setNewCategory] = useState<LifeOSCategory>('PRODUCTIVITY');
@@ -58,6 +62,7 @@ export const ProductivityWorkspace: React.FC = () => {
 
   // New Habit Modal
   const [isHabitModalOpen, setIsHabitModalOpen] = useState(false);
+  const [editingHabitId, setEditingHabitId] = useState<string | null>(null);
   const [habitTitle, setHabitTitle] = useState('');
   const [habitCategory, setHabitCategory] = useState<'MORNING' | 'AFTERNOON' | 'EVENING' | 'ANYTIME'>('MORNING');
   const [habitIcon, setHabitIcon] = useState('⚡');
@@ -115,17 +120,25 @@ export const ProductivityWorkspace: React.FC = () => {
     return true;
   });
 
+  const handleOpenEditTask = (task: any) => {
+    setEditingTaskId(task.id);
+    setNewTitle(task.title);
+    setNewTime(task.time || '09:00 AM');
+    setNewCategory(task.category);
+    setNewPriority(task.priority);
+    setNewNotes(task.notes || '');
+    setIsAddModalOpen(true);
+  };
+
   const handleCreateTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
-    addTask({
+    const taskPayload = {
       title: newTitle.trim(),
       time: newTime,
       category: newCategory,
       priority: newPriority,
-      status: 'TODO',
-      badgeLabel: 'To do',
       notes: newNotes.trim() || undefined,
       iconSymbol:
         newCategory === 'FINANCE'
@@ -137,27 +150,57 @@ export const ProductivityWorkspace: React.FC = () => {
           : newCategory === 'LIFEADMIN'
           ? '◇'
           : '☑',
-    });
+    };
+
+    if (editingTaskId) {
+      updateTask(editingTaskId, taskPayload);
+      showToast(`Task "${newTitle.trim()}" updated!`);
+    } else {
+      addTask({
+        ...taskPayload,
+        status: 'TODO',
+        badgeLabel: 'To do',
+      });
+      showToast(`Task "${newTitle.trim()}" added to agenda!`);
+    }
 
     setNewTitle('');
     setNewNotes('');
+    setEditingTaskId(null);
     setIsAddModalOpen(false);
-    showToast(`Task "${newTitle.trim()}" added to agenda!`);
+  };
+
+  const handleOpenEditHabit = (habit: any) => {
+    setEditingHabitId(habit.id);
+    setHabitTitle(habit.title);
+    setHabitCategory(habit.category);
+    setHabitIcon(habit.icon || '⚡');
+    setIsHabitModalOpen(true);
   };
 
   const handleCreateHabit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!habitTitle.trim()) return;
 
-    addHabit({
-      title: habitTitle.trim(),
-      category: habitCategory,
-      icon: habitIcon,
-    });
+    if (editingHabitId) {
+      updateHabit(editingHabitId, {
+        title: habitTitle.trim(),
+        category: habitCategory,
+        icon: habitIcon,
+      });
+      showToast(`Habit "${habitTitle.trim()}" updated!`);
+    } else {
+      addHabit({
+        title: habitTitle.trim(),
+        category: habitCategory,
+        icon: habitIcon,
+      });
+      showToast(`Habit "${habitTitle.trim()}" added to daily routine!`);
+    }
 
     setHabitTitle('');
+    setEditingHabitId(null);
     setIsHabitModalOpen(false);
-    showToast(`Habit "${habitTitle.trim()}" added to daily routine!`);
   };
 
   const handleQuickAddHabitTemplate = (template: {
@@ -229,7 +272,12 @@ export const ProductivityWorkspace: React.FC = () => {
       {/* 1. Indigo Hero Banner */}
       <SectionHero
         section="productivity"
-        onPrimaryAction={() => setIsAddModalOpen(true)}
+        onPrimaryAction={() => {
+          setEditingTaskId(null);
+          setNewTitle('');
+          setNewNotes('');
+          setIsAddModalOpen(true);
+        }}
         primaryActionLabel="+ Add a Task"
         onSecondaryAction={() => setSubTab('CALENDAR')}
         secondaryActionLabel="Open Unified Calendar"
@@ -359,7 +407,12 @@ export const ProductivityWorkspace: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => {
+                  setEditingTaskId(null);
+                  setNewTitle('');
+                  setNewNotes('');
+                  setIsAddModalOpen(true);
+                }}
                 className="px-4 py-2 rounded-xl bg-[#5574d9] hover:bg-[#435eb7] text-white text-xs font-bold transition-all shadow-md shadow-[#5574d9]/20 cursor-pointer flex items-center gap-1.5"
               >
                 <Plus className="w-4 h-4" />
@@ -494,13 +547,22 @@ export const ProductivityWorkspace: React.FC = () => {
                       {task.badgeLabel}
                     </span>
 
-                    <button
-                      onClick={() => deleteTask(task.id)}
-                      className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-600 transition-all cursor-pointer p-1"
-                      title="Delete task"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-all">
+                      <button
+                        onClick={() => handleOpenEditTask(task)}
+                        className="text-slate-300 hover:text-[#5574d9] transition-colors cursor-pointer p-1"
+                        title="Edit task"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => deleteTask(task.id)}
+                        className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer p-1"
+                        title="Delete task"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 );
               })
@@ -525,7 +587,11 @@ export const ProductivityWorkspace: React.FC = () => {
               </p>
             </div>
             <button
-              onClick={() => setIsHabitModalOpen(true)}
+              onClick={() => {
+                setEditingHabitId(null);
+                setHabitTitle('');
+                setIsHabitModalOpen(true);
+              }}
               className="px-4 py-2 rounded-xl bg-[#5574d9] hover:bg-[#435eb7] text-white text-xs font-bold transition-all shadow-md shadow-[#5574d9]/20 cursor-pointer flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
@@ -547,7 +613,11 @@ export const ProductivityWorkspace: React.FC = () => {
 
               <div className="flex items-center justify-center gap-3">
                 <button
-                  onClick={() => setIsHabitModalOpen(true)}
+                  onClick={() => {
+                    setEditingHabitId(null);
+                    setHabitTitle('');
+                    setIsHabitModalOpen(true);
+                  }}
                   className="px-5 py-2.5 rounded-xl bg-[#5574d9] hover:bg-[#435eb7] text-white text-xs font-bold transition-all shadow-md shadow-[#5574d9]/20 cursor-pointer flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
@@ -666,13 +736,22 @@ export const ProductivityWorkspace: React.FC = () => {
                       <span>🔥</span>
                       <span>{habit.streakCount} days</span>
                     </span>
-                    <button
-                      onClick={() => deleteHabit(habit.id)}
-                      className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer p-1"
-                      title="Delete habit"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleOpenEditHabit(habit)}
+                        className="text-slate-300 hover:text-[#5574d9] transition-colors cursor-pointer p-1"
+                        title="Edit habit"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => deleteHabit(habit.id)}
+                        className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer p-1"
+                        title="Delete habit"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -838,7 +917,9 @@ export const ProductivityWorkspace: React.FC = () => {
               className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#e4e9f1] space-y-4"
             >
               <div className="flex items-center justify-between pb-3 border-b border-[#e4e9f1]">
-                <h3 className="font-extrabold text-base text-[#243047]">Create New LifeOS Task</h3>
+                <h3 className="font-extrabold text-base text-[#243047]">
+                  {editingTaskId ? 'Edit LifeOS Task' : 'Create New LifeOS Task'}
+                </h3>
                 <button
                   onClick={() => setIsAddModalOpen(false)}
                   className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
@@ -923,7 +1004,7 @@ export const ProductivityWorkspace: React.FC = () => {
                     type="submit"
                     className="px-5 py-2 rounded-xl bg-[#5574d9] text-white font-bold"
                   >
-                    Add Task
+                    {editingTaskId ? 'Update Task' : 'Add Task'}
                   </button>
                 </div>
               </form>
@@ -943,7 +1024,9 @@ export const ProductivityWorkspace: React.FC = () => {
               className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#e4e9f1] space-y-4"
             >
               <div className="flex items-center justify-between pb-3 border-b border-[#e4e9f1]">
-                <h3 className="font-extrabold text-base text-[#243047]">Create Daily Habit Routine</h3>
+                <h3 className="font-extrabold text-base text-[#243047]">
+                  {editingHabitId ? 'Edit Daily Habit Routine' : 'Create Daily Habit Routine'}
+                </h3>
                 <button
                   onClick={() => setIsHabitModalOpen(false)}
                   className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
@@ -1002,7 +1085,7 @@ export const ProductivityWorkspace: React.FC = () => {
                     type="submit"
                     className="px-5 py-2 rounded-xl bg-[#5574d9] text-white font-bold"
                   >
-                    Create Habit
+                    {editingHabitId ? 'Update Habit' : 'Create Habit'}
                   </button>
                 </div>
               </form>

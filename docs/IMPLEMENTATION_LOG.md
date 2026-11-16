@@ -196,6 +196,48 @@
   - `npx playwright test tests/cross-device-sync-and-income-allocation.spec.ts` (10/10 passed including iPhone nominal 75 months & inflation-exceeded handling).
 - **Risk Assessment:** Zero risk. Pure mathematical correction and UI transparency.
 
+### Entry 008: Universal Edit Option Implementation Across All User-Added Data Sections
+- **Timestamp:** 2026-11-16T07:05:00+05:30
+- **Scope:** Universal Edit Options (`Pencil` button + pre-populated modal workflow) across Goals, Debts, Vaulted Documents, Annual Checklists, Daily Habits, Agenda Tasks, and Library Books.
+- **Root Cause / Motivation:**
+  - Previously, all user-added items across multiple modules (Life Goals, Debts/Loans, Document Vault, Administrative Checklists, Agenda Tasks, Daily Habits, and Library Books) only had a `Trash2` (delete) button and lacked an `Edit` action. Users who made typos or wished to adjust milestones, interest rates, target dates, or amounts were forced to delete and recreate their entries from scratch.
+- **Before Behavior:**
+  - Goal cards, Debt cards, Document cards, Checklist rows, Task rows, Habit rows, and Book cards presented only a `Trash2` button.
+  - Store methods in `lifeosStore.ts` lacked update handlers for `updateTask`, `updateHabit`, `updateDocument`, and `updateChecklist`.
+- **After Behavior:**
+  - `src/stores/lifeosStore.ts`:
+    - Added `updateTask(id, updates)`
+    - Added `updateHabit(id, updates)`
+    - Added `updateDocument(id, updates)`
+    - Added `updateChecklist(id, updates)`
+  - `src/services/apiClient.ts`:
+    - Added `updateHabit` and `updateChecklist` to `api.lifeos`.
+    - Protected `API_BASE` initialization with safe environment checks.
+  - `src/types/finance.ts`:
+    - Augmented `GoalItem` interface with `inflationAdjusted?: boolean;` and `stepUpPercentage?: number;`.
+  - `src/components/goals/GoalMilestoneManager.tsx`:
+    - Added `Pencil` edit button alongside `Trash2` on every goal card.
+    - Implemented `handleOpenEditGoal(goal)` to pre-populate title, category, target amount, current saved, monthly SIP, target date, priority, returns, inflation rate, step-up %, and notes.
+    - Modal dynamically toggles between "Create New Life Goal" and "Edit Life Goal", and triggers `updateGoal` on save.
+  - `src/components/debts/DebtRepaymentManager.tsx`:
+    - Added `Pencil` edit button alongside `Trash2` on every debt card.
+    - Implemented `handleOpenEditDebt(debt)` to pre-populate title, category, lender, principal, current outstanding, interest rate, EMI, due day, tenure, and notes.
+    - Modal dynamically updates via `updateDebt` on save.
+  - `src/components/lifeadmin/LifeAdminWorkspace.tsx`:
+    - Added `Pencil` edit button to all Vault Document cards and Recurring Checklist rows.
+    - Implemented `handleOpenEditDocument(doc)` and `handleOpenEditChecklist(chk)` with clean modal update flows.
+  - `src/components/productivity/ProductivityWorkspace.tsx`:
+    - Added `Pencil` edit button on hover for Agenda Tasks and Habit cards.
+    - Implemented `handleOpenEditTask(task)` and `handleOpenEditHabit(habit)` with dynamic modal update workflows.
+  - `src/components/learning/LearningWorkspace.tsx`:
+    - Added `Pencil` edit button on Library Book cards with `handleOpenEditBook(book)`.
+- **Tests Executed:**
+  - `tsc -b && vite build` (Passed cleanly, exit code 0, 36.61s).
+  - `npm run lint` (oxlint passed with 0 errors across 133 files).
+  - `npx playwright test tests/cross-device-sync-and-income-allocation.spec.ts` (10/10 passed).
+  - `npx playwright test tests/universal-edit-option.spec.ts` (25/25 passed across all browser profiles).
+- **Risk Assessment:** Zero risk. 100% backwards-compatible state mutations preserving existing data schemas and formulas.
+
 ---
 
 *(Future implementation batches will append entries here following the exact same schema).*

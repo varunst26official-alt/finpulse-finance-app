@@ -12,6 +12,7 @@ import {
   Star,
   CheckCircle2,
   Trash2,
+  Pencil,
   Check,
   X,
   Compass,
@@ -34,6 +35,7 @@ export const LearningWorkspace: React.FC = () => {
   // Modals
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
+  const [editingBookId, setEditingBookId] = useState<string | null>(null);
 
   // Skill Form
   const [title, setTitle] = useState('');
@@ -103,26 +105,48 @@ export const LearningWorkspace: React.FC = () => {
     showToast(`Learning goal "${title.trim()}" added to roadmap!`);
   };
 
+  const handleOpenEditBook = (book: any) => {
+    setEditingBookId(book.id);
+    setBookTitle(book.title);
+    setBookAuthor(book.author);
+    setBookCategory(book.category);
+    setBookTotalPages(book.totalPages);
+    setBookNotes(book.notes || '');
+    setIsBookModalOpen(true);
+  };
+
   const handleCreateBook = (e: React.FormEvent) => {
     e.preventDefault();
     if (!bookTitle.trim()) return;
 
-    addBook({
-      title: bookTitle.trim(),
-      author: bookAuthor.trim() || 'Unknown Author',
-      category: bookCategory,
-      currentPage: 0,
-      totalPages: Number(bookTotalPages) || 300,
-      status: 'IN_PROGRESS',
-      rating: 5,
-      notes: bookNotes.trim() || undefined,
-    });
+    if (editingBookId) {
+      updateBook(editingBookId, {
+        title: bookTitle.trim(),
+        author: bookAuthor.trim() || 'Unknown Author',
+        category: bookCategory,
+        totalPages: Number(bookTotalPages) || 300,
+        notes: bookNotes.trim() || undefined,
+      });
+      showToast(`"${bookTitle.trim()}" updated successfully!`);
+    } else {
+      addBook({
+        title: bookTitle.trim(),
+        author: bookAuthor.trim() || 'Unknown Author',
+        category: bookCategory,
+        currentPage: 0,
+        totalPages: Number(bookTotalPages) || 300,
+        status: 'IN_PROGRESS',
+        rating: 5,
+        notes: bookNotes.trim() || undefined,
+      });
+      showToast(`"${bookTitle.trim()}" added to your bookshelf!`);
+    }
 
     setBookTitle('');
     setBookAuthor('');
     setBookNotes('');
+    setEditingBookId(null);
     setIsBookModalOpen(false);
-    showToast(`"${bookTitle.trim()}" added to your bookshelf!`);
   };
 
   return (
@@ -412,7 +436,13 @@ export const LearningWorkspace: React.FC = () => {
               </p>
             </div>
             <button
-              onClick={() => setIsBookModalOpen(true)}
+              onClick={() => {
+                setEditingBookId(null);
+                setBookTitle('');
+                setBookAuthor('');
+                setBookNotes('');
+                setIsBookModalOpen(true);
+              }}
               className="px-4 py-2 rounded-xl bg-[#8a5bd6] hover:bg-[#7747c4] text-white text-xs font-bold transition-all shadow-md shadow-[#8a5bd6]/20 cursor-pointer flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
@@ -437,13 +467,22 @@ export const LearningWorkspace: React.FC = () => {
                       <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 uppercase">
                         {book.category}
                       </span>
-                      <button
-                        onClick={() => deleteBook(book.id)}
-                        className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer"
-                        title="Delete book"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleOpenEditBook(book)}
+                          className="text-slate-300 hover:text-amber-600 transition-colors cursor-pointer p-0.5"
+                          title="Edit book"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => deleteBook(book.id)}
+                          className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer p-0.5"
+                          title="Delete book"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
 
                     <h4 className="text-sm font-extrabold text-slate-800 mt-2">{book.title}</h4>
@@ -598,7 +637,9 @@ export const LearningWorkspace: React.FC = () => {
               className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#e4e9f1] space-y-4"
             >
               <div className="flex items-center justify-between pb-3 border-b border-[#e4e9f1]">
-                <h3 className="font-extrabold text-base text-[#243047]">Add Book to Vault</h3>
+                <h3 className="font-extrabold text-base text-[#243047]">
+                  {editingBookId ? 'Edit Book Record' : 'Add Book to Vault'}
+                </h3>
                 <button
                   onClick={() => setIsBookModalOpen(false)}
                   className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
@@ -677,7 +718,7 @@ export const LearningWorkspace: React.FC = () => {
                     type="submit"
                     className="px-5 py-2 rounded-xl bg-[#8a5bd6] text-white font-bold"
                   >
-                    Add Book
+                    {editingBookId ? 'Update Book' : 'Add Book'}
                   </button>
                 </div>
               </form>

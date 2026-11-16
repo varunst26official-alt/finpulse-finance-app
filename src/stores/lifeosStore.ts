@@ -65,6 +65,7 @@ interface LifeOSState {
   tasks: TaskItem[];
   toggleTaskComplete: (id: string) => void;
   addTask: (task: Omit<TaskItem, 'id'>) => void;
+  updateTask: (id: string, updates: Partial<TaskItem>) => void;
   deleteTask: (id: string) => void;
 
   // Wellness & Metrics
@@ -110,6 +111,7 @@ interface LifeOSState {
   // Habits & Focus (Phase 4)
   habits: HabitItem[];
   addHabit: (habit: { title: string; category: 'MORNING' | 'AFTERNOON' | 'EVENING' | 'ANYTIME'; icon?: string }) => void;
+  updateHabit: (id: string, updates: Partial<HabitItem>) => void;
   toggleHabit: (id: string) => void;
   deleteHabit: (id: string) => void;
 
@@ -139,6 +141,7 @@ interface LifeOSState {
   // Life Administration Documents (Phase 6)
   documents: DocumentItem[];
   addDocument: (doc: Omit<DocumentItem, 'id'>) => void;
+  updateDocument: (id: string, updates: Partial<DocumentItem>) => void;
   deleteDocument: (id: string) => void;
 
   emergencyInfo: EmergencyProfile | null;
@@ -146,6 +149,7 @@ interface LifeOSState {
 
   adminChecklists: AdminChecklistItem[];
   addChecklist: (item: Omit<AdminChecklistItem, 'id' | 'isCompleted'>) => void;
+  updateChecklist: (id: string, updates: Partial<AdminChecklistItem>) => void;
   toggleChecklist: (id: string) => void;
   deleteChecklist: (id: string) => void;
 
@@ -290,6 +294,14 @@ export const useLifeOSStore = create<LifeOSState>()(
         }));
 
         api.lifeos.deleteTask(id).catch(() => {});
+      },
+
+      updateTask: (id, updates) => {
+        set((state) => ({
+          tasks: state.tasks.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+        }));
+
+        api.lifeos.updateTask(id, updates).catch(() => {});
       },
 
       wellness: {
@@ -567,6 +579,13 @@ export const useLifeOSStore = create<LifeOSState>()(
         api.lifeos.toggleHabit(id).catch(() => {});
       },
 
+      updateHabit: (id, updates) => {
+        set((state) => ({
+          habits: state.habits.map((h) => (h.id === id ? { ...h, ...updates } : h)),
+        }));
+        api.lifeos.updateHabit?.(id, updates)?.catch(() => {});
+      },
+
       deleteHabit: (id) => {
         set((state) => ({
           habits: state.habits.filter((h) => h.id !== id),
@@ -660,6 +679,12 @@ export const useLifeOSStore = create<LifeOSState>()(
           documents: state.documents.filter((d) => d.id !== id),
         })),
 
+      updateDocument: (id, updates) => {
+        set((state) => ({
+          documents: state.documents.map((d) => (d.id === id ? { ...d, ...updates } : d)),
+        }));
+      },
+
       emergencyInfo: null,
 
       saveEmergencyInfo: (info) => {
@@ -688,6 +713,13 @@ export const useLifeOSStore = create<LifeOSState>()(
           ),
         }));
         api.lifeos.toggleChecklist(id).catch(() => {});
+      },
+
+      updateChecklist: (id, updates) => {
+        set((state) => ({
+          adminChecklists: state.adminChecklists.map((c) => (c.id === id ? { ...c, ...updates } : c)),
+        }));
+        api.lifeos.updateChecklist?.(id, updates)?.catch(() => {});
       },
 
       deleteChecklist: (id) => {

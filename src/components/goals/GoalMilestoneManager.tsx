@@ -11,6 +11,7 @@ import {
   Target,
   Plus,
   Trash2,
+  Pencil,
   Sparkles,
   CheckCircle2,
   TrendingUp,
@@ -33,6 +34,7 @@ export const GoalMilestoneManager: React.FC = () => {
     goals,
     currency,
     addGoal,
+    updateGoal,
     deleteGoal,
     contributeToGoal,
   } = useFinanceStore();
@@ -45,6 +47,7 @@ export const GoalMilestoneManager: React.FC = () => {
 
   // Modals
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
   const [topUpGoal, setTopUpGoal] = useState<GoalItem | null>(null);
   const [topUpAmount, setTopUpAmount] = useState<number>(25000);
 
@@ -140,7 +143,26 @@ export const GoalMilestoneManager: React.FC = () => {
     return goals.filter((g) => g.category === filterCategory);
   }, [goals, filterCategory]);
 
-  // Handle Create Goal
+  const handleOpenEditGoal = (goal: GoalItem) => {
+    setEditingGoalId(goal.id);
+    setNewTitle(goal.title);
+    setNewCategory(goal.category);
+    const mult = currency === 'INR' ? currentRate : 1;
+    setNewTargetToday(Math.round(goal.targetAmount * mult));
+    setNewCurrentSaved(Math.round(goal.currentSaved * mult));
+    setNewMonthlySip(Math.round(goal.monthlyContribution * mult));
+    setNewTargetDate(goal.targetDate || new Date().toISOString().split('T')[0]);
+    setNewPriority(goal.priority);
+    setNewInflation(goal.inflationRate ?? 7.0);
+    setNewReturns(goal.expectedReturnRate ?? 12.0);
+    setNewStepUp(goal.stepUpPercentage || 0);
+    setIsInflationAdjusted(goal.inflationAdjusted ?? true);
+    setNewNotes(goal.notes || '');
+    setIsAutoTimeCalculation(false);
+    setIsAddModalOpen(true);
+  };
+
+  // Handle Create or Update Goal
   const handleCreateGoal = (e: React.FormEvent) => {
     e.preventDefault();
     const targetUSD = currency === 'INR' ? newTargetToday / currentRate : newTargetToday;
@@ -152,7 +174,7 @@ export const GoalMilestoneManager: React.FC = () => {
         ? newGoalProjection.achievementDate
         : newTargetDate;
 
-    addGoal({
+    const goalPayload = {
       title: newTitle || 'Personal Financial Goal',
       category: newCategory,
       targetAmount: targetUSD,
@@ -162,10 +184,19 @@ export const GoalMilestoneManager: React.FC = () => {
       priority: newPriority,
       inflationRate: newInflation || 6.0,
       expectedReturnRate: newReturns || 12.0,
+      inflationAdjusted: isInflationAdjusted,
+      stepUpPercentage: newStepUp,
       notes: newNotes,
-    });
+    };
+
+    if (editingGoalId) {
+      updateGoal(editingGoalId, goalPayload);
+    } else {
+      addGoal(goalPayload);
+    }
 
     setIsAddModalOpen(false);
+    setEditingGoalId(null);
     setNewTitle('');
     setNewNotes('');
   };
@@ -345,6 +376,10 @@ export const GoalMilestoneManager: React.FC = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => {
+                setEditingGoalId(null);
+                setNewTitle('');
+                setNewNotes('');
+                setIsAutoTimeCalculation(true);
                 if (currency === 'INR') {
                   setNewTargetToday(5000000);
                   setNewCurrentSaved(1000000);
@@ -526,7 +561,13 @@ export const GoalMilestoneManager: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
-                  onClick={() => setIsAddModalOpen(true)}
+                  onClick={() => {
+                    setEditingGoalId(null);
+                    setNewTitle('');
+                    setNewNotes('');
+                    setIsAutoTimeCalculation(true);
+                    setIsAddModalOpen(true);
+                  }}
                   className="px-5 py-2.5 rounded-xl bg-[#9e783e] hover:bg-[#88642e] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
                 >
                   + Create Custom Goal
@@ -645,17 +686,26 @@ export const GoalMilestoneManager: React.FC = () => {
                           </span>
                         </div>
 
-                        <button
-                          onClick={() => {
-                            if (window.confirm(`Delete goal "${goal.title}"?`)) {
-                              deleteGoal(goal.id);
-                            }
-                          }}
-                          className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                          title="Delete goal"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleOpenEditGoal(goal)}
+                            className="p-1 rounded-lg text-slate-400 hover:text-[#9e783e] hover:bg-[#9e783e]/10 transition-colors cursor-pointer"
+                            title="Edit goal"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Delete goal "${goal.title}"?`)) {
+                                deleteGoal(goal.id);
+                              }
+                            }}
+                            className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Delete goal"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       </div>
 
                       <h4 className="text-base font-extrabold text-slate-900 leading-snug">
@@ -947,9 +997,13 @@ export const GoalMilestoneManager: React.FC = () => {
                     <Target className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-extrabold text-slate-900">Create New Life Goal</h3>
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      {editingGoalId ? 'Edit Life Goal' : 'Create New Life Goal'}
+                    </h3>
                     <p className="text-[11px] text-slate-500 font-medium">
-                      Plan milestone targets with automatic inflation adjustment
+                      {editingGoalId
+                        ? 'Modify milestone targets, contributions and return expectations'
+                        : 'Plan milestone targets with automatic inflation adjustment'}
                     </p>
                   </div>
                 </div>
@@ -1220,7 +1274,7 @@ export const GoalMilestoneManager: React.FC = () => {
                     type="submit"
                     className="px-5 py-2 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] shadow-md shadow-[#9e783e]/20 cursor-pointer"
                   >
-                    Save Life Goal
+                    {editingGoalId ? 'Update Life Goal' : 'Save Life Goal'}
                   </button>
                 </div>
               </form>

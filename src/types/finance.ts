@@ -250,6 +250,8 @@ export interface GoalItem {
   priority: GoalPriority;
   inflationRate: number; // annual percentage e.g. 6.0 or 10.0
   expectedReturnRate: number; // annual percentage e.g. 12.0
+  inflationAdjusted?: boolean;
+  stepUpPercentage?: number;
   allocatedAssetIds?: string[];
   isAchieved?: boolean;
   notes?: string;

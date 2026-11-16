@@ -23,7 +23,7 @@ import {
 import { UserAdaptiveInputs, AdaptiveLifeBlueprint } from '@/services/adaptiveLifeEngine';
 import { UserProfile } from '@/stores/authStore';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL
+const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL)
   ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')}/api`
   : '/api';
 const TOKEN_KEY = 'finpulse_auth_token';
@@ -416,6 +416,13 @@ export const api = {
       });
     },
 
+    updateHabit: async (id: string, updates: Record<string, any>): Promise<{ success: boolean }> => {
+      return request(`/lifeos/habits/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(updates),
+      });
+    },
+
     toggleHabit: async (id: string): Promise<{ success: boolean; isCompletedToday: boolean; streakCount: number }> => {
       return request(`/lifeos/habits/${id}/toggle`, {
         method: 'PATCH',
@@ -468,6 +475,13 @@ export const api = {
       return request('/lifeos/checklists', {
         method: 'POST',
         body: JSON.stringify(item),
+      });
+    },
+
+    updateChecklist: async (id: string, updates: Partial<AdminChecklistItem>): Promise<{ success: boolean }> => {
+      return request(`/lifeos/checklists/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(updates),
       });
     },
 
