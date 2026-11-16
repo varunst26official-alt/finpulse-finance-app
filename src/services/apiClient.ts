@@ -68,6 +68,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const token = getStoredToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
     ...(options.headers as Record<string, string>),
   };
 
@@ -75,15 +76,37 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch (netErr: any) {
+    throw new ApiError(`Network request failed: ${netErr?.message || 'Server unreachable'}`, 503);
+  }
 
-  const data = await response.json().catch(() => ({}));
+  // Capacitor / SPA Fallback Guard:
+  // If the server returned HTML (e.g. <!doctype html> or text/html from Capacitor asset server fallback),
+  // this is NOT a valid backend API endpoint!
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new ApiError('Remote backend service unavailable (received non-JSON response).', 503);
+  }
 
-  if (!response.ok) {
-    throw new ApiError(data.message || `Request failed with status ${response.status}`, response.status, data);
+  let data: any;
+  try {
+    data = await response.json();
+  } catch {
+    throw new ApiError('Failed to parse server response as JSON.', 500);
+  }
+
+  if (!response.ok || (data && data.success === false)) {
+    throw new ApiError(
+      data?.message || data?.error || `Request failed with status ${response.status}`,
+      response.status || 400,
+      data
+    );
   }
 
   return data as T;
@@ -104,6 +127,9 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       });
+      if (!res || !res.success || !res.user || !res.user.email) {
+        throw new ApiError('Invalid response from authentication server.', 401);
+      }
       if (res.token) setStoredToken(res.token);
       return res;
     },
@@ -118,6 +144,9 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       });
+      if (!res || !res.success || !res.user || !res.user.email) {
+        throw new ApiError('Invalid response from registration server.', 400);
+      }
       if (res.token) setStoredToken(res.token);
       return res;
     },

@@ -44,7 +44,7 @@ export function App() {
   }, [isAuthenticated, user, syncWithBackend, fetchLifeOSData]);
 
   // If user is not authenticated, show the customer Login / Register screen
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     return <AuthScreen />;
   }
 

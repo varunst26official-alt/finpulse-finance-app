@@ -241,4 +241,71 @@ test.describe('Production-Grade Auth Security & Strict User Isolation Suite', ()
     // Alice Signs Out cleanly
     await performSignOut();
   });
+
+  test('MOBILE / CAPACITOR SIMULATION: Rejects wrong credentials when backend returns HTML (Capacitor SPA fallback)', async ({ page }) => {
+    // Intercept /api/auth/login and return 200 OK with HTML content-type (exact Capacitor Android behavior)
+    await page.route('**/api/auth/login', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/html',
+        body: '<!doctype html><html><body>Capacitor SPA Fallback</body></html>',
+      });
+    });
+
+    await page.goto('/');
+
+    const emailInput = page.getByPlaceholder('name@example.com');
+    const passwordInput = page.getByPlaceholder('••••••••');
+
+    // 1. Try with wrong password for existing investor
+    await emailInput.fill('investor@quantra.io');
+    await passwordInput.fill('totally_wrong_password_999');
+    await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
+
+    // MUST REJECT!
+    await expect(page.getByText(/Incorrect password|Invalid email or password/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="user-profile-button"]')).not.toBeVisible();
+
+    // 2. Try with ghost email
+    await emailInput.fill('random_hacker@nowhere.com');
+    await passwordInput.fill('any_password_123');
+    await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
+
+    // MUST REJECT!
+    await expect(page.getByText(/Account not found|Invalid email or password/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="user-profile-button"]')).not.toBeVisible();
+  });
+
+  test('MOBILE / OFFLINE STANDALONE: Rejects wrong credentials and accepts correct ones with strict user isolation', async ({ page }) => {
+    // Abort all network requests to simulate complete offline mobile mode
+    await page.route('**/api/**', (route) => route.abort('failed'));
+
+    await page.goto('/');
+
+    const emailInput = page.getByPlaceholder('name@example.com');
+    const passwordInput = page.getByPlaceholder('••••••••');
+
+    // 1. Wrong password for investor@quantra.io
+    await emailInput.fill('investor@quantra.io');
+    await passwordInput.fill('wrongpassword123');
+    await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
+
+    await expect(page.getByText(/Incorrect password|Invalid email or password/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="user-profile-button"]')).not.toBeVisible();
+
+    // 2. Wrong password for admin@quantra.io
+    await emailInput.fill('admin@quantra.io');
+    await passwordInput.fill('wrongadminpass');
+    await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
+
+    await expect(page.getByText(/Incorrect password|Invalid email or password/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="user-profile-button"]')).not.toBeVisible();
+
+    // 3. Correct password for admin@quantra.io -> logs in as Super Admin
+    await emailInput.fill('admin@quantra.io');
+    await passwordInput.fill('admin123');
+    await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
+
+    await expect(page.locator('[data-testid="user-profile-button"]')).toBeVisible({ timeout: 10000 });
+  });
 });

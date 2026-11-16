@@ -99,6 +99,10 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           const res = await api.auth.login(normalizedEmail, password);
+          if (!res || !res.success || !res.user || !res.user.email) {
+            set({ isLoading: false });
+            return { success: false, error: 'Invalid email or password.' };
+          }
           set({ user: res.user, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
           // Store successful credentials locally for offline continuity
           localStorage.setItem(
@@ -128,39 +132,83 @@ export const useAuthStore = create<AuthState>()(
             return { success: false, error: err.message || 'Invalid email or password.' };
           }
 
-          // ONLY if server is truly unreachable (network offline), check cached offline credentials
+          // ONLY if server is truly unreachable (network offline or mobile standalone):
           console.warn('[LifeOS Auth] Server auth network unreachable, checking local credentials:', err?.message);
 
+          // Seed default accounts for local offline validation
+          const defaultAccounts: Record<string, { id: string; fullName: string; password: string; investorType: 'RETAIL' | 'HNI' | 'INSTITUTIONAL'; joinedDate: string }> = {
+            'admin@quantra.io': {
+              id: 'usr_superadmin',
+              fullName: 'Super Administrator',
+              password: 'admin123',
+              investorType: 'INSTITUTIONAL',
+              joinedDate: 'Jan 2026',
+            },
+            'investor@quantra.io': {
+              id: 'usr_investor',
+              fullName: 'Quantra Investor',
+              password: 'password123',
+              investorType: 'HNI',
+              joinedDate: 'Jan 2026',
+            },
+          };
+
           const storedCredsRaw = localStorage.getItem(`lifeos_creds_${normalizedEmail}`);
+          let creds: any = null;
+
           if (storedCredsRaw) {
             try {
-              const creds = JSON.parse(storedCredsRaw);
-              if (creds.password && creds.password !== password) {
-                set({ isLoading: false });
-                return { success: false, error: 'Incorrect password. Please try again.' };
-              }
-              const loggedUser: UserProfile = {
-                id: creds.id || 'usr_' + Date.now(),
-                fullName: creds.fullName || normalizedEmail.split('@')[0],
-                email: normalizedEmail,
-                phoneNumber: creds.phoneNumber,
-                investorType: 'RETAIL',
-                joinedDate: creds.joinedDate || 'Member',
-              };
-              set({ user: loggedUser, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
-              loadUserScopedData(loggedUser);
-              return { success: true };
+              creds = JSON.parse(storedCredsRaw);
             } catch (e) {
               console.warn('[LifeOS Auth] Error parsing credentials:', e);
             }
+          } else if (defaultAccounts[normalizedEmail]) {
+            creds = defaultAccounts[normalizedEmail];
           }
 
-          // If no stored credentials exist on this device and server is offline, DO NOT AUTO-CREATE!
-          set({ isLoading: false });
-          return {
-            success: false,
-            error: 'Account not found. Please verify your email and password, or register a new account.',
+          // STRICT CHECK 1: Account existence
+          if (!creds) {
+            set({ isLoading: false });
+            return {
+              success: false,
+              error: 'Account not found. Please verify your email and password, or register a new account.',
+            };
+          }
+
+          // STRICT CHECK 2: Password matching (strictly non-empty and exact match)
+          if (!creds.password || creds.password !== password) {
+            set({ isLoading: false });
+            return {
+              success: false,
+              error: 'Incorrect password. Please try again.',
+            };
+          }
+
+          const loggedUser: UserProfile = {
+            id: creds.id || 'usr_' + Date.now(),
+            fullName: creds.fullName || normalizedEmail.split('@')[0],
+            email: normalizedEmail,
+            phoneNumber: creds.phoneNumber,
+            investorType: creds.investorType || 'RETAIL',
+            joinedDate: creds.joinedDate || 'Member',
           };
+
+          set({
+            user: loggedUser,
+            isAuthenticated: true,
+            isDemoMode: false,
+            authModalOpen: false,
+            isLoading: false,
+          });
+
+          // Ensure credentials remain saved for future offline sign-ins
+          localStorage.setItem(
+            `lifeos_creds_${normalizedEmail}`,
+            JSON.stringify({ ...loggedUser, password })
+          );
+
+          loadUserScopedData(loggedUser);
+          return { success: true };
         }
       },
 
@@ -185,6 +233,10 @@ export const useAuthStore = create<AuthState>()(
             password,
             phoneNumber: phoneNumber?.trim(),
           });
+          if (!res || !res.success || !res.user || !res.user.email) {
+            set({ isLoading: false });
+            return { success: false, error: 'Registration failed. Please try again.' };
+          }
           set({ user: res.user, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
 
           // Cache credentials locally for offline support
@@ -193,7 +245,7 @@ export const useAuthStore = create<AuthState>()(
             JSON.stringify({ ...res.user, password })
           );
 
-          useFinanceStore.getState().resetToFreshPortfolio(fullName);
+          useFinanceStore.getState().resetToFreshPortfolio(fullName.trim());
           useLifeOSStore.getState().resetToFreshState();
           useTourStore.getState().resetTour();
           saveUserScopedData(res.user);
