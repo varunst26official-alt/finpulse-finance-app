@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { useFinanceStore } from './financeStore';
 import { useLifeOSStore } from './lifeosStore';
 import { useTourStore } from './tourStore';
-import { api } from '@/services/apiClient';
+import { api, ApiError } from '@/services/apiClient';
 import { loadUserScopedData, saveUserScopedData, clearActiveUserStores } from '@/services/userStorage';
 
 export interface UserProfile {
@@ -64,6 +64,7 @@ export const useAuthStore = create<AuthState>()(
 
       loginAsDemo: async () => {
         set({ isLoading: true });
+        clearActiveUserStores();
         api.auth.logout();
         const demoUser: UserProfile = {
           id: 'demo_varun_senthil_kumar',
@@ -93,15 +94,42 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         const normalizedEmail = email.toLowerCase().trim();
 
+        // Wipe any prior in-memory stores before authenticating incoming user
+        clearActiveUserStores();
+
         try {
           const res = await api.auth.login(normalizedEmail, password);
           set({ user: res.user, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
+          // Store successful credentials locally for offline continuity
+          localStorage.setItem(
+            `lifeos_creds_${normalizedEmail}`,
+            JSON.stringify({ ...res.user, password })
+          );
           loadUserScopedData(res.user);
           await useFinanceStore.getState().syncWithBackend();
           return { success: true };
         } catch (err: any) {
-          // If server is offline, on static Vercel (405/404), or network fails, use client-side authentication
-          console.warn('[LifeOS Auth] Server auth unavailable, using localized auth:', err?.message);
+          // If server explicitly responded with an authentication rejection (401, 400, 403, 404)
+          if (
+            err instanceof ApiError &&
+            (err.status === 401 || err.status === 400 || err.status === 403 || err.status === 404)
+          ) {
+            set({ isLoading: false });
+            return { success: false, error: err.message || 'Invalid email or password.' };
+          }
+          if (
+            err?.message &&
+            (err.message.includes('Invalid') ||
+              err.message.includes('password') ||
+              err.message.includes('401') ||
+              err.message.includes('not found'))
+          ) {
+            set({ isLoading: false });
+            return { success: false, error: err.message || 'Invalid email or password.' };
+          }
+
+          // ONLY if server is truly unreachable (network offline), check cached offline credentials
+          console.warn('[LifeOS Auth] Server auth network unreachable, checking local credentials:', err?.message);
 
           const storedCredsRaw = localStorage.getItem(`lifeos_creds_${normalizedEmail}`);
           if (storedCredsRaw) {
@@ -127,23 +155,12 @@ export const useAuthStore = create<AuthState>()(
             }
           }
 
-          // If no previous stored password exists on this device, allow initial entry
-          const fallbackUser: UserProfile = {
-            id: 'usr_' + Date.now(),
-            fullName: normalizedEmail.split('@')[0],
-            email: normalizedEmail,
-            investorType: 'RETAIL',
-            joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          // If no stored credentials exist on this device and server is offline, DO NOT AUTO-CREATE!
+          set({ isLoading: false });
+          return {
+            success: false,
+            error: 'Account not found. Please verify your email and password, or register a new account.',
           };
-
-          localStorage.setItem(
-            `lifeos_creds_${normalizedEmail}`,
-            JSON.stringify({ ...fallbackUser, password })
-          );
-
-          set({ user: fallbackUser, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
-          loadUserScopedData(fallbackUser);
-          return { success: true };
         }
       },
 
@@ -158,6 +175,9 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         const normalizedEmail = email.toLowerCase().trim();
 
+        // Wipe prior in-memory stores before registering new account
+        clearActiveUserStores();
+
         try {
           const res = await api.auth.register({
             fullName: fullName.trim(),
@@ -167,6 +187,12 @@ export const useAuthStore = create<AuthState>()(
           });
           set({ user: res.user, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
 
+          // Cache credentials locally for offline support
+          localStorage.setItem(
+            `lifeos_creds_${normalizedEmail}`,
+            JSON.stringify({ ...res.user, password })
+          );
+
           useFinanceStore.getState().resetToFreshPortfolio(fullName);
           useLifeOSStore.getState().resetToFreshState();
           useTourStore.getState().resetTour();
@@ -175,7 +201,23 @@ export const useAuthStore = create<AuthState>()(
 
           return { success: true };
         } catch (err: any) {
-          // If server is on static Vercel (405/404) or offline, complete registration locally
+          // If server explicitly returned 409 Conflict (User exists) or 400 Bad Request, propagate error
+          if (err instanceof ApiError && (err.status === 409 || err.status === 400)) {
+            set({ isLoading: false });
+            return { success: false, error: err.message || 'An account with this email already exists.' };
+          }
+          if (err?.message && (err.message.includes('already exists') || err.message.includes('409'))) {
+            set({ isLoading: false });
+            return { success: false, error: err.message || 'An account with this email already exists.' };
+          }
+
+          // If offline and email already stored locally:
+          const existingLocal = localStorage.getItem(`lifeos_creds_${normalizedEmail}`);
+          if (existingLocal) {
+            set({ isLoading: false });
+            return { success: false, error: 'An account with this email already exists.' };
+          }
+
           console.warn('[LifeOS Auth] Server registration unavailable, completing locally:', err?.message);
 
           const newUser: UserProfile = {

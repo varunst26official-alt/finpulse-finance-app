@@ -16,8 +16,8 @@ test.describe('Authentication & Branding Tests', () => {
     await expect(emailInput).toBeVisible();
     await expect(passwordInput).toBeVisible();
 
-    await emailInput.fill('tester@quantra.io');
-    await passwordInput.fill('pass1234');
+    await emailInput.fill('investor@quantra.io');
+    await passwordInput.fill('password123');
 
     // Submit form
     await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
@@ -25,7 +25,7 @@ test.describe('Authentication & Branding Tests', () => {
     // Verify successful login into command centre
     await expect(page.getByText('QUANTRA')).toBeVisible();
     await expect(page.getByText('PRO', { exact: true })).toBeVisible();
-    await expect(page.getByText('Quantitative Wealth & Life Engine')).toBeVisible();
+    await expect(page.getByText('Quantra Life OS')).toBeVisible();
   });
 
   test('verifies Quantra brand identity, vector logo, and profile logout', async ({ page }) => {
@@ -33,7 +33,7 @@ test.describe('Authentication & Branding Tests', () => {
     
     // Log in
     await page.getByPlaceholder('name@example.com').fill('investor@quantra.io');
-    await page.getByPlaceholder('••••••••').fill('secret123');
+    await page.getByPlaceholder('••••••••').fill('password123');
     await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
 
     // Verify Quantra Header Branding

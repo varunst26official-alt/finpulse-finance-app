@@ -862,9 +862,39 @@ export async function initDatabase(): Promise<Database> {
   // Execute schema tables
   db.run(SCHEMA_SQL);
 
-  // Demo user seeding is intentionally disabled — no auto-seeded accounts.
-// Users must register or sign in explicitly.
-  console.log('[Database] Demo user seeding disabled. Users must register/sign in explicitly.');
+  // Ensure usr_demo exists for instant demo mode
+  const existingDemo = queryOne('SELECT id FROM users WHERE id = ?', ['usr_demo']);
+  if (!existingDemo) {
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync('demo123456', salt);
+    run(
+      `INSERT INTO users (id, full_name, email, password_hash, phone_number, investor_type, joined_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      ['usr_demo', 'Varun Senthil Kumar', 'varun@quantra.io', hash, '+91 98765 43210', 'HNI', 'Jan 2024']
+    );
+    run(
+      `INSERT OR IGNORE INTO user_settings (user_id, currency, emergency_target_months)
+       VALUES (?, 'INR', 6)`,
+      ['usr_demo']
+    );
+  }
+
+  // Ensure investor@quantra.io exists with password123 for default credential sign-in
+  const existingInvestor = queryOne('SELECT id FROM users WHERE email = ?', ['investor@quantra.io']);
+  if (!existingInvestor) {
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync('password123', salt);
+    run(
+      `INSERT INTO users (id, full_name, email, password_hash, phone_number, investor_type, joined_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      ['usr_investor', 'Quantra Investor', 'investor@quantra.io', hash, '+91 98765 00000', 'HNI', 'Jan 2026']
+    );
+    run(
+      `INSERT OR IGNORE INTO user_settings (user_id, currency, emergency_target_months)
+       VALUES (?, 'INR', 6)`,
+      ['usr_investor']
+    );
+  }
 
   persistDatabase();
   return db;

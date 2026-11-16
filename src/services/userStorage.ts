@@ -383,6 +383,9 @@ export function loadUserScopedData(user: UserProfile | null): void {
       useFinanceStore.setState(parsedFin);
     } else {
       // Clean slate for new user
+      try {
+        localStorage.removeItem('finance-storage');
+      } catch (e) {}
       useFinanceStore.getState().resetToFreshPortfolio(user.fullName);
     }
 
@@ -427,6 +430,9 @@ export function loadUserScopedData(user: UserProfile | null): void {
       useLifeOSStore.setState(parsedLife);
     } else {
       // Clean slate for new user
+      try {
+        localStorage.removeItem('lifeos-storage');
+      } catch (e) {}
       useLifeOSStore.getState().resetToFreshState();
     }
     useMasteryStore.getState().syncWithActualUserData();
@@ -480,6 +486,12 @@ export function resetAllUserData(user: UserProfile | null): void {
 export function clearActiveUserStores(): void {
   isClearing = true;
   try {
+    try {
+      localStorage.removeItem('finance-storage');
+      localStorage.removeItem('lifeos-storage');
+    } catch (e) {
+      // ignore in environments without localStorage
+    }
     useFinanceStore.getState().resetToFreshPortfolio('');
     useLifeOSStore.getState().resetToFreshState();
     useMasteryStore.getState().resetToFreshState();

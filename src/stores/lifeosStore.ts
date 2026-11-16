@@ -177,17 +177,17 @@ export const useLifeOSStore = create<LifeOSState>()(
           const res = await api.lifeos.fetchData();
           if (res.success && res.data) {
             set((state) => ({
-              tasks: res.data.tasks?.length ? res.data.tasks : state.tasks,
+              tasks: Array.isArray(res.data.tasks) ? res.data.tasks : state.tasks,
               wellness: res.data.wellness ? { ...state.wellness, ...res.data.wellness } : state.wellness,
-              learningItems: res.data.learningItems?.length ? res.data.learningItems : state.learningItems,
-              documents: res.data.documents?.length ? res.data.documents : state.documents,
-              workoutSessions: res.data.workoutSessions?.length ? res.data.workoutSessions : state.workoutSessions,
-              mealLogs: res.data.mealLogs?.length ? res.data.mealLogs : state.mealLogs,
-              habits: res.data.habits?.length ? res.data.habits : state.habits,
-              focusSessions: res.data.focusSessions?.length ? res.data.focusSessions : state.focusSessions,
-              learningBooks: res.data.learningBooks?.length ? res.data.learningBooks : state.learningBooks,
+              learningItems: Array.isArray(res.data.learningItems) ? res.data.learningItems : state.learningItems,
+              documents: Array.isArray(res.data.documents) ? res.data.documents : state.documents,
+              workoutSessions: Array.isArray(res.data.workoutSessions) ? res.data.workoutSessions : state.workoutSessions,
+              mealLogs: Array.isArray(res.data.mealLogs) ? res.data.mealLogs : state.mealLogs,
+              habits: Array.isArray(res.data.habits) ? res.data.habits : state.habits,
+              focusSessions: Array.isArray(res.data.focusSessions) ? res.data.focusSessions : state.focusSessions,
+              learningBooks: Array.isArray(res.data.learningBooks) ? res.data.learningBooks : state.learningBooks,
               emergencyInfo: res.data.emergencyInfo || state.emergencyInfo,
-              adminChecklists: res.data.adminChecklists?.length ? res.data.adminChecklists : state.adminChecklists,
+              adminChecklists: Array.isArray(res.data.adminChecklists) ? res.data.adminChecklists : state.adminChecklists,
               userInputs: res.data.userInputs || state.userInputs,
               activeBlueprint: res.data.blueprint || state.activeBlueprint,
             }));

@@ -1062,9 +1062,6 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       resetToFreshPortfolio: (userName = 'User') => {
-        if (hasAuthToken()) {
-          api.portfolio.resetToFresh().catch((err) => console.debug('[SQLite Sync] Reset portfolio:', err));
-        }
         set({
           assets: [],
           transactions: [],
@@ -1075,6 +1072,8 @@ export const useFinanceStore = create<FinanceState>()(
           policies: [],
           goals: [],
           emergencyTargetMonths: 6,
+          monthlyNetIncome: 1800,
+          monthlyLivingAllocation: 0,
           history: [],
            subscriptions: [],
            bills: [],
@@ -1110,51 +1109,15 @@ export const useFinanceStore = create<FinanceState>()(
           if (res && res.success && res.data) {
             const current = get();
 
-            const mergedAssets =
-              res.data.assets && res.data.assets.length > 0
-                ? res.data.assets
-                : current.assets;
-
-            const mergedTxns =
-              res.data.transactions && res.data.transactions.length > 0
-                ? res.data.transactions
-                : current.transactions;
-
-            const mergedDebts =
-              res.data.debts && res.data.debts.length > 0
-                ? res.data.debts
-                : current.debts;
-
-            const mergedPolicies =
-              res.data.policies && res.data.policies.length > 0
-                ? res.data.policies
-                : current.policies;
-
-            let mergedGoals = current.goals;
-            if (res.data.goals && res.data.goals.length > 0) {
-              const remoteIds = new Set(res.data.goals.map((g: GoalItem) => g.id));
-              const remoteTitles = new Set(res.data.goals.map((g: GoalItem) => g.title.toLowerCase().trim()));
-              const localUnique = current.goals.filter(
-                (g) => !remoteIds.has(g.id) && !remoteTitles.has(g.title.toLowerCase().trim())
-              );
-              mergedGoals = [...res.data.goals, ...localUnique];
-            }
-
-            let mergedCalendar = current.calendarEvents;
-            if (res.data.calendarEvents && res.data.calendarEvents.length > 0) {
-              const remoteIds = new Set(res.data.calendarEvents.map((e: CalendarEvent) => e.id));
-              const localUnique = current.calendarEvents.filter((e) => !remoteIds.has(e.id));
-              mergedCalendar = [...res.data.calendarEvents, ...localUnique];
-            }
-
             set({
-              assets: mergedAssets,
-              transactions: mergedTxns,
-              debts: mergedDebts,
-              policies: mergedPolicies,
-              goals: mergedGoals,
-              calendarEvents: mergedCalendar,
+              assets: Array.isArray(res.data.assets) ? res.data.assets : [],
+              transactions: Array.isArray(res.data.transactions) ? res.data.transactions : [],
+              debts: Array.isArray(res.data.debts) ? res.data.debts : [],
+              policies: Array.isArray(res.data.policies) ? res.data.policies : [],
+              goals: Array.isArray(res.data.goals) ? res.data.goals : [],
+              calendarEvents: Array.isArray(res.data.calendarEvents) ? res.data.calendarEvents : [],
               emergencyTargetMonths: res.data.emergencyTargetMonths || current.emergencyTargetMonths,
+              currency: (res.data.currency as any) || current.currency,
             });
           }
         } catch (err: any) {
