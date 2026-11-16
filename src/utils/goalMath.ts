@@ -16,6 +16,8 @@ export interface GoalAchievementProjection {
   withoutStepUpMonths: number;
   monthsSavedByStepUp: number;
   isAchievable: boolean;
+  isInflationExceeded?: boolean;
+  inflationWarning?: string;
 }
 
 /**
@@ -56,47 +58,97 @@ export function calculateTimeToGoal(
   const monthlyInflation = Math.max(0, annualInflationRate / 100 / 12);
   const maxSimulationMonths = 480; // 40 years cap
 
-  // 1. Simulate with Step-Up
-  let corpus = currentSaved;
-  let totalInvested = currentSaved;
-  let monthsWithStepUp = -1;
+  // 1. Simulate Nominal (Without Inflation) Baseline
+  let corpusNominal = currentSaved;
+  let totalInvestedNominal = currentSaved;
+  let nominalMonths = -1;
 
   for (let m = 1; m <= maxSimulationMonths; m++) {
     const yearIndex = Math.floor((m - 1) / 12);
     const monthlyDeposit =
       initialMonthlyContribution * Math.pow(1 + annualStepUpPercent / 100, yearIndex);
 
-    totalInvested += monthlyDeposit;
-    corpus = (corpus + monthlyDeposit) * (1 + monthlyReturn);
+    totalInvestedNominal += monthlyDeposit;
+    corpusNominal = (corpusNominal + monthlyDeposit) * (1 + monthlyReturn);
 
-    const threshold = inflationAdjusted
-      ? targetAmount * Math.pow(1 + monthlyInflation, m)
-      : targetAmount;
-
-    if (corpus >= threshold) {
-      monthsWithStepUp = m;
+    if (corpusNominal >= targetAmount) {
+      nominalMonths = m;
       break;
     }
   }
 
-  // 2. Simulate without Step-Up (for comparative benefit calculation)
+  // 2. Simulate with Inflation Adjustment (if enabled)
+  let corpusWithInflation = currentSaved;
+  let totalInvestedInflation = currentSaved;
+  let monthsWithInflation = -1;
+
+  if (inflationAdjusted && annualInflationRate > 0) {
+    for (let m = 1; m <= maxSimulationMonths; m++) {
+      const yearIndex = Math.floor((m - 1) / 12);
+      const monthlyDeposit =
+        initialMonthlyContribution * Math.pow(1 + annualStepUpPercent / 100, yearIndex);
+
+      totalInvestedInflation += monthlyDeposit;
+      corpusWithInflation = (corpusWithInflation + monthlyDeposit) * (1 + monthlyReturn);
+
+      const threshold = targetAmount * Math.pow(1 + monthlyInflation, m);
+
+      if (corpusWithInflation >= threshold) {
+        monthsWithInflation = m;
+        break;
+      }
+    }
+  }
+
+  // 3. Determine final values and whether inflation outpaces contributions
+  let finalMonths: number;
+  let totalInvested: number;
+  let corpus: number;
+  let isInflationExceeded = false;
+  let inflationWarning: string | undefined = undefined;
+
+  if (inflationAdjusted && annualInflationRate > 0) {
+    if (monthsWithInflation > 0) {
+      finalMonths = monthsWithInflation;
+      totalInvested = totalInvestedInflation;
+      corpus = corpusWithInflation;
+    } else if (nominalMonths > 0) {
+      // Inflation growth outpaces savings (e.g. 0% return vs 7% inflation)
+      // Provide nominal achievement time so the user gets realistic duration
+      finalMonths = nominalMonths;
+      totalInvested = totalInvestedNominal;
+      corpus = corpusNominal;
+      isInflationExceeded = true;
+      inflationWarning = `At ${annualInflationRate}% inflation with ${annualReturnRate}% return, compounding inflation outpaces your flat contribution. Showing nominal achievement time. To beat inflation, consider investing at a higher return or increasing SIP.`;
+    } else {
+      finalMonths = maxSimulationMonths;
+      totalInvested = totalInvestedNominal;
+      corpus = corpusNominal;
+    }
+  } else {
+    finalMonths = nominalMonths > 0 ? nominalMonths : maxSimulationMonths;
+    totalInvested = totalInvestedNominal;
+    corpus = corpusNominal;
+  }
+
+  const isAchievable = nominalMonths > 0;
+
+  // 4. Simulate without Step-Up (for comparative benefit calculation)
   let corpusNoStep = currentSaved;
   let monthsWithoutStepUp = -1;
 
   for (let m = 1; m <= maxSimulationMonths; m++) {
     corpusNoStep = (corpusNoStep + initialMonthlyContribution) * (1 + monthlyReturn);
-    const threshold = inflationAdjusted
-      ? targetAmount * Math.pow(1 + monthlyInflation, m)
-      : targetAmount;
+    const threshold =
+      !isInflationExceeded && inflationAdjusted && annualInflationRate > 0
+        ? targetAmount * Math.pow(1 + monthlyInflation, m)
+        : targetAmount;
 
     if (corpusNoStep >= threshold) {
       monthsWithoutStepUp = m;
       break;
     }
   }
-
-  const finalMonths = monthsWithStepUp > 0 ? monthsWithStepUp : maxSimulationMonths;
-  const isAchievable = monthsWithStepUp > 0;
 
   const years = Math.floor(finalMonths / 12);
   const remainingMonths = finalMonths % 12;
@@ -109,7 +161,7 @@ export function calculateTimeToGoal(
     year: 'numeric',
   });
 
-  const durationStr =
+  let durationStr =
     years === 0
       ? `${remainingMonths} ${remainingMonths === 1 ? 'Month' : 'Months'}`
       : remainingMonths === 0
@@ -118,9 +170,13 @@ export function calculateTimeToGoal(
           remainingMonths === 1 ? 'Month' : 'Months'
         }`;
 
+  if (isInflationExceeded) {
+    durationStr += ' (Nominal)';
+  }
+
   const monthsSaved =
-    annualStepUpPercent > 0 && monthsWithoutStepUp > 0 && monthsWithStepUp > 0
-      ? Math.max(0, monthsWithoutStepUp - monthsWithStepUp)
+    annualStepUpPercent > 0 && monthsWithoutStepUp > 0 && finalMonths > 0
+      ? Math.max(0, monthsWithoutStepUp - finalMonths)
       : 0;
 
   return {
@@ -136,5 +192,7 @@ export function calculateTimeToGoal(
     withoutStepUpMonths: monthsWithoutStepUp > 0 ? monthsWithoutStepUp : maxSimulationMonths,
     monthsSavedByStepUp: monthsSaved,
     isAchievable,
+    isInflationExceeded,
+    inflationWarning,
   };
 }

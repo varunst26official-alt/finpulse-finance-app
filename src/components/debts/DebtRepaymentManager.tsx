@@ -24,6 +24,7 @@ import {
   Percent,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { NumericAmountInput } from '@/components/ui/NumericAmountInput';
 
 type PayoffStrategy = 'AVALANCHE' | 'SNOWBALL';
 
@@ -794,86 +795,73 @@ export const DebtRepaymentManager: React.FC = () => {
                     />
                   </div>
 
-                  <div>
-                    <label className="block mb-1 text-slate-600">
-                      Original Borrowed Amount ({currency}) *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="0"
-                      value={newPrincipal}
-                      onChange={(e) => setNewPrincipal(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label={`Original Borrowed Amount (${currency}) *`}
+                    required
+                    value={newPrincipal}
+                    onChange={setNewPrincipal}
+                    currency={currency}
+                    isCurrency={true}
+                    placeholder="e.g. 1000000"
+                    data-testid="debt-principal-input"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block mb-1 text-slate-600">
-                      Current Outstanding ({currency}) *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="0"
-                      value={newOutstanding}
-                      onChange={(e) => setNewOutstanding(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label={`Current Outstanding (${currency}) *`}
+                    required
+                    value={newOutstanding}
+                    onChange={setNewOutstanding}
+                    currency={currency}
+                    isCurrency={true}
+                    placeholder="e.g. 850000"
+                    data-testid="debt-outstanding-input"
+                  />
 
-                  <div>
-                    <label className="block mb-1 text-slate-600">Interest Rate (% p.a.) *</label>
-                    <input
-                      type="number"
-                      step="0.05"
-                      required
-                      min="0"
-                      max="100"
-                      value={newInterestRate}
-                      onChange={(e) => setNewInterestRate(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label="Interest Rate (% p.a.) *"
+                    required
+                    value={newInterestRate}
+                    onChange={setNewInterestRate}
+                    isCurrency={false}
+                    unitText="% p.a."
+                    placeholder="8.5"
+                    data-testid="debt-interest-input"
+                  />
 
-                  <div>
-                    <label className="block mb-1 text-slate-600">Monthly EMI ({currency}) *</label>
-                    <input
-                      type="number"
-                      required
-                      min="0"
-                      value={newMonthlyEmi}
-                      onChange={(e) => setNewMonthlyEmi(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label={`Monthly EMI (${currency}) *`}
+                    required
+                    value={newMonthlyEmi}
+                    onChange={setNewMonthlyEmi}
+                    currency={currency}
+                    isCurrency={true}
+                    placeholder="e.g. 15000"
+                    data-testid="debt-emi-input"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block mb-1 text-slate-600">Monthly Due Day (1 - 31)</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="31"
-                      value={newDueDay}
-                      onChange={(e) => setNewDueDay(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label="Monthly Due Day (1 - 31)"
+                    value={newDueDay}
+                    onChange={setNewDueDay}
+                    isCurrency={false}
+                    unitText="th of month"
+                    placeholder="5"
+                    data-testid="debt-dueday-input"
+                  />
 
-                  <div>
-                    <label className="block mb-1 text-slate-600">Total Tenure (in Months)</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={newTenureMonths}
-                      onChange={(e) => setNewTenureMonths(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label="Total Tenure (in Months)"
+                    value={newTenureMonths}
+                    onChange={setNewTenureMonths}
+                    isCurrency={false}
+                    unitText="months"
+                    placeholder="240"
+                    data-testid="debt-tenure-input"
+                  />
                 </div>
 
                 <div>
@@ -964,20 +952,17 @@ export const DebtRepaymentManager: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block mb-1 text-slate-600">Payment Amount ({currency}) *</label>
-                  <input
-                    type="number"
-                    required
-                    min="1"
-                    value={repayAmount}
-                    onChange={(e) => setRepayAmount(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">
-                    Current balance: {formatCurrency(repayModalDebt.currentOutstanding, currency)}
-                  </span>
-                </div>
+                <NumericAmountInput
+                  label={`Payment Amount (${currency}) *`}
+                  required
+                  value={repayAmount}
+                  onChange={setRepayAmount}
+                  currency={currency}
+                  isCurrency={true}
+                  placeholder="e.g. 50000"
+                  hint={`Current balance: ${formatCurrency(repayModalDebt.currentOutstanding, currency)}`}
+                  data-testid="repay-amount-input"
+                />
 
                 <div>
                   <label className="block mb-1 text-slate-600">Payment Date *</label>

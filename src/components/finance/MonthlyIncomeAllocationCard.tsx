@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { saveUserScopedData } from '@/services/userStorage';
-import { formatCurrency, CURRENCY_CONFIGS } from '@/utils/formatters';
+import { formatCurrency, CURRENCY_CONFIGS, formatExactAmountText, cleanNumericInputString } from '@/utils/formatters';
 import { MonthlyInflowAllocationModal } from './MonthlyInflowAllocationModal';
 import {
   Wallet,
@@ -144,39 +144,46 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSaveIncome} className="flex items-center gap-1.5">
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
-                  {currency === 'INR' ? '₹' : '$'}
-                </span>
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  step="any"
-                  autoFocus
-                  data-testid="income-input"
-                  value={incomeInput}
-                  onChange={(e) => setIncomeInput(e.target.value)}
-                  className="w-36 sm:w-44 h-10 pl-7 pr-3 rounded-xl bg-white border-2 border-[#9e783e] text-xs font-mono font-bold text-slate-900 focus:outline-hidden"
-                  placeholder="Monthly Inflow"
-                />
+            <form onSubmit={handleSaveIncome} className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-1.5">
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+                    {currency === 'INR' ? '₹' : '$'}
+                  </span>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    required
+                    autoFocus
+                    data-testid="income-input"
+                    value={incomeInput}
+                    onChange={(e) => setIncomeInput(cleanNumericInputString(e.target.value))}
+                    onFocus={(e) => {
+                      if (e.target.value === '0') e.target.select();
+                    }}
+                    className="w-36 sm:w-44 h-10 pl-7 pr-3 rounded-xl bg-white border-2 border-[#9e783e] text-xs font-mono font-bold text-slate-900 focus:outline-hidden"
+                    placeholder="Monthly Inflow"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  data-testid="save-income-btn"
+                  title="Save Monthly Income"
+                  className="h-10 px-3 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] transition-colors cursor-pointer flex items-center justify-center"
+                >
+                  <Check className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="h-10 px-3 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200 transition-colors cursor-pointer flex items-center justify-center"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <button
-                type="submit"
-                data-testid="save-income-btn"
-                title="Save Monthly Income"
-                className="h-10 px-3 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] transition-colors cursor-pointer flex items-center justify-center"
-              >
-                <Check className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsEditing(false)}
-                className="h-10 px-3 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200 transition-colors cursor-pointer flex items-center justify-center"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <span className="text-[11px] font-mono font-bold text-[#9e783e] pr-1">
+                {formatExactAmountText(parseFloat(incomeInput) || 0, currency)}
+              </span>
             </form>
           )}
         </div>
@@ -456,13 +463,15 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
                     {currency === 'INR' ? '₹' : '$'}
                   </span>
                   <input
-                    type="number"
-                    min="0"
-                    step="any"
+                    type="text"
+                    inputMode="decimal"
                     autoFocus
                     data-testid="living-input"
                     value={livingInput}
-                    onChange={(e) => setLivingInput(e.target.value)}
+                    onChange={(e) => setLivingInput(cleanNumericInputString(e.target.value))}
+                    onFocus={(e) => {
+                      if (e.target.value === '0') e.target.select();
+                    }}
                     className="w-full h-8 pl-6 pr-2 rounded-lg bg-white border-2 border-sky-500 text-xs font-mono font-bold text-slate-900 focus:outline-hidden"
                     placeholder="0"
                   />
@@ -484,6 +493,9 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
                   <X className="w-4 h-4" />
                 </button>
               </div>
+              <span className="text-[10px] font-mono font-bold text-sky-700 block px-0.5">
+                {formatExactAmountText(parseFloat(livingInput) || 0, currency)}
+              </span>
             </form>
           )}
 

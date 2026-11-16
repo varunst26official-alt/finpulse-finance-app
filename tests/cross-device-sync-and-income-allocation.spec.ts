@@ -34,6 +34,43 @@ test.describe('Phase 1-4 Feature Implementation Verification', () => {
     expect(withStepUp.monthsToTarget).toBeLessThan(noStepUp.monthsToTarget);
     expect(withStepUp.monthsSavedByStepUp).toBeGreaterThan(0);
     expect(withStepUp.monthsSavedByStepUp).toBe(noStepUp.monthsToTarget - withStepUp.monthsToTarget);
+
+    // Scenario 3: Consumer Purchase Milestone (iPhone ₹1,50,000 at ₹2,000/mo, 0% returns)
+    const iphoneNominal = calculateTimeToGoal(
+      150000, // ₹1.5 Lakhs
+      0,      // ₹0 saved
+      2000,   // ₹2,000/mo
+      0,      // 0% returns
+      0,      // 0% step-up
+      false   // No inflation
+    );
+
+    expect(iphoneNominal.isAchievable).toBe(true);
+    expect(iphoneNominal.monthsToTarget).toBe(75); // Exactly 6 Years, 3 Months
+    expect(iphoneNominal.years).toBe(6);
+    expect(iphoneNominal.remainingMonths).toBe(3);
+    expect(iphoneNominal.totalInvested).toBe(150000);
+    expect(iphoneNominal.formattedDuration).toBe('6 Years, 3 Months');
+
+    // Scenario 4: iPhone with 7% inflation enabled but 0% returns (Inflation exceeds contributions)
+    const iphoneWithInflation = calculateTimeToGoal(
+      150000, // ₹1.5 Lakhs
+      0,      // ₹0 saved
+      2000,   // ₹2,000/mo
+      0,      // 0% returns
+      0,      // 0% step-up
+      true,   // Inflation enabled
+      7.0     // 7% p.a.
+    );
+
+    // Must NOT clamp blindly to 40 years! Should provide nominal baseline with exceeded flag
+    expect(iphoneWithInflation.isAchievable).toBe(true);
+    expect(iphoneWithInflation.monthsToTarget).toBe(75);
+    expect(iphoneWithInflation.years).toBe(6);
+    expect(iphoneWithInflation.remainingMonths).toBe(3);
+    expect(iphoneWithInflation.totalInvested).toBe(150000);
+    expect(iphoneWithInflation.isInflationExceeded).toBe(true);
+    expect(iphoneWithInflation.formattedDuration).toContain('6 Years, 3 Months (Nominal)');
   });
 
   test('Requirement 2: Income Allocation Engine Math & Shortfall / Surplus Thresholds', async () => {

@@ -21,10 +21,12 @@ import {
   Award,
   Flame,
   Zap,
+  AlertTriangle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FireCalculatorWidget } from './FireCalculatorWidget';
 import { calculateTimeToGoal } from '@/utils/goalMath';
+import { NumericAmountInput } from '@/components/ui/NumericAmountInput';
 
 export const GoalMilestoneManager: React.FC = () => {
   const {
@@ -57,6 +59,7 @@ export const GoalMilestoneManager: React.FC = () => {
   const [newInflation, setNewInflation] = useState<number>(7.0);
   const [newReturns, setNewReturns] = useState<number>(12.0);
   const [newStepUp, setNewStepUp] = useState<number>(10); // 10% annual step-up contribution
+  const [isInflationAdjusted, setIsInflationAdjusted] = useState<boolean>(true);
   const [isAutoTimeCalculation, setIsAutoTimeCalculation] = useState<boolean>(true);
   const [newNotes, setNewNotes] = useState('');
 
@@ -68,10 +71,10 @@ export const GoalMilestoneManager: React.FC = () => {
       newMonthlySip,
       newReturns,
       newStepUp,
-      true,
+      isInflationAdjusted,
       newInflation
     );
-  }, [newTargetToday, newCurrentSaved, newMonthlySip, newReturns, newStepUp, newInflation]);
+  }, [newTargetToday, newCurrentSaved, newMonthlySip, newReturns, newStepUp, isInflationAdjusted, newInflation]);
 
   // Standalone SIP Simulator State
   const [simMonthly, setSimMonthly] = useState<number>(25000);
@@ -976,7 +979,15 @@ export const GoalMilestoneManager: React.FC = () => {
                     <label className="block mb-1 text-slate-600">Milestone Category *</label>
                     <select
                       value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value as GoalCategory)}
+                      onChange={(e) => {
+                        const cat = e.target.value as GoalCategory;
+                        setNewCategory(cat);
+                        if (['CUSTOM_GOAL', 'DREAM_CAR', 'LUXURY_VACATION'].includes(cat)) {
+                          setIsInflationAdjusted(false);
+                        } else {
+                          setIsInflationAdjusted(true);
+                        }
+                      }}
                       className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-medium focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
                     >
                       <option value="CHILD_EDUCATION">Child's Education</option>
@@ -992,51 +1003,42 @@ export const GoalMilestoneManager: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block mb-1 text-slate-600">
-                      Target Amount in Today's Value ({currency}) *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="1000"
-                      value={newTargetToday}
-                      onChange={(e) => setNewTargetToday(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label={`Target Amount in Today's Value (${currency}) *`}
+                    required
+                    value={newTargetToday}
+                    onChange={setNewTargetToday}
+                    currency={currency}
+                    isCurrency={true}
+                    placeholder="e.g. 1500000"
+                    data-testid="target-amount-input"
+                  />
 
-                  <div>
-                    <label className="block mb-1 text-slate-600">
-                      Monthly Contribution (SIP) ({currency}) *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="100"
-                      value={newMonthlySip}
-                      onChange={(e) => setNewMonthlySip(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label={`Monthly Contribution (SIP) (${currency}) *`}
+                    required
+                    value={newMonthlySip}
+                    onChange={setNewMonthlySip}
+                    currency={currency}
+                    isCurrency={true}
+                    placeholder="e.g. 20000"
+                    data-testid="monthly-sip-input"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block mb-1 text-slate-600">
-                      Current Saved ({currency})
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={newCurrentSaved}
-                      onChange={(e) => setNewCurrentSaved(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label={`Current Saved (${currency})`}
+                    value={newCurrentSaved}
+                    onChange={setNewCurrentSaved}
+                    currency={currency}
+                    isCurrency={true}
+                    placeholder="e.g. 1000000"
+                    data-testid="current-saved-input"
+                  />
 
                   <div>
-                    <label className="block mb-1 text-slate-600">Priority</label>
+                    <label className="block mb-1 text-slate-600 font-semibold text-xs">Priority</label>
                     <select
                       value={newPriority}
                       onChange={(e) => setNewPriority(e.target.value as GoalPriority)}
@@ -1050,33 +1052,46 @@ export const GoalMilestoneManager: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block mb-1 text-slate-600">Expected Return Rate (% p.a.)</label>
-                    <input
-                      type="number"
-                      step="0.5"
-                      min="1"
-                      max="25"
-                      value={newReturns}
-                      onChange={(e) => setNewReturns(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                    <span className="text-[10px] text-slate-400">Equity 12% | Balanced 10% | Debt 7%</span>
-                  </div>
+                  <NumericAmountInput
+                    label="Expected Return Rate (% p.a.)"
+                    value={newReturns}
+                    onChange={setNewReturns}
+                    isCurrency={false}
+                    unitText="% p.a."
+                    placeholder="12"
+                    hint="Equity 12% | Balanced 10% | Debt 7%"
+                    data-testid="return-rate-input"
+                  />
 
-                  <div>
-                    <label className="block mb-1 text-slate-600">Inflation Rate (% p.a.)</label>
+                  <NumericAmountInput
+                    label="Inflation Rate (% p.a.)"
+                    value={newInflation}
+                    onChange={setNewInflation}
+                    isCurrency={false}
+                    unitText="% p.a."
+                    placeholder="7"
+                    hint="Standard 6–7% | Education 9–10%"
+                    data-testid="inflation-rate-input"
+                  />
+                </div>
+
+                {/* Inflation Adjustment Toggle */}
+                <div className="flex items-center justify-between p-3 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1]">
+                  <div className="flex items-center gap-2.5">
                     <input
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      max="20"
-                      value={newInflation}
-                      onChange={(e) => setNewInflation(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
+                      type="checkbox"
+                      id="adjust-inflation-toggle"
+                      checked={isInflationAdjusted}
+                      onChange={(e) => setIsInflationAdjusted(e.target.checked)}
+                      className="w-4 h-4 rounded text-[#9e783e] focus:ring-[#9e783e] cursor-pointer"
                     />
-                    <span className="text-[10px] text-slate-400">Standard 6-7% | Education 9-10%</span>
+                    <label htmlFor="adjust-inflation-toggle" className="text-xs font-semibold text-slate-800 cursor-pointer">
+                      Adjust Target for Future Inflation ({newInflation}% p.a.)
+                    </label>
                   </div>
+                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-white border border-[#e8e0d1] text-slate-600">
+                    {isInflationAdjusted ? 'Compounding Target' : 'Fixed Nominal Price'}
+                  </span>
                 </div>
 
                 {/* Annual Step-Up Slider */}
@@ -1161,6 +1176,13 @@ export const GoalMilestoneManager: React.FC = () => {
                     </div>
                   )}
 
+                  {newGoalProjection.inflationWarning && (
+                    <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 font-medium flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <span>{newGoalProjection.inflationWarning}</span>
+                    </div>
+                  )}
+
                   {!isAutoTimeCalculation && (
                     <div className="pt-2 border-t border-[#e8e0d1]">
                       <label className="block mb-1 text-[11px] text-slate-600">Manual Target Completion Date:</label>
@@ -1235,21 +1257,17 @@ export const GoalMilestoneManager: React.FC = () => {
               </div>
 
               <form onSubmit={handleTopUpSubmit} className="space-y-4 text-xs font-semibold text-slate-700">
-                <div>
-                  <label className="block mb-1 text-slate-600">Contribution Amount ({currency}) *</label>
-                  <input
-                    type="number"
-                    required
-                    min="1"
-                    value={topUpAmount}
-                    onChange={(e) => setTopUpAmount(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">
-                    Current saved: {formatCurrency(topUpGoal.currentSaved, currency)} / Target:{' '}
-                    {formatCurrency(topUpGoal.targetAmount, currency)}
-                  </span>
-                </div>
+                <NumericAmountInput
+                  label={`Contribution Amount (${currency}) *`}
+                  required
+                  value={topUpAmount}
+                  onChange={setTopUpAmount}
+                  currency={currency}
+                  isCurrency={true}
+                  placeholder="e.g. 25000"
+                  hint={`Current saved: ${formatCurrency(topUpGoal.currentSaved, currency)} / Target: ${formatCurrency(topUpGoal.targetAmount, currency)}`}
+                  data-testid="topup-amount-input"
+                />
 
                 <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#e8e0d1]">
                   <button

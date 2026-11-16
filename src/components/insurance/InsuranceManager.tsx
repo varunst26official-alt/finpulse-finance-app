@@ -21,6 +21,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { NumericAmountInput } from '@/components/ui/NumericAmountInput';
 
 export const InsuranceManager: React.FC = () => {
   const {
@@ -607,33 +608,27 @@ export const InsuranceManager: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block mb-1 text-slate-600">
-                      Sum Assured / Coverage ({currency}) *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="100"
-                      value={newSumAssured}
-                      onChange={(e) => setNewSumAssured(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label={`Sum Assured / Coverage (${currency}) *`}
+                    required
+                    value={newSumAssured}
+                    onChange={setNewSumAssured}
+                    currency={currency}
+                    isCurrency={true}
+                    placeholder="e.g. 10000000"
+                    data-testid="insurance-sum-input"
+                  />
 
-                  <div>
-                    <label className="block mb-1 text-slate-600">
-                      Annual Premium ({currency}) *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="0"
-                      value={newPremium}
-                      onChange={(e) => setNewPremium(Number(e.target.value))}
-                      className="w-full h-10 px-3 rounded-xl bg-[#faf8f5] border border-[#e8e0d1] text-xs text-slate-900 font-mono font-bold focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
-                    />
-                  </div>
+                  <NumericAmountInput
+                    label={`Annual Premium (${currency}) *`}
+                    required
+                    value={newPremium}
+                    onChange={setNewPremium}
+                    currency={currency}
+                    isCurrency={true}
+                    placeholder="e.g. 15000"
+                    data-testid="insurance-premium-input"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

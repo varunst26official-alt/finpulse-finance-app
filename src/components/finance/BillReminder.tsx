@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
-import { formatCurrency } from '@/utils/formatters';
+import { formatCurrency, formatExactAmountText, cleanNumericInputString } from '@/utils/formatters';
 import {
   Bell,
   Plus,
@@ -293,13 +293,24 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
                       className="w-full px-3 py-2 rounded-xl border border-[#e8e0d1] text-sm"
                     />
                     <div className="grid grid-cols-2 gap-3">
-                      <input
-                        type="number"
-                        placeholder="Amount"
-                        value={form.amount}
-                        onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                        className="px-3 py-2 rounded-xl border border-[#e8e0d1] text-sm"
-                      />
+                      <div>
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          placeholder="Amount"
+                          value={form.amount}
+                          onChange={(e) => setForm({ ...form, amount: cleanNumericInputString(e.target.value) })}
+                          onFocus={(e) => {
+                            if (e.target.value === '0') e.target.select();
+                          }}
+                          className="w-full px-3 py-2 rounded-xl border border-[#e8e0d1] text-sm"
+                        />
+                        {parseFloat(form.amount) > 0 && (
+                          <span className="text-[10px] font-mono font-bold text-[#9e783e] mt-0.5 block">
+                            {formatExactAmountText(parseFloat(form.amount) || 0, currency)}
+                          </span>
+                        )}
+                      </div>
                       <select
                         value={form.billingCycle}
                         onChange={(e) => setForm({ ...form, billingCycle: e.target.value })}

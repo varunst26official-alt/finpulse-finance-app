@@ -163,4 +163,39 @@
 
 ---
 
+### Entry 007: Goal Expected Time of Achievement Mathematical Bug Fix & Inflation Control
+- **Date:** 2026-11-16
+- **Milestone:** Milestone 5 — Financial Engineering & Mathematical Precision
+- **Author:** Senior Product & QA Engineer (Antigravity)
+- **Files Changed:**
+  - `src/utils/goalMath.ts`
+  - `src/utils/formatters.ts`
+  - `src/components/goals/GoalMilestoneManager.tsx`
+  - `tests/cross-device-sync-and-income-allocation.spec.ts`
+- **Reason:** Resolve user-reported mathematical anomaly where a goal of ₹1,50,000 (e.g. iPhone) with ₹2,000/mo SIP at 0% return falsely reported "40 Years", "Target Date: November 2066", and "Total Capital: ₹9,60,000".
+- **Root Cause Analysis:**
+  - `calculateTimeToGoal` had `inflationAdjusted` hardcoded to `true` in `GoalMilestoneManager.tsx`.
+  - When expected return was low/zero (0%) and inflation was positive (7%), the compounding inflation increase on the threshold ($₹150,000 \times (1.07)^m$) eventually exceeded the flat deposit ($₹2,000 \times 12 = ₹24,000$/year).
+  - Because corpus could never catch up to runaway compounding inflation, the simulation loop exhausted `maxSimulationMonths` (480 months / 40 years).
+  - The function blindly returned `40 Years` and `₹9,60,000` capital invested instead of calculating nominal duration ($150,000 / 2,000 = 75 \text{ months} = 6\text{ Years, } 3\text{ Months}$) or flagging that inflation outpaces contributions.
+- **After Behavior:**
+  - `src/utils/goalMath.ts`:
+    - First simulates nominal baseline without inflation.
+    - If inflation is enabled and outpaces contributions (e.g. 0% return vs 7% inflation), falls back to the exact nominal duration ($75 \text{ months} = 6\text{y } 3\text{m}$, total invested ₹1,50,000) and sets `isInflationExceeded = true` with a clear explanation message instead of returning 40 years.
+  - `src/components/goals/GoalMilestoneManager.tsx`:
+    - Added explicit user-controlled toggle: `[✓] Adjust Target for Future Inflation`.
+    - Defaults to `false` for short-term / purchase / gadget goals (`CUSTOM_GOAL`, `DREAM_CAR`, `LUXURY_VACATION` or 0% return).
+    - Defaults to `true` for long-term corpus goals (`RETIREMENT_FIRE`, `CHILD_EDUCATION`, `HOME_PURCHASE`).
+    - Added contextual alert banner when inflation outpaces savings rate.
+  - `src/utils/formatters.ts`:
+    - Fixed leading zero stripping in `cleanNumericInputString`: `0150000` cleans to `150000`, `00` cleans to `0`.
+- **Tests Executed:**
+  - `tsc -b` (0 TypeScript errors).
+  - `npm run build` (Passed cleanly, exit code 0, 34.06s).
+  - `npm run lint` (Passed with 0 errors, 57 warnings).
+  - `npx playwright test tests/cross-device-sync-and-income-allocation.spec.ts` (10/10 passed including iPhone nominal 75 months & inflation-exceeded handling).
+- **Risk Assessment:** Zero risk. Pure mathematical correction and UI transparency.
+
+---
+
 *(Future implementation batches will append entries here following the exact same schema).*

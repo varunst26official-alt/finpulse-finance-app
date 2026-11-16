@@ -33,6 +33,81 @@ export function formatCurrency(amountUSD: number, currency: Currency): string {
 }
 
 /**
+ * Strips preceding leading zeros from user numeric input strings.
+ * e.g. "0150000" -> "150000", "0" -> "0", "0050" -> "50", "0.25" -> "0.25", "" -> ""
+ */
+export function cleanNumericInputString(raw: string | number): string {
+  if (raw === '' || raw === undefined || raw === null) return '';
+  const str = String(raw).trim();
+  if (str === '') return '';
+  // Strip leading zeroes before digits: "0150000" -> "150000", "00" -> "0" (retains decimals like 0.5)
+  if (/^0+[1-9]/.test(str)) {
+    return str.replace(/^0+/, '');
+  }
+  if (/^0+$/.test(str)) {
+    return '0';
+  }
+  return str.replace(/^0+(?=\d)/, '');
+}
+
+/**
+ * Formats a currency amount into exact human-readable text with Indian (Lakhs/Crores)
+ * or International (Thousands/Millions/Billions) denomination words.
+ * e.g. 1500000 -> "₹15,00,000 (15 Lakhs)"
+ */
+export function formatExactAmountText(amount: number, currency: Currency = 'INR'): string {
+  if (isNaN(amount) || amount === 0) {
+    const symbol = CURRENCY_CONFIGS[currency]?.symbol || '₹';
+    return `${symbol}0`;
+  }
+
+  const config = CURRENCY_CONFIGS[currency] || CURRENCY_CONFIGS.INR;
+
+  // Exact formatted amount with locale commas
+  const formattedExact = new Intl.NumberFormat(config.locale, {
+    style: 'currency',
+    currency: currency,
+    maximumFractionDigits: currency === 'INR' ? 0 : 2,
+    minimumFractionDigits: 0,
+  }).format(amount);
+
+  let words = '';
+
+  if (currency === 'INR') {
+    if (amount >= 10000000) {
+      const cr = amount / 10000000;
+      const crStr = cr % 1 === 0 ? cr.toString() : cr.toFixed(2).replace(/\.?0+$/, '');
+      words = `${crStr} ${cr === 1 ? 'Crore' : 'Crores'}`;
+    } else if (amount >= 100000) {
+      const lk = amount / 100000;
+      const lkStr = lk % 1 === 0 ? lk.toString() : lk.toFixed(2).replace(/\.?0+$/, '');
+      words = `${lkStr} ${lk === 1 ? 'Lakh' : 'Lakhs'}`;
+    } else if (amount >= 1000) {
+      const th = amount / 1000;
+      const thStr = th % 1 === 0 ? th.toString() : th.toFixed(2).replace(/\.?0+$/, '');
+      words = `${thStr} Thousand`;
+    }
+  } else {
+    // USD / AED / International
+    if (amount >= 1000000000) {
+      const b = amount / 1000000000;
+      const bStr = b % 1 === 0 ? b.toString() : b.toFixed(2).replace(/\.?0+$/, '');
+      words = `${bStr} Billion`;
+    } else if (amount >= 1000000) {
+      const m = amount / 1000000;
+      const mStr = m % 1 === 0 ? m.toString() : m.toFixed(2).replace(/\.?0+$/, '');
+      words = `${mStr} Million`;
+    } else if (amount >= 1000) {
+      const th = amount / 1000;
+      const thStr = th % 1 === 0 ? th.toString() : th.toFixed(2).replace(/\.?0+$/, '');
+      words = `${thStr} Thousand`;
+    }
+  }
+
+  return words ? `${formattedExact} (${words})` : formattedExact;
+}
+
+/**
  * Formats percentage changes with + or - sign
  */
 export function formatPercentage(value: number): string {

@@ -5,7 +5,7 @@ import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { saveUserScopedData } from '@/services/userStorage';
 import { useModalDismiss } from '@/hooks/useModalDismiss';
-import { CURRENCY_CONFIGS } from '@/utils/formatters';
+import { CURRENCY_CONFIGS, formatExactAmountText, cleanNumericInputString } from '@/utils/formatters';
 import { IncomeCategory, ExpenseCategory } from '@/types/finance';
 import {
   Wallet,
@@ -460,15 +460,20 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
                         {currencySymbol}
                       </span>
                       <input
-                        type="number"
-                        min="0"
-                        step="any"
-                        value={salaryInput}
-                        onChange={(e) => setSalaryInput(Number(e.target.value) || 0)}
+                        type="text"
+                        inputMode="decimal"
+                        value={salaryInput || ''}
+                        onChange={(e) => setSalaryInput(Number(cleanNumericInputString(e.target.value)) || 0)}
+                        onFocus={(e) => {
+                          if (e.target.value === '0') e.target.select();
+                        }}
                         className="w-full h-11 pl-9 pr-3 rounded-xl bg-white border border-slate-300 font-mono font-bold text-sm text-slate-900 focus:outline-hidden focus:border-amber-500"
                         placeholder="e.g. 100000"
                       />
                     </div>
+                    <span className="text-[11px] font-mono font-bold text-[#9e783e] mt-1 block">
+                      {formatExactAmountText(salaryInput || 0, currency)}
+                    </span>
                   </div>
 
                   <div>
@@ -539,23 +544,32 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
                       </div>
 
                       <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                        <div className="relative w-36">
-                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-mono font-bold text-xs text-slate-400">
-                            {currencySymbol}
-                          </span>
-                          <input
-                            type="number"
-                            min="0"
-                            step="any"
-                            value={item.amount || ''}
-                            onChange={(e) => {
-                              const next = [...otherIncomes];
-                              next[index].amount = Number(e.target.value) || 0;
-                              setOtherIncomes(next);
-                            }}
-                            className="w-full h-8 pl-7 pr-2 rounded-lg bg-slate-50 border border-slate-200 font-mono font-bold text-xs text-slate-900 focus:outline-hidden"
-                            placeholder="0"
-                          />
+                        <div className="flex flex-col items-end">
+                          <div className="relative w-36">
+                            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-mono font-bold text-xs text-slate-400">
+                              {currencySymbol}
+                            </span>
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              value={item.amount || ''}
+                              onChange={(e) => {
+                                const next = [...otherIncomes];
+                                next[index].amount = Number(cleanNumericInputString(e.target.value)) || 0;
+                                setOtherIncomes(next);
+                              }}
+                              onFocus={(e) => {
+                                if (e.target.value === '0') e.target.select();
+                              }}
+                              className="w-full h-8 pl-7 pr-2 rounded-lg bg-slate-50 border border-slate-200 font-mono font-bold text-xs text-slate-900 focus:outline-hidden"
+                              placeholder="0"
+                            />
+                          </div>
+                          {item.amount > 0 && (
+                            <span className="text-[9px] font-mono font-bold text-[#9e783e] pr-1">
+                              {formatExactAmountText(item.amount, currency)}
+                            </span>
+                          )}
                         </div>
 
                         <button

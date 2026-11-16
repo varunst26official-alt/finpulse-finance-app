@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
-import { CURRENCY_CONFIGS } from '@/utils/formatters';
+import { CURRENCY_CONFIGS, formatExactAmountText, cleanNumericInputString } from '@/utils/formatters';
 import {
   Flame,
   TrendingUp,
@@ -548,16 +548,18 @@ export const FireCalculatorWidget: React.FC = () => {
                     {isINR ? '₹' : '$'}
                   </span>
                   <input
-                    type="number"
-                    min="100000"
-                    step={isINR ? 500000 : 50000}
-                    value={customFireAmount}
-                    onChange={(e) => setCustomFireAmount(Math.max(1000, Number(e.target.value)))}
+                    type="text"
+                    inputMode="decimal"
+                    value={customFireAmount || ''}
+                    onChange={(e) => setCustomFireAmount(Number(cleanNumericInputString(e.target.value)) || 0)}
+                    onFocus={(e) => {
+                      if (e.target.value === '0') e.target.select();
+                    }}
                     className="w-40 sm:w-48 h-10 pl-7 pr-3 rounded-xl bg-white border-2 border-[#9e783e] text-xs font-mono font-bold text-slate-900 focus:outline-hidden"
                   />
                 </div>
                 <span className="text-xs font-extrabold font-mono text-[#9e783e]">
-                  ({formatVal(customFireAmount)})
+                  ({formatExactAmountText(customFireAmount, currency)})
                 </span>
               </div>
             </div>

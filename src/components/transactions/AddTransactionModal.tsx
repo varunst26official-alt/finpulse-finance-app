@@ -27,6 +27,8 @@ import {
   INCOME_CATEGORY_LABELS,
   PAYMENT_METHOD_LABELS,
   CURRENCY_CONFIGS,
+  formatExactAmountText,
+  cleanNumericInputString,
 } from '@/utils/formatters';
 import { useModalDismiss } from '@/hooks/useModalDismiss';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -546,13 +548,20 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                       Invested Capital / Valuation ({CURRENCY_CONFIGS[currency].symbol})
                     </label>
                     <input
-                      type="number"
-                      min="1"
+                      type="text"
+                      inputMode="decimal"
                       required
-                      value={assetInvestedAmount}
-                      onChange={(e) => setAssetInvestedAmount(parseFloat(e.target.value) || 0)}
+                      value={assetInvestedAmount || ''}
+                      onChange={(e) => setAssetInvestedAmount(parseFloat(cleanNumericInputString(e.target.value)) || 0)}
+                      onFocus={(e) => {
+                        if (e.target.value === '0') e.target.select();
+                      }}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs font-mono font-bold text-slate-900 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
+                      placeholder="0"
                     />
+                    <span className="text-[11px] font-mono font-bold text-[#9e783e] mt-1 block">
+                      {formatExactAmountText(assetInvestedAmount, currency)}
+                    </span>
                   </div>
 
                   <div>
@@ -661,13 +670,20 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                       Amount ({CURRENCY_CONFIGS[currency].symbol})
                     </label>
                     <input
-                      type="number"
-                      min="1"
+                      type="text"
+                      inputMode="decimal"
                       required
-                      value={expenseAmount}
-                      onChange={(e) => setExpenseAmount(parseFloat(e.target.value) || 0)}
+                      value={expenseAmount || ''}
+                      onChange={(e) => setExpenseAmount(parseFloat(cleanNumericInputString(e.target.value)) || 0)}
+                      onFocus={(e) => {
+                        if (e.target.value === '0') e.target.select();
+                      }}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs font-mono font-bold text-slate-900 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
+                      placeholder="0"
                     />
+                    <span className="text-[11px] font-mono font-bold text-[#9e783e] mt-1 block">
+                      {formatExactAmountText(expenseAmount, currency)}
+                    </span>
                   </div>
 
                   <div>
@@ -781,13 +797,20 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
                       Inflow Amount ({CURRENCY_CONFIGS[currency].symbol})
                     </label>
                     <input
-                      type="number"
-                      min="1"
+                      type="text"
+                      inputMode="decimal"
                       required
-                      value={incomeAmount}
-                      onChange={(e) => setIncomeAmount(parseFloat(e.target.value) || 0)}
+                      value={incomeAmount || ''}
+                      onChange={(e) => setIncomeAmount(parseFloat(cleanNumericInputString(e.target.value)) || 0)}
+                      onFocus={(e) => {
+                        if (e.target.value === '0') e.target.select();
+                      }}
                       className="w-full rounded-xl bg-[#faf8f5] border border-[#e8e0d1] px-3 py-2.5 text-xs font-mono font-bold text-slate-900 focus:border-[#9e783e] focus:bg-white focus:outline-hidden"
+                      placeholder="0"
                     />
+                    <span className="text-[11px] font-mono font-bold text-[#9e783e] mt-1 block">
+                      {formatExactAmountText(incomeAmount, currency)}
+                    </span>
                   </div>
 
                   <div>
