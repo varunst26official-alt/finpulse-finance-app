@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
+import { useAuthStore } from '@/stores/authStore';
 import { LifeOSSection } from '@/types/lifeos';
 import {
   LayoutDashboard,
@@ -32,6 +33,13 @@ const TABS: TabItem[] = [
 
 export const MobileBottomNav: React.FC = () => {
   const { currentSection, setCurrentSection } = useLifeOSStore();
+  const { user } = useAuthStore();
+  const isSuperAdmin = user?.email?.toLowerCase().trim() === 'admin@quantra.io';
+
+  // Super Admin does not use retail navigation tabs
+  if (isSuperAdmin) {
+    return null;
+  }
 
   return (
     <nav

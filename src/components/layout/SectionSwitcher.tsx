@@ -167,23 +167,32 @@ export const SectionSwitcher: React.FC = () => {
   const { user } = useAuthStore();
   const isSuperAdmin = user?.email?.toLowerCase().trim() === 'admin@quantra.io';
 
-  // Guard: if non-admin somehow ends up on appadmin, bounce to overview immediately
+  // Strict Role Separation:
+  // - Super Admin is locked to appadmin (Platform Governance & Control)
+  // - Non-admin users are restricted to personal life workspaces
   React.useEffect(() => {
-    if (currentSection === 'appadmin' && !isSuperAdmin) {
-      setCurrentSection('overview');
+    if (isSuperAdmin) {
+      if (currentSection !== 'appadmin') {
+        setCurrentSection('appadmin');
+      }
+    } else {
+      if (currentSection === 'appadmin') {
+        setCurrentSection('overview');
+      }
     }
   }, [currentSection, isSuperAdmin, setCurrentSection]);
 
-  const sections: LifeOSSection[] = [
-    'overview',
-    'finance',
-    'wellness',
-    'productivity',
-    'learning',
-    'lifeadmin',
-    'community',
-    ...(isSuperAdmin ? (['appadmin'] as LifeOSSection[]) : []),
-  ];
+  const sections: LifeOSSection[] = isSuperAdmin
+    ? (['appadmin'] as LifeOSSection[])
+    : [
+        'overview',
+        'finance',
+        'wellness',
+        'productivity',
+        'learning',
+        'lifeadmin',
+        'community',
+      ];
 
   return (
     <nav

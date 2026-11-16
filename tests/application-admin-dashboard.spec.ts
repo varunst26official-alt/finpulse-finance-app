@@ -43,8 +43,8 @@ test.describe('Application Admin Command Page & Platform Governance Suite', () =
     }
 
     // 3. Verify Admin Hero Header & KPI Cards
-    await expect(page.getByText('Application Admin Command Center')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText('ROOT GOVERNANCE')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Application Admin Command Center/i })).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('main').getByText('ROOT GOVERNANCE')).toBeVisible();
     await expect(page.getByText('SQLITE PERSISTENT')).toBeVisible();
     await expect(page.getByText('Registered Accounts')).toBeVisible();
     await expect(page.getByText('Database Tables')).toBeVisible();
@@ -88,25 +88,17 @@ test.describe('Application Admin Command Page & Platform Governance Suite', () =
 
     await expect(page.getByText('Immutable Security & Operations Audit Trail')).toBeVisible({ timeout: 6000 });
 
-    // 8. Verify 1-Click Profile Shortcut opens Admin Page
-    // Switch to Overview first
-    const mobileNavOverview = page.locator('nav[aria-label="Mobile Bottom Navigation"]').getByRole('button', { name: 'Overview' });
-    const desktopNavOverview = page.locator('#tour-section-switcher').getByRole('button', { name: /Life Overview/i });
-    if (await mobileNavOverview.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await mobileNavOverview.click();
-    } else {
-      await desktopNavOverview.click();
-    }
-    await expect(page.getByRole('heading', { name: /Application Admin Command Center/i })).not.toBeVisible();
+    // 8. Verify Super Admin ONLY has Admin Panels (Retail tabs are strictly absent)
+    await expect(page.locator('[data-testid="section-overview"]')).not.toBeVisible();
+    await expect(page.locator('[data-testid="section-finance"]')).not.toBeVisible();
+    await expect(page.locator('[data-testid="section-wellness"]')).not.toBeVisible();
+    await expect(page.locator('nav[aria-label="Mobile Bottom Navigation"]')).not.toBeVisible();
 
-    // Open User Profile Dropdown
+    // Verify 1-Click Profile Shortcut
     await page.locator('[data-testid="user-profile-button"]').click();
     const adminProfileShortcut = page.getByRole('button', { name: /Application Admin Page/i });
     await expect(adminProfileShortcut).toBeVisible({ timeout: 4000 });
-    await adminProfileShortcut.click();
-
-    // Verify redirected back to Application Admin Command Center
-    await expect(page.getByRole('heading', { name: /Application Admin Command Center/i })).toBeVisible({ timeout: 6000 });
+    await page.locator('[data-testid="user-profile-button"]').click(); // close menu
   });
 
   test('SECURITY: Regular users (Varun, Retail, Non-Admin) CANNOT see or access Application Admin', async ({ page }) => {
