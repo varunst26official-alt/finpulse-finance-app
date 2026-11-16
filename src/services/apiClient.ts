@@ -552,6 +552,24 @@ export const api = {
     getUsers: async (): Promise<{ success: boolean; data: any[] }> => {
       return request('/admin/users');
     },
+    createUser: async (payload: {
+      fullName: string;
+      email: string;
+      password: string;
+      phoneNumber?: string;
+      investorType?: string;
+    }): Promise<{ success: boolean; message: string; user: any }> => {
+      return request('/admin/users', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+    resetPassword: async (userId: string, newPassword: string): Promise<{ success: boolean; message: string }> => {
+      return request(`/admin/users/${userId}/reset-password`, {
+        method: 'POST',
+        body: JSON.stringify({ newPassword }),
+      });
+    },
     updateUserTier: async (userId: string, tier: string): Promise<{ success: boolean; message: string }> => {
       return request(`/admin/users/${userId}/tier`, {
         method: 'PATCH',
@@ -566,6 +584,29 @@ export const api = {
     },
     triggerVacuum: async (): Promise<{ success: boolean; message: string }> => {
       return request('/admin/vacuum', { method: 'POST' });
+    },
+    getTables: async (): Promise<{ success: boolean; data: Array<{ name: string; rowCount: number; columnCount: number; columns: string[] }> }> => {
+      return request('/admin/tables');
+    },
+    getTableRecords: async (table: string, limit = 50, offset = 0, userId?: string): Promise<{
+      success: boolean;
+      data: { table: string; total: number; limit: number; offset: number; rows: any[] };
+    }> => {
+      const q = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+      if (userId) q.set('userId', userId);
+      return request(`/admin/tables/${table}?${q.toString()}`);
+    },
+    exportDatabase: async (): Promise<{ success: boolean; data: Record<string, any[]>; exportedAt: string; tablesCount: number }> => {
+      return request('/admin/export');
+    },
+    seedDemoData: async (userId: string): Promise<{ success: boolean; message: string }> => {
+      return request('/admin/seed-demo', {
+        method: 'POST',
+        body: JSON.stringify({ userId }),
+      });
+    },
+    runIntegrityCheck: async (): Promise<{ success: boolean; status: string; result: string }> => {
+      return request('/admin/integrity-check', { method: 'POST' });
     },
   },
 };

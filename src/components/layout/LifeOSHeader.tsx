@@ -191,12 +191,12 @@ export const LifeOSHeader: React.FC = () => {
                   <button
                     onClick={() => {
                       setIsProfileOpen(false);
-                      setCurrentSection('lifeadmin');
+                      setCurrentSection('appadmin');
                     }}
                     className="w-full text-left px-3 py-2 rounded-xl text-slate-700 hover:bg-[#f5f7fb] transition-all cursor-pointer flex items-center gap-2"
                   >
-                    <ShieldAlert className="w-3.5 h-3.5 text-[#17365d]" />
-                    <span>Admin Command Dashboard</span>
+                    <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Application Admin Page</span>
                   </button>
 
                   <button

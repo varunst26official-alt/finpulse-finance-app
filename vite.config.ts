@@ -26,6 +26,9 @@ export default defineConfig({
     }),
   ],
   server: {
+    watch: {
+      ignored: ['**/playwright-report/**', '**/test-results/**', '**/dist/**', '**/.git/**'],
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:5001',

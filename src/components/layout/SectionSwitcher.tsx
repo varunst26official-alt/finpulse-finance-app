@@ -8,6 +8,7 @@ import {
   CheckSquare,
   GraduationCap,
   ShieldCheck,
+  ShieldAlert,
   Trophy,
   type LucideIcon,
 } from 'lucide-react';
@@ -142,6 +143,22 @@ export const SECTION_CONFIGS: Record<LifeOSSection, SectionConfig> = {
     action: 'View My League',
     secondary: 'Customize Alias',
   },
+  appadmin: {
+    label: 'App Admin',
+    icon: ShieldAlert,
+    symbol: '⚡',
+    heroGradient: 'linear-gradient(120deg, #0f172a, #1e293b)',
+    heroColor1: '#0f172a',
+    heroColor2: '#1e293b',
+    accent: '#d97706',
+    soft: '#fef3c7',
+    eyebrow: 'PLATFORM GOVERNANCE & DATA CONTROL',
+    title: 'Application & User Administration',
+    description:
+      'Manage user accounts, inspect live database tables, export backups, and execute platform maintenance.',
+    action: 'Manage Users',
+    secondary: 'View System Telemetry',
+  },
 };
 
 export const SectionSwitcher: React.FC = () => {
@@ -155,6 +172,7 @@ export const SectionSwitcher: React.FC = () => {
     'learning',
     'lifeadmin',
     'community',
+    'appadmin',
   ];
 
   return (
@@ -172,6 +190,7 @@ export const SectionSwitcher: React.FC = () => {
           return (
             <motion.button
               key={key}
+              data-testid={`section-${key}`}
               onClick={() => setCurrentSection(key)}
               whileHover="hover"
               whileTap={{ scale: 0.96 }}

@@ -5,7 +5,8 @@ export type LifeOSSection =
   | 'productivity'
   | 'learning'
   | 'lifeadmin'
-  | 'community';
+  | 'community'
+  | 'appadmin';
 
 export type FinanceSubTab =
   | 'summary'

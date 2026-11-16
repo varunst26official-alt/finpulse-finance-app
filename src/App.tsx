@@ -13,6 +13,7 @@ import { ProductivityWorkspace } from '@/components/productivity/ProductivityWor
 import { LearningWorkspace } from '@/components/learning/LearningWorkspace';
 import { LifeAdminWorkspace } from '@/components/lifeadmin/LifeAdminWorkspace';
 import { CommunityWorkspace } from '@/components/community/CommunityWorkspace';
+import { ApplicationAdminWorkspace } from '@/components/admin/ApplicationAdminWorkspace';
 import { MasteryXpToast } from '@/components/community/MasteryXpToast';
 import { AdaptiveBlueprintModal } from '@/components/adaptive/AdaptiveBlueprintModal';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
@@ -95,6 +96,9 @@ export function App() {
 
             {/* Workspace 7: Community, Ranks & Section-Wise Points Leaderboard */}
             {currentSection === 'community' && <CommunityWorkspace />}
+
+            {/* Workspace 8: Application Admin & Platform Governance */}
+            {currentSection === 'appadmin' && <ApplicationAdminWorkspace />}
           </motion.div>
         </AnimatePresence>
       </main>

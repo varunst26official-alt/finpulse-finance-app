@@ -29,20 +29,28 @@ export const DemoTourGuide: React.FC = () => {
 
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const hasAutoTriggered = useRef(false);
 
   // Automatically trigger tour for first-time login user after 750ms mount delay
   useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('disable-tour') === 'true') {
+      return;
+    }
+    if (hasAutoTriggered.current) return;
     const isFirstTimeUser = user?.id
-      ? !seenUserIds?.includes(user.id)
+      ? (!seenUserIds?.includes(user.id) && !seenUserIds?.includes('*') && !hasSeenTour)
       : !hasSeenTour;
 
-    if (isFirstTimeUser && !isTourOpen) {
+    if (isFirstTimeUser && !isTourOpen && currentSection === 'overview') {
+      hasAutoTriggered.current = true;
       const timer = setTimeout(() => {
-        startTour();
+        if (useLifeOSStore.getState().currentSection === 'overview') {
+          startTour();
+        }
       }, 750);
       return () => clearTimeout(timer);
     }
-  }, [user?.id, seenUserIds, hasSeenTour, isTourOpen, startTour]);
+  }, [user?.id, seenUserIds, hasSeenTour, isTourOpen, currentSection, startTour]);
 
   const currentStep = TOUR_STEPS[currentStepIndex];
 
@@ -200,6 +208,8 @@ export const DemoTourGuide: React.FC = () => {
 
             <button
               onClick={() => skipTour(user?.id)}
+              data-testid="skip-tour-btn"
+              aria-label="Skip Tour"
               className="rounded-xl p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
               title="Skip Tour"
             >
