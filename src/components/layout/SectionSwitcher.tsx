@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
+import { useAuthStore } from '@/stores/authStore';
 import { LifeOSSection } from '@/types/lifeos';
 import {
   LayoutDashboard,
@@ -163,6 +164,15 @@ export const SECTION_CONFIGS: Record<LifeOSSection, SectionConfig> = {
 
 export const SectionSwitcher: React.FC = () => {
   const { currentSection, setCurrentSection } = useLifeOSStore();
+  const { user } = useAuthStore();
+  const isSuperAdmin = user?.email?.toLowerCase().trim() === 'admin@quantra.io';
+
+  // Guard: if non-admin somehow ends up on appadmin, bounce to overview immediately
+  React.useEffect(() => {
+    if (currentSection === 'appadmin' && !isSuperAdmin) {
+      setCurrentSection('overview');
+    }
+  }, [currentSection, isSuperAdmin, setCurrentSection]);
 
   const sections: LifeOSSection[] = [
     'overview',
@@ -172,7 +182,7 @@ export const SectionSwitcher: React.FC = () => {
     'learning',
     'lifeadmin',
     'community',
-    'appadmin',
+    ...(isSuperAdmin ? (['appadmin'] as LifeOSSection[]) : []),
   ];
 
   return (

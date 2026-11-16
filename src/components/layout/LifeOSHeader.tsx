@@ -188,16 +188,18 @@ export const LifeOSHeader: React.FC = () => {
                 </div>
 
                 <div className="py-1">
-                  <button
-                    onClick={() => {
-                      setIsProfileOpen(false);
-                      setCurrentSection('appadmin');
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-xl text-slate-700 hover:bg-[#f5f7fb] transition-all cursor-pointer flex items-center gap-2"
-                  >
-                    <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Application Admin Page</span>
-                  </button>
+                  {user?.email?.toLowerCase().trim() === 'admin@quantra.io' && (
+                    <button
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        setCurrentSection('appadmin');
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-xl text-slate-700 hover:bg-[#f5f7fb] transition-all cursor-pointer flex items-center gap-2"
+                    >
+                      <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Application Admin Page</span>
+                    </button>
+                  )}
 
                   <button
                     onClick={() => {

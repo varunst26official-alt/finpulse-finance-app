@@ -97,8 +97,10 @@ export function App() {
             {/* Workspace 7: Community, Ranks & Section-Wise Points Leaderboard */}
             {currentSection === 'community' && <CommunityWorkspace />}
 
-            {/* Workspace 8: Application Admin & Platform Governance */}
-            {currentSection === 'appadmin' && <ApplicationAdminWorkspace />}
+            {/* Workspace 8: Application Admin & Platform Governance (Strict Super Admin Gate) */}
+            {currentSection === 'appadmin' && user?.email?.toLowerCase().trim() === 'admin@quantra.io' && (
+              <ApplicationAdminWorkspace />
+            )}
           </motion.div>
         </AnimatePresence>
       </main>
