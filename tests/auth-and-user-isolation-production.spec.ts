@@ -121,14 +121,19 @@ test.describe('Production-Grade Auth Security & Strict User Isolation Suite', ()
 
     // Helper to navigate to Commitments / Debts section
     const navigateToDebts = async () => {
-      // 1. Click Finance section
-      const financeNav = page.locator('#tour-section-switcher').getByRole('button', { name: /Finance/i });
-      if (await financeNav.isVisible().catch(() => false)) {
-        await financeNav.click();
+      // 1. Click Finance section (desktop switcher or mobile bottom nav)
+      const mobileNavFinance = page.locator('nav[aria-label="Mobile Bottom Navigation"]').getByRole('button', { name: 'Finance' });
+      const desktopNavFinance = page.locator('#tour-section-switcher').getByRole('button', { name: /Finance/i });
+      if (await mobileNavFinance.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await mobileNavFinance.click();
+      } else {
+        await desktopNavFinance.click();
       }
-      // 2. Click Debts, Protection & Vault sub-tab
-      const vaultSubTab = page.getByRole('button', { name: /Debts, Protection & Vault/i }).or(page.getByRole('button', { name: 'Vault' })).first();
-      await expect(vaultSubTab).toBeVisible({ timeout: 6000 });
+
+      // 2. Click Debts, Protection & Vault sub-tab (or 'Vault' on mobile)
+      const vaultSubTab = page.getByRole('button', { name: /Debts, Protection & Vault/i }).or(page.getByRole('button', { name: 'Vault', exact: true })).first();
+      await vaultSubTab.scrollIntoViewIfNeeded();
+      await expect(vaultSubTab).toBeVisible({ timeout: 8000 });
       await vaultSubTab.click();
     };
 
