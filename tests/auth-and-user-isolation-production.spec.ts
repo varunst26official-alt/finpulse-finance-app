@@ -11,6 +11,20 @@ test.describe('Production-Grade Auth Security & Strict User Isolation Suite', ()
     await page.reload();
   });
 
+  test('UX: Ensures email and password fields are completely blank with NO prefilled values', async ({ page }) => {
+    await page.goto('/');
+
+    const emailInput = page.getByPlaceholder('name@example.com');
+    const passwordInput = page.getByPlaceholder('••••••••');
+
+    await expect(emailInput).toBeVisible();
+    await expect(passwordInput).toBeVisible();
+
+    // Verify fields are strictly blank with no prefilled values
+    await expect(emailInput).toHaveValue('');
+    await expect(passwordInput).toHaveValue('');
+  });
+
   test('SECURITY: Rejects incorrect password for existing account without leaking session', async ({ page }) => {
     await page.goto('/');
 

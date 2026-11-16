@@ -142,8 +142,8 @@ export const AuthScreen: React.FC = () => {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Form State
-  const [loginEmail, setLoginEmail] = useState('investor@quantra.io');
-  const [loginPassword, setLoginPassword] = useState('password123');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   // Register Form State
@@ -482,7 +482,7 @@ export const AuthScreen: React.FC = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         alert(
-                          'Password Recovery: In this local environment, your demo password is "password123". For custom accounts, please log in with your registered credentials.'
+                          'Password Recovery: Please enter your registered account credentials or register a new profile to continue.'
                         );
                       }}
                       className="text-xs text-[#9e783e] font-semibold hover:underline"
