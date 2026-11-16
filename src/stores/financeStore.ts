@@ -1468,5 +1468,10 @@ export const useFinanceStore = create<FinanceState>()(
   )
 );
 
+if (typeof window !== 'undefined') {
+  (window as any).useFinanceStore = useFinanceStore;
+}
+
+
 
 

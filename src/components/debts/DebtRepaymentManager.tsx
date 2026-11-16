@@ -6,6 +6,7 @@ import {
   CURRENCY_CONFIGS,
   DEBT_CATEGORY_LABELS,
   DEBT_CATEGORY_COLORS,
+  EXPENSE_CATEGORY_LABELS,
 } from '@/utils/formatters';
 import {
   Landmark,
@@ -23,6 +24,11 @@ import {
   History,
   X,
   Percent,
+  AlertTriangle,
+  Scissors,
+  TrendingUp,
+  Briefcase,
+  Wallet,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NumericAmountInput } from '@/components/ui/NumericAmountInput';
@@ -30,7 +36,19 @@ import { NumericAmountInput } from '@/components/ui/NumericAmountInput';
 type PayoffStrategy = 'AVALANCHE' | 'SNOWBALL';
 
 export const DebtRepaymentManager: React.FC = () => {
-  const { debts, currency, addDebt, updateDebt, deleteDebt, recordDebtRepayment } = useFinanceStore();
+  const {
+    debts,
+    currency,
+    addDebt,
+    updateDebt,
+    deleteDebt,
+    recordDebtRepayment,
+    getIncomeAllocation,
+    expenses,
+    bills,
+    monthlyLivingAllocation,
+    monthlyNetIncome,
+  } = useFinanceStore();
   const currentRate = CURRENCY_CONFIGS[currency].rateFromUSD;
 
   // Modals & UI States
@@ -150,6 +168,166 @@ export const DebtRepaymentManager: React.FC = () => {
       newMonths,
     };
   }, [kpiData, extraPaymentMonthly, currency, currentRate]);
+
+  // Real-time Income Allocation from finance store
+  const incomeAllocation = useMemo(() => {
+    return getIncomeAllocation();
+  }, [getIncomeAllocation, debts, expenses, bills, monthlyLivingAllocation, monthlyNetIncome]);
+
+  // Surplus payoff acceleration forecast for Target #1 debt
+  const surplusPayoffForecast = useMemo(() => {
+    const targetDebt = prioritizedDebts[0];
+    if (!targetDebt || incomeAllocation.surplusAmountUSD <= 0) {
+      return null;
+    }
+
+    const principal = targetDebt.currentOutstanding;
+    const monthlyRate = (targetDebt.interestRate || 0) / 100 / 12;
+    const baseEmi = targetDebt.monthlyEmi || 0;
+    const surplusUSD = incomeAllocation.surplusAmountUSD;
+
+    // Standard payoff duration (without extra payment)
+    let standardMonths = targetDebt.tenureMonths || 60;
+    if (baseEmi > 0 && monthlyRate > 0) {
+      const factor = (principal * monthlyRate) / baseEmi;
+      if (factor < 1) {
+        standardMonths = Math.ceil(-Math.log(1 - factor) / Math.log(1 + monthlyRate));
+      } else {
+        standardMonths = Math.max(60, Math.ceil(principal / baseEmi));
+      }
+    } else if (baseEmi > 0) {
+      standardMonths = Math.ceil(principal / baseEmi);
+    }
+
+    // Accelerated payoff duration with 100% surplus applied
+    const acceleratedEmi100 = baseEmi + surplusUSD;
+    let acceleratedMonths100 = standardMonths;
+    if (acceleratedEmi100 > 0 && monthlyRate > 0) {
+      const factor = (principal * monthlyRate) / acceleratedEmi100;
+      if (factor < 1) {
+        acceleratedMonths100 = Math.ceil(-Math.log(1 - factor) / Math.log(1 + monthlyRate));
+      } else {
+        acceleratedMonths100 = Math.ceil(principal / acceleratedEmi100);
+      }
+    } else if (acceleratedEmi100 > 0) {
+      acceleratedMonths100 = Math.ceil(principal / acceleratedEmi100);
+    }
+
+    // Accelerated payoff duration with 50% surplus applied
+    const acceleratedEmi50 = baseEmi + surplusUSD * 0.5;
+    let acceleratedMonths50 = standardMonths;
+    if (acceleratedEmi50 > 0 && monthlyRate > 0) {
+      const factor = (principal * monthlyRate) / acceleratedEmi50;
+      if (factor < 1) {
+        acceleratedMonths50 = Math.ceil(-Math.log(1 - factor) / Math.log(1 + monthlyRate));
+      } else {
+        acceleratedMonths50 = Math.ceil(principal / acceleratedEmi50);
+      }
+    } else if (acceleratedEmi50 > 0) {
+      acceleratedMonths50 = Math.ceil(principal / acceleratedEmi50);
+    }
+
+    // Months saved and interest saved
+    const monthsSaved100 = Math.max(0, standardMonths - acceleratedMonths100);
+    const standardTotalInterest = Math.max(0, baseEmi * standardMonths - principal);
+    const acceleratedTotalInterest100 = Math.max(0, acceleratedEmi100 * acceleratedMonths100 - principal);
+    const interestSavedUSD100 = Math.max(0, standardTotalInterest - acceleratedTotalInterest100);
+
+    const monthsSaved50 = Math.max(0, standardMonths - acceleratedMonths50);
+    const acceleratedTotalInterest50 = Math.max(0, acceleratedEmi50 * acceleratedMonths50 - principal);
+    const interestSavedUSD50 = Math.max(0, standardTotalInterest - acceleratedTotalInterest50);
+
+    const standardDate = new Date();
+    standardDate.setMonth(standardDate.getMonth() + standardMonths);
+
+    const acceleratedDate100 = new Date();
+    acceleratedDate100.setMonth(acceleratedDate100.getMonth() + acceleratedMonths100);
+
+    return {
+      targetDebt,
+      surplusUSD,
+      standardMonths,
+      acceleratedMonths100,
+      monthsSaved100,
+      interestSavedUSD100,
+      acceleratedMonths50,
+      monthsSaved50,
+      interestSavedUSD50,
+      standardDateString: standardDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      acceleratedDateString100: acceleratedDate100.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+    };
+  }, [prioritizedDebts, incomeAllocation]);
+
+  // Cashflow Deficit & Expense Reduction Advisory when in shortfall or zero surplus
+  const shortfallAdvisory = useMemo(() => {
+    if (incomeAllocation.surplusAmountUSD > 0 && !incomeAllocation.isShortfall) {
+      return null;
+    }
+
+    const shortfallUSD =
+      incomeAllocation.shortfallAmountUSD > 0
+        ? incomeAllocation.shortfallAmountUSD
+        : Math.max(0, incomeAllocation.totalAllocatedUSD - incomeAllocation.monthlyIncomeUSD);
+
+    // 1. Group recent expenses by category to identify top reduction candidates
+    const categoryTotals: Record<string, number> = {};
+    (expenses || []).forEach((exp) => {
+      const cat = exp.category || 'OTHER';
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + (exp.amount || 0);
+    });
+
+    const sortedCategories = Object.entries(categoryTotals)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([cat, totalUSD]) => ({
+        category: cat,
+        label: EXPENSE_CATEGORY_LABELS[cat as keyof typeof EXPENSE_CATEGORY_LABELS] || cat,
+        totalUSD,
+        suggestedTrimUSD: totalUSD * 0.2, // 20% cut target
+      }));
+
+    // 2. Discretionary living allocation reduction
+    const livingBudgetUSD = incomeAllocation.monthlyLivingAllocationUSD;
+    const suggestedLivingReductionUSD = Math.min(shortfallUSD, livingBudgetUSD * 0.3); // suggest cutting up to 30% or shortfall
+
+    // 3. Recurring bills audit
+    const sortedBills = [...(bills || [])]
+      .sort((a, b) => (b.amount || 0) - (a.amount || 0))
+      .slice(0, 2);
+
+    // 4. Calculate Extra Monthly Income Needed:
+    // Minimum Breakeven:
+    const breakevenExtraUSD = Math.max(10, shortfallUSD);
+
+    // Fast-Track Debt Payoff Target (Clear Target #1 in 36 months / 3 years)
+    const targetDebt = prioritizedDebts[0];
+    let fastTrackExtraUSD = breakevenExtraUSD;
+    const fastTrackMonths = 36;
+    if (targetDebt) {
+      const P = targetDebt.currentOutstanding;
+      const r = (targetDebt.interestRate || 0) / 100 / 12;
+      let requiredMonthlyPaymentUSD = 0;
+      if (r > 0) {
+        requiredMonthlyPaymentUSD = (P * r * Math.pow(1 + r, fastTrackMonths)) / (Math.pow(1 + r, fastTrackMonths) - 1);
+      } else {
+        requiredMonthlyPaymentUSD = P / fastTrackMonths;
+      }
+      const additionalEmiNeededUSD = Math.max(0, requiredMonthlyPaymentUSD - targetDebt.monthlyEmi);
+      fastTrackExtraUSD = breakevenExtraUSD + additionalEmiNeededUSD;
+    }
+
+    return {
+      shortfallUSD,
+      livingBudgetUSD,
+      suggestedLivingReductionUSD,
+      sortedCategories,
+      sortedBills,
+      breakevenExtraUSD,
+      fastTrackExtraUSD,
+      fastTrackMonths,
+      targetDebt,
+    };
+  }, [incomeAllocation, expenses, bills, prioritizedDebts]);
 
   // Handlers
   const handleOpenAddModal = () => {
@@ -454,6 +632,247 @@ export const DebtRepaymentManager: React.FC = () => {
               </span>
             </div>
           </div>
+
+          {/* Intelligent Payoff Acceleration / Deficit Advisory Section */}
+          {surplusPayoffForecast && (
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-50/80 via-white to-emerald-50/40 border border-emerald-200/90 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
+                      Surplus Payoff Accelerator
+                      <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                        Positive Free Cashflow
+                      </span>
+                    </h4>
+                    <p className="text-xs text-slate-600">
+                      Channel your monthly surplus of{' '}
+                      <span className="font-extrabold text-emerald-700">
+                        {formatCurrency(surplusPayoffForecast.surplusUSD, currency)}
+                      </span>{' '}
+                      to crush Target #1 ({surplusPayoffForecast.targetDebt.title})
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const amount = Math.round(
+                        surplusPayoffForecast.surplusUSD * (currency === 'INR' ? currentRate : 1)
+                      );
+                      setExtraPaymentMonthly(amount);
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
+                  >
+                    <TrendingUp className="h-3.5 w-3.5" />
+                    <span>Deploy 100% Surplus</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const amount = Math.round(
+                        surplusPayoffForecast.surplusUSD * 0.5 * (currency === 'INR' ? currentRate : 1)
+                      );
+                      setExtraPaymentMonthly(amount);
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    <span>50% Balanced</span>
+                  </button>
+                  {extraPaymentMonthly > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setExtraPaymentMonthly(0)}
+                      className="px-2 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition-all cursor-pointer"
+                      title="Reset Simulator"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Payoff Impact Metrics Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 bg-white rounded-xl border border-emerald-100/80 shadow-2xs">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>Payoff Speedup</span>
+                  </div>
+                  <div className="text-base font-extrabold text-emerald-700 mt-1 font-mono">
+                    {surplusPayoffForecast.monthsSaved100} Months Sooner
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">
+                    Cleared in {surplusPayoffForecast.acceleratedMonths100} mos instead of{' '}
+                    {surplusPayoffForecast.standardMonths} mos
+                  </div>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-emerald-100/80 shadow-2xs">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                    <Wallet className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>Interest Eliminated</span>
+                  </div>
+                  <div className="text-base font-extrabold text-emerald-700 mt-1 font-mono">
+                    {formatCurrency(surplusPayoffForecast.interestSavedUSD100, currency)}
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">
+                    Pure wealth saved directly into your pocket
+                  </div>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-emerald-100/80 shadow-2xs">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>Projected Debt-Free</span>
+                  </div>
+                  <div className="text-base font-extrabold text-slate-900 mt-1 font-mono">
+                    {surplusPayoffForecast.acceleratedDateString100}
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">
+                    Standard timeline was {surplusPayoffForecast.standardDateString}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Cashflow Shortfall & Targeted Expense / Extra Income Advisory */}
+          {shortfallAdvisory && (
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-rose-50/80 via-white to-amber-50/60 border border-rose-200/90 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-600 text-white shadow-xs">
+                    <AlertTriangle className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
+                      No Free Surplus Detected
+                      <span className="text-[10px] font-bold text-rose-800 bg-rose-100 px-2 py-0.5 rounded-full">
+                        Deficit: -{formatCurrency(shortfallAdvisory.shortfallUSD, currency)}/mo
+                      </span>
+                    </h4>
+                    <p className="text-xs text-slate-600">
+                      Your commitments currently exceed net income. Here is how to regain surplus and crush your debts:
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Column 1: Areas of Expense to Reduce */}
+                <div className="p-3.5 bg-white rounded-xl border border-rose-100 shadow-2xs space-y-2.5">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-rose-900 uppercase tracking-wider">
+                    <Scissors className="h-4 w-4 text-rose-600" />
+                    <span>Areas of Expense to Reduce</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Cut these discretionary areas to eliminate your monthly deficit without taking new debt:
+                  </p>
+                  <ul className="text-xs space-y-2 text-slate-700">
+                    <li className="flex items-start gap-2 p-2 rounded-lg bg-rose-50/50 border border-rose-100/60">
+                      <span className="font-extrabold text-rose-700 mt-0.5">•</span>
+                      <div>
+                        <span className="font-bold text-slate-900">Discretionary Living Budget:</span> Currently{' '}
+                        {formatCurrency(shortfallAdvisory.livingBudgetUSD, currency)}/mo. Trimming by{' '}
+                        <span className="font-extrabold text-rose-700">
+                          {formatCurrency(shortfallAdvisory.suggestedLivingReductionUSD, currency)}/mo
+                        </span>{' '}
+                        relieves immediate cash pressure.
+                      </div>
+                    </li>
+                    {shortfallAdvisory.sortedCategories.length > 0 && (
+                      <li className="flex items-start gap-2 p-2 rounded-lg bg-amber-50/50 border border-amber-100/60">
+                        <span className="font-extrabold text-amber-700 mt-0.5">•</span>
+                        <div>
+                          <span className="font-bold text-slate-900">Top Variable Outflows:</span> High spend logged in{' '}
+                          {shortfallAdvisory.sortedCategories.map((c, i) => (
+                            <span key={c.category}>
+                              {i > 0 && ', '}
+                              <span className="font-semibold text-slate-900">{c.label}</span> (
+                              {formatCurrency(c.totalUSD, currency)})
+                            </span>
+                          ))}
+                          . Targeting a 20% cut here saves{' '}
+                          <span className="font-extrabold text-emerald-700">
+                            ~{formatCurrency(
+                              shortfallAdvisory.sortedCategories.reduce((acc, c) => acc + c.suggestedTrimUSD, 0),
+                              currency
+                            )}
+                            /mo
+                          </span>
+                          .
+                        </div>
+                      </li>
+                    )}
+                    {shortfallAdvisory.sortedBills.length > 0 && (
+                      <li className="flex items-start gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+                        <span className="font-extrabold text-slate-600 mt-0.5">•</span>
+                        <div>
+                          <span className="font-bold text-slate-900">Recurring Bills Audit:</span> Check high-ticket
+                          bills ({shortfallAdvisory.sortedBills.map((b) => b.name).join(', ')}) for unused services or
+                          lower plan tiers.
+                        </div>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+
+                {/* Column 2: Extra Monthly Income Needed */}
+                <div className="p-3.5 bg-white rounded-xl border border-amber-100 shadow-2xs space-y-2.5">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 uppercase tracking-wider">
+                    <Briefcase className="h-4 w-4 text-amber-600" />
+                    <span>Extra Monthly Income Needed</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Earn additional income per month via side-gigs, freelance, or secondary sources:
+                  </p>
+
+                  <div className="space-y-2">
+                    <div className="p-2.5 rounded-lg bg-amber-50/70 border border-amber-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800">Minimum Breakeven Target</span>
+                        <span className="text-sm font-extrabold text-amber-800 font-mono">
+                          +{formatCurrency(shortfallAdvisory.breakevenExtraUSD, currency)} / mo
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 mt-1">
+                        Covers your entire monthly shortfall to prevent missed EMIs or dipping into savings.
+                      </p>
+                    </div>
+
+                    <div className="p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800">
+                          Fast-Track Payoff ({shortfallAdvisory.fastTrackMonths} Mos)
+                        </span>
+                        <span className="text-sm font-extrabold text-emerald-800 font-mono">
+                          +{formatCurrency(shortfallAdvisory.fastTrackExtraUSD, currency)} / mo
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 mt-1">
+                        Covers the deficit AND clears{' '}
+                        <span className="font-bold text-slate-900">
+                          {shortfallAdvisory.targetDebt ? shortfallAdvisory.targetDebt.title : 'Target #1'}
+                        </span>{' '}
+                        in 3 years.
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-500 italic mt-1">
+                    💡 Tip: Just 4–5 hours of weekly freelance consulting or skills monetization can generate this extra
+                    capacity.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Prioritized Payoff Ladder */}
           <div className="space-y-3">
