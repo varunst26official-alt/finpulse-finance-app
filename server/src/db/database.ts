@@ -896,6 +896,23 @@ export async function initDatabase(): Promise<Database> {
     );
   }
 
+  // Ensure admin@quantra.io exists with admin123 as dedicated Super Admin account
+  const existingAdmin = queryOne('SELECT id FROM users WHERE email = ?', ['admin@quantra.io']);
+  if (!existingAdmin) {
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync('admin123', salt);
+    run(
+      `INSERT INTO users (id, full_name, email, password_hash, phone_number, investor_type, joined_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      ['usr_superadmin', 'Super Administrator', 'admin@quantra.io', hash, '+91 99999 00000', 'INSTITUTIONAL', 'Jan 2026']
+    );
+    run(
+      `INSERT OR IGNORE INTO user_settings (user_id, currency, emergency_target_months)
+       VALUES (?, 'INR', 6)`,
+      ['usr_superadmin']
+    );
+  }
+
   persistDatabase();
   return db;
 }
