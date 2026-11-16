@@ -34,6 +34,8 @@ export const ProductivityWorkspace: React.FC = () => {
     deleteHabit,
     focusSessions,
     logFocusSession,
+    activeFocusTimer,
+    setActiveFocusTimer,
   } = useLifeOSStore();
 
   const { calendarEvents, debts, policies, currency } = useFinanceStore();
@@ -60,11 +62,11 @@ export const ProductivityWorkspace: React.FC = () => {
   const [habitCategory, setHabitCategory] = useState<'MORNING' | 'AFTERNOON' | 'EVENING' | 'ANYTIME'>('MORNING');
   const [habitIcon, setHabitIcon] = useState('⚡');
 
-  // Focus Timer State
-  const [timerMode, setTimerMode] = useState<'POMODORO' | 'DEEP_WORK' | 'SHORT_BREAK'>('POMODORO');
-  const [timerSecondsLeft, setTimerSecondsLeft] = useState(25 * 60);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [focusTask, setFocusTask] = useState('Core Work Sprint');
+  // Persistent Focus Timer State (lifted to lifeosStore)
+  const timerMode = activeFocusTimer?.mode || 'POMODORO';
+  const timerSecondsLeft = activeFocusTimer?.secondsLeft ?? (25 * 60);
+  const isTimerRunning = activeFocusTimer?.isRunning ?? false;
+  const focusTask = activeFocusTimer?.focusTask || 'Core Work Sprint';
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -77,10 +79,10 @@ export const ProductivityWorkspace: React.FC = () => {
     let interval: any = null;
     if (isTimerRunning && timerSecondsLeft > 0) {
       interval = setInterval(() => {
-        setTimerSecondsLeft((prev) => prev - 1);
+        setActiveFocusTimer({ secondsLeft: Math.max(0, timerSecondsLeft - 1) });
       }, 1000);
-    } else if (timerSecondsLeft === 0) {
-      setIsTimerRunning(false);
+    } else if (timerSecondsLeft === 0 && isTimerRunning) {
+      setActiveFocusTimer({ isRunning: false });
       const minutesLogged = timerMode === 'DEEP_WORK' ? 50 : timerMode === 'POMODORO' ? 25 : 5;
       logFocusSession({
         durationMinutes: minutesLogged,
@@ -90,14 +92,15 @@ export const ProductivityWorkspace: React.FC = () => {
       showToast(`🎉 Focus session completed: ${minutesLogged} minutes logged!`);
     }
     return () => clearInterval(interval);
-  }, [isTimerRunning, timerSecondsLeft, timerMode, focusTask, logFocusSession]);
+  }, [isTimerRunning, timerSecondsLeft, timerMode, focusTask, logFocusSession, setActiveFocusTimer]);
 
   const switchTimerMode = (mode: 'POMODORO' | 'DEEP_WORK' | 'SHORT_BREAK') => {
-    setTimerMode(mode);
-    setIsTimerRunning(false);
-    if (mode === 'POMODORO') setTimerSecondsLeft(25 * 60);
-    if (mode === 'DEEP_WORK') setTimerSecondsLeft(50 * 60);
-    if (mode === 'SHORT_BREAK') setTimerSecondsLeft(5 * 60);
+    const seconds = mode === 'POMODORO' ? 25 * 60 : mode === 'DEEP_WORK' ? 50 * 60 : 5 * 60;
+    setActiveFocusTimer({
+      mode,
+      isRunning: false,
+      secondsLeft: seconds,
+    });
   };
 
   const completedCount = tasks.filter((t) => t.status === 'COMPLETED').length;
@@ -155,6 +158,19 @@ export const ProductivityWorkspace: React.FC = () => {
     setHabitTitle('');
     setIsHabitModalOpen(false);
     showToast(`Habit "${habitTitle.trim()}" added to daily routine!`);
+  };
+
+  const handleQuickAddHabitTemplate = (template: {
+    title: string;
+    category: 'MORNING' | 'AFTERNOON' | 'EVENING' | 'ANYTIME';
+    icon: string;
+  }) => {
+    addHabit({
+      title: template.title,
+      category: template.category,
+      icon: template.icon,
+    });
+    showToast(`Habit routine added: ${template.title}`);
   };
 
   // Cross-Module Unified Master Calendar Events Aggregator
@@ -517,61 +533,151 @@ export const ProductivityWorkspace: React.FC = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {habits.map((habit) => (
-              <div
-                key={habit.id}
-                className={`p-4 rounded-2xl border transition-all flex items-center justify-between ${
-                  habit.isCompletedToday
-                    ? 'border-emerald-200 bg-emerald-50/40'
-                    : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center gap-3">
+          {habits.length === 0 ? (
+            <div className="p-8 sm:p-12 text-center bg-slate-50/50 rounded-3xl border border-dashed border-slate-300 space-y-6">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-[#5574d9] flex items-center justify-center mx-auto border border-indigo-200">
+                <CheckSquare className="w-7 h-7" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-base font-extrabold text-slate-900">No Habit Routines Set Yet</h4>
+                <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                  Atomic habits compound into life-changing systems. Build daily momentum with streak tracking.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => setIsHabitModalOpen(true)}
+                  className="px-5 py-2.5 rounded-xl bg-[#5574d9] hover:bg-[#435eb7] text-white text-xs font-bold transition-all shadow-md shadow-[#5574d9]/20 cursor-pointer flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Create Custom Habit</span>
+                </button>
+              </div>
+
+              {/* 1-Click Starter Habit Templates */}
+              <div className="pt-4 border-t border-slate-200 max-w-2xl mx-auto">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 text-center">
+                  Or start immediately with proven keystone routines
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
                   <button
-                    onClick={() => {
-                      toggleHabit(habit.id);
-                      showToast(habit.isCompletedToday ? 'Habit unchecked' : '🔥 Streak updated!');
-                    }}
-                    className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all cursor-pointer ${
-                      habit.isCompletedToday
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-white border border-slate-300 text-slate-400 hover:border-emerald-500'
-                    }`}
+                    onClick={() =>
+                      handleQuickAddHabitTemplate({
+                        title: 'Drink 2L Filtered Water',
+                        category: 'MORNING',
+                        icon: '💧',
+                      })
+                    }
+                    className="p-3.5 rounded-2xl border border-cyan-200 bg-cyan-50/50 hover:bg-cyan-50 hover:border-cyan-400 transition-all text-left group cursor-pointer shadow-2xs"
                   >
-                    {habit.isCompletedToday ? <Check className="w-4 h-4" /> : habit.icon}
+                    <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                      <span>💧 Hydration</span>
+                      <span className="text-[10px] text-cyan-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">Morning • 2L Target</div>
                   </button>
 
-                  <div>
-                    <div
-                      className={`text-xs sm:text-sm font-bold ${
-                        habit.isCompletedToday ? 'line-through text-slate-400' : 'text-slate-800'
-                      }`}
-                    >
-                      {habit.title}
-                    </div>
-                    <div className="text-[10px] font-bold text-slate-500 uppercase mt-0.5">
-                      {habit.category} Routine
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-xs font-extrabold flex items-center gap-1">
-                    <span>🔥</span>
-                    <span>{habit.streakCount} days</span>
-                  </span>
                   <button
-                    onClick={() => deleteHabit(habit.id)}
-                    className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer p-1"
-                    title="Delete habit"
+                    onClick={() =>
+                      handleQuickAddHabitTemplate({
+                        title: 'Deep Reading (20 Mins)',
+                        category: 'EVENING',
+                        icon: '📚',
+                      })
+                    }
+                    className="p-3.5 rounded-2xl border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50 hover:border-indigo-400 transition-all text-left group cursor-pointer shadow-2xs"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                      <span>📚 20-Min Reading</span>
+                      <span className="text-[10px] text-indigo-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">Evening • Non-fiction</div>
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleQuickAddHabitTemplate({
+                        title: 'Cardio / Mobility Workout',
+                        category: 'MORNING',
+                        icon: '🏃',
+                      })
+                    }
+                    className="p-3.5 rounded-2xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 hover:border-emerald-400 transition-all text-left group cursor-pointer shadow-2xs"
+                  >
+                    <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                      <span>🏃 30-Min Cardio</span>
+                      <span className="text-[10px] text-emerald-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">Morning • Zone 2 / Run</div>
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {habits.map((habit) => (
+                <div
+                  key={habit.id}
+                  className={`p-4 rounded-2xl border transition-all flex items-center justify-between ${
+                    habit.isCompletedToday
+                      ? 'border-emerald-200 bg-emerald-50/40'
+                      : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        toggleHabit(habit.id);
+                        showToast(habit.isCompletedToday ? 'Habit unchecked' : '🔥 Streak updated!');
+                      }}
+                      className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm transition-all cursor-pointer ${
+                        habit.isCompletedToday
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-white border border-slate-300 text-slate-400 hover:border-emerald-500'
+                      }`}
+                    >
+                      {habit.isCompletedToday ? <Check className="w-4 h-4" /> : habit.icon}
+                    </button>
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-xs sm:text-sm font-bold ${
+                            habit.isCompletedToday ? 'line-through text-slate-400' : 'text-slate-800'
+                          }`}
+                        >
+                          {habit.title}
+                        </span>
+                        {habit.isCompletedToday && (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-emerald-100 text-emerald-800 uppercase tracking-wider">
+                            Done Today
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[10px] font-bold text-slate-500 uppercase mt-0.5">
+                        {habit.category} Routine
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-xs font-extrabold flex items-center gap-1">
+                      <span>🔥</span>
+                      <span>{habit.streakCount} days</span>
+                    </span>
+                    <button
+                      onClick={() => deleteHabit(habit.id)}
+                      className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer p-1"
+                      title="Delete habit"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       )}
 
@@ -631,7 +737,7 @@ export const ProductivityWorkspace: React.FC = () => {
                 type="text"
                 placeholder="What are you focusing on?"
                 value={focusTask}
-                onChange={(e) => setFocusTask(e.target.value)}
+                onChange={(e) => setActiveFocusTimer({ focusTask: e.target.value })}
                 className="text-center px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold max-w-sm w-full text-slate-800"
               />
             </div>
@@ -640,7 +746,7 @@ export const ProductivityWorkspace: React.FC = () => {
           {/* Controls */}
           <div className="flex items-center justify-center gap-3">
             <button
-              onClick={() => setIsTimerRunning(!isTimerRunning)}
+              onClick={() => setActiveFocusTimer({ isRunning: !isTimerRunning })}
               className="px-6 py-3 rounded-2xl bg-[#5574d9] hover:bg-[#435eb7] text-white text-sm font-extrabold transition-all shadow-lg shadow-[#5574d9]/30 cursor-pointer flex items-center gap-2"
             >
               {isTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}

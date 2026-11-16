@@ -50,15 +50,22 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
 
   const [mode, setMode] = useState<ModalMode>('TRADE');
 
+  const defaultInitialStock = COMPREHENSIVE_STOCK_DIRECTORY.length > 0 ? COMPREHENSIVE_STOCK_DIRECTORY[0] : null;
+
   // --- Trade Mode State ---
-  const [stockSearchQuery, setStockSearchQuery] = useState('');
+  const [stockSearchQuery, setStockSearchQuery] = useState(
+    defaultInitialStock ? `${defaultInitialStock.symbol} — ${defaultInitialStock.name}` : ''
+  );
   const [stockSearchResults, setStockSearchResults] = useState<ListedStockItem[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [selectedStock, setSelectedStock] = useState<ListedStockItem | null>(null);
+  const [selectedStock, setSelectedStock] = useState<ListedStockItem | null>(defaultInitialStock);
 
   const [tradeType, setTradeType] = useState<TransactionType>('BUY');
   const [quantity, setQuantity] = useState<number>(10);
-  const [pricePerUnit, setPricePerUnit] = useState<number>(34.8);
+  const [pricePerUnit, setPricePerUnit] = useState<number>(() => {
+    if (!defaultInitialStock) return 34.8;
+    return currency === 'INR' ? defaultInitialStock.currentPriceINR : defaultInitialStock.currentPriceUSD;
+  });
   const [tradePlatform, setTradePlatform] = useState('Zerodha Kite');
   const [tradeDate, setTradeDate] = useState(new Date().toISOString().split('T')[0]);
   const [tradeNotes, setTradeNotes] = useState('');
@@ -92,15 +99,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
 
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Initialize stock search on load
+  // Synchronize price per unit when currency changes
   useEffect(() => {
-    if (COMPREHENSIVE_STOCK_DIRECTORY.length > 0 && !selectedStock) {
-      const defaultStock = COMPREHENSIVE_STOCK_DIRECTORY[0];
-      setSelectedStock(defaultStock);
-      setStockSearchQuery(`${defaultStock.symbol} — ${defaultStock.name}`);
-      setPricePerUnit(currency === 'INR' ? defaultStock.currentPriceINR : defaultStock.currentPriceUSD);
+    if (selectedStock) {
+      setPricePerUnit(currency === 'INR' ? selectedStock.currentPriceINR : selectedStock.currentPriceUSD);
     }
-  }, [currency]);
+  }, [currency, selectedStock]);
 
   // Handle dynamic stock search
   useEffect(() => {

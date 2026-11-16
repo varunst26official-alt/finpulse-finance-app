@@ -64,7 +64,7 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
       />
 
       {/* 2. In-Workspace Sub-module Navigation Pills with Mobile 3x2 Grid */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         {/* Mobile Navigation Grid: ALL 6 Sub-Modules Visible Simultaneously */}
         <div className="grid grid-cols-3 gap-1.5 p-1.5 bg-white border border-[#e4e9f1] rounded-2xl shadow-xs sm:hidden w-full">
           {subTabs.map((tab) => {

@@ -167,6 +167,33 @@ export const GoalMilestoneManager: React.FC = () => {
     setNewNotes('');
   };
 
+  const handleQuickAddTemplate = (template: {
+    title: string;
+    category: GoalCategory;
+    targetAmountUSD: number;
+    yearsFromNow: number;
+    monthlyContributionUSD: number;
+    priority: GoalPriority;
+    notes: string;
+  }) => {
+    const target = new Date();
+    target.setFullYear(target.getFullYear() + template.yearsFromNow);
+    const targetDateStr = target.toISOString().split('T')[0];
+
+    addGoal({
+      title: template.title,
+      category: template.category,
+      targetAmount: template.targetAmountUSD,
+      targetDate: targetDateStr,
+      currentSaved: 0,
+      monthlyContribution: template.monthlyContributionUSD,
+      priority: template.priority,
+      inflationRate: 6.0,
+      expectedReturnRate: 12.0,
+      notes: template.notes,
+    });
+  };
+
   // Handle Top-up Contribution
   const handleTopUpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -483,20 +510,102 @@ export const GoalMilestoneManager: React.FC = () => {
 
           {/* Goals Cards Grid */}
           {filteredGoals.length === 0 ? (
-            <div className="p-12 text-center bg-white rounded-3xl border border-[#e8e0d1] shadow-xs">
-              <div className="p-4 rounded-2xl bg-[#faf7f0] text-[#9e783e] w-fit mx-auto mb-3 border border-[#ded3bf]">
+            <div className="p-8 sm:p-12 text-center bg-white rounded-3xl border border-[#e8e0d1] shadow-xs space-y-6">
+              <div className="p-4 rounded-2xl bg-[#faf7f0] text-[#9e783e] w-fit mx-auto border border-[#ded3bf]">
                 <Target className="h-8 w-8" />
               </div>
-              <h4 className="text-base font-extrabold text-slate-900 mb-1">No Goals Recorded Yet</h4>
-              <p className="text-xs text-slate-600 max-w-md mx-auto mb-4 font-medium leading-relaxed">
-                Connect your investments to real life aspirations like child education, home purchase, or early retirement.
-              </p>
-              <button
-                onClick={() => setIsAddModalOpen(true)}
-                className="px-4 py-2 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] transition-all cursor-pointer shadow-xs"
-              >
-                + Create First Goal
-              </button>
+              <div className="space-y-1">
+                <h4 className="text-base font-extrabold text-slate-900">No Goals Recorded Yet</h4>
+                <p className="text-xs text-slate-600 max-w-md mx-auto font-medium leading-relaxed">
+                  Connect your investments to real life aspirations like child education, home purchase, or early retirement.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="px-5 py-2.5 rounded-xl bg-[#9e783e] hover:bg-[#88642e] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                >
+                  + Create Custom Goal
+                </button>
+              </div>
+
+              {/* Starter Templates */}
+              <div className="pt-4 border-t border-[#e8e0d1]/60">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">
+                  Or launch with a 1-click starter template
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto text-left">
+                  <button
+                    onClick={() =>
+                      handleQuickAddTemplate({
+                        title: 'Early Retirement (FIRE)',
+                        category: 'RETIREMENT_FIRE',
+                        targetAmountUSD: 150000,
+                        yearsFromNow: 10,
+                        monthlyContributionUSD: 600,
+                        priority: 'HIGH',
+                        notes: 'Long-term financial freedom corpus with disciplined index compounding.',
+                      })
+                    }
+                    className="p-3.5 rounded-2xl border border-amber-200 bg-amber-50/50 hover:bg-amber-50 hover:border-amber-400 transition-all text-left group cursor-pointer shadow-2xs"
+                  >
+                    <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                      <span>🎯 FIRE Corpus</span>
+                      <span className="text-[10px] text-amber-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">
+                      {formatCurrency(150000, currency)} • 10-Yr Target
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleQuickAddTemplate({
+                        title: 'Child Higher Education',
+                        category: 'CHILD_EDUCATION',
+                        targetAmountUSD: 40000,
+                        yearsFromNow: 8,
+                        monthlyContributionUSD: 250,
+                        priority: 'HIGH',
+                        notes: 'Dedicated college tuition & academic milestone fund.',
+                      })
+                    }
+                    className="p-3.5 rounded-2xl border border-blue-200 bg-blue-50/50 hover:bg-blue-50 hover:border-blue-400 transition-all text-left group cursor-pointer shadow-2xs"
+                  >
+                    <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                      <span>🎓 Higher Education</span>
+                      <span className="text-[10px] text-blue-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">
+                      {formatCurrency(40000, currency)} • 8-Yr Target
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleQuickAddTemplate({
+                        title: 'Emergency Safety Buffer',
+                        category: 'WEALTH_CORPUS',
+                        targetAmountUSD: 10000,
+                        yearsFromNow: 2,
+                        monthlyContributionUSD: 400,
+                        priority: 'HIGH',
+                        notes: 'Liquid 6-month living expense buffer for shock immunity.',
+                      })
+                    }
+                    className="p-3.5 rounded-2xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 hover:border-emerald-400 transition-all text-left group cursor-pointer shadow-2xs"
+                  >
+                    <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                      <span>🛡️ Emergency Buffer</span>
+                      <span className="text-[10px] text-emerald-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-1">
+                      {formatCurrency(10000, currency)} • 2-Yr Target
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

@@ -115,6 +115,18 @@ interface LifeOSState {
 
   focusSessions: FocusSessionItem[];
   logFocusSession: (session: { durationMinutes: number; sessionType: 'POMODORO' | 'DEEP_WORK' | 'SHORT_BREAK'; taskTitle?: string }) => void;
+  activeFocusTimer: {
+    mode: 'POMODORO' | 'DEEP_WORK' | 'SHORT_BREAK';
+    secondsLeft: number;
+    isRunning: boolean;
+    focusTask: string;
+  };
+  setActiveFocusTimer: (updates: Partial<{
+    mode: 'POMODORO' | 'DEEP_WORK' | 'SHORT_BREAK';
+    secondsLeft: number;
+    isRunning: boolean;
+    focusTask: string;
+  }>) => void;
 
   // Learning & Career (Phase 5)
   learningItems: LearningItem[];
@@ -579,6 +591,18 @@ export const useLifeOSStore = create<LifeOSState>()(
 
         api.lifeos.logFocusSession(sessionData).catch(() => {});
       },
+
+      activeFocusTimer: {
+        mode: 'POMODORO',
+        secondsLeft: 25 * 60,
+        isRunning: false,
+        focusTask: 'Core Work Sprint',
+      },
+
+      setActiveFocusTimer: (updates) =>
+        set((state) => ({
+          activeFocusTimer: { ...state.activeFocusTimer, ...updates },
+        })),
 
       // Phase 5: Learning & Books
       learningItems: [],

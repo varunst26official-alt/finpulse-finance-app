@@ -645,13 +645,16 @@ export const FloatingAiChatWidget: React.FC = () => {
                         type="button"
                         onClick={toggleVoiceListening}
                         title={isListening ? 'Stop listening' : 'Speak with voice'}
-                        className={`absolute right-2 top-2.5 p-1 rounded-lg transition-colors cursor-pointer ${
+                        className={`relative absolute right-2 top-2 p-1.5 rounded-lg transition-all cursor-pointer flex items-center justify-center ${
                           isListening
-                            ? 'text-rose-600 bg-rose-100 animate-pulse'
+                            ? 'text-rose-600 bg-rose-100 ring-2 ring-rose-400/50 shadow-xs'
                             : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
                         }`}
                       >
-                        {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                        {isListening && (
+                          <span className="absolute -inset-1 rounded-lg bg-rose-400/30 animate-ping pointer-events-none" />
+                        )}
+                        {isListening ? <MicOff className="h-4 w-4 relative z-10" /> : <Mic className="h-4 w-4" />}
                       </button>
                     </div>
 

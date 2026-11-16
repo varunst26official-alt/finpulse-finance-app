@@ -1740,10 +1740,10 @@ export const FinancialCalendarWidget: React.FC = () => {
               </div>
 
               {/* Day Metrics Strip */}
-              <div className="grid grid-cols-3 gap-3 p-4 bg-[#faf8f5] border-b border-[#e8e0d1] text-xs">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3.5 sm:p-4 bg-[#faf8f5] border-b border-[#e8e0d1] text-xs">
                 <div>
-                  <span className="text-[10px] font-bold uppercase text-slate-500 block">Day Inflow (Credits)</span>
-                  <span className="text-sm sm:text-base font-bold font-mono text-emerald-700">
+                  <span className="text-[10px] font-bold uppercase text-slate-500 block truncate">Day Inflow (Credits)</span>
+                  <span className="text-xs sm:text-sm md:text-base font-bold font-mono text-emerald-700 truncate block">
                     +{formatCurrency(
                       selectedDateEvents
                         .filter((e) => e.type === 'EXPECTED_INCOME')
@@ -1753,8 +1753,8 @@ export const FinancialCalendarWidget: React.FC = () => {
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase text-slate-500 block">Day Outflow (Debits)</span>
-                  <span className="text-sm sm:text-base font-bold font-mono text-rose-700">
+                  <span className="text-[10px] font-bold uppercase text-slate-500 block truncate">Day Outflow (Debits)</span>
+                  <span className="text-xs sm:text-sm md:text-base font-bold font-mono text-rose-700 truncate block">
                     -{formatCurrency(
                       selectedDateEvents
                         .filter((e) => e.type !== 'EXPECTED_INCOME')
@@ -1764,8 +1764,8 @@ export const FinancialCalendarWidget: React.FC = () => {
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase text-slate-500 block">Total Entries</span>
-                  <span className="text-sm sm:text-base font-bold font-mono text-slate-900">
+                  <span className="text-[10px] font-bold uppercase text-slate-500 block truncate">Total Entries</span>
+                  <span className="text-xs sm:text-sm md:text-base font-bold font-mono text-slate-900 block truncate">
                     {selectedDateEvents.length} Recorded
                   </span>
                 </div>
@@ -1839,23 +1839,23 @@ export const FinancialCalendarWidget: React.FC = () => {
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-[#e8e0d1] bg-[#faf8f5] flex items-center justify-between">
+              <div className="p-3.5 sm:p-4 border-t border-[#e8e0d1] bg-[#faf8f5] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                <button
+                  onClick={() => setIsDateInspectorOpen(false)}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white border border-[#e8e0d1] text-xs font-bold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer min-h-[44px] flex items-center justify-center"
+                >
+                  Close
+                </button>
                 <button
                   onClick={() => {
                     setEventDate(selectedDateStr);
                     setIsDateInspectorOpen(false);
                     setIsAddModalOpen(true);
                   }}
-                  className="px-4 py-2 rounded-xl bg-[#9e783e] hover:bg-[#866632] text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#9e783e] hover:bg-[#866632] text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5 min-h-[44px]"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Entry on {selectedDateStr}</span>
-                </button>
-                <button
-                  onClick={() => setIsDateInspectorOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-white border border-[#e8e0d1] text-xs font-bold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer"
-                >
-                  Close
                 </button>
               </div>
             </motion.div>

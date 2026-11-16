@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFinanceStore } from '@/stores/financeStore';
+import { useAuthStore } from '@/stores/authStore';
+import { saveUserScopedData } from '@/services/userStorage';
 import { formatCurrency, CURRENCY_CONFIGS } from '@/utils/formatters';
+import { MonthlyInflowAllocationModal } from './MonthlyInflowAllocationModal';
 import {
   Wallet,
   AlertTriangle,
@@ -19,16 +22,27 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
   const {
     monthlyNetIncome,
     setMonthlyNetIncome,
+    monthlyLivingAllocation,
+    setMonthlyLivingAllocation,
     getIncomeAllocation,
+    bills,
     currency,
   } = useFinanceStore();
 
   const rate = CURRENCY_CONFIGS[currency]?.rateFromUSD || 84.5;
   const isINR = currency === 'INR';
 
+  const [isStudioOpen, setIsStudioOpen] = useState(false);
+  const [studioTab, setStudioTab] = useState<'inflow' | 'living' | 'commitments'>('inflow');
+
   const [isEditing, setIsEditing] = useState(false);
   const [incomeInput, setIncomeInput] = useState<string>(() =>
     Math.round(monthlyNetIncome * (isINR ? rate : 1)).toString()
+  );
+
+  const [isEditingLiving, setIsEditingLiving] = useState(false);
+  const [livingInput, setLivingInput] = useState<string>(() =>
+    Math.round((monthlyLivingAllocation || 0) * (isINR ? rate : 1)).toString()
   );
 
   const allocation = getIncomeAllocation();
@@ -50,10 +64,26 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
   const handleSaveIncome = (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = parseFloat(incomeInput.replace(/[^0-9.]/g, ''));
-    if (!isNaN(parsed) && parsed > 0) {
+    if (!isNaN(parsed) && parsed >= 0) {
       const usdValue = isINR ? parsed / rate : parsed;
       setMonthlyNetIncome(usdValue);
+      try {
+        saveUserScopedData(useAuthStore.getState().user);
+      } catch (_) {}
       setIsEditing(false);
+    }
+  };
+
+  const handleSaveLiving = (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsed = parseFloat(livingInput.replace(/[^0-9.]/g, ''));
+    if (!isNaN(parsed) && parsed >= 0) {
+      const usdValue = isINR ? parsed / rate : parsed;
+      setMonthlyLivingAllocation(usdValue);
+      try {
+        saveUserScopedData(useAuthStore.getState().user);
+      } catch (_) {}
+      setIsEditingLiving(false);
     }
   };
 
@@ -92,14 +122,25 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
                 </span>
               </div>
               <button
-                onClick={() => {
-                  setIncomeInput(Math.round(displayIncome).toString());
-                  setIsEditing(true);
-                }}
+                onClick={() => setIsEditing(true)}
+                data-testid="edit-income-btn"
                 className="p-1.5 rounded-xl hover:bg-[#e8e0d1]/60 text-slate-600 transition-colors cursor-pointer"
                 title="Edit Monthly Income"
+                aria-label="Edit Monthly Income"
               >
                 <Edit3 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => {
+                  setStudioTab('inflow');
+                  setIsStudioOpen(true);
+                }}
+                data-testid="studio-modal-btn"
+                className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#9e783e]/10 hover:bg-[#9e783e]/20 text-[#9e783e] text-xs font-bold transition-colors cursor-pointer"
+                title="Configure Monthly Inflow & Allocation Studio"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Studio</span>
               </button>
             </div>
           ) : (
@@ -111,9 +152,10 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
                 <input
                   type="number"
                   required
-                  min="100"
-                  step="500"
+                  min="0"
+                  step="any"
                   autoFocus
+                  data-testid="income-input"
                   value={incomeInput}
                   onChange={(e) => setIncomeInput(e.target.value)}
                   className="w-36 sm:w-44 h-10 pl-7 pr-3 rounded-xl bg-white border-2 border-[#9e783e] text-xs font-mono font-bold text-slate-900 focus:outline-hidden"
@@ -122,6 +164,8 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
               </div>
               <button
                 type="submit"
+                data-testid="save-income-btn"
+                title="Save Monthly Income"
                 className="h-10 px-3 rounded-xl bg-[#9e783e] text-white text-xs font-bold hover:bg-[#88642e] transition-colors cursor-pointer flex items-center justify-center"
               >
                 <Check className="w-4 h-4" />
@@ -349,20 +393,113 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
           </span>
         </div>
 
-        {/* Living Expenses */}
-        <div className="p-3.5 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1] space-y-1">
+        {/* Living Expenses & User Bills */}
+        <div data-testid="living-bills-card" className="p-3.5 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1] space-y-2 relative group">
           <div className="flex items-center justify-between text-slate-500 text-xs">
             <span className="font-semibold text-[11px]">Living & Bills</span>
-            <Home className="w-4 h-4 text-sky-600" />
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setIsEditingLiving(true)}
+                data-testid="edit-living-btn"
+                className="p-1 rounded-lg hover:bg-[#e8e0d1]/60 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                title="Edit Living Budget"
+                aria-label="Edit Living Budget"
+              >
+                <Edit3 className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setStudioTab('living');
+                  setIsStudioOpen(true);
+                }}
+                data-testid="open-living-studio-btn"
+                className="p-1 rounded-lg hover:bg-[#e8e0d1]/60 text-[#9e783e] hover:text-[#88642e] transition-colors cursor-pointer"
+                title="Open Inflow & Allocation Studio"
+                aria-label="Open Inflow & Allocation Studio"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+              </button>
+              <Home className="w-4 h-4 text-sky-600" />
+            </div>
           </div>
-          <div className="text-base sm:text-lg font-extrabold font-mono text-slate-900">
-            {formatCurrency(allocation.livingExpensesMonthlyUSD, currency)}
-          </div>
-          <span className="text-[10px] font-semibold text-sky-700 block">
+
+          {!isEditingLiving ? (
+            <div>
+              <div className="text-base sm:text-lg font-extrabold font-mono text-slate-900">
+                {formatCurrency(allocation.livingExpensesMonthlyUSD, currency)}
+              </div>
+              <div className="text-[10px] text-slate-500 font-medium space-y-0.5 mt-1">
+                <div className="flex justify-between">
+                  <span>Entered Bills ({bills?.length || 0}):</span>
+                  <span className="font-mono font-bold text-slate-700">
+                    {formatCurrency(allocation.monthlyBillsUSD, currency)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Living Allocation:</span>
+                  <span className="font-mono font-bold text-sky-700">
+                    {formatCurrency(allocation.monthlyLivingAllocationUSD, currency)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSaveLiving} className="space-y-1.5 pt-0.5">
+              <label className="text-[10px] font-bold text-sky-700 block">
+                Edit Living Allocation:
+              </label>
+              <div className="flex items-center gap-1">
+                <div className="relative flex-1">
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">
+                    {currency === 'INR' ? '₹' : '$'}
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    autoFocus
+                    data-testid="living-input"
+                    value={livingInput}
+                    onChange={(e) => setLivingInput(e.target.value)}
+                    className="w-full h-8 pl-6 pr-2 rounded-lg bg-white border-2 border-sky-500 text-xs font-mono font-bold text-slate-900 focus:outline-hidden"
+                    placeholder="0"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  data-testid="save-living-btn"
+                  className="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center hover:bg-sky-700 transition-colors cursor-pointer shrink-0"
+                  title="Save"
+                >
+                  <Check className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingLiving(false)}
+                  className="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-300 transition-colors cursor-pointer shrink-0"
+                  title="Cancel"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </form>
+          )}
+
+          <span className="text-[10px] font-semibold text-sky-700 block pt-1 border-t border-[#f0eae1]">
             {expPct.toFixed(1)}% of income
           </span>
         </div>
       </div>
+
+      {isStudioOpen && (
+        <MonthlyInflowAllocationModal
+          isOpen={isStudioOpen}
+          onClose={() => setIsStudioOpen(false)}
+          initialTab={studioTab}
+        />
+      )}
     </motion.div>
   );
 };

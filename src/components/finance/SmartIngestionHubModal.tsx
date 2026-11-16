@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { QuantraLogo } from '@/components/ui/QuantraLogo';
@@ -57,6 +57,8 @@ interface SmartIngestionHubModalProps {
   onClose: () => void;
 }
 
+const USD_INR_RATE = 84.5;
+
 type IngestionTab = 'statements' | 'sms' | 'screenshot';
 
 export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
@@ -64,7 +66,8 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   onClose,
 }) => {
   const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose);
-  const { addExpensesBatch, addIncomesBatch, addCalendarEventsBatch, addAsset } = useFinanceStore();
+  const { addExpensesBatch, addIncomesBatch, addCalendarEventsBatch, addAsset, expenses } = useFinanceStore();
+
   const [activeTab, setActiveTab] = useState<IngestionTab>('statements');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -78,6 +81,31 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   const [parsedExpenses, setParsedExpenses] = useState<ParsedTransactionResult[]>([]);
   const [parsedHoldings, setParsedHoldings] = useState<ParsedDematHolding[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const existingExpenseKeys = useMemo(() => {
+    return new Set(
+      (expenses || []).map((e) => {
+        const upiMatch = e.notes ? e.notes.match(/UPI:([0-9]+)/i) : null;
+        return upiMatch
+          ? `upi_${upiMatch[1]}`
+          : `${e.date}_${e.title.trim().toLowerCase()}_${e.amount.toFixed(2)}`;
+      })
+    );
+  }, [expenses]);
+
+  const duplicateItemIds = useMemo(() => {
+    const ids = new Set<string>();
+    parsedExpenses.forEach((item) => {
+      const upiMatch = item.accountRef ? item.accountRef.match(/([0-9]{8,})/i) : null;
+      const key = upiMatch
+        ? `upi_${upiMatch[1]}`
+        : `${normalizeDateToISO(item.date)}_${item.merchant.trim().toLowerCase()}_${(item.amount / USD_INR_RATE).toFixed(2)}`;
+      if (existingExpenseKeys.has(key)) {
+        ids.add(item.id);
+      }
+    });
+    return ids;
+  }, [parsedExpenses, existingExpenseKeys]);
 
   // Input states
   const [rawSmsInput, setRawSmsInput] = useState('');
@@ -1086,18 +1114,37 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                   </p>
                 </div>
 
-                <button
-                  onClick={() =>
-                    selectAll(
-                      parsedHoldings.length > 0
-                        ? parsedHoldings.map((h) => h.id)
-                        : parsedExpenses.map((e) => e.id)
-                    )
-                  }
-                  className="px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer"
-                >
-                  Toggle Select All ({selectedIds.size})
-                </button>
+                <div className="flex items-center gap-2">
+                  {duplicateItemIds.size > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedIds((prev) => {
+                          const next = new Set(prev);
+                          duplicateItemIds.forEach((id: string) => next.delete(id));
+                          return next;
+                        });
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 transition-all cursor-pointer flex items-center gap-1"
+                      title="Exclude transactions that already match existing records in your ledger"
+                    >
+                      Deselect Existing ({duplicateItemIds.size})
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() =>
+                      selectAll(
+                        parsedHoldings.length > 0
+                          ? parsedHoldings.map((h) => h.id)
+                          : parsedExpenses.map((e) => e.id)
+                      )
+                    }
+                    className="px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer"
+                  >
+                    Toggle Select All ({selectedIds.size})
+                  </button>
+                </div>
               </div>
 
               {/* Table A: Demat Holdings View */}
@@ -1129,6 +1176,11 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                                 <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                   {item.category}
                                 </span>
+                                {duplicateItemIds.has(item.id) && (
+                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    ALREADY IN LEDGER
+                                  </span>
+                                )}
                                 <span className="text-[10px] text-slate-400 font-mono">
                                   {item.institution}
                                 </span>
@@ -1185,6 +1237,11 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                                 ) : (
                                   <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
                                     {item.category}
+                                  </span>
+                                )}
+                                {duplicateItemIds.has(item.id) && (
+                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    ALREADY IN LEDGER
                                   </span>
                                 )}
                                 <span className="text-[10px] text-slate-400 font-mono">

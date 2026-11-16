@@ -107,6 +107,7 @@ interface FinanceState {
   toggleEventCompleted: (id: string) => void;
   addDebt: (debt: Omit<DebtItem, 'id' | 'repayments'>) => void;
   deleteDebt: (id: string) => void;
+  updateDebt: (id: string, updates: Partial<DebtItem>) => void;
   recordDebtRepayment: (
     debtId: string,
     amount: number,
@@ -140,6 +141,8 @@ interface FinanceState {
 
   monthlyNetIncome: number;
   setMonthlyNetIncome: (incomeUSD: number) => void;
+  monthlyLivingAllocation: number;
+  setMonthlyLivingAllocation: (allocationUSD: number) => void;
 
   // Computed Selectors
   getPortfolioSummary: () => PortfolioSummary;
@@ -148,6 +151,8 @@ interface FinanceState {
     monthlyIncomeUSD: number;
     goalsMonthlySipUSD: number;
     debtsMonthlyEmiUSD: number;
+    monthlyBillsUSD: number;
+    monthlyLivingAllocationUSD: number;
     livingExpensesMonthlyUSD: number;
     totalAllocatedUSD: number;
     shortfallAmountUSD: number;
@@ -181,6 +186,8 @@ export const useFinanceStore = create<FinanceState>()(
       emergencyTargetMonths: 6,
       monthlyNetIncome: 1800, // ~$1,800 USD base (~₹1,52,000)
       setMonthlyNetIncome: (amount: number) => set({ monthlyNetIncome: amount }),
+      monthlyLivingAllocation: 0,
+      setMonthlyLivingAllocation: (amount: number) => set({ monthlyLivingAllocation: Math.max(0, amount) }),
       history: [],
       subscriptions: [],
       bills: [],
@@ -750,6 +757,12 @@ export const useFinanceStore = create<FinanceState>()(
         api.debts.delete(id).catch((err) => console.warn('[SQLite Sync] Delete debt:', err));
         set((state) => ({
           debts: state.debts.filter((d) => d.id !== id),
+        }));
+      },
+
+      updateDebt: (id, updates) => {
+        set((state) => ({
+          debts: state.debts.map((d) => (d.id === id ? { ...d, ...updates } : d)),
         }));
       },
 
@@ -1386,7 +1399,7 @@ export const useFinanceStore = create<FinanceState>()(
       },
 
       getIncomeAllocation: () => {
-        const { monthlyNetIncome, goals, debts, bills, expenses } = get();
+        const { monthlyNetIncome, goals, debts, bills, monthlyLivingAllocation } = get();
         const goalsMonthlySipUSD = (goals || [])
           .filter((g) => !g.isAchieved)
           .reduce((sum, g) => sum + (g.monthlyContribution || 0), 0);
@@ -1395,15 +1408,20 @@ export const useFinanceStore = create<FinanceState>()(
           .filter((d) => d.currentOutstanding > 0)
           .reduce((sum, d) => sum + (d.monthlyEmi || 0), 0);
 
-        const monthlyBills = (bills || []).reduce(
-          (sum, b) => sum + (b.billingCycle === 'MONTHLY' ? b.amount : b.amount / 12),
-          0
-        );
-        const avgExpenses =
-          (expenses || []).length > 0
-            ? expenses.reduce((sum, e) => sum + e.amount, 0) / Math.max(1, Math.min(6, expenses.length / 10))
-            : 600;
-        const livingExpensesMonthlyUSD = Math.round(Math.max(monthlyBills, avgExpenses));
+        // Calculated strictly from bills entered by the user
+        const monthlyBillsUSD = (bills || []).reduce((sum, b) => {
+          const amt = b.amount || 0;
+          const cycle = b.billingCycle || 'MONTHLY';
+          if (cycle === 'WEEKLY') return sum + (amt * 52) / 12;
+          if (cycle === 'QUARTERLY') return sum + amt / 3;
+          if (cycle === 'YEARLY') return sum + amt / 12;
+          return sum + amt;
+        }, 0);
+
+        // Living allocation configured by the user
+        const userLivingAllocationUSD = monthlyLivingAllocation || 0;
+        // Living & Bills is strictly based on the user's entered bills and living allocation
+        const livingExpensesMonthlyUSD = monthlyBillsUSD + userLivingAllocationUSD;
 
         const totalAllocatedUSD = goalsMonthlySipUSD + debtsMonthlyEmiUSD + livingExpensesMonthlyUSD;
         const shortfallAmountUSD = Math.max(0, totalAllocatedUSD - (monthlyNetIncome || 0));
@@ -1415,6 +1433,8 @@ export const useFinanceStore = create<FinanceState>()(
           monthlyIncomeUSD: monthlyNetIncome || 0,
           goalsMonthlySipUSD,
           debtsMonthlyEmiUSD,
+          monthlyBillsUSD,
+          monthlyLivingAllocationUSD: userLivingAllocationUSD,
           livingExpensesMonthlyUSD,
           totalAllocatedUSD,
           shortfallAmountUSD,
@@ -1439,6 +1459,7 @@ export const useFinanceStore = create<FinanceState>()(
         goals: state.goals,
         emergencyTargetMonths: state.emergencyTargetMonths,
         monthlyNetIncome: state.monthlyNetIncome,
+        monthlyLivingAllocation: state.monthlyLivingAllocation,
         subscriptions: state.subscriptions,
         bills: state.bills,
         aiMessages: state.aiMessages,

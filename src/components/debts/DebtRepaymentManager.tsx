@@ -386,18 +386,42 @@ export const DebtRepaymentManager: React.FC = () => {
             </div>
           </div>
 
-          {/* Strategy Explainer Box */}
-          <div className="p-4 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1] text-xs space-y-1">
-            <span className="font-extrabold text-[#866632]">
-              {selectedStrategy === 'AVALANCHE'
-                ? '⚡ Debt Avalanche Mode (Mathematically Optimal)'
-                : '❄️ Debt Snowball Mode (Behavioral & Quick Wins)'}
-            </span>
+          {/* Strategy Explainer & Impact Banner */}
+          <div className="p-4 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1] text-xs space-y-2.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+              <span className="font-extrabold text-[#866632] flex items-center gap-1.5">
+                {selectedStrategy === 'AVALANCHE' ? (
+                  <>
+                    <Zap className="h-4 w-4 text-amber-600" />
+                    <span>Debt Avalanche Mode (Mathematically Optimal)</span>
+                  </>
+                ) : (
+                  <>
+                    <Snowflake className="h-4 w-4 text-sky-600" />
+                    <span>Debt Snowball Mode (Behavioral & Quick Wins)</span>
+                  </>
+                )}
+              </span>
+              {prioritizedDebts.length > 0 && (
+                <span className="text-[11px] font-bold text-slate-700 bg-white px-2.5 py-0.5 rounded-full border border-[#ded3bf]">
+                  Target #1: <span className="text-slate-900 font-extrabold">{prioritizedDebts[0].title}</span> ({selectedStrategy === 'AVALANCHE' ? `${prioritizedDebts[0].interestRate}% APR` : formatCurrency(prioritizedDebts[0].currentOutstanding, currency)})
+                </span>
+              )}
+            </div>
             <p className="text-slate-600 leading-relaxed font-medium">
               {selectedStrategy === 'AVALANCHE'
                 ? 'Focuses all extra repayments on your highest interest rate debt first. Saves the absolute maximum amount of interest and accelerates your mathematical net worth growth.'
                 : 'Focuses all extra repayments on your smallest remaining balance first. Gives you immediate psychological satisfaction and eliminates entire monthly payments fast to free up cash flow.'}
             </p>
+            <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#ded3bf]/40 text-[11px]">
+              <span className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Strategic Advantage:</span>
+              <span className="inline-flex items-center gap-1 font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                {selectedStrategy === 'AVALANCHE' ? '💰 Minimizes total lifetime interest paid' : '⚡ Fastest timeline to eliminate your first monthly EMI'}
+              </span>
+              <span className="inline-flex items-center gap-1 font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md border border-[#e8e0d1]">
+                {selectedStrategy === 'AVALANCHE' ? 'Best for disciplined wealth optimizers' : 'Best for behavioral momentum & cashflow freedom'}
+              </span>
+            </div>
           </div>
 
           {/* Prioritized Payoff Ladder */}

@@ -122,6 +122,30 @@ export const LifeAdminWorkspace: React.FC = () => {
     showToast(`Document "${docTitle.trim()}" vaulted securely!`);
   };
 
+  const handleQuickAddDocTemplate = (template: {
+    title: string;
+    category: 'ID_CARD' | 'INSURANCE' | 'PROPERTY' | 'VEHICLE' | 'TAX_RECORD';
+    documentNumber: string;
+    authority: string;
+    yearsExpiry: number;
+    notes: string;
+  }) => {
+    const exp = new Date();
+    exp.setFullYear(exp.getFullYear() + template.yearsExpiry);
+    const expiryDateStr = exp.toISOString().split('T')[0];
+
+    addDocument({
+      title: template.title,
+      category: template.category,
+      documentNumber: template.documentNumber,
+      expiryDate: expiryDateStr,
+      status: 'ACTIVE',
+      authority: template.authority,
+      notes: template.notes,
+    });
+    showToast(`Template added: ${template.title}`);
+  };
+
   const handleCreateChecklist = (e: React.FormEvent) => {
     e.preventDefault();
     if (!chkTitle.trim() || !chkDueDate) return;
@@ -357,53 +381,160 @@ Notes: ${emNotes || 'None'}`;
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredDocs.map((doc) => (
-              <div
-                key={doc.id}
-                className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-3 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#fff0df] text-[#b27635] uppercase">
-                      {doc.category.replace('_', ' ')}
-                    </span>
+          {filteredDocs.length === 0 ? (
+            documents.length === 0 ? (
+              <div className="p-8 sm:p-12 text-center bg-slate-50/50 rounded-3xl border border-dashed border-slate-300 space-y-6">
+                <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#b27635] flex items-center justify-center mx-auto border border-amber-200">
+                  <ShieldCheck className="w-7 h-7" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-base font-extrabold text-slate-900">Your Document Vault is Empty</h4>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                    Safeguard critical identification cards, vehicle titles, property agreements, and insurance policies with expiry tracking.
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => setIsDocModalOpen(true)}
+                    className="px-5 py-2.5 rounded-xl bg-[#b27635] hover:bg-[#976025] text-white text-xs font-bold transition-all shadow-md shadow-[#b27635]/20 cursor-pointer flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Vault First Document</span>
+                  </button>
+                </div>
+
+                {/* 1-Click Starter Templates */}
+                <div className="pt-4 border-t border-slate-200 max-w-2xl mx-auto">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 text-center">
+                    Or initialize with 1-click official document templates
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
                     <button
-                      onClick={() => deleteDocument(doc.id)}
-                      className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer"
-                      title="Delete document"
+                      onClick={() =>
+                        handleQuickAddDocTemplate({
+                          title: 'National Passport',
+                          category: 'ID_CARD',
+                          documentNumber: 'Z1234567',
+                          authority: 'Passport Seva / Govt of India',
+                          yearsExpiry: 10,
+                          notes: 'Primary international travel identity document.',
+                        })
+                      }
+                      className="p-3.5 rounded-2xl border border-blue-200 bg-blue-50/50 hover:bg-blue-50 hover:border-blue-400 transition-all text-left group cursor-pointer shadow-2xs"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                        <span>📘 Passport</span>
+                        <span className="text-[10px] text-blue-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 mt-1">ID Card • 10-Yr Validity</div>
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        handleQuickAddDocTemplate({
+                          title: 'Motor Vehicle Driving License',
+                          category: 'VEHICLE',
+                          documentNumber: 'DL-04202300098',
+                          authority: 'Regional Transport Office (RTO)',
+                          yearsExpiry: 15,
+                          notes: 'Permanent non-transport & transport vehicle permit.',
+                        })
+                      }
+                      className="p-3.5 rounded-2xl border border-amber-200 bg-amber-50/50 hover:bg-amber-50 hover:border-amber-400 transition-all text-left group cursor-pointer shadow-2xs"
+                    >
+                      <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                        <span>🚗 Driving License</span>
+                        <span className="text-[10px] text-amber-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 mt-1">Vehicle • 15-Yr Validity</div>
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        handleQuickAddDocTemplate({
+                          title: 'Comprehensive Health Floater Policy',
+                          category: 'INSURANCE',
+                          documentNumber: 'POL-HLT-998822',
+                          authority: 'HDFC ERGO / Star Health',
+                          yearsExpiry: 1,
+                          notes: 'Family cashless hospitalization health policy card.',
+                        })
+                      }
+                      className="p-3.5 rounded-2xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 hover:border-emerald-400 transition-all text-left group cursor-pointer shadow-2xs"
+                    >
+                      <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                        <span>🏥 Health Insurance</span>
+                        <span className="text-[10px] text-emerald-700 font-bold group-hover:translate-x-0.5 transition-transform">+ Add</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 mt-1">Insurance • Annual Renewal</div>
                     </button>
                   </div>
-
-                  <h4 className="text-sm font-extrabold text-slate-800 mt-2">{doc.title}</h4>
-                  <div className="text-xs font-mono text-slate-600 mt-1">
-                    Doc #: {doc.documentNumber}
-                  </div>
-                  <div className="text-[11px] text-slate-500 font-medium">Issued by: {doc.authority}</div>
-                  {doc.notes && (
-                    <p className="text-[11px] text-slate-500 italic mt-1">{doc.notes}</p>
-                  )}
-                </div>
-
-                <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px] font-bold">
-                  <span className="text-slate-600">
-                    Expiry: {doc.expiryDate ? doc.expiryDate : 'No expiry'}
-                  </span>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-extrabold ${
-                      doc.status === 'EXPIRING_SOON'
-                        ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                        : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    }`}
-                  >
-                    {doc.status.replace('_', ' ')}
-                  </span>
                 </div>
               </div>
-            ))}
-          </div>
+            ) : (
+              <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200">
+                <FileText className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                <h4 className="text-xs font-extrabold text-slate-700">
+                  No documents found under category &quot;{filterDocCategory.replace('_', ' ')}&quot;
+                </h4>
+                <button
+                  onClick={() => setFilterDocCategory('ALL')}
+                  className="mt-3 px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Show All Documents ({documents.length})
+                </button>
+              </div>
+            )
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredDocs.map((doc) => (
+                <div
+                  key={doc.id}
+                  className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-3 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#fff0df] text-[#b27635] uppercase">
+                        {doc.category.replace('_', ' ')}
+                      </span>
+                      <button
+                        onClick={() => deleteDocument(doc.id)}
+                        className="text-slate-300 hover:text-rose-600 transition-colors cursor-pointer"
+                        title="Delete document"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <h4 className="text-sm font-extrabold text-slate-800 mt-2">{doc.title}</h4>
+                    <div className="text-xs font-mono text-slate-600 mt-1">
+                      Doc #: {doc.documentNumber}
+                    </div>
+                    <div className="text-[11px] text-slate-500 font-medium">Issued by: {doc.authority}</div>
+                    {doc.notes && (
+                      <p className="text-[11px] text-slate-500 italic mt-1">{doc.notes}</p>
+                    )}
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px] font-bold">
+                    <span className="text-slate-600">
+                      Expiry: {doc.expiryDate ? doc.expiryDate : 'No expiry'}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-extrabold ${
+                        doc.status === 'EXPIRING_SOON'
+                          ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                          : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      }`}
+                    >
+                      {doc.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       )}
 
