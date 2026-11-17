@@ -13,6 +13,7 @@ import { lifeosRoutes } from './routes/lifeosRoutes.ts';
 import { communityRoutes } from './routes/communityRoutes.ts';
 import { userSyncRoutes } from './routes/userSyncRoutes.ts';
 import { adminRoutes } from './routes/adminRoutes.ts';
+import { aiRoutes } from './routes/aiRoutes.ts';
 
 dotenv.config();
 
@@ -55,6 +56,7 @@ app.use('/api/lifeos', lifeosRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/user', userSyncRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
