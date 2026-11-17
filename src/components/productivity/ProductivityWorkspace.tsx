@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { useFinanceStore } from '@/stores/financeStore';
 import { SectionHero } from '@/components/layout/SectionHero';
+import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
 import {
   CheckCircle2,
   Circle,
@@ -263,6 +264,21 @@ export const ProductivityWorkspace: React.FC = () => {
     })),
   ];
 
+  const scrollToSection = (id: string) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        const headerOffset = 130;
+        const elementPosition = el.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: 'smooth',
+        });
+      }
+    }, 150);
+  };
+
   return (
     <div className="space-y-6">
       {/* Toast Notification */}
@@ -280,7 +296,7 @@ export const ProductivityWorkspace: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* 1. Indigo Hero Banner */}
+      {/* 1. Indigo Hero Banner with Direct Calendar & Stopwatch Actions */}
       <SectionHero
         section="productivity"
         onPrimaryAction={() => {
@@ -292,14 +308,14 @@ export const ProductivityWorkspace: React.FC = () => {
         primaryActionLabel="+ Add a Task"
         onSecondaryAction={() => {
           setSubTab('CALENDAR');
-          setTimeout(() => {
-            const el = document.getElementById('unified-calendar');
-            if (el) {
-              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-          }, 80);
+          scrollToSection('unified-calendar');
         }}
         secondaryActionLabel="Open Unified Calendar"
+        onTertiaryAction={() => {
+          setSubTab('FOCUS_TIMER');
+          scrollToSection('focus-stopwatch-section');
+        }}
+        tertiaryActionLabel="⏱️ Open Stopwatch"
       />
 
       {/* 2. Top 4 Productivity Metric Cards */}
@@ -386,7 +402,10 @@ export const ProductivityWorkspace: React.FC = () => {
           <span>Daily Habit Routines ({habits.length})</span>
         </button>
         <button
-          onClick={() => setSubTab('FOCUS_TIMER')}
+          onClick={() => {
+            setSubTab('FOCUS_TIMER');
+            scrollToSection('focus-stopwatch-section');
+          }}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
             subTab === 'FOCUS_TIMER'
               ? 'bg-[#5574d9] text-white shadow-xs'
@@ -397,7 +416,10 @@ export const ProductivityWorkspace: React.FC = () => {
           <span>Deep Work Focus Timer</span>
         </button>
         <button
-          onClick={() => setSubTab('CALENDAR')}
+          onClick={() => {
+            setSubTab('CALENDAR');
+            scrollToSection('unified-calendar');
+          }}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
             subTab === 'CALENDAR'
               ? 'bg-[#5574d9] text-white shadow-xs'
@@ -783,7 +805,7 @@ export const ProductivityWorkspace: React.FC = () => {
       {/* SUBTAB 3: DEEP WORK FOCUS TIMER (PHASE 4)                */}
       {/* ======================================================== */}
       {subTab === 'FOCUS_TIMER' && (
-        <section className="bg-white border border-[#e4e9f1] rounded-3xl p-8 shadow-xs max-w-2xl mx-auto space-y-6 text-center">
+        <section id="focus-stopwatch-section" className="bg-white border border-[#e4e9f1] rounded-3xl p-8 shadow-xs max-w-2xl mx-auto space-y-6 text-center">
           <div>
             <span className="px-3 py-1 rounded-full bg-[#edf0ff] text-[#5574d9] text-xs font-extrabold">
               🧠 Deep Work State
@@ -888,47 +910,53 @@ export const ProductivityWorkspace: React.FC = () => {
       {/* SUBTAB 4: UNIFIED MASTER CALENDAR (PHASE 4)              */}
       {/* ======================================================== */}
       {subTab === 'CALENDAR' && (
-        <section id="unified-calendar" className="bg-white border border-[#e4e9f1] rounded-3xl p-6 shadow-xs space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#e4e9f1] gap-2">
-            <div>
-              <h3 className="font-extrabold text-sm sm:text-base text-[#243047] flex items-center gap-2">
-                <CalendarIcon className="w-4 h-4 text-[#5574d9]" />
-                <span>Unified LifeOS Master Calendar</span>
-              </h3>
-              <p className="text-xs text-[#6f7c91]">
-                Combines financial obligations, EMI dates, mutual fund SIPs, insurance renewals, and agenda tasks
-              </p>
-            </div>
-            <span className="px-3 py-1 rounded-full bg-[#edf0ff] text-[#5574d9] text-xs font-extrabold">
-              {aggregatedEvents.length} scheduled occurrences
-            </span>
-          </div>
+        <section id="unified-calendar" className="space-y-6">
+          {/* 1. Full Interactive Month Calendar Grid */}
+          <FinancialCalendarWidget />
 
-          <div className="divide-y divide-slate-100">
-            {aggregatedEvents.map((evt) => (
-              <div key={evt.id} className="py-3 flex items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-xs">
-                    {evt.type === 'FINANCE' ? '₹' : '☑'}
-                  </div>
-                  <div>
-                    <div className="font-bold text-slate-800">{evt.title}</div>
-                    <div className="text-[11px] text-slate-500 font-medium">Due: {evt.date}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  {evt.amount > 0 && (
-                    <span className="font-mono font-bold text-slate-800">
-                      {formatCurrency(evt.amount, currency)}
-                    </span>
-                  )}
-                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-extrabold">
-                    {evt.badge}
-                  </span>
-                </div>
+          {/* 2. Scheduled Deadlines & Milestone Commitments */}
+          <div className="bg-white border border-[#e4e9f1] rounded-3xl p-6 shadow-xs space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#e4e9f1] gap-2">
+              <div>
+                <h3 className="font-extrabold text-sm sm:text-base text-[#243047] flex items-center gap-2">
+                  <CalendarIcon className="w-4 h-4 text-[#5574d9]" />
+                  <span>Scheduled Deadlines & Milestone Commitments</span>
+                </h3>
+                <p className="text-xs text-[#6f7c91]">
+                  Combines financial obligations, EMI dates, mutual fund SIPs, insurance renewals, and agenda tasks
+                </p>
               </div>
-            ))}
+              <span className="px-3 py-1 rounded-full bg-[#edf0ff] text-[#5574d9] text-xs font-extrabold">
+                {aggregatedEvents.length} scheduled occurrences
+              </span>
+            </div>
+
+            <div className="divide-y divide-slate-100 max-h-96 overflow-y-auto scrollbar-none">
+              {aggregatedEvents.map((evt) => (
+                <div key={evt.id} className="py-3 flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-xs">
+                      {evt.type === 'FINANCE' ? '₹' : '☑'}
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-800">{evt.title}</div>
+                      <div className="text-[11px] text-slate-500 font-medium">Due: {evt.date}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    {evt.amount > 0 && (
+                      <span className="font-mono font-bold text-slate-800">
+                        {formatCurrency(evt.amount, currency)}
+                      </span>
+                    )}
+                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-extrabold">
+                      {evt.badge}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}

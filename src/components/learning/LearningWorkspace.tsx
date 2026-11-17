@@ -149,6 +149,21 @@ export const LearningWorkspace: React.FC = () => {
     setIsBookModalOpen(false);
   };
 
+  const scrollToSection = (id: string) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        const headerOffset = 130;
+        const elementPosition = el.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: 'smooth',
+        });
+      }
+    }, 150);
+  };
+
   return (
     <div className="space-y-6">
       {/* Toast Notification */}
@@ -171,7 +186,10 @@ export const LearningWorkspace: React.FC = () => {
         section="learning"
         onPrimaryAction={() => setIsSkillModalOpen(true)}
         primaryActionLabel="+ Add Learning Goal"
-        onSecondaryAction={() => setActiveTab('STUDY_TIMER')}
+        onSecondaryAction={() => {
+          setActiveTab('STUDY_TIMER');
+          scrollToSection('study-stopwatch-section');
+        }}
         secondaryActionLabel="Open Study Stopwatch"
       />
 
@@ -246,7 +264,10 @@ export const LearningWorkspace: React.FC = () => {
           <span>Skill Roadmaps & Goals</span>
         </button>
         <button
-          onClick={() => setActiveTab('STUDY_TIMER')}
+          onClick={() => {
+            setActiveTab('STUDY_TIMER');
+            scrollToSection('study-stopwatch-section');
+          }}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
             activeTab === 'STUDY_TIMER'
               ? 'bg-[#8a5bd6] text-white shadow-xs'
@@ -347,7 +368,7 @@ export const LearningWorkspace: React.FC = () => {
       {/* SUBTAB 2: ACTIVE STUDY STOPWATCH                         */}
       {/* ======================================================== */}
       {activeTab === 'STUDY_TIMER' && (
-        <section className="bg-white border border-[#e4e9f1] rounded-3xl p-8 shadow-xs max-w-xl mx-auto space-y-6 text-center">
+        <section id="study-stopwatch-section" className="bg-white border border-[#e4e9f1] rounded-3xl p-8 shadow-xs max-w-xl mx-auto space-y-6 text-center">
           <div>
             <span className="px-3 py-1 rounded-full bg-[#f1eaff] text-[#8a5bd6] text-xs font-extrabold">
               📖 Live Study Logger

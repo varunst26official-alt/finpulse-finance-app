@@ -7,16 +7,20 @@ interface SectionHeroProps {
   section: LifeOSSection;
   onPrimaryAction?: () => void;
   onSecondaryAction?: () => void;
+  onTertiaryAction?: () => void;
   primaryActionLabel?: string;
   secondaryActionLabel?: string;
+  tertiaryActionLabel?: string;
 }
 
 export const SectionHero: React.FC<SectionHeroProps> = ({
   section,
   onPrimaryAction,
   onSecondaryAction,
+  onTertiaryAction,
   primaryActionLabel,
   secondaryActionLabel,
+  tertiaryActionLabel,
 }) => {
   const config = SECTION_CONFIGS[section];
   const { requireAuth } = useAuthStore();
@@ -65,11 +69,11 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
           {config.description}
         </p>
 
-        {/* Action Buttons (2-column compact row on mobile, inline on desktop) */}
-        <div className="grid grid-cols-2 sm:flex sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 pt-1 sm:pt-2 w-full sm:w-auto">
+        {/* Action Buttons (flex wrap or compact row on mobile, inline on desktop) */}
+        <div className="flex flex-wrap sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 pt-1 sm:pt-2 w-full sm:w-auto">
           <button
             onClick={handlePrimaryClick}
-            className="w-full sm:w-auto px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white text-slate-900 text-xs font-extrabold shadow-md hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-center gap-1.5 touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95 border border-white/40"
+            className="flex-1 sm:flex-none px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white text-slate-900 text-xs font-extrabold shadow-md hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-center gap-1.5 touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95 border border-white/40"
           >
             <span>{primaryActionLabel || config.action}</span>
             <span className="text-xs font-bold opacity-75">↗</span>
@@ -77,10 +81,19 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
 
           <button
             onClick={handleSecondaryClick}
-            className="w-full sm:w-auto px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/15 text-white border border-white/30 text-xs font-bold hover:bg-white/25 transition-all cursor-pointer flex items-center justify-center text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95 backdrop-blur-xs shadow-xs"
+            className="flex-1 sm:flex-none px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/15 text-white border border-white/30 text-xs font-bold hover:bg-white/25 transition-all cursor-pointer flex items-center justify-center text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95 backdrop-blur-xs shadow-xs"
           >
             <span>{secondaryActionLabel || config.secondary}</span>
           </button>
+
+          {tertiaryActionLabel && onTertiaryAction && (
+            <button
+              onClick={onTertiaryAction}
+              className="w-full sm:w-auto px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/20 text-white border border-white/35 text-xs font-bold hover:bg-white/30 transition-all cursor-pointer flex items-center justify-center text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95 backdrop-blur-xs shadow-xs"
+            >
+              <span>{tertiaryActionLabel}</span>
+            </button>
+          )}
         </div>
       </div>
 

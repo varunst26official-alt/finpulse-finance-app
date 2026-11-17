@@ -241,6 +241,21 @@ Notes: ${emNotes || 'None'}`;
     showToast('Emergency summary copied to clipboard! 📋');
   };
 
+  const scrollToSection = (id: string) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        const headerOffset = 130;
+        const elementPosition = el.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: 'smooth',
+        });
+      }
+    }, 150);
+  };
+
   return (
     <div className="space-y-6">
       {/* Toast Notification */}
@@ -269,7 +284,10 @@ Notes: ${emNotes || 'None'}`;
           setIsDocModalOpen(true);
         }}
         primaryActionLabel="+ Add a Document"
-        onSecondaryAction={() => setActiveTab('EMERGENCY')}
+        onSecondaryAction={() => {
+          setActiveTab('EMERGENCY');
+          scrollToSection('emergency-card-section');
+        }}
         secondaryActionLabel="View Emergency Card"
       />
 
@@ -354,7 +372,10 @@ Notes: ${emNotes || 'None'}`;
           <span>Encrypted Document Vault ({documents.length})</span>
         </button>
         <button
-          onClick={() => setActiveTab('EMERGENCY')}
+          onClick={() => {
+            setActiveTab('EMERGENCY');
+            scrollToSection('emergency-card-section');
+          }}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
             activeTab === 'EMERGENCY'
               ? 'bg-[#b27635] text-white shadow-xs'
@@ -610,7 +631,7 @@ Notes: ${emNotes || 'None'}`;
       {/* SUBTAB 2: EMERGENCY MEDICAL & CONTACT CARD               */}
       {/* ======================================================== */}
       {activeTab === 'EMERGENCY' && (
-        <section className="bg-white border border-[#e4e9f1] rounded-3xl p-6 shadow-xs space-y-6">
+        <section id="emergency-card-section" className="bg-white border border-[#e4e9f1] rounded-3xl p-6 shadow-xs space-y-6">
           {/* Subheader and Action buttons */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#e4e9f1] gap-3">
             <div>
