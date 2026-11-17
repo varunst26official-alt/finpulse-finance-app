@@ -391,45 +391,87 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
             `Parsed ${transactions.length} Google Pay transactions (Sent: ₹${summary.totalSent.toLocaleString('en-IN')})!`
           );
         });
-      } else if (
-        fileName.endsWith('.csv') ||
-        fileName.endsWith('.txt') ||
-        file.type.includes('csv') ||
-        file.type.includes('excel') ||
-        content.toLowerCase().includes('withdrawal') ||
-        content.toLowerCase().includes('narration') ||
-        content.toLowerCase().includes('txn date') ||
-        content.toLowerCase().includes('debit') ||
-        content.toLowerCase().includes('credit')
-      ) {
-        runSimulatedScan('bank', () => {
-          const parsed = parseBankStatementCsv(content);
-          if (parsed.length > 0) {
-            setParsedExpenses(parsed);
-            setParsedHoldings([]);
-            setSelectedIds(new Set(parsed.map((p) => p.id)));
-            setSuccessMessage(`Parsed ${parsed.length} transactions from ${file.name}!`);
-          } else {
-            setSuccessMessage(`Parsed statement file: ${file.name}`);
-          }
-        });
       } else {
-        runSimulatedScan('demat', () => {
+        const lower = content.toLowerCase();
+        const isCas =
+          lower.includes('consolidated account statement') ||
+          lower.includes('central depository') ||
+          lower.includes('national securities depository') ||
+          lower.includes('cdsl') ||
+          lower.includes('nsdl') ||
+          lower.includes('=== equities') ||
+          lower.includes('cams & kfintech');
+
+        const isBankCsv =
+          !isCas &&
+          (lower.includes('withdrawal') ||
+            /\bdeposit\b/i.test(content) ||
+            lower.includes('narration') ||
+            lower.includes('closing balance') ||
+            lower.includes('txn date') ||
+            lower.includes('chq/ref'));
+
+        if (isCas) {
           const casResult = parseCasTextContent(content);
-          if (casResult.holdings.length > 0) {
+          runSimulatedScan('demat', () => {
             setParsedHoldings(casResult.holdings);
             setParsedExpenses([]);
             setSelectedIds(new Set(casResult.holdings.map((h) => h.id)));
             setSuccessMessage(
               `Parsed ${casResult.holdings.length} Demat holdings for ${casResult.investorName} (${casResult.panMasked})!`
             );
+          });
+        } else if (isBankCsv) {
+          runSimulatedScan('bank', () => {
+            const parsed = parseBankStatementCsv(content);
+            if (parsed.length > 0) {
+              setParsedExpenses(parsed);
+              setParsedHoldings([]);
+              setSelectedIds(new Set(parsed.map((p) => p.id)));
+              setSuccessMessage(`Parsed ${parsed.length} transactions from ${file.name}!`);
+            } else {
+              setSuccessMessage(`Parsed statement file: ${file.name}`);
+            }
+          });
+        } else {
+          const casResult = parseCasTextContent(content);
+          if (casResult.holdings.length > 0) {
+            runSimulatedScan('demat', () => {
+              setParsedHoldings(casResult.holdings);
+              setParsedExpenses([]);
+              setSelectedIds(new Set(casResult.holdings.map((h) => h.id)));
+              setSuccessMessage(
+                `Parsed ${casResult.holdings.length} Demat holdings for ${casResult.investorName} (${casResult.panMasked})!`
+              );
+            });
+          } else if (
+            fileName.endsWith('.csv') ||
+            fileName.endsWith('.txt') ||
+            file.type.includes('csv') ||
+            file.type.includes('excel') ||
+            lower.includes('debit') ||
+            lower.includes('credit')
+          ) {
+            runSimulatedScan('bank', () => {
+              const parsed = parseBankStatementCsv(content);
+              if (parsed.length > 0) {
+                setParsedExpenses(parsed);
+                setParsedHoldings([]);
+                setSelectedIds(new Set(parsed.map((p) => p.id)));
+                setSuccessMessage(`Parsed ${parsed.length} transactions from ${file.name}!`);
+              } else {
+                setSuccessMessage(`Parsed statement file: ${file.name}`);
+              }
+            });
           } else {
-            setParsedHoldings(SAMPLE_CAS_DEMAT_PORTFOLIO);
-            setParsedExpenses([]);
-            setSelectedIds(new Set(SAMPLE_CAS_DEMAT_PORTFOLIO.map((h) => h.id)));
-            setSuccessMessage(`Parsed statements from ${file.name}!`);
+            runSimulatedScan('demat', () => {
+              setParsedHoldings(SAMPLE_CAS_DEMAT_PORTFOLIO);
+              setParsedExpenses([]);
+              setSelectedIds(new Set(SAMPLE_CAS_DEMAT_PORTFOLIO.map((h) => h.id)));
+              setSuccessMessage(`Parsed statements from ${file.name}!`);
+            });
           }
-        });
+        }
       }
     };
     reader.readAsText(file);

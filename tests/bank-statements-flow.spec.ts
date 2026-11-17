@@ -5,7 +5,7 @@ test.describe('Bank Statement & Ingestion Re-import Idempotency and Calendar Vis
   test.beforeEach(async ({ page }) => {
     await setupAuthenticatedUser(page);
     await page.goto('/');
-    await expect(page.getByText('QUANTRA')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('QUANTRA', { exact: true })).toBeVisible({ timeout: 10000 });
   });
 
   test('imports Google Pay statement, verifies income vs expenses, switches charts, checks calendar date inspection, and handles re-import idempotency', async ({

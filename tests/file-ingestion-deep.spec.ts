@@ -10,7 +10,7 @@ test.describe('Deep File Ingestion & Real-World Statement Parsers', () => {
   test.beforeEach(async ({ page }) => {
     await setupAuthenticatedUser(page);
     await page.goto('/');
-    await expect(page.getByText('QUANTRA')).toBeVisible();
+    await expect(page.getByText('QUANTRA', { exact: true })).toBeVisible({ timeout: 10000 });
 
     await page.getByRole('button', { name: /Finance/i }).first().click();
     await expect(page.getByText('⚡ Auto-Import (Demat & UPI)')).toBeVisible();

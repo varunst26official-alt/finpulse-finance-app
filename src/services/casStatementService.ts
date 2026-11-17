@@ -57,7 +57,7 @@ export function parseCasTextContent(textContent: string): CasParseResult {
     const line = lines[i];
 
     // Detect Equity Line: e.g. "RELIANCE | Reliance Industries Ltd | INE002A01018 | 25 | 2450.00 | 2920.00"
-    if (line.includes('|') || line.includes(',')) {
+    if (line.includes('|') || /IN[A-Z0-9]{10}/i.test(line)) {
       const parts = line.split(/[|,]/).map((p) => p.trim());
       if (parts.length >= 3) {
         const symbolOrName = parts[0];
