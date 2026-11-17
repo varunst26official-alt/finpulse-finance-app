@@ -26,6 +26,7 @@ import {
   Bell,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ShimmerButton } from '@/components/ui/ShimmerButton';
 
 interface FinanceWorkspaceProps {
   onOpenAddTradeModal: () => void;
@@ -143,13 +144,16 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
             <span>Bills</span>
           </button>
 
-          <button
+          <ShimmerButton
             onClick={onOpenAddTradeModal}
-            className="w-full sm:w-auto px-3 sm:px-4 py-2.5 rounded-xl bg-[#16836b] text-white text-xs font-bold hover:bg-[#0f6753] shadow-sm shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+            background="linear-gradient(135deg, #16836b 0%, #0f6753 100%)"
+            shimmerColor="#ffffff"
+            borderRadius="0.75rem"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-sm shadow-[#16836b]/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
           >
             <Plus className="w-3.5 h-3.5 shrink-0" />
             <span>{financeSubTab === 'holdings' ? 'Add Holding' : '+ Record Trade'}</span>
-          </button>
+          </ShimmerButton>
         </div>
       </div>
 

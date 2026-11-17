@@ -22,11 +22,72 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Improved readable headings */
+  /* Improved readable headings with balanced line wrapping */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', var(--font-sans);
     color: #0f172a;
     letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* Global touch responsiveness: eliminate 300ms double-tap delay on mobile */
+  button, a, input, select, textarea, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Tabular figures for precision financial, calorie, and telemetry displays */
+.tabular-nums, .font-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Overscroll containment for modals, drawers, and bottom sheets */
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+/* Safe area padding utilities for notches and modern mobile home bars */
+.pt-safe-top {
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+
+.pb-safe-bottom {
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+/* Animations for Magic UI / Aceternity components */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.animate-border-beam {
+  animation: border-beam var(--duration, 12s) infinite linear;
+}
+
+@keyframes spin-around {
+  0% {
+    transform: translateZ(0) rotate(0);
+  }
+  100% {
+    transform: translateZ(0) rotate(360deg);
+  }
+}
+
+.animate-spin-around {
+  animation: spin-around var(--speed, 3s) infinite linear;
+}
+
+/* Accessibility: respect user prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

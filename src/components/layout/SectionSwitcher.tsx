@@ -213,7 +213,8 @@ export const SectionSwitcher: React.FC = () => {
               onClick={() => setCurrentSection(key)}
               whileHover="hover"
               whileTap={{ scale: 0.96 }}
-              className="group relative flex items-center gap-2 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap snap-start select-none"
+              aria-current={isActive ? 'page' : undefined}
+              className="group relative flex items-center gap-2 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer whitespace-nowrap snap-start select-none touch-manipulation focus-visible:ring-2 focus-visible:ring-[#9e783e] focus-visible:outline-none"
             >
               {/* Fluid Sliding Active Indicator with Spring Motion */}
               {isActive && (

@@ -2,6 +2,7 @@ import React from 'react';
 import { SECTION_CONFIGS } from './SectionSwitcher';
 import { LifeOSSection } from '@/types/lifeos';
 import { useAuthStore } from '@/stores/authStore';
+import { ShimmerButton } from '@/components/ui/ShimmerButton';
 
 interface SectionHeroProps {
   section: LifeOSSection;
@@ -58,27 +59,30 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
         <div className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-white/75">
           {config.eyebrow}
         </div>
-        <h1 className="text-base sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white leading-tight">
+        <h1 className="text-base sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white leading-tight text-balance">
           {config.title}
         </h1>
-        <p className="hidden sm:block text-xs sm:text-sm text-white/80 leading-relaxed max-w-xl">
+        <p className="hidden sm:block text-xs sm:text-sm text-white/80 leading-relaxed max-w-xl text-balance">
           {config.description}
         </p>
 
         {/* Action Buttons (2-column compact row on mobile, inline on desktop) */}
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 pt-1 sm:pt-2 w-full sm:w-auto">
-          <button
+          <ShimmerButton
             onClick={handlePrimaryClick}
-            className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white text-slate-900 text-xs font-bold shadow-md hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-center gap-1"
+            background="#ffffff"
+            shimmerColor="rgba(255, 255, 255, 0.8)"
+            borderRadius="0.75rem"
+            className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-slate-900 text-xs font-bold shadow-md hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-center gap-1 touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95"
             style={{ color: config.heroColor1 }}
           >
             <span>{primaryActionLabel || config.action}</span>
             <span className="text-sm">↗</span>
-          </button>
+          </ShimmerButton>
 
           <button
             onClick={handleSecondaryClick}
-            className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/15 text-white border border-white/25 text-xs font-bold hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center text-center"
+            className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/15 text-white border border-white/25 text-xs font-bold hover:bg-white/20 transition-colors cursor-pointer flex items-center justify-center text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95"
           >
             <span>{secondaryActionLabel || config.secondary}</span>
           </button>

@@ -21,6 +21,9 @@ import {
 import { LifeOSCategory, PriorityLevel } from '@/types/lifeos';
 import { CashFlowVisualizationCard } from '@/components/finance/CashFlowVisualizationCard';
 import { useAuthStore } from '@/stores/authStore';
+import { SpotlightCard } from '@/components/ui/SpotlightCard';
+import { ShimmerButton } from '@/components/ui/ShimmerButton';
+import { Badge } from '@/components/ui/Badge';
 
 export const LifeOverviewWorkspace: React.FC = () => {
   const {
@@ -153,7 +156,10 @@ export const LifeOverviewWorkspace: React.FC = () => {
       />
 
       {/* Adaptive Blueprint Active Status Card */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-[#f5eee3] via-[#fbf9f5] to-white border border-[#e8e0d1] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+      <SpotlightCard
+        spotlightColor="rgba(164, 123, 60, 0.15)"
+        className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#f5eee3] via-[#fbf9f5] to-white border border-[#e8e0d1] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
+      >
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#a47b3c] text-white flex items-center justify-center shrink-0 shadow-sm shadow-[#a47b3c]/20">
             <Sparkles className="w-4 h-4 text-[#f5eee3]" />
@@ -161,9 +167,9 @@ export const LifeOverviewWorkspace: React.FC = () => {
           <div>
             <div className="text-xs font-extrabold text-[#243047] flex items-center gap-2">
               <span>Adaptive LifeOS Blueprint Active</span>
-              <span className="px-2 py-0.5 rounded-full bg-[#f5eee3] text-[#a47b3c] text-[10px] font-bold">
+              <Badge variant="gold">
                 {userInputs.fitnessGoal ? userInputs.fitnessGoal.replace(/_/g, ' ') : 'Custom Protocol'}
-              </span>
+              </Badge>
             </div>
             <p className="text-[11px] text-[#6f7c91] font-medium mt-0.5">
               Split: <strong className="text-slate-800">{activeBlueprint.workoutSplitName}</strong> · Daily Target: <strong className="text-slate-800">{activeBlueprint.targetCalories} kcal</strong> · Water: <strong className="text-slate-800">{activeBlueprint.dailyWaterTargetLiters} L</strong>
@@ -171,16 +177,19 @@ export const LifeOverviewWorkspace: React.FC = () => {
           </div>
         </div>
 
-        <button
+        <ShimmerButton
           onClick={() => {
             if (!useAuthStore.getState().requireAuth('recalibrate LifeOS Blueprint')) return;
             setIsAiModalOpen(true);
           }}
-          className="px-3.5 py-1.5 rounded-xl bg-white border border-[#a47b3c] text-[#a47b3c] text-xs font-bold hover:bg-[#f5eee3] transition-all cursor-pointer shadow-xs whitespace-nowrap"
+          background="linear-gradient(135deg, #17365d 0%, #16836b 100%)"
+          shimmerColor="#ffffff"
+          borderRadius="0.75rem"
+          className="px-3.5 py-1.5 text-xs font-bold text-white shadow-xs whitespace-nowrap self-start sm:self-auto"
         >
           ⚡ Recalibrate Entire LifeOS
-        </button>
-      </div>
+        </ShimmerButton>
+      </SpotlightCard>
 
       {/* 2. Heading Row with Period Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pt-2">
@@ -208,31 +217,31 @@ export const LifeOverviewWorkspace: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Metrics Grid (4 KPI Cards) */}
+      {/* 3. Metrics Grid (4 KPI Cards in Bento Style) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Active Goals */}
-        <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs hover:border-[#a47b3c]/40 transition-all">
+        <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs hover:border-[#a47b3c]/40 hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#6f7c91]">Active goals</span>
             <div className="w-9 h-9 rounded-xl bg-[#f5eee3] text-[#a47b3c] flex items-center justify-center font-bold text-sm">
               <Target className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3">
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3 tabular-nums">
             {goals.length}
           </div>
           <div className="text-[11px] text-[#6f7c91] mt-1 font-medium">Across your life areas</div>
         </article>
 
         {/* Metric 2: Today's Tasks */}
-        <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs hover:border-[#a47b3c]/40 transition-all">
+        <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs hover:border-[#a47b3c]/40 hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#6f7c91]">Today's tasks</span>
             <div className="w-9 h-9 rounded-xl bg-[#edf0ff] text-[#5574d9] flex items-center justify-center font-bold text-sm">
               <Clock className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3">
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3 tabular-nums">
             {completedTasksCount} / {tasks.length}
           </div>
           <div className="text-[11px] text-[#6f7c91] mt-1 font-medium">
@@ -241,23 +250,23 @@ export const LifeOverviewWorkspace: React.FC = () => {
         </article>
 
         {/* Metric 3: Finance Snapshot */}
-        <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs hover:border-[#a47b3c]/40 transition-all">
+        <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs hover:border-[#a47b3c]/40 hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#6f7c91]">Finance net worth</span>
+            <span className="text-xs font-bold text-[#6f7c91]">Finance Net Worth</span>
             <div className="w-9 h-9 rounded-xl bg-[#e5f5ef] text-[#16836b] flex items-center justify-center font-bold text-sm">
               ₹
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3">
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3 tabular-nums font-mono">
             {formatCurrency(summary.totalNetWorth, currency)}
           </div>
-          <div className="text-[11px] text-emerald-600 mt-1 font-bold">
+          <div className="text-[11px] text-emerald-600 mt-1 font-bold tabular-nums">
             +{summary.pnlPercentage.toFixed(1)}% portfolio growth
           </div>
         </article>
 
         {/* Metric 4: Wellness Check-in */}
-        <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs hover:border-[#a47b3c]/40 transition-all">
+        <article className="bg-white border border-[#e4e9f1] rounded-2xl p-5 shadow-xs hover:border-[#a47b3c]/40 hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#6f7c91]">Wellness check-in</span>
             <div className="w-9 h-9 rounded-xl bg-[#fdebf0] text-[#d45b73] flex items-center justify-center font-bold text-sm">
@@ -267,7 +276,7 @@ export const LifeOverviewWorkspace: React.FC = () => {
           <div className="text-2xl sm:text-3xl font-extrabold text-[#243047] tracking-tight mt-3">
             {wellness.workoutMinutesLogged > 0 ? 'Active' : 'Pending'}
           </div>
-          <div className="text-[11px] text-[#6f7c91] mt-1 font-medium">
+          <div className="text-[11px] text-[#6f7c91] mt-1 font-medium tabular-nums">
             {wellness.workoutMinutesLogged}m workout · {wellness.waterLitersLogged}L water
           </div>
         </article>

@@ -43,7 +43,7 @@ export const LifeOSHeader: React.FC = () => {
     : 'LO';
 
   return (
-    <header className="h-[68px] sm:h-[72px] bg-white border-b border-[#e4e9f1] px-2.5 sm:px-7 flex items-center justify-between sticky top-0 z-30 select-none w-full max-w-full min-w-0">
+    <header className="h-[68px] sm:h-[72px] bg-white border-b border-[#e4e9f1] px-2.5 sm:px-7 pt-[env(safe-area-inset-top,0px)] flex items-center justify-between sticky top-0 z-30 select-none w-full max-w-full min-w-0">
       {/* Brand Identity - Quantra */}
       <QuantraLogo size="md" variant="horizontal" animated={true} />
 
@@ -52,7 +52,7 @@ export const LifeOSHeader: React.FC = () => {
         {/* Super Admin Status Pill */}
         {isSuperAdmin && (
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-amber-400 font-extrabold text-[11px] sm:text-xs shadow-xs">
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
             <span className="tracking-wide">ROOT GOVERNANCE</span>
           </div>
         )}
@@ -64,34 +64,37 @@ export const LifeOSHeader: React.FC = () => {
             <button
               id="tour-adaptive-blueprint"
               onClick={() => setIsAiModalOpen(true)}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#17365d] to-[#2c527e] text-white hover:from-[#132c4d] hover:to-[#24456b] text-xs font-extrabold transition-all shadow-sm shadow-[#17365d]/20 cursor-pointer shrink-0"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#17365d] to-[#2c527e] text-white hover:from-[#132c4d] hover:to-[#24456b] text-xs font-extrabold transition-colors shadow-sm shadow-[#17365d]/20 cursor-pointer shrink-0 focus-visible:ring-2 focus-visible:ring-[#9e783e] focus-visible:outline-none touch-manipulation"
               title="Adaptive LifeOS Blueprint Engine"
+              aria-label="Open Adaptive LifeOS Blueprint Engine"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#a47b3c]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#a47b3c]" aria-hidden="true" />
               <span>AI Blueprint</span>
             </button>
 
             {/* Guided Walkthrough Tour Button */}
             <button
               onClick={startTour}
-              className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-[#a47b3c]/35 bg-[#faf6ef] text-[#866632] hover:bg-[#f5eee3] hover:border-[#a47b3c] text-xs font-bold transition-all shadow-xs cursor-pointer group shrink-0"
+              className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-[#a47b3c]/35 bg-[#faf6ef] text-[#866632] hover:bg-[#f5eee3] hover:border-[#a47b3c] text-xs font-bold transition-colors shadow-xs cursor-pointer group shrink-0 focus-visible:ring-2 focus-visible:ring-[#9e783e] focus-visible:outline-none touch-manipulation"
               title="Take an Interactive Guided Tour of Quantra Life OS"
+              aria-label="Take an Interactive Guided Tour"
             >
-              <Compass className="w-3.5 h-3.5 text-[#a47b3c] group-hover:rotate-45 transition-transform duration-300 shrink-0" />
+              <Compass className="w-3.5 h-3.5 text-[#a47b3c] group-hover:rotate-45 transition-transform duration-300 shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline font-extrabold text-[11px] sm:text-xs">Tour</span>
             </button>
 
             {/* Community League & Rank Badge */}
             <button
               onClick={() => setCurrentSection('community')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/10 border border-amber-400/40 text-amber-900 hover:bg-amber-100/60 text-xs font-black transition-all cursor-pointer shrink-0 shadow-2xs group"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/10 border border-amber-400/40 text-amber-900 hover:bg-amber-100/60 text-xs font-black transition-colors cursor-pointer shrink-0 shadow-2xs group focus-visible:ring-2 focus-visible:ring-[#9e783e] focus-visible:outline-none touch-manipulation"
               title="View Community Leaderboard, Leagues & Section Points"
+              aria-label="View Community Leaderboard, Leagues & Section Points"
             >
-              <span className="text-sm">👑</span>
-              <span className="hidden md:inline font-black text-[11px] sm:text-xs text-amber-900">
+              <span className="text-sm" aria-hidden="true">👑</span>
+              <span className="hidden md:inline font-black text-[11px] sm:text-xs text-amber-900 tabular-nums">
                 Lvl {level} · Rank #{rank}
               </span>
-              <span className="md:hidden font-black text-[11px] text-amber-900">#{rank}</span>
+              <span className="md:hidden font-black text-[11px] text-amber-900 tabular-nums">#{rank}</span>
             </button>
           </>
         )}
@@ -103,11 +106,12 @@ export const LifeOSHeader: React.FC = () => {
               setIsCurrencyOpen(!isCurrencyOpen);
               setIsProfileOpen(false);
             }}
-            className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-[#e4e9f1] bg-white hover:bg-[#f5f7fb] text-xs font-bold text-[#243047] transition-all cursor-pointer"
+            className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-[#e4e9f1] bg-white hover:bg-[#f5f7fb] text-xs font-bold text-[#243047] transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#9e783e] focus-visible:outline-none touch-manipulation"
+            aria-label="Change Display Currency"
           >
-            <DollarSign className="w-3.5 h-3.5 text-[#a47b3c]" />
-            <span className="text-[11px] sm:text-xs">{currency}</span>
-            <ChevronDown className="hidden sm:inline w-3 h-3 text-[#6f7c91]" />
+            <DollarSign className="w-3.5 h-3.5 text-[#a47b3c]" aria-hidden="true" />
+            <span className="text-[11px] sm:text-xs tabular-nums">{currency}</span>
+            <ChevronDown className="hidden sm:inline w-3 h-3 text-[#6f7c91]" aria-hidden="true" />
           </button>
 
           <AnimatePresence>

@@ -100,21 +100,21 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({ onAddHolding }) =>
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#f0e8db] text-xs">
                   <div>
                     <span className="text-[10px] text-slate-400 block font-medium">Holdings / Qty</span>
-                    <span className="font-bold text-slate-800">{asset.quantity} units</span>
+                    <span className="font-bold text-slate-800 tabular-nums">{asset.quantity} units</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-400 block font-medium">Current Valuation</span>
-                    <span className="font-extrabold text-slate-900">{formatCurrency(currentValue, currency)}</span>
+                    <span className="font-extrabold text-slate-900 tabular-nums font-mono">{formatCurrency(currentValue, currency)}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-400 block font-medium">Avg → Current</span>
-                    <span className="text-[11px] text-slate-600 font-medium">
+                    <span className="text-[11px] text-slate-600 font-medium tabular-nums font-mono">
                       {formatCurrency(asset.averageBuyPrice, currency)} → {formatCurrency(asset.currentMarketPrice, currency)}
                     </span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-400 block font-medium">P&L Returns</span>
-                    <span className={`font-extrabold text-xs ${isProfit ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    <span className={`font-extrabold text-xs tabular-nums font-mono ${isProfit ? 'text-emerald-700' : 'text-rose-700'}`}>
                       {isProfit ? '+' : ''}{formatPercentage(pnlPercent)} ({formatCurrency(pnl, currency)})
                     </span>
                   </div>
@@ -193,18 +193,18 @@ export const HoldingsTable: React.FC<HoldingsTableProps> = ({ onAddHolding }) =>
                         {CATEGORY_LABELS[asset.category]}
                       </span>
                     </td>
-                    <td className="py-3.5 text-right font-bold text-slate-900">{asset.quantity}</td>
-                    <td className="py-3.5 text-right text-slate-600 font-medium">
+                    <td className="py-3.5 text-right font-bold text-slate-900 tabular-nums">{asset.quantity}</td>
+                    <td className="py-3.5 text-right text-slate-600 font-medium tabular-nums font-mono">
                       {formatCurrency(asset.averageBuyPrice, currency)}
                     </td>
-                    <td className="py-3.5 text-right font-semibold text-slate-900">
+                    <td className="py-3.5 text-right font-semibold text-slate-900 tabular-nums font-mono">
                       {formatCurrency(asset.currentMarketPrice, currency)}
                     </td>
-                    <td className="py-3.5 text-right font-extrabold text-slate-900">
+                    <td className="py-3.5 text-right font-extrabold text-slate-900 tabular-nums font-mono">
                       {formatCurrency(currentValue, currency)}
                     </td>
                     <td
-                      className={`py-3.5 text-right font-extrabold ${
+                      className={`py-3.5 text-right font-extrabold tabular-nums font-mono ${
                         isProfit ? 'text-emerald-700' : 'text-rose-700'
                       }`}
                     >

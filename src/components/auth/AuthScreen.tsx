@@ -267,7 +267,7 @@ export const AuthScreen: React.FC = () => {
                     Quantra LifeOS
                   </span>
                   <span className="text-[10px] bg-white/20 text-white font-mono px-1.5 py-0.5 rounded-sm font-semibold">
-                    v1.8
+                    v1.9
                   </span>
                 </div>
                 <span className="text-[11px] text-white/70 font-medium">
@@ -681,7 +681,7 @@ export const AuthScreen: React.FC = () => {
               Quantra Engine Active
             </span>
             <span className="bg-[#f4efe4] text-[#84632c] px-2 py-0.5 rounded-md font-bold text-[10px] border border-[#e2d5c0]">
-              v1.8 (Build 8)
+              v1.9 (Build 9)
             </span>
           </div>
         </div>

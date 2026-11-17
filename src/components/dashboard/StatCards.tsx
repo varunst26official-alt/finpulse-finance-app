@@ -1,12 +1,14 @@
 import React from 'react';
 import { useFinanceStore } from '@/stores/financeStore';
-import { formatCurrency, formatPercentage } from '@/utils/formatters';
+import { formatCurrency, formatPercentage, CURRENCY_CONFIGS } from '@/utils/formatters';
 import { Wallet, TrendingUp, ArrowUpRight, DollarSign, PiggyBank } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { NumberTicker } from '@/components/ui/NumberTicker';
 
 export const StatCards: React.FC = () => {
   const { currency, assets, getPortfolioSummary } = useFinanceStore();
   const summary = getPortfolioSummary();
+  const currConfig = CURRENCY_CONFIGS[currency] || { symbol: '₹', rateFromUSD: 84.5 };
 
   const isProfit = summary.totalUnrealizedPnL >= 0;
   const monthlySurplus = summary.totalMonthlyIncome - summary.totalMonthlyExpenses;
@@ -15,6 +17,10 @@ export const StatCards: React.FC = () => {
     {
       title: 'Total Net Worth',
       value: formatCurrency(summary.totalNetWorth, currency),
+      numericValue: Math.round(summary.totalNetWorth * currConfig.rateFromUSD),
+      prefix: currConfig.symbol,
+      suffix: '',
+      decimalPlaces: 0,
       subtext: summary.totalDebt > 0
         ? `${formatCurrency(summary.grossAssets, currency)} Assets − ${formatCurrency(summary.totalDebt, currency)} Debt`
         : assets.length > 0
@@ -29,6 +35,10 @@ export const StatCards: React.FC = () => {
     {
       title: 'Total Invested Capital',
       value: formatCurrency(summary.totalInvested, currency),
+      numericValue: Math.round(summary.totalInvested * currConfig.rateFromUSD),
+      prefix: currConfig.symbol,
+      suffix: '',
+      decimalPlaces: 0,
       subtext: assets.length > 0
         ? `Principal cost basis across ${assets.length} multi-asset holdings`
         : '0 holdings recorded • Click + Add Trade',
@@ -41,6 +51,10 @@ export const StatCards: React.FC = () => {
     {
       title: 'Unrealized Returns (P&L)',
       value: formatCurrency(summary.totalUnrealizedPnL, currency),
+      numericValue: Math.round(Math.abs(summary.totalUnrealizedPnL * currConfig.rateFromUSD)),
+      prefix: summary.totalUnrealizedPnL >= 0 ? `+${currConfig.symbol}` : `-${currConfig.symbol}`,
+      suffix: '',
+      decimalPlaces: 0,
       subtext: assets.length > 0
         ? `${formatPercentage(summary.pnlPercentage)} overall return on capital`
         : '0.00% capital growth • No active risk',
@@ -53,6 +67,10 @@ export const StatCards: React.FC = () => {
     {
       title: 'Monthly Savings Rate',
       value: `${summary.monthlySavingsRate.toFixed(1)}%`,
+      numericValue: Number(summary.monthlySavingsRate.toFixed(1)),
+      prefix: '',
+      suffix: '%',
+      decimalPlaces: 1,
       subtext: `${formatCurrency(monthlySurplus, currency)} net monthly surplus`,
       isPositive: monthlySurplus >= 0,
       icon: PiggyBank,
@@ -70,20 +88,26 @@ export const StatCards: React.FC = () => {
           <motion.div
             key={i}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className={`rounded-2xl border ${card.borderColor} bg-gradient-to-b ${card.gradient} p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between`}
+            className={`rounded-2xl border ${card.borderColor} bg-gradient-to-b ${card.gradient} p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between`}
           >
             <div className="flex items-center justify-between mb-3">
               <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
                 {card.title}
               </span>
               <div className={`p-2.5 rounded-xl ${card.iconBg}`}>
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4" aria-hidden="true" />
               </div>
             </div>
 
             <div>
-              <div className="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900 tracking-tight font-mono">
-                {card.value}
+              <div className="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900 tracking-tight font-mono tabular-nums">
+                <NumberTicker
+                  value={card.numericValue}
+                  prefix={card.prefix}
+                  suffix={card.suffix}
+                  decimalPlaces={card.decimalPlaces}
+                  className="tabular-nums"
+                />
               </div>
               <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold">
                 {card.isPositive !== null && (

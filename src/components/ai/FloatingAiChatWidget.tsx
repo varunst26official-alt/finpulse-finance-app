@@ -23,6 +23,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '@/utils/formatters';
 import { FormattedMessageContent } from '@/components/ai/FormattedMessageContent';
+import { BorderBeam } from '@/components/ui/BorderBeam';
 
 export const FloatingAiChatWidget: React.FC = () => {
   const {
@@ -178,10 +179,11 @@ export const FloatingAiChatWidget: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className={`fixed bottom-18 sm:bottom-6 right-3 sm:right-6 z-[60] w-[calc(100vw-24px)] sm:w-[440px] max-h-[86vh] sm:max-h-[90vh] rounded-[24px] border border-[#e8dfcf] bg-white shadow-2xl overflow-hidden flex flex-col transition-all ${
+            className={`fixed bottom-18 sm:bottom-6 right-3 sm:right-6 z-[60] w-[calc(100vw-24px)] sm:w-[440px] max-h-[86vh] sm:max-h-[90vh] rounded-[24px] border border-[#e8dfcf] bg-white shadow-2xl overflow-hidden flex flex-col overscroll-contain transition-all ${
               isMinimized ? 'h-16' : 'h-[640px]'
             }`}
           >
+            <BorderBeam size={220} duration={9} colorFrom="#9e783e" colorTo="#16836b" />
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[#e8dfcf] bg-gradient-to-r from-[#faf8f4] via-white to-[#faf8f4] px-4 py-3 select-none">
               <div className="flex items-center gap-2.5">
@@ -635,7 +637,7 @@ export const FloatingAiChatWidget: React.FC = () => {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         disabled={isAiTyping}
-                        className={`w-full h-11 rounded-xl border pl-3.5 pr-10 text-xs text-slate-900 placeholder-slate-400 focus:border-[#17365d] focus:bg-white focus:outline-hidden font-medium transition-all ${
+                        className={`w-full h-11 rounded-xl border pl-3.5 pr-10 text-xs text-slate-900 placeholder-slate-400 focus:border-[#17365d] focus:bg-white focus:outline-hidden font-medium transition-all touch-manipulation focus-visible:ring-2 focus-visible:ring-[#9e783e] focus-visible:outline-none ${
                           isListening
                             ? 'bg-rose-50 border-rose-300 text-rose-900 ring-2 ring-rose-200'
                             : 'bg-[#faf8f4] border-[#e4d9c7]'
@@ -645,7 +647,7 @@ export const FloatingAiChatWidget: React.FC = () => {
                         type="button"
                         onClick={toggleVoiceListening}
                         title={isListening ? 'Stop listening' : 'Speak with voice'}
-                        className={`relative absolute right-2 top-2 p-1.5 rounded-lg transition-all cursor-pointer flex items-center justify-center ${
+                        className={`relative absolute right-2 top-2 p-1.5 rounded-lg transition-all cursor-pointer flex items-center justify-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[#9e783e] focus-visible:outline-none ${
                           isListening
                             ? 'text-rose-600 bg-rose-100 ring-2 ring-rose-400/50 shadow-xs'
                             : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
@@ -661,7 +663,7 @@ export const FloatingAiChatWidget: React.FC = () => {
                     <button
                       onClick={() => handleSend()}
                       disabled={!input.trim() || isAiTyping}
-                      className="h-11 w-11 rounded-xl bg-[#17365d] hover:bg-[#122b4a] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs shrink-0"
+                      className="h-11 w-11 rounded-xl bg-[#17365d] hover:bg-[#122b4a] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs shrink-0 touch-manipulation focus-visible:ring-2 focus-visible:ring-[#17365d] focus-visible:outline-none active:scale-95"
                     >
                       <Send className="h-4 w-4" />
                     </button>
