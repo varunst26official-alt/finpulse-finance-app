@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { SectionHero } from '@/components/layout/SectionHero';
+import { backgroundTimerManager } from '@/services/backgroundTimerService';
 import {
   Heart,
   Activity,
@@ -194,23 +195,57 @@ export const WellnessWorkspace: React.FC = () => {
     setTimeout(() => setToastMsg(null), 3000);
   };
 
-  // Rest Timer Countdown Effect
+  // Rest Timer Countdown Effect with Lock-Screen Notification Support
   useEffect(() => {
-    let interval: any = null;
-    if (isTimerRunning && restSeconds !== null && restSeconds > 0) {
-      interval = setInterval(() => {
-        setRestSeconds((prev) => (prev !== null && prev > 0 ? prev - 1 : 0));
-      }, 1000);
-    } else if (restSeconds === 0) {
-      setIsTimerRunning(false);
-      showToast('⏰ Rest period complete! Time for the next set.');
+    // Check if background timer was already running across tab switch
+    const currentRemaining = backgroundTimerManager.getCurrentSeconds(2001);
+    if (currentRemaining !== null && currentRemaining > 0 && !isTimerRunning) {
+      setRestSeconds(currentRemaining);
+      setIsTimerRunning(true);
     }
-    return () => clearInterval(interval);
-  }, [isTimerRunning, restSeconds]);
+
+    if (isTimerRunning && restSeconds !== null && restSeconds > 0) {
+      backgroundTimerManager.startCountdown({
+        id: 2001,
+        title: '🏋️ Workout Rest Timer',
+        category: 'WORKOUT',
+        totalSeconds: restSeconds,
+        preserveIfRunning: true,
+        onTick: (secondsLeft) => {
+          setRestSeconds(secondsLeft);
+        },
+        onComplete: () => {
+          setRestSeconds(0);
+          setIsTimerRunning(false);
+          showToast('⏰ Rest period complete! Time for the next set.');
+        },
+      });
+    } else if (!isTimerRunning) {
+      backgroundTimerManager.pauseTimer(2001);
+    }
+
+    return () => {
+      backgroundTimerManager.detachHandlers(2001);
+    };
+  }, [isTimerRunning]);
 
   const startRestTimer = (seconds: number) => {
     setRestSeconds(seconds);
     setIsTimerRunning(true);
+    backgroundTimerManager.startCountdown({
+      id: 2001,
+      title: '🏋️ Workout Rest Timer',
+      category: 'WORKOUT',
+      totalSeconds: seconds,
+      onTick: (secondsLeft) => {
+        setRestSeconds(secondsLeft);
+      },
+      onComplete: () => {
+        setRestSeconds(0);
+        setIsTimerRunning(false);
+        showToast('⏰ Rest period complete! Time for the next set.');
+      },
+    });
   };
 
   // Adult BMI Formula: Weight (kg) / [Height (m)]^2

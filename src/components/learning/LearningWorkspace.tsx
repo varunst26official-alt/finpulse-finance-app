@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { SectionHero } from '@/components/layout/SectionHero';
+import { backgroundTimerManager } from '@/services/backgroundTimerService';
 import {
   BookOpen,
   Award,
@@ -61,16 +62,36 @@ export const LearningWorkspace: React.FC = () => {
     setTimeout(() => setToastMsg(null), 3000);
   };
 
-  // Stopwatch timer effect
+  // Stopwatch timer effect with Background Resilience & Lock-Screen Notifications
   useEffect(() => {
-    let interval: any = null;
-    if (isStudyTimerRunning) {
-      interval = setInterval(() => {
-        setStudySeconds((prev) => prev + 1);
-      }, 1000);
+    // Check if background stopwatch was already running across tab switch
+    const currentElapsed = backgroundTimerManager.getCurrentSeconds(3001);
+    if (currentElapsed !== null && currentElapsed > 0 && !isStudyTimerRunning) {
+      setStudySeconds(currentElapsed);
+      setIsStudyTimerRunning(true);
     }
-    return () => clearInterval(interval);
-  }, [isStudyTimerRunning]);
+
+    if (isStudyTimerRunning) {
+      const selectedSkill = learningItems.find((item) => item.id === selectedSkillId);
+      const skillName = selectedSkill ? selectedSkill.title : 'Deep Learning';
+      backgroundTimerManager.startStopwatch({
+        id: 3001,
+        title: `📚 Study Stopwatch: ${skillName}`,
+        category: 'STUDY',
+        initialSeconds: studySeconds,
+        preserveIfRunning: true,
+        onTick: (elapsedSeconds) => {
+          setStudySeconds(elapsedSeconds);
+        },
+      });
+    } else if (!isStudyTimerRunning) {
+      backgroundTimerManager.pauseTimer(3001);
+    }
+
+    return () => {
+      backgroundTimerManager.detachHandlers(3001);
+    };
+  }, [isStudyTimerRunning, selectedSkillId]);
 
   const handleSaveStudySession = () => {
     if (studySeconds < 60) {
@@ -78,6 +99,7 @@ export const LearningWorkspace: React.FC = () => {
       return;
     }
     const hours = Math.round((studySeconds / 3600) * 10) / 10;
+    backgroundTimerManager.stopTimer(3001);
     setIsStudyTimerRunning(false);
     setStudySeconds(0);
     showToast(`Logged ${hours} hours of deep learning!`);
@@ -429,6 +451,7 @@ export const LearningWorkspace: React.FC = () => {
             </button>
             <button
               onClick={() => {
+                backgroundTimerManager.stopTimer(3001);
                 setIsStudyTimerRunning(false);
                 setStudySeconds(0);
               }}

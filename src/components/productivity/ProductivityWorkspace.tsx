@@ -3,6 +3,7 @@ import { useLifeOSStore } from '@/stores/lifeosStore';
 import { useFinanceStore } from '@/stores/financeStore';
 import { SectionHero } from '@/components/layout/SectionHero';
 import { FinancialCalendarWidget } from '@/components/calendar/FinancialCalendarWidget';
+import { backgroundTimerManager } from '@/services/backgroundTimerService';
 import {
   CheckCircle2,
   Circle,
@@ -80,27 +81,40 @@ export const ProductivityWorkspace: React.FC = () => {
     setTimeout(() => setToastMsg(null), 3000);
   };
 
-  // Timer Countdown Effect
+  // Timer Countdown Effect with Background Resilience & Lock-Screen Notifications
   useEffect(() => {
-    let interval: any = null;
     if (isTimerRunning && timerSecondsLeft > 0) {
-      interval = setInterval(() => {
-        setActiveFocusTimer({ secondsLeft: Math.max(0, timerSecondsLeft - 1) });
-      }, 1000);
-    } else if (timerSecondsLeft === 0 && isTimerRunning) {
-      setActiveFocusTimer({ isRunning: false });
-      const minutesLogged = timerMode === 'DEEP_WORK' ? 50 : timerMode === 'POMODORO' ? 25 : 5;
-      logFocusSession({
-        durationMinutes: minutesLogged,
-        sessionType: timerMode,
-        taskTitle: focusTask,
+      backgroundTimerManager.startCountdown({
+        id: 1001,
+        title: `⏱️ Focus: ${focusTask || (timerMode === 'DEEP_WORK' ? 'Deep Work' : 'Pomodoro')}`,
+        category: 'TASK',
+        totalSeconds: timerSecondsLeft,
+        preserveIfRunning: true,
+        onTick: (secondsLeft) => {
+          setActiveFocusTimer({ secondsLeft });
+        },
+        onComplete: () => {
+          setActiveFocusTimer({ isRunning: false, secondsLeft: 0 });
+          const minutesLogged = timerMode === 'DEEP_WORK' ? 50 : timerMode === 'POMODORO' ? 25 : 5;
+          logFocusSession({
+            durationMinutes: minutesLogged,
+            sessionType: timerMode,
+            taskTitle: focusTask,
+          });
+          showToast(`🎉 Focus session completed: ${minutesLogged} minutes logged!`);
+        },
       });
-      showToast(`🎉 Focus session completed: ${minutesLogged} minutes logged!`);
+    } else if (!isTimerRunning) {
+      backgroundTimerManager.pauseTimer(1001);
     }
-    return () => clearInterval(interval);
-  }, [isTimerRunning, timerSecondsLeft, timerMode, focusTask, logFocusSession, setActiveFocusTimer]);
+
+    return () => {
+      backgroundTimerManager.detachHandlers(1001);
+    };
+  }, [isTimerRunning]);
 
   const switchTimerMode = (mode: 'POMODORO' | 'DEEP_WORK' | 'SHORT_BREAK') => {
+    backgroundTimerManager.stopTimer(1001);
     const seconds = mode === 'POMODORO' ? 25 * 60 : mode === 'DEEP_WORK' ? 50 * 60 : 5 * 60;
     setActiveFocusTimer({
       mode,
@@ -110,6 +124,7 @@ export const ProductivityWorkspace: React.FC = () => {
   };
 
   const handleCompleteAndLogSprint = () => {
+    backgroundTimerManager.stopTimer(1001);
     const minutesLogged = timerMode === 'DEEP_WORK' ? 50 : timerMode === 'POMODORO' ? 25 : 5;
     logFocusSession({
       durationMinutes: minutesLogged,
