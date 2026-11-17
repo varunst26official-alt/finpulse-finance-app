@@ -290,7 +290,15 @@ export const ProductivityWorkspace: React.FC = () => {
           setIsAddModalOpen(true);
         }}
         primaryActionLabel="+ Add a Task"
-        onSecondaryAction={() => setSubTab('CALENDAR')}
+        onSecondaryAction={() => {
+          setSubTab('CALENDAR');
+          setTimeout(() => {
+            const el = document.getElementById('unified-calendar');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 80);
+        }}
         secondaryActionLabel="Open Unified Calendar"
       />
 

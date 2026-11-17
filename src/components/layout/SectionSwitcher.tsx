@@ -191,7 +191,6 @@ export const SectionSwitcher: React.FC = () => {
         'productivity',
         'learning',
         'lifeadmin',
-        'community',
       ];
 
   return (

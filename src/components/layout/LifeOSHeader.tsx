@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useFinanceStore } from '@/stores/financeStore';
 import { useLifeOSStore } from '@/stores/lifeosStore';
-import { useMasteryStore } from '@/stores/masteryStore';
 import { useTourStore } from '@/stores/tourStore';
 import { Currency } from '@/types/finance';
 import { CURRENCY_CONFIGS } from '@/utils/formatters';
@@ -24,14 +23,10 @@ export const LifeOSHeader: React.FC = () => {
   const { user, logout } = useAuthStore();
   const { currency, setCurrency, resetToFreshPortfolio } = useFinanceStore();
   const { setIsAiModalOpen, setCurrentSection } = useLifeOSStore();
-  const { getComputedLevel, getUserRank } = useMasteryStore();
   const { startTour, resetTour } = useTourStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const isSuperAdmin = user?.email?.toLowerCase().trim() === 'admin@quantra.io';
-
-  const { level } = getComputedLevel();
-  const { rank } = getUserRank();
 
   const userInitials = user?.fullName
     ? user.fullName
@@ -81,20 +76,6 @@ export const LifeOSHeader: React.FC = () => {
             >
               <Compass className="w-3.5 h-3.5 text-[#a47b3c] group-hover:rotate-45 transition-transform duration-300 shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline font-extrabold text-[11px] sm:text-xs">Tour</span>
-            </button>
-
-            {/* Community League & Rank Badge */}
-            <button
-              onClick={() => setCurrentSection('community')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/10 border border-amber-400/40 text-amber-900 hover:bg-amber-100/60 text-xs font-black transition-colors cursor-pointer shrink-0 shadow-2xs group focus-visible:ring-2 focus-visible:ring-[#9e783e] focus-visible:outline-none touch-manipulation"
-              title="View Community Leaderboard, Leagues & Section Points"
-              aria-label="View Community Leaderboard, Leagues & Section Points"
-            >
-              <span className="text-sm" aria-hidden="true">👑</span>
-              <span className="hidden md:inline font-black text-[11px] sm:text-xs text-amber-900 tabular-nums">
-                Lvl {level} · Rank #{rank}
-              </span>
-              <span className="md:hidden font-black text-[11px] text-amber-900 tabular-nums">#{rank}</span>
             </button>
           </>
         )}

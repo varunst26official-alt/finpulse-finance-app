@@ -115,6 +115,29 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
 
   // Native Android Scanner State
   const isNative = nativeTransactionScanner.isSupported();
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return (
+      isNative ||
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      window.innerWidth < 768
+    );
+  });
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile =
+        isNative ||
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile && activeTab === 'sms') {
+        setActiveTab('statements');
+      }
+    };
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [activeTab, isNative]);
   const { autoDetectionEnabled, setAutoDetectionEnabled } = usePreferencesStore();
   const [notifAccessGranted, setNotifAccessGranted] = useState(false);
   const [smsPermGranted, setSmsPermGranted] = useState(false);
@@ -673,17 +696,20 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
             <span>Demat & Bank Statements</span>
           </button>
 
-          <button
-            onClick={() => setActiveTab('sms')}
-            className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-heading font-bold text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
-              activeTab === 'sms'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-            }`}
-          >
-            <Smartphone className="w-4 h-4" />
-            <span>UPI SMS & Notifications</span>
-          </button>
+          {/* SMS Tab - Mobile Only */}
+          {isMobile && (
+            <button
+              onClick={() => setActiveTab('sms')}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-heading font-bold text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+                activeTab === 'sms'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              }`}
+            >
+              <Smartphone className="w-4 h-4" />
+              <span>UPI SMS & Notifications</span>
+            </button>
+          )}
 
           <button
             onClick={() => setActiveTab('screenshot')}
@@ -827,8 +853,8 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
             </div>
           )}
 
-          {/* TAB 2: UPI SMS & Notifications */}
-          {activeTab === 'sms' && (
+          {/* TAB 2: UPI SMS & Notifications (Mobile Only) */}
+          {isMobile && activeTab === 'sms' && (
             <div className="space-y-5">
               {/* Native Android Auto-Detection Control Center */}
               <div className="p-4 sm:p-5 rounded-3xl bg-linear-to-br from-indigo-50/90 via-white to-purple-50/70 border border-indigo-200 shadow-xs space-y-3.5">
@@ -1069,6 +1095,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                 {/* Mobile-Safe Image File Input */}
                 <input
                   ref={imageInputRef}
+                  data-testid="receipt-image-input"
                   type="file"
                   accept="image/*,.png,.jpg,.jpeg,.webp"
                   onChange={handleImageUpload}
@@ -1078,6 +1105,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
                 <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 w-full">
                   <button
                     type="button"
+                    data-testid="upload-receipt-btn"
                     onClick={() => imageInputRef.current?.click()}
                     className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-heading font-bold shadow-md shadow-indigo-600/20 transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.02]"
                   >
@@ -1087,12 +1115,13 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
 
                   <button
                     type="button"
+                    data-testid="test-sample-ocr-btn"
                     onClick={() =>
                       handleLoadSampleSms(
                         'Paid Rs 850.00 to FUEL PUMP IOCL BANGALORE on 28-OCT-2024 via PhonePe UPI.'
                       )
                     }
-                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-heading font-bold text-xs shadow-xs transition-all cursor-pointer"
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-heading font-bold text-xs shadow-xs transition-all cursor-pointer"
                   >
                     Test Sample Receipt OCR
                   </button>

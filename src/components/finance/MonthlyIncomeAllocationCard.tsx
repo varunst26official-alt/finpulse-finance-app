@@ -240,29 +240,29 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
-            className="p-4 sm:p-5 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-950 space-y-2"
+            className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-50/90 via-white to-emerald-50/50 border border-emerald-200/80 shadow-xs space-y-3"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-emerald-600 text-white shrink-0">
-                  <Sparkles className="w-5 h-5" />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-start sm:items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-600/20 mt-0.5 sm:mt-0">
+                  <Sparkles className="w-5 h-5 text-emerald-100" />
                 </div>
                 <div>
-                  <h4 className="text-sm sm:text-base font-extrabold text-emerald-900 flex items-center gap-2">
-                    <span>✨ Investable Surplus Buffer:</span>
-                    <span className="font-mono text-emerald-700 bg-emerald-200/80 px-2 py-0.5 rounded-lg">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-extrabold text-slate-900 tracking-tight">Investable Surplus Buffer</span>
+                    <span className="font-mono text-xs font-bold text-emerald-800 bg-emerald-100/90 border border-emerald-200 px-2 py-0.5 rounded-lg shadow-2xs">
                       +{formatCurrency(allocation.surplusAmountUSD, currency)} / month
                     </span>
-                  </h4>
-                  <p className="text-xs text-emerald-800 font-medium mt-0.5">
-                    Your commitments consume <strong>{allocation.allocationPercent.toFixed(1)}%</strong> of your income. You are safely within your budget!
+                  </div>
+                  <p className="text-xs text-slate-600 font-medium mt-1">
+                    Your commitments consume <strong className="text-slate-900">{allocation.allocationPercent.toFixed(1)}%</strong> of income. You are safely within your monthly capacity.
                   </p>
                 </div>
               </div>
 
-              <div className="text-right shrink-0">
-                <span className="text-[10px] uppercase font-bold text-emerald-600 block">Surplus Cashflow Share</span>
-                <span className="text-sm font-extrabold font-mono text-emerald-800">
+              <div className="flex sm:flex-col items-center sm:items-end justify-between border-t border-emerald-100 sm:border-t-0 pt-2 sm:pt-0 shrink-0">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Surplus Share</span>
+                <span className="text-xs sm:text-sm font-extrabold font-mono text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-md mt-0.5">
                   {surplusPct.toFixed(1)}% free buffer
                 </span>
               </div>

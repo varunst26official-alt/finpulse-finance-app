@@ -145,26 +145,35 @@ test.describe('Multi-Format Bank & Investment Statement Ingestion E2E', () => {
 
     await page.locator('button:has-text("Auto-Import"), button:has-text("Statement Hub")').first().click();
 
-    // Switch to UPI SMS & Notifications Tab
-    await page.getByRole('button', { name: /UPI SMS & Notifications/i }).click();
+    const isMobileViewport = (page.viewportSize()?.width ?? 1280) < 768;
+    const smsTab = page.getByRole('button', { name: /UPI SMS & Notifications/i });
 
-    // Paste multi-line raw SMS batch (HDFC, SBI Card, Axis, Kotak, Paytm)
-    const textarea = page.locator('textarea');
-    await textarea.fill(rawSmsDump);
+    if (isMobileViewport) {
+      // Switch to UPI SMS & Notifications Tab on Mobile
+      await expect(smsTab).toBeVisible({ timeout: 6000 });
+      await smsTab.click();
 
-    // Run on-device SMS parser
-    await page.getByRole('button', { name: /Parse SMS Locally/i }).click();
+      // Paste multi-line raw SMS batch (HDFC, SBI Card, Axis, Kotak, Paytm)
+      const textarea = page.locator('textarea');
+      await textarea.fill(rawSmsDump);
 
-    // Review parsed items from multiple financial institutions
-    await expect(page.getByText('Review & Verify Parsed Items')).toBeVisible({ timeout: 12000 });
-    await expect(page.getByText('SWIGGY', { exact: true })).toBeVisible();
-    await expect(page.getByText('APOLLO PHARMACY', { exact: true })).toBeVisible();
-    await expect(page.getByText('RELIANCE DIGITAL', { exact: true })).toBeVisible();
+      // Run on-device SMS parser
+      await page.getByRole('button', { name: /Parse SMS Locally/i }).click();
 
-    // Confirm & Import
-    const confirmBtn = page.getByRole('button', { name: /Confirm & Import/i });
-    await confirmBtn.click();
-    await expect(page.getByText(/Successfully imported/i)).toBeVisible({ timeout: 8000 });
+      // Review parsed items from multiple financial institutions
+      await expect(page.getByText('Review & Verify Parsed Items')).toBeVisible({ timeout: 12000 });
+      await expect(page.getByText('SWIGGY', { exact: true })).toBeVisible();
+      await expect(page.getByText('APOLLO PHARMACY', { exact: true })).toBeVisible();
+      await expect(page.getByText('RELIANCE DIGITAL', { exact: true })).toBeVisible();
+
+      // Confirm & Import
+      const confirmBtn = page.getByRole('button', { name: /Confirm & Import/i });
+      await confirmBtn.click();
+      await expect(page.getByText(/Successfully imported/i)).toBeVisible({ timeout: 8000 });
+    } else {
+      // On Web Desktop: Verify that the SMS tab is hidden as requested
+      await expect(smsTab).toHaveCount(0);
+    }
   });
 
   test('Type 6: Bank Statement Analytics & Donut vs Graph Visualizations', async ({ page }) => {

@@ -2,7 +2,6 @@ import React from 'react';
 import { SECTION_CONFIGS } from './SectionSwitcher';
 import { LifeOSSection } from '@/types/lifeos';
 import { useAuthStore } from '@/stores/authStore';
-import { ShimmerButton } from '@/components/ui/ShimmerButton';
 
 interface SectionHeroProps {
   section: LifeOSSection;
@@ -68,21 +67,17 @@ export const SectionHero: React.FC<SectionHeroProps> = ({
 
         {/* Action Buttons (2-column compact row on mobile, inline on desktop) */}
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 pt-1 sm:pt-2 w-full sm:w-auto">
-          <ShimmerButton
+          <button
             onClick={handlePrimaryClick}
-            background="#ffffff"
-            shimmerColor="rgba(255, 255, 255, 0.8)"
-            borderRadius="0.75rem"
-            className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-slate-900 text-xs font-bold shadow-md hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-center gap-1 touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95"
-            style={{ color: config.heroColor1 }}
+            className="w-full sm:w-auto px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white text-slate-900 text-xs font-extrabold shadow-md hover:bg-slate-50 transition-all cursor-pointer flex items-center justify-center gap-1.5 touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95 border border-white/40"
           >
             <span>{primaryActionLabel || config.action}</span>
-            <span className="text-sm">↗</span>
-          </ShimmerButton>
+            <span className="text-xs font-bold opacity-75">↗</span>
+          </button>
 
           <button
             onClick={handleSecondaryClick}
-            className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/15 text-white border border-white/25 text-xs font-bold hover:bg-white/20 transition-colors cursor-pointer flex items-center justify-center text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95"
+            className="w-full sm:w-auto px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/15 text-white border border-white/30 text-xs font-bold hover:bg-white/25 transition-all cursor-pointer flex items-center justify-center text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95 backdrop-blur-xs shadow-xs"
           >
             <span>{secondaryActionLabel || config.secondary}</span>
           </button>

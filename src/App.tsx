@@ -9,12 +9,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { LifeOverviewWorkspace } from '@/components/overview/LifeOverviewWorkspace';
 import { FinanceWorkspace } from '@/components/finance/FinanceWorkspace';
 import { WellnessWorkspace } from '@/components/wellness/WellnessWorkspace';
-import { ProductivityWorkspace } from '@/components/productivity/ProductivityWorkspace';
-import { LearningWorkspace } from '@/components/learning/LearningWorkspace';
-import { LifeAdminWorkspace } from '@/components/lifeadmin/LifeAdminWorkspace';
-import { CommunityWorkspace } from '@/components/community/CommunityWorkspace';
+import { UnifiedOperationsWorkspace } from '@/components/operations/UnifiedOperationsWorkspace';
 import { ApplicationAdminWorkspace } from '@/components/admin/ApplicationAdminWorkspace';
-import { MasteryXpToast } from '@/components/community/MasteryXpToast';
 import { AdaptiveBlueprintModal } from '@/components/adaptive/AdaptiveBlueprintModal';
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal';
 import { FloatingAiChatWidget } from '@/components/ai/FloatingAiChatWidget';
@@ -85,17 +81,20 @@ export function App() {
             {/* Workspace 3: Fitness & Wellness (BMI Calculator, Workouts, Food, Water) */}
             {currentSection === 'wellness' && <WellnessWorkspace />}
 
-            {/* Workspace 4: Productivity & Tasks (Agenda, Checklist, Unified Calendar) */}
-            {currentSection === 'productivity' && <ProductivityWorkspace />}
-
-            {/* Workspace 5: Learning & Career (Skills Roadmap, Certifications) */}
-            {currentSection === 'learning' && <LearningWorkspace />}
-
-            {/* Workspace 6: Life Administration (Document Vault, Renewals, Household) */}
-            {currentSection === 'lifeadmin' && <LifeAdminWorkspace />}
-
-            {/* Workspace 7: Community, Ranks & Section-Wise Points Leaderboard */}
-            {currentSection === 'community' && <CommunityWorkspace />}
+            {/* Unified Operations Workspace: Combines Tasks, Career & Life Admin */}
+            {(currentSection === 'productivity' ||
+              currentSection === 'learning' ||
+              currentSection === 'lifeadmin') && (
+              <UnifiedOperationsWorkspace
+                initialSubTab={
+                  currentSection === 'learning'
+                    ? 'career'
+                    : currentSection === 'lifeadmin'
+                    ? 'admin'
+                    : 'tasks'
+                }
+              />
+            )}
 
             {/* Workspace 8: Application Admin & Platform Governance (Strict Super Admin Gate) */}
             {currentSection === 'appadmin' && user?.email?.toLowerCase().trim() === 'admin@quantra.io' && (
@@ -115,9 +114,8 @@ export function App() {
       {/* 5. Mobile Native Bottom Navigation Bar */}
       <MobileBottomNav />
 
-      {/* 6. Modals, XP Celebration Toast & Onboarding Tour */}
+      {/* 6. Modals & Onboarding Tour */}
       <DemoAuthModal />
-      <MasteryXpToast />
       <DemoTourGuide />
       <AdaptiveBlueprintModal />
       <FloatingDailyPlanWidget />

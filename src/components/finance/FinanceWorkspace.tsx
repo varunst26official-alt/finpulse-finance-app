@@ -60,7 +60,12 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
         section="finance"
         onPrimaryAction={onOpenAddTradeModal}
         primaryActionLabel="+ Add Trade"
-        onSecondaryAction={() => setFinanceSubTab('calendar')}
+        onSecondaryAction={() => {
+          setFinanceSubTab('calendar');
+          setTimeout(() => {
+            document.getElementById('financial-calendar-view')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 80);
+        }}
         secondaryActionLabel="Open Financial Calendar"
       />
 
@@ -191,9 +196,11 @@ export const FinanceWorkspace: React.FC<FinanceWorkspaceProps> = ({
 
           {/* Sub-tab 3: Combined Financial Calendar & Transactions Ledger */}
           {(financeSubTab === 'calendar' || financeSubTab === 'ledger') && (
-            <CalendarLedgerManager
-              initialView={financeSubTab === 'ledger' ? 'ledger' : 'calendar'}
-            />
+            <div id="financial-calendar-view">
+              <CalendarLedgerManager
+                initialView={financeSubTab === 'ledger' ? 'ledger' : 'calendar'}
+              />
+            </div>
           )}
 
           {/* Sub-tab 4: Holdings & Asset Allocation */}
