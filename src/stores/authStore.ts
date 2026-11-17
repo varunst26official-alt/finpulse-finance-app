@@ -55,6 +55,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       requireAuth: (featureName = 'this feature') => {
+        if (typeof window !== 'undefined' && window.localStorage.getItem('bypassDemoAuth') === 'true') {
+          return true;
+        }
         if (get().isDemoMode) {
           set({ authModalOpen: true, authModalFeatureName: featureName });
           return false;

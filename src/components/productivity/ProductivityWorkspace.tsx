@@ -108,6 +108,17 @@ export const ProductivityWorkspace: React.FC = () => {
     });
   };
 
+  const handleCompleteAndLogSprint = () => {
+    const minutesLogged = timerMode === 'DEEP_WORK' ? 50 : timerMode === 'POMODORO' ? 25 : 5;
+    logFocusSession({
+      durationMinutes: minutesLogged,
+      sessionType: timerMode,
+      taskTitle: focusTask || 'Core Work Sprint',
+    });
+    switchTimerMode(timerMode);
+    showToast(`🎉 Focus session completed: ${minutesLogged} minutes logged!`);
+  };
+
   const completedCount = tasks.filter((t) => t.status === 'COMPLETED').length;
   const pendingCount = tasks.length - completedCount;
 
@@ -823,13 +834,21 @@ export const ProductivityWorkspace: React.FC = () => {
           </div>
 
           {/* Controls */}
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => setActiveFocusTimer({ isRunning: !isTimerRunning })}
               className="px-6 py-3 rounded-2xl bg-[#5574d9] hover:bg-[#435eb7] text-white text-sm font-extrabold transition-all shadow-lg shadow-[#5574d9]/30 cursor-pointer flex items-center gap-2"
             >
               {isTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               <span>{isTimerRunning ? 'Pause Session' : 'Start Focus Sprint'}</span>
+            </button>
+            <button
+              onClick={handleCompleteAndLogSprint}
+              className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-extrabold transition-all shadow-lg shadow-emerald-600/30 cursor-pointer flex items-center gap-2"
+              title="Log completed sprint"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Log Session</span>
             </button>
             <button
               onClick={() => switchTimerMode(timerMode)}
