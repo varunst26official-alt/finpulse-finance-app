@@ -23,7 +23,7 @@ test.describe('Authentication & Branding Tests', () => {
     await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
 
     // Verify successful login into command centre
-    await expect(page.getByText('QUANTRA')).toBeVisible();
+    await expect(page.getByText('QUANTRA').first()).toBeVisible();
     await expect(page.getByText('PRO', { exact: true })).toBeVisible();
     await expect(page.getByText('Quantra Life OS')).toBeVisible();
   });
@@ -37,7 +37,7 @@ test.describe('Authentication & Branding Tests', () => {
     await page.getByRole('button', { name: /Sign In to LifeOS/i }).click();
 
     // Verify Quantra Header Branding
-    await expect(page.getByText('QUANTRA')).toBeVisible();
+    await expect(page.getByText('QUANTRA').first()).toBeVisible();
 
     // If initial onboarding tour dialog appears, dismiss it
     const skipTourBtn = page.getByRole('button', { name: /Skip Tour/i });

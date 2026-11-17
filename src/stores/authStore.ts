@@ -4,7 +4,13 @@ import { useFinanceStore } from './financeStore';
 import { useLifeOSStore } from './lifeosStore';
 import { useTourStore } from './tourStore';
 import { api, ApiError } from '@/services/apiClient';
-import { loadUserScopedData, saveUserScopedData, clearActiveUserStores } from '@/services/userStorage';
+import {
+  loadUserScopedData,
+  saveUserScopedData,
+  clearActiveUserStores,
+  pullUserDataFromCloud,
+  syncUserDataToCloud,
+} from '@/services/userStorage';
 
 export interface UserProfile {
   id: string;
@@ -113,9 +119,56 @@ export const useAuthStore = create<AuthState>()(
             JSON.stringify({ ...res.user, password })
           );
           loadUserScopedData(res.user);
+          await pullUserDataFromCloud(res.user);
           await useFinanceStore.getState().syncWithBackend();
           return { success: true };
         } catch (err: any) {
+          // Check if user credentials exist locally (e.g. registered on device when offline or local)
+          const localStoredCredsRaw =
+            typeof window !== 'undefined' ? localStorage.getItem(`lifeos_creds_${normalizedEmail}`) : null;
+          let localCreds: any = null;
+          if (localStoredCredsRaw) {
+            try {
+              localCreds = JSON.parse(localStoredCredsRaw);
+            } catch {}
+          }
+
+          // If local credentials exist and match password, auto-register this account to the database!
+          if (localCreds && localCreds.password === password) {
+            try {
+              console.log('[LifeOS Auth] Account created locally, synchronizing to server database now...');
+              const regRes = await api.auth.register({
+                fullName: localCreds.fullName || normalizedEmail.split('@')[0],
+                email: normalizedEmail,
+                password,
+                phoneNumber: localCreds.phoneNumber,
+              });
+              if (regRes && regRes.success && regRes.user) {
+                set({ user: regRes.user, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
+                localStorage.setItem(`lifeos_creds_${normalizedEmail}`, JSON.stringify({ ...regRes.user, password }));
+                loadUserScopedData(regRes.user);
+                // Immediately push any local data to server database
+                await syncUserDataToCloud(regRes.user);
+                await useFinanceStore.getState().syncWithBackend();
+                return { success: true };
+              }
+            } catch (regErr: any) {
+              console.warn('[LifeOS Auth] Auto-register to server database deferred:', regErr?.message);
+              // Fall back to local session
+              const loggedUser: UserProfile = {
+                id: localCreds.id || 'usr_' + Date.now(),
+                fullName: localCreds.fullName || normalizedEmail.split('@')[0],
+                email: normalizedEmail,
+                phoneNumber: localCreds.phoneNumber,
+                investorType: localCreds.investorType || 'RETAIL',
+                joinedDate: localCreds.joinedDate || 'Member',
+              };
+              set({ user: loggedUser, isAuthenticated: true, isDemoMode: false, authModalOpen: false, isLoading: false });
+              loadUserScopedData(loggedUser);
+              return { success: true };
+            }
+          }
+
           // If server explicitly responded with an authentication rejection (401, 400, 403, 404)
           if (
             err instanceof ApiError &&
@@ -266,6 +319,7 @@ export const useAuthStore = create<AuthState>()(
           useLifeOSStore.getState().resetToFreshState();
           useTourStore.getState().resetTour();
           saveUserScopedData(res.user);
+          await syncUserDataToCloud(res.user);
           await useFinanceStore.getState().syncWithBackend();
 
           return { success: true };

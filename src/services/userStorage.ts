@@ -108,15 +108,22 @@ export async function pullUserDataFromCloud(user: UserProfile | null): Promise<b
       const { financeState, lifeosState } = res.data;
       const userKey = getUserStorageKey(user);
 
-      if (financeState && typeof financeState === 'object') {
-        useFinanceStore.setState(financeState);
-        localStorage.setItem(`${userKey}_finance`, JSON.stringify(financeState));
+      // Guard against auto-save re-triggering while hydrating from remote cloud
+      isClearing = true;
+      try {
+        if (financeState && typeof financeState === 'object') {
+          useFinanceStore.setState(financeState);
+          localStorage.setItem(`${userKey}_finance`, JSON.stringify(financeState));
+        }
+        if (lifeosState && typeof lifeosState === 'object') {
+          useLifeOSStore.setState(lifeosState);
+          localStorage.setItem(`${userKey}_lifeos`, JSON.stringify(lifeosState));
+        }
+        useMasteryStore.getState().syncWithActualUserData();
+      } finally {
+        isClearing = false;
       }
-      if (lifeosState && typeof lifeosState === 'object') {
-        useLifeOSStore.setState(lifeosState);
-        localStorage.setItem(`${userKey}_lifeos`, JSON.stringify(lifeosState));
-      }
-      useMasteryStore.getState().syncWithActualUserData();
+
       console.log('[UserStorage] Successfully restored remote cloud state for user:', user.email);
       return true;
     }

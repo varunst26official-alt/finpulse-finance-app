@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import {
   Asset,
   Transaction,
@@ -23,9 +24,55 @@ import {
 import { UserAdaptiveInputs, AdaptiveLifeBlueprint } from '@/services/adaptiveLifeEngine';
 import { UserProfile } from '@/stores/authStore';
 
-const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL)
-  ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')}/api`
-  : '/api';
+export function getApiBaseCandidates(): string[] {
+  const candidates: string[] = [];
+
+  // 1. Explicit env var (e.g. production cloud backend or Vercel)
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) {
+    candidates.push(`${import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')}/api`);
+  }
+
+  // 2. Custom override from localStorage
+  if (typeof window !== 'undefined') {
+    const custom = localStorage.getItem('lifeos_custom_api_url');
+    if (custom) candidates.push(`${custom.replace(/\/$/, '')}/api`);
+  }
+
+  // 3. Native Mobile (Capacitor Android / iOS / BlueStacks)
+  const isNative =
+    Capacitor.isNativePlatform() ||
+    (typeof window !== 'undefined' &&
+      (window.location.protocol === 'capacitor:' ||
+        (window.location.hostname === 'localhost' && !window.location.port && Capacitor.getPlatform() !== 'web')));
+
+  if (isNative) {
+    // 10.0.2.2 is Android emulator & BlueStacks host gateway to host PC
+    candidates.push('http://10.0.2.2:5001/api');
+    // Local LAN host IP for physical device on Wi-Fi
+    candidates.push('http://192.168.1.5:5001/api');
+  }
+
+  // 4. Web Browser candidates
+  candidates.push('/api');
+  candidates.push('http://localhost:5001/api');
+  candidates.push('http://127.0.0.1:5001/api');
+
+  // Deduplicate
+  return Array.from(new Set(candidates));
+}
+
+let activeApiBase: string | null = null;
+
+export function getActiveApiBase(): string {
+  if (activeApiBase) return activeApiBase;
+  const candidates = getApiBaseCandidates();
+  return candidates[0] || '/api';
+}
+
+export function setActiveApiBase(base: string): void {
+  activeApiBase = base;
+}
+
 const TOKEN_KEY = 'finpulse_auth_token';
 
 export function getStoredToken(): string | null {
@@ -76,40 +123,59 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  let response: Response;
-  try {
-    response = await fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      headers,
-    });
-  } catch (netErr: any) {
-    throw new ApiError(`Network request failed: ${netErr?.message || 'Server unreachable'}`, 503);
+  const allCandidates = getApiBaseCandidates();
+  const candidateBases = activeApiBase
+    ? [activeApiBase, ...allCandidates.filter((b) => b !== activeApiBase)]
+    : allCandidates;
+
+  let lastError: any = null;
+
+  for (const base of candidateBases) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    try {
+      const response = await fetch(`${base}${endpoint}`, {
+        ...options,
+        headers,
+        signal: options.signal || controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      const contentType = response.headers.get('content-type') || '';
+      // If server returned non-JSON (e.g. HTML from Capacitor asset fallback), try next candidate base
+      if (!contentType.includes('application/json')) {
+        continue;
+      }
+
+      let data: any;
+      try {
+        data = await response.json();
+      } catch {
+        continue;
+      }
+
+      if (!response.ok || (data && data.success === false)) {
+        throw new ApiError(
+          data?.message || data?.error || `Request failed with status ${response.status}`,
+          response.status || 400,
+          data
+        );
+      }
+
+      // Success! Lock this working base URL for subsequent calls
+      activeApiBase = base;
+      return data as T;
+    } catch (err: any) {
+      if (err instanceof ApiError && err.status !== 503 && err.status !== 502 && err.status !== 404) {
+        // Legitimate business rejection from backend (e.g. 400 Bad Request, 401 Unauthorized, 409 Conflict)
+        activeApiBase = base;
+        throw err;
+      }
+      lastError = err;
+    }
   }
 
-  // Capacitor / SPA Fallback Guard:
-  // If the server returned HTML (e.g. <!doctype html> or text/html from Capacitor asset server fallback),
-  // this is NOT a valid backend API endpoint!
-  const contentType = response.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
-    throw new ApiError('Remote backend service unavailable (received non-JSON response).', 503);
-  }
-
-  let data: any;
-  try {
-    data = await response.json();
-  } catch {
-    throw new ApiError('Failed to parse server response as JSON.', 500);
-  }
-
-  if (!response.ok || (data && data.success === false)) {
-    throw new ApiError(
-      data?.message || data?.error || `Request failed with status ${response.status}`,
-      response.status || 400,
-      data
-    );
-  }
-
-  return data as T;
+  throw lastError || new ApiError('Unable to connect to LifeOS backend database service.', 503);
 }
 
 async function authenticatedRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
