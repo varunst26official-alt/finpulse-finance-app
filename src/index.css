@@ -31,9 +31,31 @@
   }
 
   /* Global touch responsiveness: eliminate 300ms double-tap delay on mobile */
-  button, a, input, select, textarea, [role="button"] {
+  button, a, select, textarea, [role="button"] {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Range sliders: Lock touch-action to prevent page scroll gesture conflict */
+  input[type="range"] {
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Enlarge range slider thumb for mobile touchscreen ergonomics */
+  input[type="range"]::-webkit-slider-thumb {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    touch-action: none;
+    cursor: grab;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:active {
+    transform: scale(1.18);
+    cursor: grabbing;
   }
 }
 

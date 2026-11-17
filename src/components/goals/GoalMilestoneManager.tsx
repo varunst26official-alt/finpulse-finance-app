@@ -49,19 +49,19 @@ export const GoalMilestoneManager: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
   const [topUpGoal, setTopUpGoal] = useState<GoalItem | null>(null);
-  const [topUpAmount, setTopUpAmount] = useState<number>(25000);
+  const [topUpAmount, setTopUpAmount] = useState<number>(0);
 
-  // New Goal Form State
+  // New Goal Form State (Zero Preloaded Defaults; User Defined)
   const [newTitle, setNewTitle] = useState('');
   const [newCategory, setNewCategory] = useState<GoalCategory>('CHILD_EDUCATION');
-  const [newTargetToday, setNewTargetToday] = useState<number>(5000000); // ₹50 Lakhs
-  const [newTargetDate, setNewTargetDate] = useState('2034-06-30');
-  const [newCurrentSaved, setNewCurrentSaved] = useState<number>(1000000);
-  const [newMonthlySip, setNewMonthlySip] = useState<number>(20000);
+  const [newTargetToday, setNewTargetToday] = useState<number>(0);
+  const [newTargetDate, setNewTargetDate] = useState('');
+  const [newCurrentSaved, setNewCurrentSaved] = useState<number>(0);
+  const [newMonthlySip, setNewMonthlySip] = useState<number>(0);
   const [newPriority, setNewPriority] = useState<GoalPriority>('HIGH');
-  const [newInflation, setNewInflation] = useState<number>(7.0);
+  const [newInflation, setNewInflation] = useState<number>(6.0);
   const [newReturns, setNewReturns] = useState<number>(12.0);
-  const [newStepUp, setNewStepUp] = useState<number>(10); // 10% annual step-up contribution
+  const [newStepUp, setNewStepUp] = useState<number>(0);
   const [isInflationAdjusted, setIsInflationAdjusted] = useState<boolean>(true);
   const [isAutoTimeCalculation, setIsAutoTimeCalculation] = useState<boolean>(true);
   const [newNotes, setNewNotes] = useState('');
@@ -79,11 +79,11 @@ export const GoalMilestoneManager: React.FC = () => {
     );
   }, [newTargetToday, newCurrentSaved, newMonthlySip, newReturns, newStepUp, isInflationAdjusted, newInflation]);
 
-  // Standalone SIP Simulator State
-  const [simMonthly, setSimMonthly] = useState<number>(25000);
-  const [simReturns, setSimReturns] = useState<number>(12.5);
+  // Standalone SIP Simulator State (Clean Zero Start)
+  const [simMonthly, setSimMonthly] = useState<number>(0);
+  const [simReturns, setSimReturns] = useState<number>(12.0);
   const [simYears, setSimYears] = useState<number>(10);
-  const [simStepUp, setSimStepUp] = useState<number>(10); // 10% annual step-up
+  const [simStepUp, setSimStepUp] = useState<number>(0);
 
   // Aggregate Metrics Across All Goals
   const metrics = useMemo(() => {

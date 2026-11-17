@@ -20,7 +20,7 @@ import {
   PaymentMethod,
   ListedStockItem,
 } from '@/types/finance';
-import { searchListedStocks, COMPREHENSIVE_STOCK_DIRECTORY } from '@/services/stockSearchService';
+import { searchListedStocks } from '@/services/stockSearchService';
 import {
   formatCurrency,
   EXPENSE_CATEGORY_LABELS,
@@ -52,31 +52,24 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
 
   const [mode, setMode] = useState<ModalMode>('TRADE');
 
-  const defaultInitialStock = COMPREHENSIVE_STOCK_DIRECTORY.length > 0 ? COMPREHENSIVE_STOCK_DIRECTORY[0] : null;
-
-  // --- Trade Mode State ---
-  const [stockSearchQuery, setStockSearchQuery] = useState(
-    defaultInitialStock ? `${defaultInitialStock.symbol} — ${defaultInitialStock.name}` : ''
-  );
+  // --- Trade Mode State (Clean Zero Defaults; User Defined) ---
+  const [stockSearchQuery, setStockSearchQuery] = useState('');
   const [stockSearchResults, setStockSearchResults] = useState<ListedStockItem[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [selectedStock, setSelectedStock] = useState<ListedStockItem | null>(defaultInitialStock);
+  const [selectedStock, setSelectedStock] = useState<ListedStockItem | null>(null);
 
   const [tradeType, setTradeType] = useState<TransactionType>('BUY');
-  const [quantity, setQuantity] = useState<number>(10);
-  const [pricePerUnit, setPricePerUnit] = useState<number>(() => {
-    if (!defaultInitialStock) return 34.8;
-    return currency === 'INR' ? defaultInitialStock.currentPriceINR : defaultInitialStock.currentPriceUSD;
-  });
-  const [tradePlatform, setTradePlatform] = useState('Zerodha Kite');
+  const [quantity, setQuantity] = useState<number>(0);
+  const [pricePerUnit, setPricePerUnit] = useState<number>(0);
+  const [tradePlatform, setTradePlatform] = useState('');
   const [tradeDate, setTradeDate] = useState(new Date().toISOString().split('T')[0]);
   const [tradeNotes, setTradeNotes] = useState('');
 
   // --- Fixed Asset / Real Estate Mode State ---
   const [assetName, setAssetName] = useState('');
   const [assetCategory, setAssetCategory] = useState<AssetCategory>('REAL_ESTATE');
-  const [assetInvestedAmount, setAssetInvestedAmount] = useState<number>(10000);
-  const [expectedReturnRate, setExpectedReturnRate] = useState<number>(8.0);
+  const [assetInvestedAmount, setAssetInvestedAmount] = useState<number>(0);
+  const [expectedReturnRate, setExpectedReturnRate] = useState<number>(0);
   const [assetInstitution, setAssetInstitution] = useState('');
   const [assetDate, setAssetDate] = useState(new Date().toISOString().split('T')[0]);
   const [assetNotes, setAssetNotes] = useState('');
@@ -84,7 +77,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   // --- Expense Mode State ---
   const [expenseTitle, setExpenseTitle] = useState('');
   const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory>('HOUSING_RENT');
-  const [expenseAmount, setExpenseAmount] = useState<number>(300);
+  const [expenseAmount, setExpenseAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('UPI');
   const [expenseFrequency, setExpenseFrequency] = useState<'ONE_TIME' | 'MONTHLY_RECURRING'>('MONTHLY_RECURRING');
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split('T')[0]);
@@ -93,9 +86,9 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   // --- Income Mode State ---
   const [incomeSource, setIncomeSource] = useState('');
   const [incomeCategory, setIncomeCategory] = useState<IncomeCategory>('SALARY');
-  const [incomeAmount, setIncomeAmount] = useState<number>(2000);
+  const [incomeAmount, setIncomeAmount] = useState<number>(0);
   const [incomeFrequency, setIncomeFrequency] = useState<'MONTHLY' | 'ONE_TIME' | 'ANNUAL'>('MONTHLY');
-  const [incomeAccount, setIncomeAccount] = useState('Primary Salary Bank A/c');
+  const [incomeAccount, setIncomeAccount] = useState('');
   const [incomeDate, setIncomeDate] = useState(new Date().toISOString().split('T')[0]);
   const [incomeNotes, setIncomeNotes] = useState('');
 
@@ -229,7 +222,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   return createPortal(
     <div
       {...overlayProps}
-      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
     >
       <motion.div
         {...contentProps}
@@ -237,65 +230,68 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.96, opacity: 0, y: 24 }}
         transition={{ duration: 0.2 }}
-        className="w-full max-w-2xl max-h-[90vh] sm:max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[#e8e0d1] bg-white p-4 sm:p-7 pb-8 sm:pb-7 shadow-2xl space-y-4 sm:space-y-5"
+        className="w-full max-w-2xl max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[92vh] flex flex-col rounded-t-3xl sm:rounded-3xl border border-[#e8e0d1] bg-white shadow-2xl overflow-hidden cursor-default"
       >
-        {/* Mobile Drag Indicator */}
-        <div className="w-10 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden shrink-0" />
+        {/* Mobile Drawer Top Drag Bar & Header (Sticky Top Zone) */}
+        <div className="shrink-0 p-4 sm:p-6 pb-3 border-b border-[#e8e0d1] space-y-3 bg-white">
+          <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden shrink-0 mb-1" />
 
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#e8e0d1] pb-3 sm:pb-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-md shadow-[#9e783e]/25">
-              <Sparkles className="h-5 w-5" />
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-[#9e783e] text-white shadow-md shadow-[#9e783e]/25 shrink-0">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+                  Unified Financial Entry & Planner
+                </h3>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  Log listed stocks, real estate, spent expenses, or income inflows
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">
-                Unified Financial Entry & Planner
-              </h3>
-              <p className="text-xs text-slate-600 mt-0.5">
-                Log listed stocks, real estate, spent expenses, or income inflows in one place
-              </p>
-            </div>
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="rounded-xl p-2 text-slate-400 hover:text-slate-900 hover:bg-[#faf8f5] transition-colors cursor-pointer shrink-0"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="rounded-xl p-2 text-slate-400 hover:text-slate-900 hover:bg-[#faf8f5] transition-colors cursor-pointer"
-          >
-            <X className="h-5 w-5" />
-          </button>
+
+          {/* 4 Mode Switcher Segment Pills */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 rounded-2xl bg-[#faf8f5] p-1 border border-[#e8e0d1]">
+            {[
+              { id: 'TRADE', label: 'Stocks & Equities', icon: TrendingUp },
+              { id: 'FIXED_ASSET', label: 'Fixed Assets & RE', icon: Building2 },
+              { id: 'EXPENSE', label: 'Spent Expenses', icon: Receipt },
+              { id: 'INCOME', label: 'Income Inflows', icon: Wallet },
+            ].map((item) => {
+              const Icon = item.icon;
+              const isActive = mode === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setMode(item.id as ModalMode)}
+                  className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-[#9e783e] text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-[#f4efe4]'
+                  }`}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* 4 Mode Switcher Segment Pills */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 rounded-2xl bg-[#faf8f5] p-1.5 border border-[#e8e0d1]">
-          {[
-            { id: 'TRADE', label: 'Stocks & Equities', icon: TrendingUp },
-            { id: 'FIXED_ASSET', label: 'Fixed Assets & RE', icon: Building2 },
-            { id: 'EXPENSE', label: 'Spent Expenses', icon: Receipt },
-            { id: 'INCOME', label: 'Income Inflows', icon: Wallet },
-          ].map((item) => {
-            const Icon = item.icon;
-            const isActive = mode === item.id;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setMode(item.id as ModalMode)}
-                className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-[#9e783e] text-white shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-[#f4efe4]'
-                }`}
-              >
-                <Icon className="h-4 w-4 shrink-0" />
-                <span className="truncate">{item.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form Body - Scrollable Container that adjusts to Mobile Virtual Keyboards */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto overscroll-contain flex flex-col min-h-0">
+          <div className="p-4 sm:p-6 space-y-4 flex-1">
           <AnimatePresence mode="wait">
             {/* ============================================================== */}
             {/* MODE 1: STOCKS & EQUITIES TRADE ENTRY */}
@@ -931,8 +927,10 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e8e0d1]">
+          </div>
+
+          {/* Sticky Action Footer (Never crushed by Virtual Keyboard) */}
+          <div className="shrink-0 flex items-center justify-end gap-3 p-4 sm:p-6 pt-3 border-t border-[#e8e0d1] bg-white pb-[calc(env(safe-area-inset-bottom)+0.75rem)] sm:pb-4 z-10">
             <button
               type="button"
               onClick={onClose}

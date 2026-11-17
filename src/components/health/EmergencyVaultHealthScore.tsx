@@ -26,8 +26,8 @@ export const EmergencyVaultHealthScore: React.FC = () => {
   const summary = getPortfolioSummary();
   const healthScore = getFinancialHealthScore();
 
-  // Emergency Vault Calculations
-  const monthlyExpenses = summary.totalMonthlyExpenses > 0 ? summary.totalMonthlyExpenses : 1000;
+  // Emergency Vault Calculations (Zero-based; requires user expense entry)
+  const monthlyExpenses = summary.totalMonthlyExpenses > 0 ? summary.totalMonthlyExpenses : 0;
   const targetRequiredUSD = monthlyExpenses * emergencyTargetMonths;
   const currentLiquidUSD =
     summary.allocationBreakdown.find((a) => a.category === 'LIQUID_CASH')?.currentValue || 0;

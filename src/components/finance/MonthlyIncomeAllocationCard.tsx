@@ -191,7 +191,33 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
 
       {/* Prominent Shortfall vs Surplus Notification Banner */}
       <AnimatePresence mode="wait">
-        {allocation.isShortfall ? (
+        {allocation.monthlyIncomeUSD === 0 ? (
+          <motion.div
+            key="zero-income-banner"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-amber-50/80 via-white to-amber-50/40 border border-amber-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+          >
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-amber-500/20 mt-0.5 sm:mt-0">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h4 className="text-sm font-extrabold text-slate-900 tracking-tight">Set Monthly Net Inflow</h4>
+                <p className="text-xs text-slate-600 font-medium mt-0.5">
+                  Enter your monthly take-home salary or net income to activate real-time commitment allocation and surplus buffer tracking.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs transition-all shadow-xs shrink-0 cursor-pointer text-center"
+            >
+              + Enter Monthly Income
+            </button>
+          </motion.div>
+        ) : allocation.isShortfall ? (
           <motion.div
             key="shortfall-alert"
             initial={{ opacity: 0, scale: 0.98 }}

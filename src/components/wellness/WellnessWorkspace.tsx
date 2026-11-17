@@ -180,13 +180,13 @@ export const WellnessWorkspace: React.FC = () => {
   const [restSeconds, setRestSeconds] = useState<number | null>(null);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-  // Phase 3: Meal Logger State
+  // Phase 3: Meal Logger State (Zero Preloaded Defaults; User Defined)
   const [mealType, setMealType] = useState<MealType>('LUNCH');
   const [mealName, setMealName] = useState('');
-  const [mealCalories, setMealCalories] = useState<number>(550);
-  const [mealProtein, setMealProtein] = useState<number>(45);
-  const [mealCarbs, setMealCarbs] = useState<number>(50);
-  const [mealFat, setMealFat] = useState<number>(15);
+  const [mealCalories, setMealCalories] = useState<number>(0);
+  const [mealProtein, setMealProtein] = useState<number>(0);
+  const [mealCarbs, setMealCarbs] = useState<number>(0);
+  const [mealFat, setMealFat] = useState<number>(0);
   const [mealPortion, setMealPortion] = useState('');
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 

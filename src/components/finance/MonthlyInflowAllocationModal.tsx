@@ -84,7 +84,7 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
     return s ? Math.round(s.amount * (isINR ? rate : 1)) : Math.round(monthlyNetIncome * (isINR ? rate : 1));
   }, [incomes, monthlyNetIncome, isINR, rate]);
 
-  const [salaryInput, setSalaryInput] = useState<number>(existingSalary || 100000);
+  const [salaryInput, setSalaryInput] = useState<number>(existingSalary || 0);
   const [salaryDay, setSalaryDay] = useState<number>(1);
 
   const existingOtherIncomes = useMemo(() => {
@@ -97,11 +97,7 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
         amount: Math.round(o.amount * (isINR ? rate : 1)),
       }));
     }
-    return [
-      { id: 'inc_freelance', source: 'Freelance & Consulting', category: 'FREELANCE' as IncomeCategory, amount: 0 },
-      { id: 'inc_rental', source: 'Rental Property Inflow', category: 'RENTAL' as IncomeCategory, amount: 0 },
-      { id: 'inc_dividend', source: 'Dividends & Interest Yield', category: 'DIVIDEND_INTEREST' as IncomeCategory, amount: 0 },
-    ];
+    return [];
   }, [incomes, isINR, rate]);
 
   const [otherIncomes, setOtherIncomes] = useState<OtherIncomeEntry[]>(existingOtherIncomes);
@@ -120,30 +116,26 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
         dueDate: 5,
       }));
     }
-    return [
-      { id: 'b_rent', name: 'Housing Rent / Maintenance', category: 'HOUSING_RENT' as ExpenseCategory, amount: 25000, dueDate: 1 },
-      { id: 'b_elec', name: 'Electricity & Power Utility', category: 'UTILITIES_BILLS' as ExpenseCategory, amount: 3500, dueDate: 10 },
-      { id: 'b_wifi', name: 'High-speed Wi-Fi & Mobile', category: 'UTILITIES_BILLS' as ExpenseCategory, amount: 1500, dueDate: 15 },
-    ];
+    return [];
   }, [bills, isINR, rate]);
 
   const [editableBills, setEditableBills] = useState<QuickBillEntry[]>(initialBills);
 
-  // Variable essentials buckets
+  // Variable essentials buckets - Starts at 0 until user allocates
   const [groceriesInput, setGroceriesInput] = useState<number>(() => {
-    const alloc = monthlyLivingAllocation ? monthlyLivingAllocation * (isINR ? rate : 1) : 25000;
+    const alloc = monthlyLivingAllocation ? monthlyLivingAllocation * (isINR ? rate : 1) : 0;
     return Math.round(alloc * 0.45);
   });
   const [transitInput, setTransitInput] = useState<number>(() => {
-    const alloc = monthlyLivingAllocation ? monthlyLivingAllocation * (isINR ? rate : 1) : 25000;
+    const alloc = monthlyLivingAllocation ? monthlyLivingAllocation * (isINR ? rate : 1) : 0;
     return Math.round(alloc * 0.2);
   });
   const [medicalInput, setMedicalInput] = useState<number>(() => {
-    const alloc = monthlyLivingAllocation ? monthlyLivingAllocation * (isINR ? rate : 1) : 25000;
+    const alloc = monthlyLivingAllocation ? monthlyLivingAllocation * (isINR ? rate : 1) : 0;
     return Math.round(alloc * 0.15);
   });
   const [bufferInput, setBufferInput] = useState<number>(() => {
-    const alloc = monthlyLivingAllocation ? monthlyLivingAllocation * (isINR ? rate : 1) : 25000;
+    const alloc = monthlyLivingAllocation ? monthlyLivingAllocation * (isINR ? rate : 1) : 0;
     return Math.round(alloc * 0.2);
   });
 

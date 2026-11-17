@@ -40,15 +40,15 @@ export const InsuranceManager: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filterType, setFilterType] = useState<string>('ALL');
 
-  // New Policy Form State
+  // New Policy Form State (Zero Preloaded Defaults; User Defined)
   const [newName, setNewName] = useState('');
   const [newType, setNewType] = useState<InsuranceType>('TERM_LIFE');
   const [newProvider, setNewProvider] = useState('');
   const [newNumber, setNewNumber] = useState('');
-  const [newSumAssured, setNewSumAssured] = useState<number>(10000000); // ₹1 Cr default
-  const [newPremium, setNewPremium] = useState<number>(20000);
-  const [newRenewalDate, setNewRenewalDate] = useState('2027-03-31');
-  const [newMembers, setNewMembers] = useState('Self');
+  const [newSumAssured, setNewSumAssured] = useState<number>(0);
+  const [newPremium, setNewPremium] = useState<number>(0);
+  const [newRenewalDate, setNewRenewalDate] = useState('');
+  const [newMembers, setNewMembers] = useState('');
   const [newHelpline, setNewHelpline] = useState('');
   const [newNotes, setNewNotes] = useState('');
 

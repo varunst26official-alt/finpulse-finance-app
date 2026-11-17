@@ -38,17 +38,17 @@ export const LearningWorkspace: React.FC = () => {
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [editingBookId, setEditingBookId] = useState<string | null>(null);
 
-  // Skill Form
+  // Skill Form (Zero Preloaded Defaults; User Defined)
   const [title, setTitle] = useState('');
-  const [field, setField] = useState('Engineering');
-  const [targetHours, setTargetHours] = useState(30);
+  const [field, setField] = useState('');
+  const [targetHours, setTargetHours] = useState(0);
   const [skillNotes, setSkillNotes] = useState('');
 
   // Book Form
   const [bookTitle, setBookTitle] = useState('');
   const [bookAuthor, setBookAuthor] = useState('');
-  const [bookCategory, setBookCategory] = useState('Technology');
-  const [bookTotalPages, setBookTotalPages] = useState(400);
+  const [bookCategory, setBookCategory] = useState('');
+  const [bookTotalPages, setBookTotalPages] = useState(0);
   const [bookNotes, setBookNotes] = useState('');
 
   // Live Study Stopwatch

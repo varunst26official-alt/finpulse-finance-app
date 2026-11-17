@@ -3,16 +3,25 @@ import { useFinanceStore } from '@/stores/financeStore';
 import { formatCurrency, CURRENCY_CONFIGS } from '@/utils/formatters';
 import { Calculator, ShieldAlert } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { StepperSlider } from '@/components/ui/StepperSlider';
 
 export const SipCalculator: React.FC = () => {
   const { currency } = useFinanceStore();
   const config = CURRENCY_CONFIGS[currency];
 
-  const [monthlyInvestment, setMonthlyInvestment] = useState(25000);
-  const [expectedReturnRate, setExpectedReturnRate] = useState(12.5);
-  const [timePeriodYears, setTimePeriodYears] = useState(10);
+  // Zero-based: User defines their investment numbers
+  const [monthlyInvestment, setMonthlyInvestment] = useState<number>(0);
+  const [expectedReturnRate, setExpectedReturnRate] = useState<number>(12.0);
+  const [timePeriodYears, setTimePeriodYears] = useState<number>(10);
 
   const calculation = useMemo(() => {
+    if (monthlyInvestment <= 0) {
+      return {
+        totalInvestedUSD: 0,
+        wealthGainUSD: 0,
+        futureValueUSD: 0,
+      };
+    }
     const P = monthlyInvestment / config.rateFromUSD;
     const i = expectedReturnRate / 12 / 100;
     const n = timePeriodYears * 12;
@@ -45,29 +54,23 @@ export const SipCalculator: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Sliders Input Controls */}
-        <div className="space-y-6 text-xs">
-          {/* Monthly Investment Slider */}
-          <div>
-            <div className="flex justify-between items-center mb-1.5 text-slate-800">
-              <span className="font-bold text-sm">Monthly Contribution</span>
-              <span className="text-[#9e783e] font-extrabold text-base">
-                {formatCurrency(monthlyInvestment / config.rateFromUSD, currency)}/mo
-              </span>
-            </div>
-            <input
-              type="range"
-              min={1000}
-              max={200000}
-              step={1000}
-              value={monthlyInvestment}
-              onChange={(e) => setMonthlyInvestment(Number(e.target.value))}
-              className="w-full accent-[#9e783e] cursor-pointer h-2 bg-slate-200 rounded-lg"
-            />
-            <div className="flex justify-between text-xs text-slate-500 font-medium mt-1">
-              <span>{formatCurrency(1000 / config.rateFromUSD, currency)}</span>
-              <span>{formatCurrency(200000 / config.rateFromUSD, currency)}</span>
-            </div>
-          </div>
+        <div className="space-y-4 text-xs">
+          {/* Monthly Investment Tactile Stepper-Slider (0 Preloaded; User Input) */}
+          <StepperSlider
+            label="Monthly SIP Contribution"
+            sublabel="Zero preloaded values · User defined"
+            value={monthlyInvestment}
+            min={0}
+            max={200000}
+            step={1000}
+            stepIncrement={5000}
+            unit="/mo"
+            currencyPrefix={currency === 'INR' ? '₹' : '$'}
+            formatValue={(val) => formatCurrency(val / config.rateFromUSD, currency)}
+            onChange={(val) => setMonthlyInvestment(val)}
+            presets={[5000, 10000, 25000, 50000]}
+            accentColor="#9e783e"
+          />
 
           {/* Expected Return Rate */}
           <div>

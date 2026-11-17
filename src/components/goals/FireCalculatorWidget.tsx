@@ -40,41 +40,42 @@ export const FireCalculatorWidget: React.FC = () => {
     return assets.reduce((sum, a) => sum + (a.currentMarketPrice * a.quantity), 0) * (isINR ? rate : 1);
   }, [assets, isINR, rate]);
 
-  // 2. Calculate Actual Monthly Expenses from Ledger
+  // 2. Calculate Actual Monthly Expenses from Ledger (0 if no user expenses logged)
   const ledgerMonthlyExpenses = useMemo(() => {
-    if (!expenses || expenses.length === 0) return isINR ? 50000 : 2500;
+    if (!expenses || expenses.length === 0) return 0;
     const totalExp = expenses.reduce((sum, e) => sum + e.amount, 0) * (isINR ? rate : 1);
-    return Math.max(isINR ? 25000 : 1500, Math.round(totalExp / Math.max(1, Math.min(6, expenses.length / 5))));
+    return Math.round(totalExp / Math.max(1, Math.min(6, expenses.length / 5)));
   }, [expenses, isINR, rate]);
 
-  // 3. Calculate Actual Monthly Inflow Surplus from Ledger
+  // 3. Calculate Actual Monthly Inflow Surplus from Ledger (0 if no user income logged)
   const ledgerMonthlySurplus = useMemo(() => {
+    if (!incomes || incomes.length === 0) return 0;
     const monthlyIncome = incomes.reduce((sum, i) => sum + (i.frequency === 'MONTHLY' ? i.amount : i.amount / 12), 0) * (isINR ? rate : 1);
     const surplus = monthlyIncome - ledgerMonthlyExpenses;
-    return Math.max(isINR ? 15000 : 800, Math.round(surplus > 0 ? surplus : (isINR ? 35000 : 1500)));
+    return Math.max(0, Math.round(surplus));
   }, [incomes, ledgerMonthlyExpenses, isINR, rate]);
 
-  // Form & Simulator State
-  const [currentAge, setCurrentAge] = useState<number>(29);
+  // Form & Simulator State (Zero Preloaded Defaults; User Defined)
+  const [currentAge, setCurrentAge] = useState<number>(28);
 
   const [monthlyExpenses, setMonthlyExpenses] = useState<number>(() => {
-    return ledgerMonthlyExpenses > 0 ? ledgerMonthlyExpenses : (isINR ? 50000 : 2500);
+    return ledgerMonthlyExpenses > 0 ? ledgerMonthlyExpenses : 0;
   });
 
   const [currentCorpus, setCurrentCorpus] = useState<number>(() => {
-    return ledgerTotalInvested > 0 ? Math.round(ledgerTotalInvested) : (isINR ? 1500000 : 50000);
+    return ledgerTotalInvested > 0 ? Math.round(ledgerTotalInvested) : 0;
   });
 
   const [monthlyInvestment, setMonthlyInvestment] = useState<number>(() => {
-    return ledgerMonthlySurplus > 0 ? ledgerMonthlySurplus : (isINR ? 35000 : 1500);
+    return ledgerMonthlySurplus > 0 ? ledgerMonthlySurplus : 0;
   });
 
-  const [annualStepUpPercent, setAnnualStepUpPercent] = useState<number>(10); // 10% annual increase in investment capacity
-  const [expectedReturnRate, setExpectedReturnRate] = useState<number>(12.0); // 12% CAGR equity
-  const [inflationRate, setInflationRate] = useState<number>(6.0); // 6% annual inflation
+  const [annualStepUpPercent, setAnnualStepUpPercent] = useState<number>(0);
+  const [expectedReturnRate, setExpectedReturnRate] = useState<number>(12.0); // 12% CAGR standard equity benchmark
+  const [inflationRate, setInflationRate] = useState<number>(6.0); // 6% annual inflation benchmark
   const [safeWithdrawalRate, setSafeWithdrawalRate] = useState<number>(4.0); // 4% SWR (25x)
   const [selectedFireType, setSelectedFireType] = useState<'LEAN' | 'STANDARD' | 'FAT' | 'CUSTOM'>('STANDARD');
-  const [customFireAmount, setCustomFireAmount] = useState<number>(() => isINR ? 50000000 : 1500000); // Default ₹5 Cr or $1.5M
+  const [customFireAmount, setCustomFireAmount] = useState<number>(0);
 
   // Format local currency helper
   const formatVal = (val: number): string => {

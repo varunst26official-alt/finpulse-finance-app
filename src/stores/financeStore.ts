@@ -28,7 +28,6 @@ import {
 import {
   STOCK_PREDICTIONS,
   MARKET_NEWS_ITEMS,
-  TAX_REPORT_MOCK,
   INITIAL_DEBTS,
   INITIAL_POLICIES,
   INITIAL_GOALS,
@@ -184,8 +183,8 @@ export const useFinanceStore = create<FinanceState>()(
       policies: [],
       goals: [],
       emergencyTargetMonths: 6,
-      monthlyNetIncome: 1800, // ~$1,800 USD base (~₹1,52,000)
-      setMonthlyNetIncome: (amount: number) => set({ monthlyNetIncome: amount }),
+      monthlyNetIncome: 0, // Zero preloaded income; user defined
+      setMonthlyNetIncome: (amount: number) => set({ monthlyNetIncome: Math.max(0, amount) }),
       monthlyLivingAllocation: 0,
       setMonthlyLivingAllocation: (amount: number) => set({ monthlyLivingAllocation: Math.max(0, amount) }),
       history: [],
@@ -197,7 +196,16 @@ export const useFinanceStore = create<FinanceState>()(
 
       predictions: STOCK_PREDICTIONS,
       newsItems: MARKET_NEWS_ITEMS,
-      taxReport: TAX_REPORT_MOCK,
+      taxReport: {
+        stcgTotalGains: 0,
+        stcgEstimatedTax: 0,
+        ltcgTotalGains: 0,
+        ltcgExemptionLimit: 0,
+        ltcgTaxableGains: 0,
+        ltcgEstimatedTax: 0,
+        holdings: [],
+        harvestingRecommendation: 'No trades logged. Tax harvesting recommendations will activate once transactions are added.',
+      },
 
       sendAiMessage: (prompt: string) => {
         const userMsg: AiChatMessage = {
@@ -1072,11 +1080,21 @@ export const useFinanceStore = create<FinanceState>()(
           policies: [],
           goals: [],
           emergencyTargetMonths: 6,
-          monthlyNetIncome: 1800,
+          monthlyNetIncome: 0,
           monthlyLivingAllocation: 0,
           history: [],
-           subscriptions: [],
-           bills: [],
+          subscriptions: [],
+          bills: [],
+          taxReport: {
+            stcgTotalGains: 0,
+            stcgEstimatedTax: 0,
+            ltcgTotalGains: 0,
+            ltcgExemptionLimit: 0,
+            ltcgTaxableGains: 0,
+            ltcgEstimatedTax: 0,
+            holdings: [],
+            harvestingRecommendation: 'No trades logged. Tax harvesting recommendations will activate once transactions are added.',
+          },
           aiMessages: [
             {
               id: `msg_welcome_${Date.now()}`,

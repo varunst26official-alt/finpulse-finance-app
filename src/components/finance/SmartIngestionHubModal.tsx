@@ -649,7 +649,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   return createPortal(
     <div
       {...overlayProps}
-      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-900/60 backdrop-blur-md overflow-hidden cursor-pointer"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-900/60 backdrop-blur-md overflow-y-auto overscroll-contain cursor-pointer"
     >
       <motion.div
         {...contentProps}
@@ -657,7 +657,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 24 }}
         transition={{ type: 'spring', damping: 25, stiffness: 320 }}
-        className="w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[88vh] sm:max-h-[92vh] overflow-hidden"
+        className="w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[92vh] overflow-hidden"
       >
         {/* Mobile Drag Indicator */}
         <div className="w-10 h-1.5 bg-slate-300 rounded-full mx-auto mt-2 sm:hidden shrink-0" />

@@ -59,20 +59,20 @@ export const DebtRepaymentManager: React.FC = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<PayoffStrategy>('AVALANCHE');
   const [extraPaymentMonthly, setExtraPaymentMonthly] = useState<number>(0);
 
-  // Add Debt Form State
+  // Add Debt Form State (Zero Preloaded Defaults; User Defined)
   const [newTitle, setNewTitle] = useState('');
   const [newCategory, setNewCategory] = useState<DebtCategory>('HOME_LOAN');
   const [newLender, setNewLender] = useState('');
-  const [newPrincipal, setNewPrincipal] = useState<number>(1000000);
-  const [newOutstanding, setNewOutstanding] = useState<number>(850000);
-  const [newInterestRate, setNewInterestRate] = useState<number>(8.5);
-  const [newMonthlyEmi, setNewMonthlyEmi] = useState<number>(15000);
-  const [newDueDay, setNewDueDay] = useState<number>(5);
-  const [newTenureMonths, setNewTenureMonths] = useState<number>(120);
+  const [newPrincipal, setNewPrincipal] = useState<number>(0);
+  const [newOutstanding, setNewOutstanding] = useState<number>(0);
+  const [newInterestRate, setNewInterestRate] = useState<number>(0);
+  const [newMonthlyEmi, setNewMonthlyEmi] = useState<number>(0);
+  const [newDueDay, setNewDueDay] = useState<number>(1);
+  const [newTenureMonths, setNewTenureMonths] = useState<number>(0);
   const [newNotes, setNewNotes] = useState('');
 
   // Repayment Form State
-  const [repayAmount, setRepayAmount] = useState<number>(15000);
+  const [repayAmount, setRepayAmount] = useState<number>(0);
   const [repayType, setRepayType] = useState<'REGULAR_EMI' | 'LUMP_SUM_PREPAYMENT'>('REGULAR_EMI');
   const [repayDate, setRepayDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [repayNotes, setRepayNotes] = useState('');

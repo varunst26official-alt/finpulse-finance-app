@@ -147,12 +147,12 @@ export const FinancialCalendarWidget: React.FC = () => {
     }
   }, [defaultYearMonth.year, defaultYearMonth.month]);
 
-  // Modal State for Adding New Calendar Event
+  // Modal State for Adding New Calendar Event (Zero Preloaded Defaults)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
   const [eventType, setEventType] = useState<CalendarEventType>('PLANNED_EXPENSE');
-  const [eventDate, setEventDate] = useState('2026-10-29');
-  const [eventAmount, setEventAmount] = useState<number>(100);
+  const [eventDate, setEventDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [eventAmount, setEventAmount] = useState<number>(0);
   const [eventCategoryName, setEventCategoryName] = useState('General');
   const [eventNotes, setEventNotes] = useState('');
 
