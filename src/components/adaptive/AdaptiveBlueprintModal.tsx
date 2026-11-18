@@ -58,6 +58,8 @@ export const AdaptiveBlueprintModal: React.FC = () => {
   return (
     <div
       {...overlayProps}
+      role="dialog"
+      aria-modal="true"
       className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/50 backdrop-blur-xs select-none overflow-y-auto overscroll-contain cursor-pointer"
     >
       <motion.div

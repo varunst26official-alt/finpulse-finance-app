@@ -222,6 +222,8 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   return createPortal(
     <div
       {...overlayProps}
+      role="dialog"
+      aria-modal="true"
       className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
     >
       <motion.div

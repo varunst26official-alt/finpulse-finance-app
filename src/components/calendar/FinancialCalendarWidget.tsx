@@ -1707,6 +1707,8 @@ export const FinancialCalendarWidget: React.FC = () => {
         {isDateInspectorOpen && (
           <div
             {...inspectorOverlayProps}
+            role="dialog"
+            aria-modal="true"
             className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
           >
             <motion.div
@@ -1874,6 +1876,8 @@ export const FinancialCalendarWidget: React.FC = () => {
         {isAddModalOpen && (
           <div
             {...addModalOverlayProps}
+            role="dialog"
+            aria-modal="true"
             className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
           >
             <motion.div

@@ -322,6 +322,8 @@ export const FloatingDailyPlanWidget: React.FC = () => {
             />
 
             <motion.div
+              role="dialog"
+              aria-modal="true"
               initial={{ opacity: 0, y: 40, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 40, scale: 0.96 }}
@@ -747,7 +749,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
               </div>
 
               {/* Footer: Calibrate Shortcut */}
-              <div className="p-3 sm:p-4 bg-[#faf8f5] border-t border-[#e4e9f1] flex items-center justify-between text-xs shrink-0">
+              <div className="p-3 sm:p-4 pb-safe-bottom bg-[#faf8f5] border-t border-[#e4e9f1] flex items-center justify-between text-xs shrink-0">
                 <span className="text-[11px] text-slate-500 font-medium">
                   {userLocation ? `📍 ${userLocation.city}` : 'LifeOS'} · Regional AI
                 </span>
@@ -772,7 +774,12 @@ export const FloatingDailyPlanWidget: React.FC = () => {
       {/* ============================================================== */}
       <AnimatePresence>
         {isAiConfigOpen && (
-          <div className="fixed inset-0 z-60 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsAiConfigOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-60 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
+            onClick={() => setIsAiConfigOpen(false)}
+          >
             <motion.div
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, y: 35, scale: 0.98 }}
@@ -907,7 +914,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
               </div>
 
               {/* Footer */}
-              <div className="p-4 bg-white border-t border-[#e4e9f1] flex items-center justify-between gap-3 shrink-0">
+              <div className="p-4 pb-safe-bottom bg-white border-t border-[#e4e9f1] flex items-center justify-between gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsAiConfigOpen(false)}

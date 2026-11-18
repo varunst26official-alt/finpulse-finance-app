@@ -180,6 +180,8 @@ export const DemoTourGuide: React.FC = () => {
 
       {/* 3. Tour Dialog Card */}
       <div
+        role="dialog"
+        aria-modal="true"
         className={
           !isTargeted
             ? 'fixed inset-0 z-60 flex items-end sm:items-center justify-center p-0 sm:p-4 overscroll-contain overflow-y-auto'

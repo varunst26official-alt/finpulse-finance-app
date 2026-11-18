@@ -114,6 +114,8 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
   return (
     <AnimatePresence>
       <motion.div
+        role="dialog"
+        aria-modal="true"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -274,10 +276,12 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
           <AnimatePresence>
             {showForm && (
               <motion.div
+                role="dialog"
+                aria-modal="true"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 z-20 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4"
+                className="absolute inset-0 z-20 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overscroll-contain overflow-y-auto cursor-pointer"
                 onClick={() => setShowForm(false)}
               >
                 <motion.div
@@ -285,7 +289,7 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 25, scale: 0.98 }}
                   transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-                  className="bg-white rounded-t-3xl sm:rounded-2xl p-6 pb-safe-bottom w-full max-w-md space-y-4 shadow-2xl border border-[#e8e0d1]"
+                  className="bg-white rounded-t-3xl sm:rounded-2xl p-6 pb-safe-bottom w-full max-w-md max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto overscroll-contain space-y-4 shadow-2xl border border-[#e8e0d1] cursor-default"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />

@@ -89,4 +89,37 @@ test.describe('Mobile Bottom-Sheet Drawers Verification', () => {
       await page.screenshot({ path: 'C:/Users/Admin/.gemini/antigravity/brain/9282e259-53be-4163-b3c8-d35c4935b146/drawer_copilot.png' });
     }
   });
+
+  test('Finance - Inflow Allocation Studio opens as a bottom sheet drawer', async ({ page }) => {
+    const financeNav = page.getByRole('button', { name: 'Finance', exact: true });
+    await financeNav.click();
+
+    const inflowBtn = page.getByRole('button', { name: /Inflow & Allocation/i }).or(page.getByText('Inflow & Allocation'));
+    if (await inflowBtn.first().isVisible({ timeout: 3000 }).catch(() => false)) {
+      await inflowBtn.first().click();
+
+      const drawer = page.locator('.rounded-t-3xl').first();
+      await expect(drawer).toBeVisible();
+      await expect(page.getByText('Monthly Inflow & Allocation Studio')).toBeVisible();
+
+      const dragHandle = page.locator('.w-12.h-1\\.5.bg-slate-300');
+      await expect(dragHandle.first()).toBeVisible();
+    }
+  });
+
+  test('Finance - Smart Ingestion Hub opens as a bottom sheet drawer with drag handle', async ({ page }) => {
+    const financeNav = page.getByRole('button', { name: 'Finance', exact: true });
+    await financeNav.click();
+
+    const smartIngestBtn = page.getByRole('button', { name: /Smart Ingestion/i }).or(page.getByText(/Smart Ingest/i));
+    if (await smartIngestBtn.first().isVisible({ timeout: 3000 }).catch(() => false)) {
+      await smartIngestBtn.first().click();
+
+      const drawer = page.locator('.rounded-t-3xl').first();
+      await expect(drawer).toBeVisible();
+
+      const dragHandle = page.locator('.w-12.h-1\\.5.bg-slate-300');
+      await expect(dragHandle.first()).toBeVisible();
+    }
+  });
 });

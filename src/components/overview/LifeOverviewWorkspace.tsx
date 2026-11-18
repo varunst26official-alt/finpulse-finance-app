@@ -648,7 +648,12 @@ export const LifeOverviewWorkspace: React.FC = () => {
       {/* Quick Add Task Modal */}
       <AnimatePresence>
         {isQuickTaskModalOpen && (
-          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsQuickTaskModalOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
+            onClick={() => setIsQuickTaskModalOpen(false)}
+          >
             <motion.div
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, y: 35, scale: 0.98 }}

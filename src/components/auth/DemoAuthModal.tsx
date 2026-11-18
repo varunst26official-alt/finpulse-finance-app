@@ -60,13 +60,21 @@ export const DemoAuthModal: React.FC = () => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs select-none overflow-y-auto overscroll-contain">
+      <div
+        role="dialog"
+        aria-modal="true"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) closeAuthModal();
+        }}
+        className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs select-none overflow-y-auto overscroll-contain cursor-pointer"
+      >
         <motion.div
+          onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.94, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 16 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="relative w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#e8dfcf] bg-white shadow-2xl p-6 sm:p-7 max-h-[min(90vh,calc(100dvh-1rem))] overflow-y-auto overscroll-contain text-slate-900 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:pb-7"
+          className="relative w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#e8dfcf] bg-white shadow-2xl p-6 sm:p-7 max-h-[min(90vh,calc(100dvh-1rem))] overflow-y-auto overscroll-contain text-slate-900 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:pb-7 cursor-default"
         >
           {/* Mobile Drawer Drag Handle */}
           <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden shrink-0 mb-3" />

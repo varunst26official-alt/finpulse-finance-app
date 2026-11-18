@@ -67,6 +67,8 @@ export const BottomSheetDrawer: React.FC<BottomSheetDrawerProps> = ({
       {isOpen && (
         <div
           data-testid={dataTestId}
+          role="dialog"
+          aria-modal="true"
           onClick={(e) => {
             if (e.target === e.currentTarget) onClose();
           }}
