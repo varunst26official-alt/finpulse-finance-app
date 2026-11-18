@@ -580,13 +580,16 @@ export const LearningWorkspace: React.FC = () => {
       {/* Add Skill Goal Modal */}
       <AnimatePresence>
         {isSkillModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsSkillModalOpen(false)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#e4e9f1] space-y-4"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 pb-safe-bottom shadow-2xl border border-[#e4e9f1] space-y-4 max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto cursor-default"
             >
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
               <div className="flex items-center justify-between pb-3 border-b border-[#e4e9f1]">
                 <h3 className="font-extrabold text-base text-[#243047]">Add Learning Goal</h3>
                 <button
@@ -673,13 +676,16 @@ export const LearningWorkspace: React.FC = () => {
       {/* Add Book Modal */}
       <AnimatePresence>
         {isBookModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsBookModalOpen(false)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#e4e9f1] space-y-4"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 pb-safe-bottom shadow-2xl border border-[#e4e9f1] space-y-4 max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto cursor-default"
             >
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
               <div className="flex items-center justify-between pb-3 border-b border-[#e4e9f1]">
                 <h3 className="font-extrabold text-base text-[#243047]">
                   {editingBookId ? 'Edit Book Record' : 'Add Book to Vault'}

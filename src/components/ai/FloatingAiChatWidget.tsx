@@ -179,11 +179,16 @@ export const FloatingAiChatWidget: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className={`fixed bottom-18 sm:bottom-6 right-3 sm:right-6 z-[60] w-[calc(100vw-24px)] sm:w-[440px] max-h-[86vh] sm:max-h-[90vh] rounded-[24px] border border-[#e8dfcf] bg-white shadow-2xl overflow-hidden flex flex-col overscroll-contain transition-all ${
-              isMinimized ? 'h-16' : 'h-[640px]'
+            className={`fixed bottom-0 sm:bottom-6 inset-x-0 sm:inset-x-auto sm:right-6 z-[60] w-full sm:w-[440px] max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[90vh] rounded-t-3xl sm:rounded-[24px] border border-[#e8dfcf] bg-white shadow-2xl overflow-hidden flex flex-col overscroll-contain transition-all ${
+              isMinimized ? 'h-16' : 'h-[min(640px,90vh)]'
             }`}
           >
             <BorderBeam size={220} duration={9} colorFrom="#9e783e" colorTo="#16836b" />
+            {/* Mobile Drawer Top Drag Bar */}
+            <div className="shrink-0 pt-2.5 pb-0 bg-[#faf8f4] sm:hidden flex justify-center">
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full" />
+            </div>
+
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[#e8dfcf] bg-gradient-to-r from-[#faf8f4] via-white to-[#faf8f4] px-4 py-3 select-none">
               <div className="flex items-center gap-2.5">
@@ -626,7 +631,7 @@ export const FloatingAiChatWidget: React.FC = () => {
                 </div>
 
                 {/* Input Bar with Voice Recognition Mic */}
-                <div className="p-3 border-t border-[#e8dfcf] bg-white">
+                <div className="p-3 pb-safe-bottom border-t border-[#e8dfcf] bg-white">
                   <div className="relative flex items-center gap-1.5">
                     <div className="relative flex-1">
                       <input

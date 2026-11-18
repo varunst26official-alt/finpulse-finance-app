@@ -348,15 +348,21 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
   return createPortal(
     <div
       {...overlayProps}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
     >
       <motion.div
         {...contentProps}
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 12 }}
-        className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]"
+        initial={{ opacity: 0, y: 35, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 35, scale: 0.98 }}
+        transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+        className="w-full max-w-3xl max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[92vh] flex flex-col rounded-t-3xl sm:rounded-3xl border border-[#e8e0d1] bg-white shadow-2xl overflow-hidden cursor-default"
       >
+        {/* Mobile Drawer Top Drag Handle */}
+        <div className="shrink-0 pt-3 pb-0 bg-[#faf8f5] sm:hidden flex justify-center">
+          <div className="w-12 h-1.5 bg-slate-300 rounded-full shrink-0" />
+        </div>
+
         {/* Modal Header */}
         <div className="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between gap-4 bg-[#faf8f5]">
           <div className="flex items-center gap-3">
@@ -904,7 +910,7 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
         </div>
 
         {/* Live Reconciliation Pre-Commit Bar */}
-        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 space-y-3">
+        <div className="p-4 sm:p-5 pb-safe-bottom bg-slate-50 border-t border-slate-200 space-y-3 shrink-0">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">

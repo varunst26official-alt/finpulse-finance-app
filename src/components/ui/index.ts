@@ -6,3 +6,5 @@ export * from './BorderBeam';
 export * from './NumberTicker';
 export * from './NumericAmountInput';
 export * from './QuantraLogo';
+export * from './StepperSlider';
+export * from './BottomSheetDrawer';

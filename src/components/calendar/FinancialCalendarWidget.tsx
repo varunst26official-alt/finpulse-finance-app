@@ -1707,15 +1707,21 @@ export const FinancialCalendarWidget: React.FC = () => {
         {isDateInspectorOpen && (
           <div
             {...inspectorOverlayProps}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs cursor-pointer"
+            className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
           >
             <motion.div
               {...inspectorContentProps}
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-[#e8e0d1] overflow-hidden flex flex-col max-h-[88vh]"
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="w-full max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e8e0d1] overflow-hidden flex flex-col max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[88vh] cursor-default"
             >
+              {/* Mobile Drawer Top Drag Bar */}
+              <div className="shrink-0 pt-3 pb-1 bg-[#faf8f5] sm:hidden flex justify-center">
+                <div className="w-12 h-1.5 bg-slate-300 rounded-full" />
+              </div>
+
               {/* Header */}
               <div className="p-5 sm:p-6 border-b border-[#e8e0d1] flex items-center justify-between bg-gradient-to-r from-[#faf8f5] to-white">
                 <div>
@@ -1839,7 +1845,7 @@ export const FinancialCalendarWidget: React.FC = () => {
               </div>
 
               {/* Footer */}
-              <div className="p-3.5 sm:p-4 border-t border-[#e8e0d1] bg-[#faf8f5] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+              <div className="p-3.5 sm:p-4 pb-safe-bottom border-t border-[#e8e0d1] bg-[#faf8f5] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 shrink-0">
                 <button
                   onClick={() => setIsDateInspectorOpen(false)}
                   className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white border border-[#e8e0d1] text-xs font-bold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer min-h-[44px] flex items-center justify-center"
@@ -1868,15 +1874,17 @@ export const FinancialCalendarWidget: React.FC = () => {
         {isAddModalOpen && (
           <div
             {...addModalOverlayProps}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer"
+            className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain"
           >
             <motion.div
               {...addModalContentProps}
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md rounded-3xl border border-[#e8e0d1] bg-white p-6 shadow-2xl space-y-4"
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#e8e0d1] bg-white p-6 pb-safe-bottom shadow-2xl space-y-4 max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[88vh] overflow-y-auto cursor-default"
             >
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
               <div className="flex items-center justify-between border-b border-[#e8e0d1] pb-3">
                 <h4 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <CalendarIcon className="h-5 w-5 text-[#9e783e]" />

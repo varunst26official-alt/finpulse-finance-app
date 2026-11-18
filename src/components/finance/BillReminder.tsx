@@ -117,16 +117,22 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+        className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-slate-950/45 backdrop-blur-xs p-0 sm:p-4 cursor-pointer overflow-y-auto overscroll-contain"
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col relative"
+          initial={{ opacity: 0, y: 35, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 35, scale: 0.98 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+          className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-3xl max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-hidden flex flex-col relative border border-[#e8e0d1] cursor-default"
           onClick={(e) => e.stopPropagation()}
         >
+        {/* Mobile Drawer Top Drag Bar */}
+        <div className="shrink-0 pt-3 pb-1 bg-white sm:hidden flex justify-center">
+          <div className="w-12 h-1.5 bg-slate-300 rounded-full" />
+        </div>
+
         <div className="flex items-center justify-between p-5 border-b border-[#e8e0d1]">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-amber-50 border border-amber-200">
@@ -271,16 +277,18 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/30 flex items-center justify-center p-4"
+                className="absolute inset-0 z-20 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4"
                 onClick={() => setShowForm(false)}
               >
                 <motion.div
-                  initial={{ scale: 0.95 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0.95 }}
-                  className="bg-white rounded-2xl p-6 w-full max-w-md space-y-4 shadow-2xl"
+                  initial={{ opacity: 0, y: 25, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 25, scale: 0.98 }}
+                  transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+                  className="bg-white rounded-t-3xl sm:rounded-2xl p-6 pb-safe-bottom w-full max-w-md space-y-4 shadow-2xl border border-[#e8e0d1]"
                   onClick={(e) => e.stopPropagation()}
                 >
+                  <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
                   <h3 className="text-lg font-bold text-slate-900">
                     {editingId ? 'Edit Bill' : 'Add Bill'}
                   </h3>

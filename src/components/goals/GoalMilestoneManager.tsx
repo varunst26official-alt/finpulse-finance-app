@@ -984,13 +984,16 @@ export const GoalMilestoneManager: React.FC = () => {
       {/* ============================================================== */}
       <AnimatePresence>
         {isAddModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsAddModalOpen(false)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-lg rounded-3xl bg-white border border-[#e8e0d1] p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl bg-white border border-[#e8e0d1] p-6 pb-safe-bottom shadow-2xl space-y-4 max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[90vh] overflow-y-auto cursor-default"
             >
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
               <div className="flex items-center justify-between pb-3 border-b border-[#e8e0d1]">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-xl bg-[#9e783e]/15 text-[#9e783e]">
@@ -1288,13 +1291,16 @@ export const GoalMilestoneManager: React.FC = () => {
       {/* ============================================================== */}
       <AnimatePresence>
         {topUpGoal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setTopUpGoal(null)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-md rounded-3xl bg-white border border-[#e8e0d1] p-6 shadow-2xl space-y-4"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="w-full max-w-md rounded-t-3xl sm:rounded-3xl bg-white border border-[#e8e0d1] p-6 pb-safe-bottom shadow-2xl space-y-4 max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto cursor-default"
             >
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
               <div className="flex items-center justify-between pb-3 border-b border-[#e8e0d1]">
                 <div>
                   <h3 className="text-base font-extrabold text-slate-900">Add Goal Contribution</h3>

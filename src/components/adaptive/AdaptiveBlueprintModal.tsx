@@ -58,15 +58,21 @@ export const AdaptiveBlueprintModal: React.FC = () => {
   return (
     <div
       {...overlayProps}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/50 backdrop-blur-xs select-none overflow-y-auto cursor-pointer"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-5 bg-slate-950/50 backdrop-blur-xs select-none overflow-y-auto overscroll-contain cursor-pointer"
     >
       <motion.div
         {...contentProps}
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-[#e4e9f1] overflow-hidden my-auto max-h-[92vh] flex flex-col"
+        initial={{ opacity: 0, y: 35, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 35, scale: 0.98 }}
+        transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+        className="w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e4e9f1] overflow-hidden max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[92vh] flex flex-col cursor-default"
       >
+        {/* Mobile Drawer Top Drag Handle */}
+        <div className="shrink-0 pt-3 pb-0 bg-[#17365d] sm:hidden flex justify-center">
+          <div className="w-12 h-1.5 bg-white/40 rounded-full" />
+        </div>
+
         {/* Header */}
         <div className="p-5 sm:p-6 bg-gradient-to-r from-[#17365d] via-[#244b7a] to-[#17365d] text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -534,7 +540,7 @@ export const AdaptiveBlueprintModal: React.FC = () => {
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="p-4 sm:p-5 bg-white border-t border-[#e4e9f1] flex items-center justify-between gap-3 shrink-0">
+        <div className="p-4 sm:p-5 pb-safe-bottom bg-white border-t border-[#e4e9f1] flex items-center justify-between gap-3 shrink-0">
           <button
             type="button"
             onClick={() => setIsAiModalOpen(false)}

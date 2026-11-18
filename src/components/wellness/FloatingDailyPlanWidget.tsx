@@ -326,8 +326,13 @@ export const FloatingDailyPlanWidget: React.FC = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 40, scale: 0.96 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[490px] max-w-full bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e4e9f1] flex flex-col max-h-[92vh] sm:max-h-[86vh] overflow-hidden"
+              className="fixed bottom-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[490px] max-w-full bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e4e9f1] flex flex-col max-h-[min(92vh,calc(100dvh-1rem))] sm:max-h-[86vh] overflow-hidden"
             >
+              {/* Mobile Drawer Top Drag Bar */}
+              <div className="shrink-0 pt-3 pb-0 bg-[#17365d] sm:hidden flex justify-center">
+                <div className="w-12 h-1.5 bg-white/40 rounded-full" />
+              </div>
+
               {/* Header */}
               <div className="p-4 sm:p-5 bg-gradient-to-r from-[#17365d] via-[#244b7a] to-[#17365d] text-white flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
@@ -767,13 +772,20 @@ export const FloatingDailyPlanWidget: React.FC = () => {
       {/* ============================================================== */}
       <AnimatePresence>
         {isAiConfigOpen && (
-          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+          <div className="fixed inset-0 z-60 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsAiConfigOpen(false)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-[#e4e9f1] overflow-hidden flex flex-col max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e4e9f1] overflow-hidden flex flex-col max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[90vh] cursor-default"
             >
+              {/* Mobile Drawer Top Drag Bar */}
+              <div className="shrink-0 pt-3 pb-0 bg-[#17365d] sm:hidden flex justify-center">
+                <div className="w-12 h-1.5 bg-white/40 rounded-full" />
+              </div>
+
               {/* Header */}
               <div className="p-4 sm:p-5 bg-gradient-to-r from-[#17365d] to-[#244b7a] text-white flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2.5">

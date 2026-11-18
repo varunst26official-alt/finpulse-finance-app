@@ -793,13 +793,16 @@ export const CommunityWorkspace: React.FC = () => {
       {/* 5. Privacy & Identity Settings Modal */}
       <AnimatePresence>
         {isPrivacyModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs">
+          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/50 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsPrivacyModalOpen(false)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200 space-y-5"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="bg-white rounded-t-3xl sm:rounded-3xl p-6 pb-safe-bottom max-w-md w-full shadow-2xl border border-slate-200 space-y-5 max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto cursor-default"
             >
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-indigo-600" />

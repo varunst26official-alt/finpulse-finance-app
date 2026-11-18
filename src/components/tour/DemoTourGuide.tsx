@@ -182,7 +182,7 @@ export const DemoTourGuide: React.FC = () => {
       <div
         className={
           !isTargeted
-            ? 'fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-4'
+            ? 'fixed inset-0 z-60 flex items-end sm:items-center justify-center p-0 sm:p-4 overscroll-contain overflow-y-auto'
             : ''
         }
       >
@@ -193,8 +193,9 @@ export const DemoTourGuide: React.FC = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 15 }}
           transition={{ type: 'spring', damping: 25, stiffness: 320 }}
-          className="w-full max-w-lg max-h-[88vh] overflow-y-auto rounded-3xl border border-[#e8e0d1] bg-white p-4 sm:p-6 shadow-2xl space-y-3.5 sm:space-y-4 relative z-60"
+          className="w-full max-w-lg max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[88vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[#e8e0d1] bg-white p-4 sm:p-6 pb-safe-bottom shadow-2xl space-y-3.5 sm:space-y-4 relative z-60"
         >
+          <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-1 mb-1" />
           {/* Top Header Badge & Close Button */}
           <div className="flex items-center justify-between border-b border-[#e8e0d1] pb-3">
             <div className="flex items-center gap-2">

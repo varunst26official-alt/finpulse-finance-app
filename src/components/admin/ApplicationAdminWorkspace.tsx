@@ -1092,13 +1092,16 @@ export const ApplicationAdminWorkspace: React.FC = () => {
       {/* MODAL 1: CREATE USER ACCOUNT */}
       <AnimatePresence>
         {isCreateUserModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsCreateUserModalOpen(false)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 w-full max-w-md space-y-4"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="bg-white rounded-t-3xl sm:rounded-3xl p-6 pb-safe-bottom shadow-2xl border border-slate-200 w-full max-w-md space-y-4 max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto cursor-default"
             >
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-200">
@@ -1204,13 +1207,16 @@ export const ApplicationAdminWorkspace: React.FC = () => {
       {/* MODAL 2: RESET PASSWORD */}
       <AnimatePresence>
         {isResetPasswordModalOpen && selectedUserForReset && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs cursor-pointer overflow-y-auto overscroll-contain" onClick={() => setIsResetPasswordModalOpen(false)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 w-full max-w-md space-y-4"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 35, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, scale: 0.98 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+              className="bg-white rounded-t-3xl sm:rounded-3xl p-6 pb-safe-bottom shadow-2xl border border-slate-200 w-full max-w-md space-y-4 max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto cursor-default"
             >
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-200">
