@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import { api } from '@/services/apiClient';
 import { useFinanceStore } from '@/stores/financeStore';
 import { useLifeOSStore } from '@/stores/lifeosStore';
@@ -108,6 +109,17 @@ export const ApplicationAdminWorkspace: React.FC = () => {
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [selectedUserForReset, setSelectedUserForReset] = useState<any>(null);
   const [newPasswordInput, setNewPasswordInput] = useState('');
+
+  // Modal dismiss & back button synchronization hooks
+  useModalDismiss(isCreateUserModalOpen, () => setIsCreateUserModalOpen(false), 'admin-create-user');
+  useModalDismiss(
+    isResetPasswordModalOpen && !!selectedUserForReset,
+    () => {
+      setIsResetPasswordModalOpen(false);
+      setSelectedUserForReset(null);
+    },
+    'admin-reset-password'
+  );
 
   // Create User Form State
   const [createFullName, setCreateFullName] = useState('');

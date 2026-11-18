@@ -12,6 +12,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 
 export const DemoTourGuide: React.FC = () => {
   const { user } = useAuthStore();
@@ -30,6 +31,9 @@ export const DemoTourGuide: React.FC = () => {
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const hasAutoTriggered = useRef(false);
+
+  // Modal dismiss & back button synchronization hook
+  useModalDismiss(isTourOpen, skipTour, 'demo-tour');
 
   // Automatically trigger tour for first-time login user after 750ms mount delay
   useEffect(() => {

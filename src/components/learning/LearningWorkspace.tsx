@@ -19,6 +19,7 @@ import {
   Compass,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 
 export const LearningWorkspace: React.FC = () => {
   const {
@@ -37,6 +38,10 @@ export const LearningWorkspace: React.FC = () => {
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [editingBookId, setEditingBookId] = useState<string | null>(null);
+
+  // Modal dismiss & back button synchronization hooks
+  useModalDismiss(isSkillModalOpen, () => setIsSkillModalOpen(false), 'add-skill');
+  useModalDismiss(isBookModalOpen, () => setIsBookModalOpen(false), 'add-book');
 
   // Skill Form (Zero Preloaded Defaults; User Defined)
   const [title, setTitle] = useState('');

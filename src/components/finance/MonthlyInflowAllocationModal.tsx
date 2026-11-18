@@ -50,7 +50,7 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
   onClose,
   initialTab = 'inflow',
 }) => {
-  const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose);
+  const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose, 'inflow-allocation');
 
   const {
     monthlyNetIncome,

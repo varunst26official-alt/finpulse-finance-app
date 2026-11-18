@@ -31,6 +31,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import { NumericAmountInput } from '@/components/ui/NumericAmountInput';
 
 type PayoffStrategy = 'AVALANCHE' | 'SNOWBALL';
@@ -58,6 +59,11 @@ export const DebtRepaymentManager: React.FC = () => {
   const [historyModalDebt, setHistoryModalDebt] = useState<DebtItem | null>(null);
   const [selectedStrategy, setSelectedStrategy] = useState<PayoffStrategy>('AVALANCHE');
   const [extraPaymentMonthly, setExtraPaymentMonthly] = useState<number>(0);
+
+  // Modal dismiss & back button synchronization hooks
+  useModalDismiss(isAddModalOpen, () => setIsAddModalOpen(false), 'add-debt');
+  useModalDismiss(!!repayModalDebt, () => setRepayModalDebt(null), 'repay-debt');
+  useModalDismiss(!!historyModalDebt, () => setHistoryModalDebt(null), 'debt-history');
 
   // Add Debt Form State (Zero Preloaded Defaults; User Defined)
   const [newTitle, setNewTitle] = useState('');

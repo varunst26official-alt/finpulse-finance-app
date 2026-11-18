@@ -2,10 +2,12 @@ import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 
 export interface BottomSheetDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  modalId?: string;
   title?: React.ReactNode;
   subtitle?: React.ReactNode;
   icon?: React.ReactNode;
@@ -24,6 +26,7 @@ export interface BottomSheetDrawerProps {
 export const BottomSheetDrawer: React.FC<BottomSheetDrawerProps> = ({
   isOpen,
   onClose,
+  modalId,
   title,
   subtitle,
   icon,
@@ -38,6 +41,14 @@ export const BottomSheetDrawer: React.FC<BottomSheetDrawerProps> = ({
   dataTestId,
   hideCloseButton = false,
 }) => {
+  const resolvedModalId =
+    modalId || (typeof title === 'string' ? title : 'drawer');
+  useModalDismiss(
+    isOpen,
+    onClose,
+    resolvedModalId
+  );
+
   // Lock body scroll when drawer is open
   useEffect(() => {
     if (isOpen) {
@@ -48,17 +59,6 @@ export const BottomSheetDrawer: React.FC<BottomSheetDrawerProps> = ({
       };
     }
   }, [isOpen]);
-
-  // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
 
   if (typeof document === 'undefined') return null;
 

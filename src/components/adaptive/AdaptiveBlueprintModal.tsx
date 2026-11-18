@@ -23,7 +23,7 @@ export const AdaptiveBlueprintModal: React.FC = () => {
   const [formInputs, setFormInputs] = useState<UserAdaptiveInputs>(userInputs);
   const [activeTab, setActiveTab] = useState<'PARAMETERS' | 'PREVIEW'>('PARAMETERS');
 
-  const { overlayProps, contentProps } = useModalDismiss(isAiModalOpen, () => setIsAiModalOpen(false));
+  const { overlayProps, contentProps } = useModalDismiss(isAiModalOpen, () => setIsAiModalOpen(false), 'adaptive-blueprint');
 
   useEffect(() => {
     if (isAiModalOpen) {

@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 
 const BILLING_CYCLES = ['WEEKLY', 'MONTHLY', 'QUARTERLY', 'YEARLY'] as const;
 
@@ -57,6 +58,17 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<BillFormState>(emptyForm);
+
+  // Modal dismiss & back button synchronization hooks
+  useModalDismiss(isOpen, onClose, 'bill-reminders');
+  useModalDismiss(
+    showForm,
+    () => {
+      setShowForm(false);
+      setEditingId(null);
+    },
+    'add-bill'
+  );
 
   const upcoming = getUpcomingBills(7);
   const overdue = bills.filter(

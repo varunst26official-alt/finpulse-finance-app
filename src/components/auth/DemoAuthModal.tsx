@@ -11,6 +11,7 @@ import {
   EyeOff,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 
 export const DemoAuthModal: React.FC = () => {
   const { authModalOpen, authModalFeatureName, closeAuthModal, login, register } = useAuthStore();
@@ -23,6 +24,9 @@ export const DemoAuthModal: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Modal dismiss & back button synchronization hook
+  useModalDismiss(authModalOpen, closeAuthModal, 'auth-modal');
 
   if (!authModalOpen) return null;
 

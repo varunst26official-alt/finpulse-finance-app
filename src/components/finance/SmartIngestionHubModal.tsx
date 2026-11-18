@@ -65,7 +65,7 @@ export const SmartIngestionHubModal: React.FC<SmartIngestionHubModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose);
+  const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose, 'smart-ingest');
   const { addExpensesBatch, addIncomesBatch, addCalendarEventsBatch, addAsset, expenses } = useFinanceStore();
 
   const [activeTab, setActiveTab] = useState<IngestionTab>('statements');

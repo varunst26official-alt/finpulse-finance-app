@@ -41,7 +41,7 @@ interface AddTransactionModalProps {
 }
 
 export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClose }) => {
-  const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose);
+  const { overlayProps, contentProps } = useModalDismiss(isOpen, onClose, 'record-trade');
   const {
     currency,
     addTransaction,

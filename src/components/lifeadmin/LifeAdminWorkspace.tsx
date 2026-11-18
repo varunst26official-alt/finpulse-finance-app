@@ -21,6 +21,7 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import { SuperAdminDashboard } from '@/components/admin/SuperAdminDashboard';
 
 export const LifeAdminWorkspace: React.FC = () => {
@@ -48,6 +49,11 @@ export const LifeAdminWorkspace: React.FC = () => {
   const [editingChkId, setEditingChkId] = useState<string | null>(null);
   const [isEmergencyEditOpen, setIsEmergencyEditOpen] = useState(false);
   const [filterDocCategory, setFilterDocCategory] = useState<string>('ALL');
+
+  // Modal dismiss & back button synchronization hooks
+  useModalDismiss(isDocModalOpen, () => setIsDocModalOpen(false), 'add-doc');
+  useModalDismiss(isChecklistModalOpen, () => setIsChecklistModalOpen(false), 'add-checklist');
+  useModalDismiss(isEmergencyEditOpen, () => setIsEmergencyEditOpen(false), 'emergency-profile');
 
   // Document Form
   const [docTitle, setDocTitle] = useState('');

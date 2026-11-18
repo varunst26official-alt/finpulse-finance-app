@@ -24,6 +24,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 
 const LEAGUE_THEMES: Record<
   MasteryLeague,
@@ -150,6 +151,9 @@ export const CommunityWorkspace: React.FC = () => {
   const [selectedLeague, setSelectedLeague] = useState<MasteryLeague | 'ALL'>('ALL');
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [aliasDraft, setAliasDraft] = useState(customAlias);
+
+  // Modal dismiss & back button synchronization hook
+  useModalDismiss(isPrivacyModalOpen, () => setIsPrivacyModalOpen(false), 'community-privacy');
 
   // Sync and fetch real-time community data on mount
   useEffect(() => {

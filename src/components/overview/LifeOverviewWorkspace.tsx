@@ -4,6 +4,7 @@ import { useFinanceStore } from '@/stores/financeStore';
 import { SectionHero } from '@/components/layout/SectionHero';
 import { formatCurrency } from '@/utils/formatters';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import {
   CheckCircle2,
   Circle,
@@ -50,6 +51,9 @@ export const LifeOverviewWorkspace: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [isQuickTaskModalOpen, setIsQuickTaskModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Modal dismiss & back button synchronization hook
+  useModalDismiss(isQuickTaskModalOpen, () => setIsQuickTaskModalOpen(false), 'quick-add-task');
 
   // Quick Task Form Inputs
   const [taskTitle, setTaskTitle] = useState('');

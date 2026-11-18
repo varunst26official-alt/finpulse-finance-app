@@ -25,6 +25,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import { FireCalculatorWidget } from './FireCalculatorWidget';
 import { calculateTimeToGoal } from '@/utils/goalMath';
 import { NumericAmountInput } from '@/components/ui/NumericAmountInput';
@@ -50,6 +51,10 @@ export const GoalMilestoneManager: React.FC = () => {
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
   const [topUpGoal, setTopUpGoal] = useState<GoalItem | null>(null);
   const [topUpAmount, setTopUpAmount] = useState<number>(0);
+
+  // Modal dismiss & back button synchronization hooks
+  useModalDismiss(isAddModalOpen, () => setIsAddModalOpen(false), 'add-goal');
+  useModalDismiss(!!topUpGoal, () => setTopUpGoal(null), 'topup-goal');
 
   // New Goal Form State (Zero Preloaded Defaults; User Defined)
   const [newTitle, setNewTitle] = useState('');

@@ -167,11 +167,13 @@ export const FinancialCalendarWidget: React.FC = () => {
   // Dismissal hooks for Inspector drawer and Add Event modal
   const { overlayProps: inspectorOverlayProps, contentProps: inspectorContentProps } = useModalDismiss(
     isDateInspectorOpen,
-    () => setIsDateInspectorOpen(false)
+    () => setIsDateInspectorOpen(false),
+    'calendar-inspector'
   );
   const { overlayProps: addModalOverlayProps, contentProps: addModalContentProps } = useModalDismiss(
     isAddModalOpen,
-    () => setIsAddModalOpen(false)
+    () => setIsAddModalOpen(false),
+    'add-calendar-event'
   );
 
   // Calendar calculations with NaN guards

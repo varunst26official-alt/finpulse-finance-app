@@ -21,6 +21,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import { NumericAmountInput } from '@/components/ui/NumericAmountInput';
 
 export const InsuranceManager: React.FC = () => {
@@ -39,6 +40,9 @@ export const InsuranceManager: React.FC = () => {
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filterType, setFilterType] = useState<string>('ALL');
+
+  // Modal dismiss & back button synchronization hook
+  useModalDismiss(isAddModalOpen, () => setIsAddModalOpen(false), 'add-insurance');
 
   // New Policy Form State (Zero Preloaded Defaults; User Defined)
   const [newName, setNewName] = useState('');

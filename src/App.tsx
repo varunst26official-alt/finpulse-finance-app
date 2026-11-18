@@ -3,6 +3,7 @@ import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { initUserStorageAutoSave, loadUserScopedData } from '@/services/userStorage';
+import { initModalBackSystem, syncSectionWithUrl } from '@/services/modalBackHandler';
 import { LifeOSHeader } from '@/components/layout/LifeOSHeader';
 import { SectionSwitcher } from '@/components/layout/SectionSwitcher';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
@@ -28,6 +29,7 @@ export function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
+    initModalBackSystem();
     initUserStorageAutoSave();
     if (isAuthenticated && user) {
       loadUserScopedData(user);
@@ -38,6 +40,11 @@ export function App() {
       }
     }
   }, [isAuthenticated, user, syncWithBackend, fetchLifeOSData]);
+
+  // Synchronize active section with URL hash & navigation history stack
+  useEffect(() => {
+    syncSectionWithUrl(currentSection);
+  }, [currentSection]);
 
   // If user is not authenticated, show the customer Login / Register screen
   if (!isAuthenticated || !user) {

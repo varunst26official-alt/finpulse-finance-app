@@ -22,6 +22,7 @@ import {
   BrainCircuit,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 import { LifeOSCategory, PriorityLevel } from '@/types/lifeos';
 import { formatCurrency } from '@/utils/formatters';
 
@@ -68,6 +69,10 @@ export const ProductivityWorkspace: React.FC = () => {
   const [habitTitle, setHabitTitle] = useState('');
   const [habitCategory, setHabitCategory] = useState<'MORNING' | 'AFTERNOON' | 'EVENING' | 'ANYTIME'>('MORNING');
   const [habitIcon, setHabitIcon] = useState('⚡');
+
+  // Modal dismiss & back button synchronization hooks
+  useModalDismiss(isAddModalOpen, () => setIsAddModalOpen(false), 'add-task');
+  useModalDismiss(isHabitModalOpen, () => setIsHabitModalOpen(false), 'add-habit');
 
   // Persistent Focus Timer State (lifted to lifeosStore)
   const timerMode = activeFocusTimer?.mode || 'POMODORO';

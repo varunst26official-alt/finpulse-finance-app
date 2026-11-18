@@ -24,6 +24,7 @@ import {
   Key,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 
 const WEEKDAYS = [
   { key: 'Monday', short: 'Mon', index: 1 },
@@ -57,6 +58,10 @@ export const FloatingDailyPlanWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'ALL' | 'WORKOUT' | 'DIET'>('ALL');
   const [isAiConfigOpen, setIsAiConfigOpen] = useState(false);
+
+  // Modal dismiss & back button synchronization hooks
+  useModalDismiss(isOpen, () => setIsOpen(false), 'daily-plan');
+  useModalDismiss(isAiConfigOpen, () => setIsAiConfigOpen(false), 'daily-plan-ai-config');
 
   // AI Configuration State
   const [selectedCuisine, setSelectedCuisine] = useState(

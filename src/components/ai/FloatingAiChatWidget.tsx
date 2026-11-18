@@ -24,6 +24,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '@/utils/formatters';
 import { FormattedMessageContent } from '@/components/ai/FormattedMessageContent';
 import { BorderBeam } from '@/components/ui/BorderBeam';
+import { useModalDismiss } from '@/hooks/useModalDismiss';
 
 export const FloatingAiChatWidget: React.FC = () => {
   const {
@@ -47,6 +48,9 @@ export const FloatingAiChatWidget: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const speechRecognitionRef = useRef<any>(null);
+
+  // Modal dismiss & back button synchronization hook
+  useModalDismiss(isFloatingChatOpen, () => setIsFloatingChatOpen(false), 'copilot-chat');
 
   useEffect(() => {
     if (isFloatingChatOpen && !isMinimized) {
