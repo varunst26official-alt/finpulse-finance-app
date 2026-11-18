@@ -136,7 +136,7 @@ export const MonthlyIncomeAllocationCard: React.FC = () => {
                   setIsStudioOpen(true);
                 }}
                 data-testid="studio-modal-btn"
-                className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#9e783e]/10 hover:bg-[#9e783e]/20 text-[#9e783e] text-xs font-bold transition-colors cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#9e783e]/10 hover:bg-[#9e783e]/20 text-[#9e783e] text-xs font-bold transition-colors cursor-pointer"
                 title="Configure Monthly Inflow & Allocation Studio"
               >
                 <Sparkles className="w-3.5 h-3.5" />

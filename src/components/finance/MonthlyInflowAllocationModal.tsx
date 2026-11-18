@@ -5,6 +5,7 @@ import { useFinanceStore } from '@/stores/financeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { saveUserScopedData } from '@/services/userStorage';
 import { useModalDismiss } from '@/hooks/useModalDismiss';
+import { StepperSlider } from '@/components/ui/StepperSlider';
 import { CURRENCY_CONFIGS, formatExactAmountText, cleanNumericInputString } from '@/utils/formatters';
 import { IncomeCategory, ExpenseCategory } from '@/types/finance';
 import {
@@ -391,43 +392,72 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
           </button>
         </div>
 
-        {/* Tab Navigation Strip */}
-        <div className="flex border-b border-slate-100 bg-slate-50/50 p-2 gap-2 text-xs font-bold overflow-x-auto scrollbar-none">
-          <button
-            onClick={() => setActiveTab('inflow')}
-            className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeTab === 'inflow'
-                ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80'
-                : 'text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            <Wallet className="w-4 h-4 text-[#9e783e]" />
-            <span>1. Monthly Inflow ({currencySymbol}{totalInflow.toLocaleString()})</span>
-          </button>
+        {/* Tab Navigation Strip (Solid Sticky Segmented Bar) */}
+        <div className="sticky top-0 z-20 shrink-0 bg-white border-b border-slate-200 px-3 sm:px-6 py-2.5">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-1 bg-slate-100 rounded-2xl">
+            <button
+              type="button"
+              onClick={() => setActiveTab('inflow')}
+              className={`py-2 px-1.5 sm:px-3 rounded-xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-center ${
+                activeTab === 'inflow'
+                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-extrabold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50 font-semibold'
+              }`}
+            >
+              <Wallet className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${activeTab === 'inflow' ? 'text-[#9e783e]' : 'text-slate-400'}`} />
+              <div className="min-w-0 leading-tight">
+                <span className="block text-[11px] sm:text-xs truncate">
+                  <span className="sm:hidden">1. Inflow</span>
+                  <span className="hidden sm:inline">1. Monthly Inflow</span>
+                </span>
+                <span className="block text-[10px] font-mono text-slate-500 font-medium">
+                  {currencySymbol}{totalInflow.toLocaleString()}
+                </span>
+              </div>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('living')}
-            className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeTab === 'living'
-                ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80'
-                : 'text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            <Home className="w-4 h-4 text-sky-600" />
-            <span>2. Essential Living & Bills ({currencySymbol}{totalLivingAndBills.toLocaleString()})</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('living')}
+              className={`py-2 px-1.5 sm:px-3 rounded-xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-center ${
+                activeTab === 'living'
+                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-extrabold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50 font-semibold'
+              }`}
+            >
+              <Home className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${activeTab === 'living' ? 'text-sky-600' : 'text-slate-400'}`} />
+              <div className="min-w-0 leading-tight">
+                <span className="block text-[11px] sm:text-xs truncate">
+                  <span className="sm:hidden">2. Living</span>
+                  <span className="hidden sm:inline">2. Essential Living</span>
+                </span>
+                <span className="block text-[10px] font-mono text-slate-500 font-medium">
+                  {currencySymbol}{totalLivingAndBills.toLocaleString()}
+                </span>
+              </div>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('commitments')}
-            className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeTab === 'commitments'
-                ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80'
-                : 'text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            <Layers className="w-4 h-4 text-indigo-600" />
-            <span>3. Debts & Goals ({currencySymbol}{(totalDebtsEmi + totalGoalsSip).toLocaleString()})</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('commitments')}
+              className={`py-2 px-1.5 sm:px-3 rounded-xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-center ${
+                activeTab === 'commitments'
+                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-extrabold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50 font-semibold'
+              }`}
+            >
+              <Layers className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${activeTab === 'commitments' ? 'text-indigo-600' : 'text-slate-400'}`} />
+              <div className="min-w-0 leading-tight">
+                <span className="block text-[11px] sm:text-xs truncate">
+                  <span className="sm:hidden">3. Commitments</span>
+                  <span className="hidden sm:inline">3. Debts & Goals</span>
+                </span>
+                <span className="block text-[10px] font-mono text-slate-500 font-medium">
+                  {currencySymbol}{(totalDebtsEmi + totalGoalsSip).toLocaleString()}
+                </span>
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* Modal Scrollable Body */}
@@ -716,76 +746,73 @@ export const MonthlyInflowAllocationModal: React.FC<MonthlyInflowAllocationModal
               </div>
 
               {/* Section B: Variable Essentials Allocation */}
-              <div className="space-y-3 pt-2 border-t border-slate-200">
-                <div>
-                  <h4 className="text-sm font-extrabold text-slate-900">Variable Daily Living Expenses</h4>
-                  <p className="text-xs text-slate-500">Groceries, transportation, medical needs & flexible buffer</p>
+              <div className="space-y-4 pt-3 border-t border-slate-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-extrabold text-slate-900">Variable Daily Living Expenses</h4>
+                    <p className="text-xs text-slate-500">Groceries, transportation, medical needs & flexible buffer</p>
+                  </div>
+                  <span className="text-[11px] font-mono font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-lg">
+                    {currencySymbol}{totalVariableLiving.toLocaleString()} TOTAL
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1">
-                    <label className="text-[11px] font-bold text-slate-600 flex items-center justify-between">
-                      <span>🛒 Groceries & Household Provisions</span>
-                      <span className="font-mono text-slate-900">{currencySymbol}{groceriesInput.toLocaleString()}</span>
-                    </label>
-                    <input
-                      type="range"
-                      min="2000"
-                      max={Math.max(50000, totalInflow * 0.4)}
-                      step="500"
-                      value={groceriesInput}
-                      onChange={(e) => setGroceriesInput(Number(e.target.value))}
-                      className="w-full accent-sky-600 cursor-pointer"
-                    />
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <StepperSlider
+                    label="🛒 Groceries & Household Provisions"
+                    sublabel="Supermarket, veggies, provisions & household"
+                    value={groceriesInput}
+                    min={0}
+                    max={Math.max(50000, totalInflow * 0.5 || 50000)}
+                    step={500}
+                    stepIncrement={1000}
+                    currencyPrefix={currencySymbol}
+                    onChange={setGroceriesInput}
+                    presets={[0, 2000, 5000, 10000, 15000]}
+                    accentColor="#0284c7"
+                  />
 
-                  <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1">
-                    <label className="text-[11px] font-bold text-slate-600 flex items-center justify-between">
-                      <span>🚗 Commute, Transit & Fuel</span>
-                      <span className="font-mono text-slate-900">{currencySymbol}{transitInput.toLocaleString()}</span>
-                    </label>
-                    <input
-                      type="range"
-                      min="1000"
-                      max={Math.max(25000, totalInflow * 0.2)}
-                      step="500"
-                      value={transitInput}
-                      onChange={(e) => setTransitInput(Number(e.target.value))}
-                      className="w-full accent-sky-600 cursor-pointer"
-                    />
-                  </div>
+                  <StepperSlider
+                    label="🚗 Commute, Transit & Fuel"
+                    sublabel="Petrol, cabs, metro, tolls & parking"
+                    value={transitInput}
+                    min={0}
+                    max={Math.max(25000, totalInflow * 0.3 || 25000)}
+                    step={500}
+                    stepIncrement={500}
+                    currencyPrefix={currencySymbol}
+                    onChange={setTransitInput}
+                    presets={[0, 1000, 3000, 5000, 8000]}
+                    accentColor="#0284c7"
+                  />
 
-                  <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1">
-                    <label className="text-[11px] font-bold text-slate-600 flex items-center justify-between">
-                      <span>🏥 Health, Pharmacy & Family Care</span>
-                      <span className="font-mono text-slate-900">{currencySymbol}{medicalInput.toLocaleString()}</span>
-                    </label>
-                    <input
-                      type="range"
-                      min="500"
-                      max={Math.max(20000, totalInflow * 0.15)}
-                      step="500"
-                      value={medicalInput}
-                      onChange={(e) => setMedicalInput(Number(e.target.value))}
-                      className="w-full accent-sky-600 cursor-pointer"
-                    />
-                  </div>
+                  <StepperSlider
+                    label="🏥 Health, Pharmacy & Family Care"
+                    sublabel="Consultations, prescriptions & daily healthcare"
+                    value={medicalInput}
+                    min={0}
+                    max={Math.max(20000, totalInflow * 0.2 || 20000)}
+                    step={500}
+                    stepIncrement={500}
+                    currencyPrefix={currencySymbol}
+                    onChange={setMedicalInput}
+                    presets={[0, 500, 2000, 5000]}
+                    accentColor="#0284c7"
+                  />
 
-                  <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1">
-                    <label className="text-[11px] font-bold text-slate-600 flex items-center justify-between">
-                      <span>🍿 Discretionary Dining & Buffer</span>
-                      <span className="font-mono text-slate-900">{currencySymbol}{bufferInput.toLocaleString()}</span>
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max={Math.max(25000, totalInflow * 0.2)}
-                      step="500"
-                      value={bufferInput}
-                      onChange={(e) => setBufferInput(Number(e.target.value))}
-                      className="w-full accent-sky-600 cursor-pointer"
-                    />
-                  </div>
+                  <StepperSlider
+                    label="🍿 Discretionary Dining & Buffer"
+                    sublabel="Weekend dining, entertainment & flex cushion"
+                    value={bufferInput}
+                    min={0}
+                    max={Math.max(25000, totalInflow * 0.25 || 25000)}
+                    step={500}
+                    stepIncrement={1000}
+                    currencyPrefix={currencySymbol}
+                    onChange={setBufferInput}
+                    presets={[0, 1000, 3000, 5000, 10000]}
+                    accentColor="#0284c7"
+                  />
                 </div>
               </div>
             </div>
