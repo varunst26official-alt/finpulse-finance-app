@@ -333,7 +333,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 40, scale: 0.96 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[490px] max-w-full bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e4e9f1] flex flex-col max-h-[min(92vh,calc(100dvh-1rem))] sm:max-h-[86vh] overflow-hidden"
+              className="fixed bottom-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[490px] max-w-full bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e4e9f1] flex flex-col max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[86vh] overflow-hidden overscroll-contain"
             >
               {/* Mobile Drawer Top Drag Bar */}
               <div className="shrink-0 pt-3 pb-0 bg-[#17365d] sm:hidden flex justify-center">
@@ -502,7 +502,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
               </div>
 
               {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-4">
                 {/* 1. Daily Calorie & Macro Target Progress Meter */}
                 <div className="p-3.5 rounded-2xl bg-[#faf8f5] border border-[#e8e0d1] space-y-2">
                   <div className="flex items-center justify-between text-xs font-extrabold text-[#243047]">
@@ -820,7 +820,7 @@ export const FloatingDailyPlanWidget: React.FC = () => {
               </div>
 
               {/* Form Body */}
-              <div className="p-5 overflow-y-auto space-y-4 text-xs font-semibold text-slate-700">
+              <div className="p-5 overflow-y-auto overscroll-contain space-y-4 text-xs font-semibold text-slate-700">
                 {/* Detected Location Info */}
                 <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">

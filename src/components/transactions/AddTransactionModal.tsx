@@ -932,7 +932,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
           </div>
 
           {/* Sticky Action Footer (Never crushed by Virtual Keyboard) */}
-          <div className="shrink-0 flex items-center justify-end gap-3 p-4 sm:p-6 pt-3 border-t border-[#e8e0d1] bg-white pb-[calc(env(safe-area-inset-bottom)+0.75rem)] sm:pb-4 z-10">
+          <div className="shrink-0 flex items-center justify-end gap-3 p-4 sm:p-6 pt-3 border-t border-[#e8e0d1] bg-white pb-safe-bottom pb-[calc(env(safe-area-inset-bottom)+0.75rem)] sm:pb-4 z-10">
             <button
               type="button"
               onClick={onClose}

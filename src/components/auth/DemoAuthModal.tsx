@@ -78,7 +78,7 @@ export const DemoAuthModal: React.FC = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 16 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="relative w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#e8dfcf] bg-white shadow-2xl p-6 sm:p-7 max-h-[min(90vh,calc(100dvh-1rem))] overflow-y-auto overscroll-contain text-slate-900 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:pb-7 cursor-default"
+          className="relative w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-[#e8dfcf] bg-white shadow-2xl p-6 sm:p-7 max-h-[min(90vh,calc(100dvh-1rem))] overflow-y-auto overscroll-contain text-slate-900 pb-safe-bottom pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:pb-7 cursor-default"
         >
           {/* Mobile Drawer Drag Handle */}
           <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden shrink-0 mb-3" />

@@ -202,7 +202,7 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-5 pb-5 space-y-3">
+          <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-5 pb-safe-bottom space-y-3">
             {filtered.length === 0 ? (
               <div className="text-center py-12 text-slate-400 text-sm">
                 No bills yet. Add your first bill to get started.
@@ -301,7 +301,7 @@ export const BillReminder: React.FC<{ isOpen: boolean; onClose: () => void }> = 
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 25, scale: 0.98 }}
                   transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-                  className="bg-white rounded-t-3xl sm:rounded-2xl p-6 pb-safe-bottom w-full max-w-md max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto overscroll-contain space-y-4 shadow-2xl border border-[#e8e0d1] cursor-default"
+                  className="bg-white rounded-t-3xl sm:rounded-3xl p-6 pb-safe-bottom w-full max-w-md max-h-[min(90vh,calc(100dvh-1rem))] sm:max-h-[85vh] overflow-y-auto overscroll-contain space-y-4 shadow-2xl border border-[#e8e0d1] cursor-default"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
