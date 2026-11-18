@@ -1,6 +1,12 @@
 package app.lifeos.commandcentre;
 
+import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        registerPlugin(PersistentTimerPlugin.class);
+        super.onCreate(savedInstanceState);
+    }
 }

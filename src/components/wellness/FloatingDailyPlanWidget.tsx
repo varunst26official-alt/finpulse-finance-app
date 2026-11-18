@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLifeOSStore } from '@/stores/lifeosStore';
 import { MealItem, WorkoutRoutineDay } from '@/services/adaptiveLifeEngine';
 import { SUPPORTED_CUISINE_STYLES } from '@/services/locationService';
+import { backgroundTimerManager } from '@/services/backgroundTimerService';
 import {
   Dumbbell,
   Apple,
@@ -109,23 +110,42 @@ export const FloatingDailyPlanWidget: React.FC = () => {
     }
   }, [userLocation]);
 
-  // Rest timer tick
+  // Rest timer integration with backgroundTimerManager & persistent lock-screen chronometer
   useEffect(() => {
-    let interval: any = null;
-    if (timerRunning && restSeconds !== null && restSeconds > 0) {
-      interval = setInterval(() => {
-        setRestSeconds((prev) => (prev !== null && prev > 0 ? prev - 1 : 0));
-      }, 1000);
-    } else if (restSeconds === 0) {
-      setTimerRunning(false);
-      showNotification('⏰ Rest period finished! Ready for next set.');
+    const currentRemaining = backgroundTimerManager.getCurrentSeconds(2002);
+    if (currentRemaining !== null && currentRemaining > 0 && !timerRunning) {
+      setRestSeconds(currentRemaining);
+      setTimerRunning(true);
     }
-    return () => clearInterval(interval);
-  }, [timerRunning, restSeconds]);
+
+    return () => {
+      backgroundTimerManager.detachHandlers(2002);
+    };
+  }, []);
 
   const startTimer = (seconds: number) => {
     setRestSeconds(seconds);
     setTimerRunning(true);
+    backgroundTimerManager.startCountdown({
+      id: 2002,
+      title: '🏋️ Workout Rest Interval',
+      category: 'WORKOUT',
+      totalSeconds: seconds,
+      onTick: (left) => {
+        setRestSeconds(left);
+      },
+      onComplete: () => {
+        setRestSeconds(0);
+        setTimerRunning(false);
+        showNotification('⏰ Rest period finished! Ready for next set.');
+      },
+    });
+  };
+
+  const stopTimer = () => {
+    setTimerRunning(false);
+    setRestSeconds(null);
+    backgroundTimerManager.stopTimer(2002);
   };
 
   // Close on Escape key
@@ -553,17 +573,21 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                         <span>Workout: {selectedDay}</span>
                       </h4>
 
-                      <div className="flex items-center gap-1">
-                        <span className="text-[10px] text-slate-500 font-bold">Rest:</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs text-slate-500 font-bold">Rest:</span>
                         <button
+                          type="button"
+                          data-testid="rest-timer-60s"
                           onClick={() => startTimer(60)}
-                          className="px-1.5 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold cursor-pointer"
+                          className="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-extrabold cursor-pointer active:scale-95 transition-all shadow-xs"
                         >
                           60s
                         </button>
                         <button
+                          type="button"
+                          data-testid="rest-timer-90s"
                           onClick={() => startTimer(90)}
-                          className="px-1.5 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold cursor-pointer"
+                          className="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-extrabold cursor-pointer active:scale-95 transition-all shadow-xs"
                         >
                           90s
                         </button>
@@ -571,12 +595,20 @@ export const FloatingDailyPlanWidget: React.FC = () => {
                     </div>
 
                     {timerRunning && (
-                      <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between text-xs font-bold animate-pulse">
+                      <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between text-xs font-bold">
                         <span className="flex items-center gap-1.5">
-                          <Timer className="w-4 h-4 text-rose-600" />
+                          <Timer className="w-4 h-4 text-rose-600 animate-pulse" />
                           <span>Rest countdown:</span>
                         </span>
-                        <span className="font-mono text-sm">{restSeconds}s</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-sm">{restSeconds}s</span>
+                          <button
+                            onClick={stopTimer}
+                            className="px-1.5 py-0.5 rounded bg-rose-200 hover:bg-rose-300 text-rose-900 text-[10px] cursor-pointer"
+                          >
+                            Stop
+                          </button>
+                        </div>
                       </div>
                     )}
 

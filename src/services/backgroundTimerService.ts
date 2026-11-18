@@ -1,4 +1,4 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 
 export interface ActiveTimerInstance {
@@ -14,33 +14,40 @@ export interface ActiveTimerInstance {
   onComplete?: () => void;
 }
 
+// Native Android Persistent Timer Plugin definition
+export interface PersistentTimerPlugin {
+  startTimer(options: {
+    id: number;
+    title: string;
+    subtitle?: string;
+    isCountdown: boolean;
+    targetEndTime?: number;
+    startTime?: number;
+  }): Promise<{ success: boolean; id: number }>;
+
+  stopTimer(options: { id: number }): Promise<{ success: boolean; id: number }>;
+
+  stopAllTimers(): Promise<{ success: boolean }>;
+}
+
+const PersistentTimer = registerPlugin<PersistentTimerPlugin>('PersistentTimer');
+
 const activeTimers = new Map<number, ActiveTimerInstance>();
-let channelInitialized = false;
+let permissionsRequested = false;
 
 /**
- * Initialize high-priority lock-screen notification channel on Android
+ * Ensure notification permissions on native devices
  */
-async function ensureNotificationChannel() {
-  if (channelInitialized || !Capacitor.isNativePlatform()) return;
+async function ensurePermissions() {
+  if (permissionsRequested || !Capacitor.isNativePlatform()) return;
   try {
     const perm = await LocalNotifications.checkPermissions();
     if (perm.display !== 'granted') {
       await LocalNotifications.requestPermissions();
     }
-
-    await LocalNotifications.createChannel({
-      id: 'quantra-active-timers',
-      name: 'Active Timers & Stopwatches',
-      description: 'Persistent lock-screen notifications for ongoing tasks and workout timers',
-      importance: 5, // MAX importance for lock-screen presence
-      visibility: 1, // VISIBILITY_PUBLIC (Shows on lock screen)
-      vibration: true,
-      lights: true,
-      lightColor: '#2563eb',
-    });
-    channelInitialized = true;
+    permissionsRequested = true;
   } catch (err) {
-    console.warn('[BackgroundTimer] Failed to initialize notification channel:', err);
+    console.warn('[BackgroundTimer] Permission request failed:', err);
   }
 }
 
@@ -51,63 +58,66 @@ function formatTime(seconds: number): string {
 }
 
 /**
- * Updates or schedules the Android Lock-Screen Notification
+ * Starts or updates the Native Android Persistent Chronometer Notification
+ * Uses native Foreground Service and setUsesChronometer(true) so Android SystemUI
+ * ticks in real time every second on Lock Screen, Notification Shade, and Notch
+ * without any JavaScript interval dependency or battery drain!
  */
-async function syncNotification(timer: ActiveTimerInstance, secondsRemainingOrElapsed: number) {
+async function syncNativeNotification(timer: ActiveTimerInstance) {
   if (!Capacitor.isNativePlatform()) {
-    // Optional Web Notification fallback
     if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-      // Light title update
-      document.title = `(${formatTime(secondsRemainingOrElapsed)}) ${timer.title} · Quantra`;
+      const remainingOrElapsed = timer.type === 'COUNTDOWN' && timer.targetEndTime
+        ? Math.max(0, Math.round((timer.targetEndTime - Date.now()) / 1000))
+        : Math.round((Date.now() - timer.startedAt) / 1000);
+      document.title = `(${formatTime(remainingOrElapsed)}) ${timer.title} · Quantra`;
     }
     return;
   }
 
+  await ensurePermissions();
+
+  const isCountdown = timer.type === 'COUNTDOWN';
+  const subtitle = isCountdown
+    ? `${formatTime(timer.initialSeconds)} Target Session · Live Countdown`
+    : `Active Timer · Real-Time Chronometer`;
+
   try {
-    await ensureNotificationChannel();
-
-    const isCountdown = timer.type === 'COUNTDOWN';
-    const timeDisplay = formatTime(secondsRemainingOrElapsed);
-    const body = isCountdown
-      ? `${timeDisplay} remaining · Tap to open session`
-      : `${timeDisplay} active elapsed · Tap to open session`;
-
-    // 1. Post/Update ongoing lock-screen notification
-    await LocalNotifications.schedule({
-      notifications: [
-        {
-          id: timer.id,
-          title: timer.title,
-          body,
-          channelId: 'quantra-active-timers',
-          ongoing: true, // Cannot be swiped away while active
-          autoCancel: false,
-          schedule: { at: new Date(Date.now() + 100) },
-        },
-      ],
+    // 1. Primary: Native Android Foreground Service with Real-Time Chronometer
+    await PersistentTimer.startTimer({
+      id: timer.id,
+      title: timer.title,
+      subtitle,
+      isCountdown,
+      targetEndTime: timer.targetEndTime,
+      startTime: timer.startedAt,
     });
-
-    // 2. If countdown, schedule completion alert at exact target time
-    if (isCountdown && timer.targetEndTime) {
+  } catch (err) {
+    console.warn('[BackgroundTimer] Native PersistentTimer call failed, falling back to LocalNotifications:', err);
+    // Fallback if native plugin unavailable
+    try {
+      const remaining = isCountdown && timer.targetEndTime
+        ? Math.max(0, Math.round((timer.targetEndTime - Date.now()) / 1000))
+        : Math.round((Date.now() - timer.startedAt) / 1000);
       await LocalNotifications.schedule({
         notifications: [
           {
-            id: timer.id + 10000,
-            title: `🔔 ${timer.title} Finished!`,
-            body: 'Timer reached zero. Tap to view and log your session.',
+            id: timer.id,
+            title: timer.title,
+            body: `${formatTime(remaining)} ${isCountdown ? 'remaining' : 'elapsed'} · Tap to open`,
             channelId: 'quantra-active-timers',
-            schedule: { at: new Date(timer.targetEndTime) },
+            ongoing: true,
+            autoCancel: false,
           },
         ],
       });
+    } catch (fallbackErr) {
+      console.warn('[BackgroundTimer] Fallback notification failed:', fallbackErr);
     }
-  } catch (err) {
-    console.warn('[BackgroundTimer] Error scheduling notification:', err);
   }
 }
 
 /**
- * Cancels active lock-screen and completion notifications
+ * Cancels active lock-screen, status-bar, and completion notifications
  */
 export async function clearTimerNotifications(id: number) {
   if (typeof document !== 'undefined') {
@@ -116,11 +126,19 @@ export async function clearTimerNotifications(id: number) {
   if (!Capacitor.isNativePlatform()) return;
 
   try {
+    // 1. Stop native Foreground Service
+    await PersistentTimer.stopTimer({ id });
+  } catch (err) {
+    console.warn('[BackgroundTimer] Error stopping native persistent timer:', err);
+  }
+
+  try {
+    // 2. Also cancel any fallback LocalNotifications
     await LocalNotifications.cancel({
       notifications: [{ id }, { id: id + 10000 }],
     });
   } catch (err) {
-    console.warn('[BackgroundTimer] Error cancelling notification:', err);
+    console.warn('[BackgroundTimer] Error cancelling LocalNotifications:', err);
   }
 }
 
@@ -128,7 +146,7 @@ export async function clearTimerNotifications(id: number) {
  * Core ticker loop and visibility listener
  */
 if (typeof window !== 'undefined') {
-  // 1. Heartbeat interval (updates notifications and ticks every 1 second)
+  // 1. In-app UI ticker (updates React state when app is visible)
   setInterval(() => {
     const now = Date.now();
     activeTimers.forEach((timer, id) => {
@@ -138,11 +156,6 @@ if (typeof window !== 'undefined') {
         if (!timer.targetEndTime) return;
         const remaining = Math.max(0, Math.round((timer.targetEndTime - now) / 1000));
         timer.onTick?.(remaining);
-
-        // Update notification every 5 seconds (or at 0) to conserve battery
-        if (remaining % 5 === 0 || remaining === 0) {
-          syncNotification(timer, remaining);
-        }
 
         if (remaining <= 0) {
           timer.isRunning = false;
@@ -154,14 +167,11 @@ if (typeof window !== 'undefined') {
         // Stopwatch
         const elapsed = Math.round((now - timer.startedAt) / 1000);
         timer.onTick?.(elapsed);
-        if (elapsed % 5 === 0) {
-          syncNotification(timer, elapsed);
-        }
       }
     });
   }, 1000);
 
-  // 2. High-precision Resync when app is unlocked or foregrounded
+  // 2. High-precision Resync when app returns from background or phone is unlocked
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       const now = Date.now();
@@ -191,7 +201,7 @@ if (typeof window !== 'undefined') {
  */
 export const backgroundTimerManager = {
   /**
-   * Start a countdown timer with lock-screen notification support
+   * Start a countdown timer with native real-time lock-screen chronometer
    */
   startCountdown(options: {
     id: number;
@@ -235,12 +245,12 @@ export const backgroundTimerManager = {
     };
 
     activeTimers.set(options.id, timerInstance);
-    syncNotification(timerInstance, options.totalSeconds);
+    syncNativeNotification(timerInstance);
     return timerInstance;
   },
 
   /**
-   * Start a stopwatch with lock-screen notification support
+   * Start a stopwatch with native real-time lock-screen chronometer
    */
   startStopwatch(options: {
     id: number;
@@ -275,7 +285,7 @@ export const backgroundTimerManager = {
     };
 
     activeTimers.set(options.id, timerInstance);
-    syncNotification(timerInstance, initial);
+    syncNativeNotification(timerInstance);
     return timerInstance;
   },
 
